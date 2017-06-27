@@ -1,0 +1,740 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="Material Design 控件知识梳理(1) - Android Design Support Library 是什么Material Design 控件知识梳理(2) - AppBarLayout &amp;amp; CollapsingToolbarLayoutMaterial Design 控件知识梳理(3) - BottomSheet &amp;amp;&amp;amp; BottomSheetDialo">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Material Design 控件知识梳理(4) - FloatingActionButton">
+<meta property="og:url" content="http://yoursite.com/2017/04/13/Material-Design-控件/Material-Design-控件知识梳理(4)---FloatingActionButton/index.html">
+<meta property="og:site_name" content="泽毛">
+<meta property="og:description" content="Material Design 控件知识梳理(1) - Android Design Support Library 是什么Material Design 控件知识梳理(2) - AppBarLayout &amp;amp; CollapsingToolbarLayoutMaterial Design 控件知识梳理(3) - BottomSheet &amp;amp;&amp;amp; BottomSheetDialo">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-da87f7c332a8b4f4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-27fc91bd32eee7c6.gif?imageMogr2/auto-orient/strip">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-5d8cbfbee63d7181.gif?imageMogr2/auto-orient/strip">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-d0b08b586a1d1f06.gif?imageMogr2/auto-orient/strip">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-34a8b9f4b82cea05.gif?imageMogr2/auto-orient/strip">
+<meta property="og:updated_time" content="2017-06-27T15:00:18.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Material Design 控件知识梳理(4) - FloatingActionButton">
+<meta name="twitter:description" content="Material Design 控件知识梳理(1) - Android Design Support Library 是什么Material Design 控件知识梳理(2) - AppBarLayout &amp;amp; CollapsingToolbarLayoutMaterial Design 控件知识梳理(3) - BottomSheet &amp;amp;&amp;amp; BottomSheetDialo">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-da87f7c332a8b4f4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/04/13/Material-Design-控件/Material-Design-控件知识梳理(4)---FloatingActionButton/"/>
+
+
+
+
+
+  <title>Material Design 控件知识梳理(4) - FloatingActionButton | 泽毛</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">泽毛</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/04/13/Material-Design-控件/Material-Design-控件知识梳理(4)---FloatingActionButton/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="泽毛">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Material Design 控件知识梳理(4) - FloatingActionButton</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-13T20:16:00+08:00">
+                2017-04-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Material-Design-控件知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">Material Design 控件知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p><a href="http://www.jianshu.com/p/32b2638a1785" target="_blank" rel="external">Material Design 控件知识梳理(1) - Android Design Support Library 是什么</a><br><a href="http://www.jianshu.com/p/d4fd636d7c44" target="_blank" rel="external">Material Design 控件知识梳理(2) - AppBarLayout &amp; CollapsingToolbarLayout</a><br><a href="http://www.jianshu.com/p/2a5be29123e5" target="_blank" rel="external">Material Design 控件知识梳理(3) - BottomSheet &amp;&amp; BottomSheetDialog &amp;&amp; BottomSheetDialogFragment</a><br><a href="http://www.jianshu.com/p/5a354e318019" target="_blank" rel="external">Material Design 控件知识梳理(4) - FloatingActionButton</a><br><a href="http://www.jianshu.com/p/d70cfd724c7f" target="_blank" rel="external">Material Design 控件知识梳理(5) - DrawerLayout &amp;&amp; NavigationView</a><br><a href="http://www.jianshu.com/p/6aea94f9ae2f" target="_blank" rel="external">Material Design 控件知识梳理(6) - Snackbar</a><br><a href="http://www.jianshu.com/p/22ec4fc1cb71" target="_blank" rel="external">Material Design 控件知识梳理(7) - BottomNavigationBar</a><br><a href="http://www.jianshu.com/p/5dd04fda13ab" target="_blank" rel="external">Material Design 控件知识梳理(8) - TabLayout</a><br><a href="http://www.jianshu.com/p/ed9642fc8634" target="_blank" rel="external">Material Design 控件知识梳理(9) - TextInputLayout</a></p>
+</blockquote>
+<h1 id="一、概述"><a href="#一、概述" class="headerlink" title="一、概述"></a>一、概述</h1><p>今天，我们介绍一个比较简单的控件：<code>FloatingActionButton</code>，相信大家一定都听过也在网上见过类似的例子，我们就分为三个部分介绍一下<code>FloatingActionButton</code>的相关知识：</p>
+<ul>
+<li><code>Fab</code>的基础使用</li>
+<li><code>Fab</code>和其它<code>MD</code>控件的组合</li>
+<li>通过自定义<code>FloatingActionButton.Behavior</code>，让<code>Fab</code>根据列表的状态显示和隐藏</li>
+</ul>
+<h1 id="二、Fab的基础使用"><a href="#二、Fab的基础使用" class="headerlink" title="二、Fab的基础使用"></a>二、<code>Fab</code>的基础使用</h1><p><code>Fab</code>本质上其实是一个<code>ImageButton</code>，只是它在<code>ImageButton</code>的基础上增加了一些属性，这里介绍几个常用的属性：</p>
+<h2 id="展现属性"><a href="#展现属性" class="headerlink" title="展现属性"></a>展现属性</h2><ul>
+<li><code>android:src</code>：<code>Fab</code>的图片，这其实是<code>ImageView</code>的属性。</li>
+<li><code>app:backgroundTint</code>：<code>Fab</code>的背景色，如果没有设置，那么会取<code>theme</code>中的<code>colorAccent</code>作为背景色。</li>
+<li><code>app:fabSize</code> ：<code>Fab</code>的大小，可选的值包括：<ul>
+<li><code>mini</code>：</li>
+<li><code>normal</code></li>
+<li><code>auto</code>：<code>mini</code>和<code>normal</code>都预设了固定的大小，而<code>auto</code>属性则会根据屏幕的宽度来设置，在小屏幕上使用<code>mini</code>，而在大屏幕上使用<code>normal</code>，当然我们也可以直接通过<code>layout_width/layout_height</code>来指定。</li>
+</ul>
+</li>
+<li><code>app:elevation</code>：<code>Fab</code>在<code>Z</code>轴方向的距离，也就是深度。</li>
+<li><code>app:borderWidth</code>：<code>Fab</code>边界的宽度，边界的颜色会比背景色稍淡，如下图所示<br><img src="http://upload-images.jianshu.io/upload_images/1949836-da87f7c332a8b4f4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></li>
+</ul>
+<h2 id="点击属性"><a href="#点击属性" class="headerlink" title="点击属性"></a>点击属性</h2><ul>
+<li><code>app:pressedTranslationZ</code>：点击时<code>Fab</code>在<code>Z</code>轴的变化值。</li>
+<li><code>app:rippleColor</code>：点击时水波纹扩散的颜色。</li>
+</ul>
+<h1 id="三、与其它MD控件结合使用"><a href="#三、与其它MD控件结合使用" class="headerlink" title="三、与其它MD控件结合使用"></a>三、与其它<code>MD</code>控件结合使用</h1><h2 id="3-1-和AppBarLayout联动"><a href="#3-1-和AppBarLayout联动" class="headerlink" title="3.1 和AppBarLayout联动"></a>3.1 和<code>AppBarLayout</code>联动</h2><p>通过给<code>Fab</code>设置<code>app:layout_anchor</code>和<code>layout_anchorGravity</code>两个属性，可以让<code>Fab</code>跟随<code>AppBarLayout</code>移动，并在合适的时候隐藏，下面是我们的布局：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line">&lt;android.support.design.widget.CoordinatorLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;</div><div class="line">    xmlns:app=&quot;http://schemas.android.com/apk/res-auto&quot;</div><div class="line">    xmlns:tools=&quot;http://schemas.android.com/tools&quot;</div><div class="line">    android:layout_width=&quot;match_parent&quot;</div><div class="line">    android:layout_height=&quot;match_parent&quot;</div><div class="line">    tools:context=&quot;com.demo.lizejun.repotransition.FABActivity&quot;&gt;</div><div class="line">    &lt;android.support.design.widget.AppBarLayout</div><div class="line">        android:id=&quot;@+id/al_title&quot;</div><div class="line">        android:layout_width=&quot;match_parent&quot;</div><div class="line">        android:layout_height=&quot;wrap_content&quot;&gt;</div><div class="line">        &lt;ImageView</div><div class="line">            android:id=&quot;@+id/iv_title&quot;</div><div class="line">            android:src=&quot;@drawable/ic_bg&quot;</div><div class="line">            android:layout_width=&quot;match_parent&quot;</div><div class="line">            android:scaleType=&quot;centerCrop&quot;</div><div class="line">            android:layout_height=&quot;150dp&quot;</div><div class="line">            app:layout_scrollFlags=&quot;scroll&quot;/&gt;</div><div class="line">    &lt;/android.support.design.widget.AppBarLayout&gt;</div><div class="line">    &lt;android.support.v7.widget.RecyclerView</div><div class="line">        android:id=&quot;@+id/rv_content&quot;</div><div class="line">        android:layout_width=&quot;match_parent&quot;</div><div class="line">        android:layout_height=&quot;match_parent&quot;</div><div class="line">        app:layout_behavior=&quot;@string/appbar_scrolling_view_behavior&quot;/&gt;</div><div class="line">    &lt;android.support.design.widget.FloatingActionButton</div><div class="line">        android:id=&quot;@+id/fab&quot;</div><div class="line">        android:layout_width=&quot;wrap_content&quot;</div><div class="line">        android:layout_height=&quot;wrap_content&quot;</div><div class="line">        android:src=&quot;@android:drawable/ic_btn_speak_now&quot;</div><div class="line">        android:layout_margin=&quot;10dp&quot;</div><div class="line">        app:backgroundTint=&quot;@color/colorPrimary&quot;</div><div class="line">        app:layout_anchor=&quot;@id/al_title&quot; </div><div class="line">        app:layout_anchorGravity=&quot;bottom|end&quot;/&gt;</div><div class="line">&lt;/android.support.design.widget.CoordinatorLayout&gt;</div></pre></td></tr></table></figure></p>
+<p>当我们滚动布局的时候，<code>Fab</code>会跟着<code>AppBarLayout</code>先上移，然后消失：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-27fc91bd32eee7c6.gif?imageMogr2/auto-orient/strip" alt=""></p>
+<h2 id="3-2-和BottomSheet联动"><a href="#3-2-和BottomSheet联动" class="headerlink" title="3.2 和BottomSheet联动"></a>3.2 和<code>BottomSheet</code>联动</h2><p>和<code>AppBarLayout</code>类似，我们也可以通过设置<code>layout_anchor</code>的方法让<code>Fab</code>和<code>BottomSheet</code>联动：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line">&lt;android.support.design.widget.CoordinatorLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;</div><div class="line">    xmlns:app=&quot;http://schemas.android.com/apk/res-auto&quot;</div><div class="line">    xmlns:tools=&quot;http://schemas.android.com/tools&quot;</div><div class="line">    android:layout_width=&quot;match_parent&quot;</div><div class="line">    android:layout_height=&quot;match_parent&quot;</div><div class="line">    tools:context=&quot;com.demo.lizejun.repotransition.FABActivity&quot;&gt;</div><div class="line">    &lt;android.support.design.widget.AppBarLayout</div><div class="line">        android:id=&quot;@+id/al_title&quot;</div><div class="line">        android:layout_width=&quot;match_parent&quot;</div><div class="line">        android:layout_height=&quot;wrap_content&quot;&gt;</div><div class="line">        &lt;ImageView</div><div class="line">            android:id=&quot;@+id/iv_title&quot;</div><div class="line">            android:src=&quot;@drawable/ic_bg&quot;</div><div class="line">            android:layout_width=&quot;match_parent&quot;</div><div class="line">            android:scaleType=&quot;centerCrop&quot;</div><div class="line">            android:layout_height=&quot;150dp&quot;</div><div class="line">            app:layout_scrollFlags=&quot;scroll&quot;/&gt;</div><div class="line">    &lt;/android.support.design.widget.AppBarLayout&gt;</div><div class="line">    &lt;android.support.v7.widget.RecyclerView</div><div class="line">        android:id=&quot;@+id/rv_content&quot;</div><div class="line">        android:layout_width=&quot;match_parent&quot;</div><div class="line">        android:layout_height=&quot;match_parent&quot;</div><div class="line">        app:layout_behavior=&quot;@string/appbar_scrolling_view_behavior&quot;/&gt;</div><div class="line">    &lt;include android:id=&quot;@+id/bottom_sheet&quot; layout=&quot;@layout/layout_bottom_sheet_linear&quot;/&gt;</div><div class="line">    &lt;android.support.design.widget.FloatingActionButton</div><div class="line">        android:id=&quot;@+id/fab&quot;</div><div class="line">        android:layout_width=&quot;wrap_content&quot;</div><div class="line">        android:layout_height=&quot;wrap_content&quot;</div><div class="line">        android:src=&quot;@android:drawable/ic_btn_speak_now&quot;</div><div class="line">        android:layout_margin=&quot;10dp&quot;</div><div class="line">        app:backgroundTint=&quot;@color/colorPrimary&quot;</div><div class="line">        app:layout_anchor=&quot;@id/bottom_sheet&quot;</div><div class="line">        app:layout_anchorGravity=&quot;end&quot;/&gt;</div><div class="line">&lt;/android.support.design.widget.CoordinatorLayout&gt;</div></pre></td></tr></table></figure></p>
+<p>这里，我们把<code>layout_anchor</code>设为<code>bottom_sheet</code>：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-5d8cbfbee63d7181.gif?imageMogr2/auto-orient/strip" alt=""></p>
+<h2 id="3-3-和Snackbar联动"><a href="#3-3-和Snackbar联动" class="headerlink" title="3.3 和Snackbar联动"></a>3.3 和<code>Snackbar</code>联动</h2><p>需要和<code>Snackbar</code>联动时，不需要<code>Fab</code>设置<code>layout_anchor</code>，而是需要在<code>Snackbar</code>展现的时候，第一个参数传入的是<code>CoordinatorLayout</code>：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">@Override</div><div class="line">protected void onCreate(Bundle savedInstanceState) &#123;</div><div class="line">    super.onCreate(savedInstanceState);</div><div class="line">    setContentView(R.layout.activity_fab);</div><div class="line">    initView();</div><div class="line">    mRootView = (CoordinatorLayout) findViewById(R.id.cl_root);</div><div class="line">    mFab = (FloatingActionButton) findViewById(R.id.fab);</div><div class="line">    mFab.setOnClickListener(new View.OnClickListener() &#123;</div><div class="line">        @Override</div><div class="line">        public void onClick(View v) &#123;</div><div class="line">            //这里需要传入CoordinatorLayout</div><div class="line">            Snackbar.make(mRootView, &quot;点击Fab&quot;, Snackbar.LENGTH_LONG).show();</div><div class="line">        &#125;</div><div class="line">    &#125;);</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>下面是展现的效果：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-d0b08b586a1d1f06.gif?imageMogr2/auto-orient/strip" alt=""></p>
+<h1 id="四、Fab根据列表的状态显示或隐藏"><a href="#四、Fab根据列表的状态显示或隐藏" class="headerlink" title="四、Fab根据列表的状态显示或隐藏"></a>四、<code>Fab</code>根据列表的状态显示或隐藏</h1><p>在<code>Fab</code>的内部，定义了一个<code>Behavior</code>，我们可以通过继承这个<code>Behavior</code>来监听<code>CoordinatorLayout</code>内布局的变化，以实现<code>Fab</code>的显示和隐藏，首先看我们的布局：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">&lt;android.support.design.widget.CoordinatorLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;</div><div class="line">    xmlns:app=&quot;http://schemas.android.com/apk/res-auto&quot;</div><div class="line">    xmlns:tools=&quot;http://schemas.android.com/tools&quot;</div><div class="line">    android:id=&quot;@+id/cl_root&quot;</div><div class="line">    android:layout_width=&quot;match_parent&quot;</div><div class="line">    android:layout_height=&quot;match_parent&quot;</div><div class="line">    tools:context=&quot;com.demo.lizejun.repotransition.FABActivity&quot;&gt;</div><div class="line">    &lt;android.support.v7.widget.RecyclerView</div><div class="line">        android:id=&quot;@+id/rv_content&quot;</div><div class="line">        android:tag=&quot;rv_content&quot;</div><div class="line">        android:layout_width=&quot;match_parent&quot;</div><div class="line">        android:layout_height=&quot;match_parent&quot;</div><div class="line">        app:layout_behavior=&quot;@string/appbar_scrolling_view_behavior&quot;/&gt;</div><div class="line">    &lt;android.support.design.widget.FloatingActionButton</div><div class="line">        android:id=&quot;@+id/fab&quot;</div><div class="line">        android:layout_width=&quot;wrap_content&quot;</div><div class="line">        android:layout_height=&quot;wrap_content&quot;</div><div class="line">        android:src=&quot;@android:drawable/ic_btn_speak_now&quot;</div><div class="line">        android:layout_margin=&quot;10dp&quot;</div><div class="line">        android:layout_gravity=&quot;bottom|end&quot;</div><div class="line">        app:backgroundTint=&quot;@color/colorPrimary&quot;</div><div class="line">        app:layout_behavior=&quot;com.demo.lizejun.repotransition.behavior.FabListBehavior&quot;/&gt;</div><div class="line">&lt;/android.support.design.widget.CoordinatorLayout&gt;</div></pre></td></tr></table></figure></p>
+<p>我们的根布局是一个<code>CoordinatorLayout</code>，<code>RecyclerView</code>和<code>Fab</code>是它的两个子<code>View</code>，<code>Fab</code>位于<code>CoordinatorLayout</code>的右下角，注意到，这里我们给<code>Fab</code>设置了一个自定义的<code>Behavior</code>，正是通过这个<code>behavior</code>，<code>Fab</code>可以监听到<code>CoordinatorLayout</code>内布局的滚动情况，下面是我们的<code>Behavior</code>：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line">public class FabListBehavior extends FloatingActionButton.Behavior &#123;</div><div class="line"></div><div class="line">    private static final int MIN_CHANGED_DISTANCE = 30;</div><div class="line"></div><div class="line">    public FabListBehavior(Context context, AttributeSet attributeSet) &#123;</div><div class="line">        super(context, attributeSet);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public boolean onStartNestedScroll(CoordinatorLayout coordinatorLayout, FloatingActionButton child, View directTargetChild, View target, int nestedScrollAxes) &#123;</div><div class="line">        return true;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void onNestedScroll(CoordinatorLayout coordinatorLayout, FloatingActionButton child, View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) &#123;</div><div class="line">        super.onNestedScroll(coordinatorLayout, child, target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed);</div><div class="line">        if (dyConsumed &gt; MIN_CHANGED_DISTANCE) &#123;</div><div class="line">            createValueAnimator(coordinatorLayout, child, false).start();</div><div class="line">        &#125; else if (dyConsumed &lt; -MIN_CHANGED_DISTANCE) &#123;</div><div class="line">            createValueAnimator(coordinatorLayout, child, true).start();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private Animator createValueAnimator(CoordinatorLayout coordinatorLayout, final View fab, boolean dismiss) &#123;</div><div class="line">        int distanceToDismiss = coordinatorLayout.getBottom() - fab.getBottom() + fab.getHeight();</div><div class="line">        int end = dismiss ? 0 : distanceToDismiss;</div><div class="line">        float start = fab.getTranslationY();</div><div class="line">        ValueAnimator animator = ValueAnimator.ofFloat(start, end);</div><div class="line">        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() &#123;</div><div class="line">            @Override</div><div class="line">            public void onAnimationUpdate(ValueAnimator animation) &#123;</div><div class="line">                fab.setTranslationY((Float) animation.getAnimatedValue());</div><div class="line">            &#125;</div><div class="line">        &#125;);</div><div class="line">        return animator;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这里，我们继承于<code>FloatingActionButton.Behavior</code>来实现自己的<code>Behavior</code>，注意，必须要声明构造函数为<code>FabListBehavior(Context, AttributeSet)</code>，并调用<code>super()</code>方法，否则会无法实例化：</p>
+<ul>
+<li><code>onStartNestedScroll</code>决定了之后是否需要回调<code>onNestedScroll</code>，这里我们直接返回<code>true</code>。</li>
+<li><code>onNestedScroll</code>：我们根据<code>dyConsumed</code>的正负值来判断列表滚动的方法，然后通过改变<code>Fab</code>的<code>translationY</code>来让它移入或者移出屏幕。<br><img src="http://upload-images.jianshu.io/upload_images/1949836-34a8b9f4b82cea05.gif?imageMogr2/auto-orient/strip" alt=""><h1 id="五、总结"><a href="#五、总结" class="headerlink" title="五、总结"></a>五、总结</h1>这篇文章，介绍了<code>Fab</code>的基本用法、其它<code>MD</code>控件的联动以及如何自定义<code>FloatingActionButtonBehavior</code>。</li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/04/12/Material-Design-控件/Material-Design-控件知识梳理(3)---BottomSheet-&&-BottomSheetDialog-&&-Bottom/" rel="next" title="Material Design 控件知识梳理(3) - BottomSheet && BottomSheetDialog && BottomSheetDialogFragment">
+                <i class="fa fa-chevron-left"></i> Material Design 控件知识梳理(3) - BottomSheet && BottomSheetDialog && BottomSheetDialogFragment
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/04/14/Material-Design-控件/Material-Design-控件知识梳理(5)---DrawerLayout-&&-NavigationView/" rel="prev" title="Material Design 控件知识梳理(5) - DrawerLayout && NavigationView">
+                Material Design 控件知识梳理(5) - DrawerLayout && NavigationView <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="John Doe" />
+          <p class="site-author-name" itemprop="name">John Doe</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">104</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">23</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、概述"><span class="nav-number">1.</span> <span class="nav-text">一、概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、Fab的基础使用"><span class="nav-number">2.</span> <span class="nav-text">二、Fab的基础使用</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#展现属性"><span class="nav-number">2.1.</span> <span class="nav-text">展现属性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#点击属性"><span class="nav-number">2.2.</span> <span class="nav-text">点击属性</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、与其它MD控件结合使用"><span class="nav-number">3.</span> <span class="nav-text">三、与其它MD控件结合使用</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-和AppBarLayout联动"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 和AppBarLayout联动</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-和BottomSheet联动"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 和BottomSheet联动</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-3-和Snackbar联动"><span class="nav-number">3.3.</span> <span class="nav-text">3.3 和Snackbar联动</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四、Fab根据列表的状态显示或隐藏"><span class="nav-number">4.</span> <span class="nav-text">四、Fab根据列表的状态显示或隐藏</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#五、总结"><span class="nav-number">5.</span> <span class="nav-text">五、总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

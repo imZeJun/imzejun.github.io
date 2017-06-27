@@ -1,0 +1,795 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="一、概述今天介绍一些关于Bitmap的基础知识：  Bitmap是什么 屏幕密度相关概念 工程中各drawable文件夹 Bitmap.Options 简要分析Bitmap所占内存  二、什么是Bitmap官方的说法是：Bitmap是对位图的抽象。形象地来说，我们在手机屏幕上所看到的图片就是由一个个像素点拼接而成的，每个像素点的都是用不同数量的二进制位来表示，而Bitmap就是用来保存这些二进制位">
+<meta property="og:type" content="article">
+<meta property="og:title" content="图片基础知识梳理(2) - Bitmap 占用内存分析">
+<meta property="og:url" content="http://yoursite.com/2017/03/16/图片基础/图片基础知识梳理(2)---Bitmap-占用内存分析/index.html">
+<meta property="og:site_name" content="泽毛">
+<meta property="og:description" content="一、概述今天介绍一些关于Bitmap的基础知识：  Bitmap是什么 屏幕密度相关概念 工程中各drawable文件夹 Bitmap.Options 简要分析Bitmap所占内存  二、什么是Bitmap官方的说法是：Bitmap是对位图的抽象。形象地来说，我们在手机屏幕上所看到的图片就是由一个个像素点拼接而成的，每个像素点的都是用不同数量的二进制位来表示，而Bitmap就是用来保存这些二进制位">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-b1414217cfc0b938.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2017-06-27T14:20:04.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="图片基础知识梳理(2) - Bitmap 占用内存分析">
+<meta name="twitter:description" content="一、概述今天介绍一些关于Bitmap的基础知识：  Bitmap是什么 屏幕密度相关概念 工程中各drawable文件夹 Bitmap.Options 简要分析Bitmap所占内存  二、什么是Bitmap官方的说法是：Bitmap是对位图的抽象。形象地来说，我们在手机屏幕上所看到的图片就是由一个个像素点拼接而成的，每个像素点的都是用不同数量的二进制位来表示，而Bitmap就是用来保存这些二进制位">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-b1414217cfc0b938.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/03/16/图片基础/图片基础知识梳理(2)---Bitmap-占用内存分析/"/>
+
+
+
+
+
+  <title>图片基础知识梳理(2) - Bitmap 占用内存分析 | 泽毛</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">泽毛</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/03/16/图片基础/图片基础知识梳理(2)---Bitmap-占用内存分析/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="泽毛">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">图片基础知识梳理(2) - Bitmap 占用内存分析</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-16T19:53:00+08:00">
+                2017-03-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/图片基础知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">图片基础知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="一、概述"><a href="#一、概述" class="headerlink" title="一、概述"></a>一、概述</h1><p>今天介绍一些关于<code>Bitmap</code>的基础知识：</p>
+<ul>
+<li><code>Bitmap</code>是什么</li>
+<li>屏幕密度相关概念</li>
+<li>工程中各<code>drawable</code>文件夹</li>
+<li><code>Bitmap.Options</code></li>
+<li>简要分析<code>Bitmap</code>所占内存</li>
+</ul>
+<h1 id="二、什么是Bitmap"><a href="#二、什么是Bitmap" class="headerlink" title="二、什么是Bitmap"></a>二、什么是<code>Bitmap</code></h1><p>官方的说法是：<code>Bitmap</code>是对位图的抽象。<br>形象地来说，我们在手机屏幕上所看到的图片就是由一个个像素点拼接而成的，每个像素点的都是用不同数量的二进制位来表示，而<code>Bitmap</code>就是用来保存这些二进制位。</p>
+<h1 id="三、Bitmap占用内存分析"><a href="#三、Bitmap占用内存分析" class="headerlink" title="三、Bitmap占用内存分析"></a>三、<code>Bitmap</code>占用内存分析</h1><h2 id="3-1-屏幕密度的相关概念"><a href="#3-1-屏幕密度的相关概念" class="headerlink" title="3.1 屏幕密度的相关概念"></a>3.1 屏幕密度的相关概念</h2><p>前面我们说到，<code>Bitmap</code>的最终目的是为了在屏幕上显示图片，所以首先我们需要了解关于屏幕密度的相关知识：</p>
+<ul>
+<li>像素<code>px</code>：如果我们近距离地看手机屏幕，就可以发现它有一个个小点，每一个小点就表示一个像素，我们通常称它为<code>px</code>。</li>
+<li>屏幕分辨率：指的是<strong>屏幕的上的像素总和</strong>，例如常说的某某手机屏幕分辨率为<code>1920 * 1080</code>，也就是说它的高有<code>1920px</code>，宽为<code>1080px</code>，像素点总和就是<code>1920 * 1080px</code>。</li>
+<li>屏幕尺寸：指的是<strong>屏幕的对象线长度</strong>，这里的长度不是用<code>px</code>为单位，而是用英寸为单位的，它和我们平时说的米、厘米是一个概念。</li>
+<li><code>ppi</code>：英文名为<code>pixel per inch</code>，中文全称为<strong>每英寸屏幕上的像素数</strong>，它决定了<strong>屏幕的质量</strong>，通常是按手机的对角线来计算的，也就是说，它等于<strong>对象线的像素个数除以对角线的长度（单位为英寸）</strong>。</li>
+<li><code>dp/dip</code>：英文名为<code>density-independent pixel</code>，这是安卓特有的概念，它和<code>px</code>的作用相同，都是用来表示长度。但是它和硬件屏幕无关，如果需要转换为<code>px</code>，那么<code>1dp</code>在屏幕上最终会显示为<code>(ppi / 160)</code>个<code>px</code>。</li>
+<li><code>dpi</code>：英文名为<code>dot per inch</code>，中文全称为<strong>每英寸图片上点的个数</strong>，它决定了<strong>图片的质量</strong>，比如<code>dpi</code>为<code>320</code>，那么最终在手机上一张<code>320 * 320</code>的图片就会用<code>320 * 320 * (dpi / 160)</code>个像素点来表示。</li>
+</ul>
+<h2 id="3-2-动态获得上述的信息"><a href="#3-2-动态获得上述的信息" class="headerlink" title="3.2 动态获得上述的信息"></a>3.2 动态获得上述的信息</h2><p>在<code>Android</code>中，通过<code>DisplayMetrics</code>可以获得上述的信息：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">public static void logDensityInfo(Activity activity) &#123;</div><div class="line">    DisplayMetrics displayMetrics = new DisplayMetrics();</div><div class="line">    //将信息保存到displayMetrics中.</div><div class="line">    activity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);</div><div class="line">    //1.x轴和y轴的dpi.</div><div class="line">    Log.d(&quot;logDensityInfo&quot;, &quot;ydpi=&quot; + displayMetrics.ydpi);</div><div class="line">    Log.d(&quot;logDensityInfo&quot;, &quot;xdpi=&quot; + displayMetrics.xdpi);</div><div class="line">    //2.x轴和y轴的像素个数.</div><div class="line">    Log.d(&quot;logDensityInfo&quot;, &quot;heightPixels=&quot; + displayMetrics.heightPixels);</div><div class="line">    Log.d(&quot;logDensityInfo&quot;, &quot;widthPixels=&quot; + displayMetrics.widthPixels);</div><div class="line">    //3.dpi</div><div class="line">    Log.d(&quot;logDensityInfo&quot;, &quot;densityDpi=&quot; + displayMetrics.densityDpi);</div><div class="line">    //4.dpi/160.</div><div class="line">    Log.d(&quot;logDensityInfo&quot;, &quot;density=&quot; + displayMetrics.density);</div><div class="line">    //5.通常情况下和density相同.</div><div class="line">    Log.d(&quot;logDensityInfo&quot;, &quot;scaledDensity=&quot; + displayMetrics.scaledDensity);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>在我的手机上，最终的结果是：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-b1414217cfc0b938.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>那么我们看一下<code>dpi</code>相关的值是怎么获得的：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">public void setToDefaults() &#123;</div><div class="line">    density =  DENSITY_DEVICE / (float) DENSITY_DEFAULT;</div><div class="line">    densityDpi =  DENSITY_DEVICE;</div><div class="line">    scaledDensity = density;</div><div class="line">    xdpi = DENSITY_DEVICE;</div><div class="line">    ydpi = DENSITY_DEVICE;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>其中<code>DENSITY_DEFAULT</code>为<code>160</code>，而<code>DENSITY_DEVICE</code>则是通过下面方式得到的：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">private static int getDeviceDensity() &#123;</div><div class="line">    return SystemProperties.getInt(&quot;qemu.sf.lcd_density&quot;, SystemProperties.getInt(&quot;ro.sf.lcd_density&quot;, DENSITY_DEFAULT));</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="3-3-drawable文件夹内的图片"><a href="#3-3-drawable文件夹内的图片" class="headerlink" title="3.3 drawable文件夹内的图片"></a>3.3 <code>drawable</code>文件夹内的图片</h2><p>说起<code>dpi</code>，自然就会想到<code>res</code>文件夹下的<code>drawable-?</code>文件夹，我们在平时开发中会发现，如果将同一大小的图片，放在不同的<code>drawable</code>文件夹下，最终在屏幕上展现的大小是不一样的。<br>这其实是<code>Android</code>在读取资源的时候，会根据文件夹的不同，给每个文件夹定义一个叫做<code>density</code>的属性，根据最终找到的资源所在的文件夹位置，会有以下几种情况：</p>
+<ul>
+<li>存在于和手机所匹配的<code>dpi</code>文件夹：不进行缩放。</li>
+<li>存在于非<code>drawable-nodpi</code>其它的<code>dpi</code>文件夹：那么最终的长度变为<code>(原始长度 / 所在文件夹density) * 匹配文件夹density</code></li>
+<li>存在<code>drawable-nodpi</code>：不进行缩放。</li>
+</ul>
+<p>而每个<code>ARBG</code>位的二进制个数相乘，就是图片所占内存的大小，对应的<code>density</code>如下：</p>
+<ul>
+<li><code>drawable-nodpi</code>：不缩放</li>
+<li><code>drawable-ldpi</code>：<code>0.75</code></li>
+<li><code>drawable</code>：<code>1</code></li>
+<li><code>drawable-mdpi</code>：<code>1</code></li>
+<li><code>drawable-hdpi</code>：<code>1.5</code></li>
+<li><code>drawable-xhdpi</code>：<code>2</code></li>
+<li><code>drawable-xxhdpi</code>：<code>3</code></li>
+<li><code>drawable-xxhdpi</code>：<code>4</code></li>
+</ul>
+<p>如果某个资源存在于上面的多个文件夹下，它的匹配优先级如下：</p>
+<ul>
+<li>和手机<code>dpi</code>匹配的<code>dpi</code>文件夹</li>
+<li>比匹配<code>dpi</code>高的<code>dpi</code>文件夹</li>
+<li><code>drawable-nodpi</code></li>
+<li>比匹配<code>dpi</code>低，但大于等于<code>1</code>的<code>dpi</code>文件夹</li>
+<li><code>drawable</code></li>
+<li><code>drawable-ldpi</code></li>
+</ul>
+<h2 id="3-4-Bitmap-Config"><a href="#3-4-Bitmap-Config" class="headerlink" title="3.4 Bitmap.Config"></a>3.4 <code>Bitmap.Config</code></h2><p>这是一个枚举类型，它用来描述每个像素是如何被保存的，它会影响图片的质量并决定能否表示透明/半透明颜色。</p>
+<ul>
+<li><code>ALPHA_8</code>：每个像素点仅表示<code>alpha</code>的值，它不会存储任何颜色信息，占<code>8位</code>。</li>
+<li><code>RGB_565</code>：每个像素用<code>5位R/6位G/5位G</code>来表示，占<code>16位</code>。</li>
+<li><code>ARGB_8888</code>：每个像素分别用<code>8位</code>存储<code>ARGB</code>，占<code>32位</code>。</li>
+<li><code>ARGB_4444</code>：和<code>8888</code>类似，只不过对于每个通道是使用<code>4位</code>表示，因此它的图片质量比较低，已经不推荐使用了。</li>
+</ul>
+<h2 id="3-5-实例分析"><a href="#3-5-实例分析" class="headerlink" title="3.5 实例分析"></a>3.5 实例分析</h2><p>已经介绍完所需要掌握的基础知识，总结下来，<code>Bitmap</code>所占内存大小其实由两个因素决定：</p>
+<ul>
+<li>读入内存中的宽高</li>
+<li><code>ARGB</code>所占位宽</li>
+</ul>
+<p>第一点的影响因素有：原始图片的宽高、手机内置的<code>dpi</code>、图片所放位置。<br>第二点的影响因素有：<code>Bitmap</code>所对应的<code>Bitmap.Config</code>配置。</p>
+<p>下面我们几个例子，验证前面说的三种情况：</p>
+<h2 id="3-5-1-放在匹配的文件夹中"><a href="#3-5-1-放在匹配的文件夹中" class="headerlink" title="3.5.1 放在匹配的文件夹中"></a>3.5.1 放在匹配的文件夹中</h2><ul>
+<li>所用的手机分辨率为<code>720 * 1280</code>，它所匹配到的文件夹为<code>drawable-xhdpi</code>，我们先将一个原始大小为<code>48 * 48</code>的图片方在<code>drawable-xhdpi</code>文件夹中，并配置<code>Option</code>为<code>Bitmap.Config.RGB_565</code>：<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">private void logWrapperImageView() &#123;</div><div class="line">    BitmapFactory.Options options = new BitmapFactory.Options();</div><div class="line">    options.inPreferredConfig = Bitmap.Config.RGB_565;</div><div class="line">    Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.drawable_test, options);</div><div class="line">    Log.d(&quot;logWrapperImageView&quot;, &quot;width=&quot; + bitmap.getWidth() + &quot;,height=&quot; + bitmap.getHeight() + &quot;,size=&quot; + bitmap.getByteCount());</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>这种情况下最终的结果为，虽然我们指出了需要用<code>RGB_565</code>，但是系统每个像素还是只用了一位：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">width=48,height=48,size=2304 //RGB_565</div><div class="line">width=48,height=48,size=9216 //ARGB_8888</div><div class="line">width=48,height=48,size=2304 //ALPHA_8</div></pre></td></tr></table></figure></p>
+<ul>
+<li>所用的手机分辨率为<code>1080 * 1920</code>，它所匹配到的文件夹为<code>drawable-xxhdpi</code>，我们先将一个原始大小为<code>48 * 48</code>的图片方在<code>drawable-xxhdpi</code>文件夹中，并配置<code>Option</code>为<code>Bitmap.Config.RGB_565</code>，运行和上面一样的程序，得到的结果为：<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">width=48,height=48,size=2304 //RGB_565</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>接着改变它的<code>Options</code>：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">width=48,height=48,size=9216 //ARGB_8888</div><div class="line">width=48,height=48,size=2304 //ALPHA_8</div></pre></td></tr></table></figure></p>
+<h3 id="3-5-2-放在不匹配，且不是drawable-nodpi的文件夹中"><a href="#3-5-2-放在不匹配，且不是drawable-nodpi的文件夹中" class="headerlink" title="3.5.2 放在不匹配，且不是drawable-nodpi的文件夹中"></a>3.5.2 放在不匹配，且不是<code>drawable-nodpi</code>的文件夹中</h3><ul>
+<li>所用的手机分辨率为<code>720 * 1280</code>，把图片放在<code>drawable-xxhdpi</code>文件夹中：<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">width=32,height=32,size=4096 //RGB_565</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>改变它的<code>Options</code>：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">width=32,height=32,size=4096 //ALPHA_8</div><div class="line">width=32,height=32,size=4096 //ARGB_8888</div></pre></td></tr></table></figure></p>
+<ul>
+<li>所用的手机分辨率为<code>1080 * 1960</code>，把图片放在<code>drawable-xhdpi</code>文件夹中：<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">width=72,height=72,size=20736</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>改变它的<code>Options</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">width=72,height=72,size=20736 //ALPHA_8</div><div class="line">width=72,height=72,size=20736 //ARGB_8888</div></pre></td></tr></table></figure></p>
+<h3 id="3-5-3-放在drawable-nodpi文件夹中"><a href="#3-5-3-放在drawable-nodpi文件夹中" class="headerlink" title="3.5.3 放在drawable-nodpi文件夹中"></a>3.5.3 放在<code>drawable-nodpi</code>文件夹中</h3><ul>
+<li><p>所用的手机分辨率为<code>720 * 1280</code>：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">width=48,height=48,size=2304 //RGB_565</div><div class="line">width=48,height=48,size=9216 //ARGB_8888</div><div class="line">width=48,height=48,size=2304 //ALPHA_8</div></pre></td></tr></table></figure>
+</li>
+<li><p>所用的手机分辨率为<code>1080 * 1960</code>：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">width=48,height=48,size=2304 //RGB_565</div><div class="line">width=48,height=48,size=9216 //ARGB_8888</div><div class="line">width=48,height=48,size=2304 //ALPHA_8</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="3-5-4-小结"><a href="#3-5-4-小结" class="headerlink" title="3.5.4 小结"></a>3.5.4 小结</h3><p>从上面的例子中，总结出几点：</p>
+<ul>
+<li>把资源放在和它对应的<code>dpi</code>文件夹，和放在<code>drawable-nodpi</code>文件夹是相同的。</li>
+<li>我们使用<code>RGB_565</code>时，实际占用的是一个字节。</li>
+<li>当将资源文件放在别的文件夹时，无论选择哪种<code>Options</code>，都是采用占用<code>4字节</code>的方式。</li>
+<li>当资源放在对应的<code>dpi</code>文件夹下和<code>drawable-nodpi</code>文件夹下时，长宽不进行缩放。</li>
+<li>当资源放在除以上两类的文件夹下时，缩放的倍数为 <code>匹配文件夹density/所在文件夹density</code>，以上面<code>3.5.2</code>的<code>720 * 1280</code>手机为例，原始的图片的长宽为<code>48</code>，其匹配文件夹的<code>density</code>为<code>2</code>，所在文件夹的<code>density</code>为<code>3</code>，所以缩放倍数为<code>2/3</code>，因此，最后的长宽为<code>32</code>。</li>
+<li><code>Bitmap</code>所占内存大小就等于它的长宽乘以每个像素所占位数。</li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/03/14/图片基础/图片基础知识梳理(1)---ImageView-的-ScaleType-属性解析/" rel="next" title="图片基础知识梳理(1) - ImageView 的 ScaleType 属性解析">
+                <i class="fa fa-chevron-left"></i> 图片基础知识梳理(1) - ImageView 的 ScaleType 属性解析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/03/17/Java&Android-基础知识/Java&Android-基础知识梳理(3)---内存区域/" rel="prev" title="Java&Android 基础知识梳理(3) - 内存区域">
+                Java&Android 基础知识梳理(3) - 内存区域 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="John Doe" />
+          <p class="site-author-name" itemprop="name">John Doe</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">104</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">23</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、概述"><span class="nav-number">1.</span> <span class="nav-text">一、概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、什么是Bitmap"><span class="nav-number">2.</span> <span class="nav-text">二、什么是Bitmap</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、Bitmap占用内存分析"><span class="nav-number">3.</span> <span class="nav-text">三、Bitmap占用内存分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-屏幕密度的相关概念"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 屏幕密度的相关概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-动态获得上述的信息"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 动态获得上述的信息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-3-drawable文件夹内的图片"><span class="nav-number">3.3.</span> <span class="nav-text">3.3 drawable文件夹内的图片</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-4-Bitmap-Config"><span class="nav-number">3.4.</span> <span class="nav-text">3.4 Bitmap.Config</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-5-实例分析"><span class="nav-number">3.5.</span> <span class="nav-text">3.5 实例分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-5-1-放在匹配的文件夹中"><span class="nav-number">3.6.</span> <span class="nav-text">3.5.1 放在匹配的文件夹中</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-5-2-放在不匹配，且不是drawable-nodpi的文件夹中"><span class="nav-number">3.6.1.</span> <span class="nav-text">3.5.2 放在不匹配，且不是drawable-nodpi的文件夹中</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-5-3-放在drawable-nodpi文件夹中"><span class="nav-number">3.6.2.</span> <span class="nav-text">3.5.3 放在drawable-nodpi文件夹中</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-5-4-小结"><span class="nav-number">3.6.3.</span> <span class="nav-text">3.5.4 小结</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

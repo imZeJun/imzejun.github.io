@@ -1,0 +1,742 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="一、概述在上一篇文章中，我们通过源码的角度了解FragmentPagerAdapter和FragmentStatePagerAdapter的原理。这其实是为我们分析数据更新问题做一个铺垫。在实际的开发当中，我们在ViewPager中嵌套的Fragment中并不是固定不变的，需要动态地添加和删除，下面我们就从几个大家经常会遇到的问题入手，然后分析问题的原因，最后我们尝试总结一种比较好的数据更新方式。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Fragment 知识梳理(3) - FragmentPagerAdapter 和 FragmentStatePagerAdapter 的数据更新问题">
+<meta property="og:url" content="http://yoursite.com/2017/03/31/Fragment/Fragment-知识梳理(3)---FragmentPagerAdapter-和-FragmentStatePagerAdapter-的数/index.html">
+<meta property="og:site_name" content="泽毛">
+<meta property="og:description" content="一、概述在上一篇文章中，我们通过源码的角度了解FragmentPagerAdapter和FragmentStatePagerAdapter的原理。这其实是为我们分析数据更新问题做一个铺垫。在实际的开发当中，我们在ViewPager中嵌套的Fragment中并不是固定不变的，需要动态地添加和删除，下面我们就从几个大家经常会遇到的问题入手，然后分析问题的原因，最后我们尝试总结一种比较好的数据更新方式。">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-cca0eb7af7c7d795.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-00954e6773f5ffc6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-054f183233d24cff.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2017-06-27T14:46:52.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Fragment 知识梳理(3) - FragmentPagerAdapter 和 FragmentStatePagerAdapter 的数据更新问题">
+<meta name="twitter:description" content="一、概述在上一篇文章中，我们通过源码的角度了解FragmentPagerAdapter和FragmentStatePagerAdapter的原理。这其实是为我们分析数据更新问题做一个铺垫。在实际的开发当中，我们在ViewPager中嵌套的Fragment中并不是固定不变的，需要动态地添加和删除，下面我们就从几个大家经常会遇到的问题入手，然后分析问题的原因，最后我们尝试总结一种比较好的数据更新方式。">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-cca0eb7af7c7d795.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/03/31/Fragment/Fragment-知识梳理(3)---FragmentPagerAdapter-和-FragmentStatePagerAdapter-的数/"/>
+
+
+
+
+
+  <title>Fragment 知识梳理(3) - FragmentPagerAdapter 和 FragmentStatePagerAdapter 的数据更新问题 | 泽毛</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">泽毛</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/03/31/Fragment/Fragment-知识梳理(3)---FragmentPagerAdapter-和-FragmentStatePagerAdapter-的数/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="泽毛">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Fragment 知识梳理(3) - FragmentPagerAdapter 和 FragmentStatePagerAdapter 的数据更新问题</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-31T21:05:00+08:00">
+                2017-03-31
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Fragment-知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">Fragment 知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="一、概述"><a href="#一、概述" class="headerlink" title="一、概述"></a>一、概述</h1><p>在上一篇文章中，我们通过源码的角度了解<code>FragmentPagerAdapter</code>和<code>FragmentStatePagerAdapter</code>的原理。这其实是为我们<strong>分析数据更新问题</strong>做一个铺垫。<br>在实际的开发当中，我们在<code>ViewPager</code>中嵌套的<code>Fragment</code>中并不是固定不变的，需要动态地添加和删除，下面我们就从几个大家经常会遇到的问题入手，然后分析问题的原因，最后我们尝试总结一种比较好的数据更新方式。</p>
+<h1 id="二、使用FragmentPagerAdapter"><a href="#二、使用FragmentPagerAdapter" class="headerlink" title="二、使用FragmentPagerAdapter"></a>二、使用<code>FragmentPagerAdapter</code></h1><h2 id="2-1-一段有问题的代码"><a href="#2-1-一段有问题的代码" class="headerlink" title="2.1 一段有问题的代码"></a>2.1 一段有问题的代码</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div></pre></td><td class="code"><pre><div class="line">public class DemoActivity extends AppCompatActivity &#123;</div><div class="line"></div><div class="line">    private static final int INCREASE = 4;</div><div class="line">    private FPAdapter mFPAdapter;</div><div class="line">    private List&lt;String&gt; mTitles;</div><div class="line">    private int mGroup = 0;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    protected void onCreate(Bundle savedInstanceState) &#123;</div><div class="line">        super.onCreate(savedInstanceState);</div><div class="line">        setContentView(R.layout.activity_not_update);</div><div class="line">        TextView updateTv = (TextView) findViewById(R.id.tv_update);</div><div class="line">        updateTv.setOnClickListener(new View.OnClickListener() &#123;</div><div class="line">            @Override</div><div class="line">            public void onClick(View v) &#123;</div><div class="line">                updateFragments();</div><div class="line">            &#125;</div><div class="line">        &#125;);</div><div class="line">        initFPAFragments();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private void initFPAFragments() &#123;</div><div class="line">        mTitles = new ArrayList&lt;&gt;();</div><div class="line">        for (int i = 0; i &lt; INCREASE; i++) &#123;</div><div class="line">            mTitles.add(&quot;index=&quot; + i + &quot;,group=0&quot;);</div><div class="line">        &#125;</div><div class="line">        ViewPager viewPager = (ViewPager) findViewById(R.id.vp_content);</div><div class="line">        mFPAdapter = new FPAdapter(getSupportFragmentManager(), mTitles);</div><div class="line">        viewPager.setAdapter(mFPAdapter);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private void updateFragments() &#123;</div><div class="line">        mTitles.clear();</div><div class="line">        mGroup++;</div><div class="line">        for (int i = 0; i &lt; INCREASE; i++) &#123;</div><div class="line">            mTitles.add(&quot;index=&quot; + i + &quot;,group=&quot; + mGroup);</div><div class="line">        &#125;</div><div class="line">        mFPAdapter.notifyDataSetChanged();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private class FPAdapter extends FragmentPagerAdapter &#123;</div><div class="line"></div><div class="line">        private List&lt;String&gt; mTitles;</div><div class="line"></div><div class="line">        public FPAdapter(FragmentManager fm, List&lt;String&gt; titles) &#123;</div><div class="line">            super(fm);</div><div class="line">            mTitles = titles;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        @Override</div><div class="line">        public Fragment getItem(int position) &#123;</div><div class="line">            Log.d(&quot;LogcatFragment&quot;, &quot;get Item from FPAdapter, position=&quot; + position);</div><div class="line">            return LogcatFragment.newInstance(mTitles.get(position));</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        @Override</div><div class="line">        public int getCount() &#123;</div><div class="line">            return mTitles.size();</div><div class="line">        &#125;</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>之所以会写出这样的代码，很大一部分是受到我们平时写<code>ListView</code>中<code>BaseAdapter</code>的影响，因为我们浅意识地认为，调用了<code>notifyDataSetChanged()</code>方法之后，<code>ViewPager</code>就会去调用<code>getItem</code>方法来获取新的<code>Fragment</code>以替换旧的<code>Fragment</code>，就好像我们使用<code>ListVIew</code>的时候，它会去回调<code>BaseAdapter</code>的<code>getView</code>方法来获取新的<code>View</code>一样，运行上面的<code>Demo</code>，会有发现以下几个问题：</p>
+<ul>
+<li>第一个问题：调用<code>notifyDataSetChanged()</code>之后，<code>ViewPager</code>当前存在的页面中的<code>Fragment</code>不会发生变化。</li>
+<li>第二个问题：对于重新添加的界面，不会回调<code>getItem</code>来获取新的<code>Fragment</code>。</li>
+</ul>
+<h2 id="2-2-原因分析-问题一"><a href="#2-2-原因分析-问题一" class="headerlink" title="2.2 原因分析 - 问题一"></a>2.2 原因分析 - 问题一</h2><p>我们首先分析问题一：调用<code>notifyDataSetChanged()</code>之后，<code>ViewPager</code>当前存在的页面中的<code>Fragment</code>不会发生变化。</p>
+<p>首先，我们确定分析的场景：启动<code>DemoActivity</code>，按照之前的分析，现在会给<code>ViewPager</code>添加两个页面，分别是<code>index=0</code>和<code>index=1</code>，接着我们调用<code>PagerAdapter#notifyDataSetChanged()</code>，最终会走到<code>ViewPager#dataSetChanged</code>方法，我们看一下里面做了什么：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div></pre></td><td class="code"><pre><div class="line">void dataSetChanged() &#123;</div><div class="line">    //在我们的例子中，返回的是4</div><div class="line">    final int adapterCount = mAdapter.getCount();</div><div class="line">    mExpectedAdapterCount = adapterCount;</div><div class="line">    //此时为true.</div><div class="line">    boolean needPopulate = mItems.size() &lt; mOffscreenPageLimit * 2 + 1</div><div class="line">            &amp;&amp; mItems.size() &lt; adapterCount;</div><div class="line">    int newCurrItem = mCurItem;</div><div class="line">    boolean isUpdating = false;</div><div class="line">    //遍历列表，这个</div><div class="line">    for (int i = 0; i &lt; mItems.size(); i++) &#123;</div><div class="line">        final ItemInfo ii = mItems.get(i);</div><div class="line">        //这里是关键，默认都是返回POSITION_UNCHANGED</div><div class="line">        final int newPos = mAdapter.getItemPosition(ii.object);</div><div class="line">        //第一种情况：如果返回的是POSITION_UNCHANGED，那么表示这个界面在ViewPager中的位置没有变，那么不需要更新.</div><div class="line">        if (newPos == PagerAdapter.POSITION_UNCHANGED) &#123;</div><div class="line">            continue;</div><div class="line">        &#125;</div><div class="line">        //第二种情况：如果返回的是POSITION_NONE，就表示这个界面在ViewPager中不存在了，那么就把它移除.</div><div class="line">        if (newPos == PagerAdapter.POSITION_NONE) &#123;</div><div class="line">            mItems.remove(i);</div><div class="line">            i--;</div><div class="line"></div><div class="line">            if (!isUpdating) &#123;</div><div class="line">                mAdapter.startUpdate(this);</div><div class="line">                isUpdating = true;</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            mAdapter.destroyItem(this, ii.position, ii.object);</div><div class="line">            needPopulate = true;</div><div class="line"></div><div class="line">            if (mCurItem == ii.position) &#123;</div><div class="line">                // Keep the current item in the valid range</div><div class="line">                newCurrItem = Math.max(0, Math.min(mCurItem, adapterCount - 1));</div><div class="line">                needPopulate = true;</div><div class="line">            &#125;</div><div class="line">            continue;</div><div class="line">        &#125;</div><div class="line">       //第三种情况：界面仍然存在，但是其在ViewPager中的位置发生了改变.</div><div class="line">        if (ii.position != newPos) &#123;</div><div class="line">            if (ii.position == mCurItem) &#123;</div><div class="line">                // Our current item changed position. Follow it.</div><div class="line">                newCurrItem = newPos;</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            ii.position = newPos;</div><div class="line">            needPopulate = true;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    if (isUpdating) &#123;</div><div class="line">        mAdapter.finishUpdate(this);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    Collections.sort(mItems, COMPARATOR);</div><div class="line"></div><div class="line">    if (needPopulate) &#123;</div><div class="line">        // Reset our known page widths; populate will recompute them.</div><div class="line">        final int childCount = getChildCount();</div><div class="line">        for (int i = 0; i &lt; childCount; i++) &#123;</div><div class="line">            final View child = getChildAt(i);</div><div class="line">            final LayoutParams lp = (LayoutParams) child.getLayoutParams();</div><div class="line">            if (!lp.isDecor) &#123;</div><div class="line">                lp.widthFactor = 0.f;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        setCurrentItemInternal(newCurrItem, false, true);</div><div class="line">        requestLayout();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>要理解上面的这段代码，首先要明白<code>mItems</code>是什么，以及<code>mItems</code>的<code>ItemInfo</code>中各个成员变量的含义：</p>
+<ul>
+<li><code>mItems</code>中的每一个<code>ItemInfo</code>和存在与<code>ViewPager</code>中的界面一一关联。</li>
+<li><code>ItemInfo</code>中的含义：<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">static class ItemInfo &#123;</div><div class="line">    Object object; //通过PagerAdapter#instantiateItem所返回的Object.</div><div class="line">    int position; //这个Item所处的位置，也就是上面我们所说的index.</div><div class="line">    boolean scrolling;</div><div class="line">    float widthFactor;</div><div class="line">    float offset;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>此时，也就是我们位于<code>index=0</code>的页面，<code>mItems</code>的内容为：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-cca0eb7af7c7d795.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>而如果我们滑动到<code>index=2</code>的页面，那么<code>mItems</code>的内容变为：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-00954e6773f5ffc6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<p>我们注意上面有一句关键的话：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">final int newPos = mAdapter.getItemPosition(ii.object);</div></pre></td></tr></table></figure></p>
+<p>对于它的返回值，有三种处理方式：</p>
+<ul>
+<li><code>PagerAdapter.POSITION_UNCHANGED</code>：这个<code>ItemInfo</code>在整个<code>ViewPager</code>的位置没有发生改变。</li>
+<li><code>PagerAdapter.POSITION_NONE</code>：这个<code>ItemInfo</code>在整个<code>ViewPager</code>中已经不存在了。</li>
+<li><code>ii.position != newPos</code>，也就是说<code>ItemInfo</code>在<code>ViewPager</code>仍然需要存在，但是它的位置发生了改变。</li>
+</ul>
+<p>也就是说，<code>notifyDataSetChanged()</code>只处理<code>ViewPager</code>当前已经存在的界面，而对于这些界面如何处理，则要依赖于<code>getItemPosition</code>的返回值，但是<strong><code>FragmentPagerAdapter</code>的返回值默认是<code>POSITION_UNCHANGED</code></strong>，因此，当前已经存在的界面不会发生任何改变。</p>
+<h2 id="2-3-原因分析-问题二"><a href="#2-3-原因分析-问题二" class="headerlink" title="2.3 原因分析 - 问题二"></a>2.3 原因分析 - 问题二</h2><p>问题二：对于重新添加的界面，不会回调<code>getItem</code>来获取新的<code>Fragment</code>。<br>这个其实和<code>notifyDataSetChanged()</code>没有关系，而是和<code>FragmentPagerAdapter</code>寻找<code>Fragment</code>的方式有关，它会优先从<code>FragmentManager</code>中寻找，找不到了才会回调<code>getItem</code>来取新的<code>Fragment</code>。<br>但是我们在移除界面的是调用的是<code>detach</code>方法，因此<code>FragmentManager</code>中仍然保存了<code>Fragment</code>的实例，在重新添加的时候就不会再回调<code>getItem</code>来取了，这个我们在前一篇文章中已经分析过，就不贴具体的代码了。</p>
+<h1 id="三、FragmentStatePagerAdapter"><a href="#三、FragmentStatePagerAdapter" class="headerlink" title="三、FragmentStatePagerAdapter"></a>三、<code>FragmentStatePagerAdapter</code></h1><p>我们把上面例子中的<code>FragmentPagerAdapter</code>替换成为<code>FragmentStatePagerAdapter</code>，采用一样的更新方式，此时调用<code>notifyDataSetChanged()</code>之后，<code>ViewPager</code>当前存在的页面中的<code>Fragment</code>依然不会发生变化，不刷新的原因和<code>FragmentPagerAdapter</code>是相同的。<br>与<code>FragmentPagerAdapter</code>不同的是，<strong>对于重新添加的界面，会回调<code>getItem</code>来获取新的<code>Fragment</code></strong>，这个原因在之前的文章中也分析过了。</p>
+<h1 id="四、实现一个高效的动态FragmentPagerAdapter"><a href="#四、实现一个高效的动态FragmentPagerAdapter" class="headerlink" title="四、实现一个高效的动态FragmentPagerAdapter"></a>四、实现一个高效的动态<code>FragmentPagerAdapter</code></h1><p>我们的需求和下面的这个界面类似：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-054f183233d24cff.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>需求包括：</p>
+<ul>
+<li>支持动态地添加和移除界面，界面的个数和频道的个数相同，并且是可变的。</li>
+<li>当频道发生变化时，界面也要根据频道的顺序进行相应的改变，但是，如果上次存在的频道，在编辑之后仍然存在，那么应当复用之前的界面。</li>
+</ul>
+<p>因此，我们继承于<code>FramentStatePagerAdapter</code>：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div></pre></td><td class="code"><pre><div class="line">public abstract class FixedPagerAdapter&lt;T&gt; extends FragmentStatePagerAdapter &#123;</div><div class="line"></div><div class="line">    private List&lt;ItemObject&gt; mCurrentItems = new ArrayList&lt;&gt;();</div><div class="line"></div><div class="line">    public FixedPagerAdapter(FragmentManager fragmentManager) &#123;</div><div class="line">        super(fragmentManager);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public Object instantiateItem(ViewGroup container, int position) &#123;</div><div class="line">        while (mCurrentItems.size() &lt;= position) &#123;</div><div class="line">            mCurrentItems.add(null);</div><div class="line">        &#125;</div><div class="line">        Fragment fragment = (Fragment) super.instantiateItem(container, position);</div><div class="line">        ItemObject object = new ItemObject(fragment, getItemData(position));</div><div class="line">        mCurrentItems.set(position, object);</div><div class="line">        return object;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void destroyItem(ViewGroup container, int position, Object object) &#123;</div><div class="line">        mCurrentItems.set(position, null);</div><div class="line">        super.destroyItem(container, position, ((ItemObject) object).fragment);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public int getItemPosition(Object object) &#123;</div><div class="line">        ItemObject itemObject = (ItemObject) object;</div><div class="line">        if (mCurrentItems.contains(itemObject)) &#123;</div><div class="line">            T oldData = itemObject.t;</div><div class="line">            int oldPosition = mCurrentItems.indexOf(itemObject);</div><div class="line">            T newData = getItemData(oldPosition);</div><div class="line">            if (equals(oldData, newData)) &#123;</div><div class="line">                return POSITION_UNCHANGED;</div><div class="line">            &#125; else &#123;</div><div class="line">                int newPosition = getDataPosition(oldData);</div><div class="line">                return newPosition &gt;= 0 ? newPosition : POSITION_NONE;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return POSITION_UNCHANGED;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void setPrimaryItem(ViewGroup container, int position, Object object) &#123;</div><div class="line">        super.setPrimaryItem(container, position, ((ItemObject) object).fragment);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public boolean isViewFromObject(View view, Object object) &#123;</div><div class="line">        return super.isViewFromObject(view, ((ItemObject) object).fragment);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public abstract T getItemData(int position);</div><div class="line"></div><div class="line">    public abstract int getDataPosition(T t);</div><div class="line"></div><div class="line">    public abstract boolean equals(T oldD, T newD);</div><div class="line"></div><div class="line">    public class ItemObject &#123;</div><div class="line"></div><div class="line">        public Fragment fragment;</div><div class="line">        public T t;</div><div class="line"></div><div class="line">        public ItemObject(Fragment fragment, T t) &#123;</div><div class="line">            this.fragment = fragment;</div><div class="line">            this.t = t;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这里：</p>
+<ul>
+<li>我们通过一个<code>mCurrentItems</code>保存了当前页面中对应的<code>Fragment</code>和其所包含的数据。</li>
+<li>最重要的是我们重写了<code>getItemPosition</code>方法，根据不同的情况返回位置，这里需要子类提供三个方面的信息：<ul>
+<li>新数据在某个位置的数据。</li>
+<li>某个数据在新数据中的位置。</li>
+<li>判断两个数据是否相等的标准。</li>
+</ul>
+</li>
+</ul>
+<p>现在，我们的<code>Adapter</code>只需要重写很少的代码，就能实现数据的更新：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div></pre></td><td class="code"><pre><div class="line">public class DemoActivity extends AppCompatActivity &#123;</div><div class="line"></div><div class="line">    private static final int INCREASE = 4;</div><div class="line">    private FixedPagerAdapter mFixedPagerAdapter;</div><div class="line">    private List&lt;String&gt; mTitles;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    protected void onCreate(Bundle savedInstanceState) &#123;</div><div class="line">        super.onCreate(savedInstanceState);</div><div class="line">        setContentView(R.layout.activity_not_update);</div><div class="line">        TextView updateTv = (TextView) findViewById(R.id.tv_update);</div><div class="line">        updateTv.setOnClickListener(new View.OnClickListener() &#123;</div><div class="line">            @Override</div><div class="line">            public void onClick(View v) &#123;</div><div class="line">                updateFragments();</div><div class="line">            &#125;</div><div class="line">        &#125;);</div><div class="line">        initFragments();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private void initFragments() &#123;</div><div class="line">        mTitles = new ArrayList&lt;&gt;();</div><div class="line">        for (int i = 0; i &lt; INCREASE; i++) &#123;</div><div class="line">            mTitles.add(String.valueOf(i));</div><div class="line">        &#125;</div><div class="line">        ViewPager viewPager = (ViewPager) findViewById(R.id.vp_content);</div><div class="line">        mFixedPagerAdapter = new MyFixedPagerAdapter(getSupportFragmentManager(), mTitles);</div><div class="line">        viewPager.setAdapter(mFixedPagerAdapter);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private void updateFragments() &#123;</div><div class="line">        mTitles.clear();</div><div class="line">        mTitles.add(&quot;3&quot;);</div><div class="line">        mTitles.add(&quot;2&quot;);</div><div class="line">        mFixedPagerAdapter.notifyDataSetChanged();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private class MyFixedPagerAdapter extends FixedPagerAdapter&lt;String&gt; &#123;</div><div class="line"></div><div class="line">        private List&lt;String&gt; mTitles;</div><div class="line"></div><div class="line">        public MyFixedPagerAdapter(FragmentManager fragmentManager, List&lt;String&gt; titles) &#123;</div><div class="line">            super(fragmentManager);</div><div class="line">            mTitles = titles;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        @Override</div><div class="line">        public String getItemData(int position) &#123;</div><div class="line">            return mTitles.size() &gt; position ? mTitles.get(position) : null;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        @Override</div><div class="line">        public int getDataPosition(String s) &#123;</div><div class="line">            return mTitles.indexOf(s);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        @Override</div><div class="line">        public boolean equals(String oldD, String newD) &#123;</div><div class="line">            return TextUtils.equals(oldD, newD);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        @Override</div><div class="line">        public Fragment getItem(int position) &#123;</div><div class="line">            return LogcatFragment.newInstance(mTitles.get(position));</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        @Override</div><div class="line">        public int getCount() &#123;</div><div class="line">            return mTitles.size();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/03/30/Fragment/Fragment-知识梳理(4)---FragmentPagerAdapter-和-FragmentStatePagerAdapter-解析/" rel="next" title="Fragment 知识梳理(4) - FragmentPagerAdapter 和 FragmentStatePagerAdapter 解析">
+                <i class="fa fa-chevron-left"></i> Fragment 知识梳理(4) - FragmentPagerAdapter 和 FragmentStatePagerAdapter 解析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/04/02/RecyclerView/RecyclerView-知识梳理(2)---Adapter/" rel="prev" title="RecyclerView 知识梳理(2) - Adapter">
+                RecyclerView 知识梳理(2) - Adapter <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="John Doe" />
+          <p class="site-author-name" itemprop="name">John Doe</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">104</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">23</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、概述"><span class="nav-number">1.</span> <span class="nav-text">一、概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、使用FragmentPagerAdapter"><span class="nav-number">2.</span> <span class="nav-text">二、使用FragmentPagerAdapter</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-一段有问题的代码"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 一段有问题的代码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-原因分析-问题一"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 原因分析 - 问题一</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-原因分析-问题二"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 原因分析 - 问题二</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、FragmentStatePagerAdapter"><span class="nav-number">3.</span> <span class="nav-text">三、FragmentStatePagerAdapter</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四、实现一个高效的动态FragmentPagerAdapter"><span class="nav-number">4.</span> <span class="nav-text">四、实现一个高效的动态FragmentPagerAdapter</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

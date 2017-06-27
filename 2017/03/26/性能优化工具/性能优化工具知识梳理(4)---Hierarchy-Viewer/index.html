@@ -1,0 +1,756 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="性能优化工具知识梳理(1) - TraceView性能优化工具知识梳理(2) - Systrace性能优化工具知识梳理(3) - 调试GPU过度绘制 &amp;amp; GPU呈现模式分析性能优化工具知识梳理(4) - Hierarchy Viewer性能优化工具知识梳理(5) - MAT性能优化工具知识梳理(6) - Memory Monitor &amp;amp; Heap Viewer &amp;amp; All">
+<meta property="og:type" content="article">
+<meta property="og:title" content="性能优化工具知识梳理(4) - Hierarchy Viewer">
+<meta property="og:url" content="http://yoursite.com/2017/03/26/性能优化工具/性能优化工具知识梳理(4)---Hierarchy-Viewer/index.html">
+<meta property="og:site_name" content="泽毛">
+<meta property="og:description" content="性能优化工具知识梳理(1) - TraceView性能优化工具知识梳理(2) - Systrace性能优化工具知识梳理(3) - 调试GPU过度绘制 &amp;amp; GPU呈现模式分析性能优化工具知识梳理(4) - Hierarchy Viewer性能优化工具知识梳理(5) - MAT性能优化工具知识梳理(6) - Memory Monitor &amp;amp; Heap Viewer &amp;amp; All">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-4751361f2fe735ff.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-be7b5331d0e9a9e5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-7fa620a1c1ec6d19.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2017-06-27T14:29:00.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="性能优化工具知识梳理(4) - Hierarchy Viewer">
+<meta name="twitter:description" content="性能优化工具知识梳理(1) - TraceView性能优化工具知识梳理(2) - Systrace性能优化工具知识梳理(3) - 调试GPU过度绘制 &amp;amp; GPU呈现模式分析性能优化工具知识梳理(4) - Hierarchy Viewer性能优化工具知识梳理(5) - MAT性能优化工具知识梳理(6) - Memory Monitor &amp;amp; Heap Viewer &amp;amp; All">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-4751361f2fe735ff.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/03/26/性能优化工具/性能优化工具知识梳理(4)---Hierarchy-Viewer/"/>
+
+
+
+
+
+  <title>性能优化工具知识梳理(4) - Hierarchy Viewer | 泽毛</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">泽毛</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/03/26/性能优化工具/性能优化工具知识梳理(4)---Hierarchy-Viewer/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="泽毛">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">性能优化工具知识梳理(4) - Hierarchy Viewer</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-26T18:20:00+08:00">
+                2017-03-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/插性能优化工具知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">插性能优化工具知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p><a href="http://www.jianshu.com/p/37c263f9886b" target="_blank" rel="external">性能优化工具知识梳理(1) - TraceView</a><br><a href="http://www.jianshu.com/p/41bb27235921" target="_blank" rel="external">性能优化工具知识梳理(2) - Systrace</a><br><a href="http://www.jianshu.com/p/ac2d58666106" target="_blank" rel="external">性能优化工具知识梳理(3) - 调试GPU过度绘制 &amp; GPU呈现模式分析</a><br><a href="http://www.jianshu.com/p/7ac6a2b8d740" target="_blank" rel="external">性能优化工具知识梳理(4) - Hierarchy Viewer</a><br><a href="http://www.jianshu.com/p/fa016c32360f" target="_blank" rel="external">性能优化工具知识梳理(5) - MAT</a><br><a href="http://www.jianshu.com/p/29a539bca730" target="_blank" rel="external">性能优化工具知识梳理(6) - Memory Monitor &amp; Heap Viewer &amp; Allocation Tracker</a><br><a href="http://www.jianshu.com/p/3c055862f353" target="_blank" rel="external">性能优化工具知识梳理(7) - LeakCanary</a><br><a href="http://www.jianshu.com/p/4ebe5d502842" target="_blank" rel="external">性能优化工具知识梳理(8) - Lint</a></p>
+</blockquote>
+<h1 id="一、概述"><a href="#一、概述" class="headerlink" title="一、概述"></a>一、概述</h1><p><code>Hierarchy Viewer</code>是我们平时开发中常用的工具，通过它我们可以得到某个界面中的布局层次，今天我们来介绍一下如何使用这个工具来优化布局。</p>
+<p><code>Hierarchy</code>工具位于<code>SDK/tools</code>目录下，直<br>接运行之后我们会得到下面这个界面：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-4751361f2fe735ff.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>它提供了下面两个功能：</p>
+<ul>
+<li><code>Load View Hierarchy</code></li>
+<li><code>Inspect Screenshot</code></li>
+</ul>
+<p>因为主要是讨论如何用它来分析性能问题，所以我们主要介绍第一个功能。</p>
+<h1 id="二、Hierarchy分析"><a href="#二、Hierarchy分析" class="headerlink" title="二、Hierarchy分析"></a>二、<code>Hierarchy</code>分析</h1><h2 id="2-1-整体布局分析"><a href="#2-1-整体布局分析" class="headerlink" title="2.1 整体布局分析"></a>2.1 整体布局分析</h2><p>在<code>Hierarchy Viewer</code>的根界面，它列出了当前手机或者模拟器中可见的<code>Window</code>，假如我们要分析某个<code>Activity</code>，那么点击它，再点击<code>Load View Hierarchy</code>后，就会得到下面这个界面：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-be7b5331d0e9a9e5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>这个界面一共分为四个部分，它们分别是：</p>
+<ul>
+<li><code>Tree View</code><br>这里面将<code>Activity</code>的所有<code>View</code>呈现成为一个树形结构，它提供了以下几种操作方式：<ul>
+<li>通过拖动条来放大或缩小可视范围。</li>
+<li>通过输入类名或者<code>View</code>的<code>id</code>来迅速定位到需要分析的<code>View</code></li>
+<li>通过上方的<code>Save as PNG</code>或者<code>Capture Layers</code>保存当前的树形结构。</li>
+</ul>
+</li>
+<li><code>Tree Overview</code><br>这相当于是<code>Tree View</code>的缩小版，可以通过它快速查看或者定位。</li>
+<li><code>Properties View</code><br>当我们选取了一个<code>View</code>的时候，它会列出对应<code>View</code>的属性。</li>
+<li><code>Layout View</code><br>当我们选取了一个<code>View</code>之后，会在这个区域内，显示出不同颜色的矩形框，其中红色就是我们选取的<code>View</code>的范围，而淡红色则是该<code>View</code>对应的父容器的范围，其它的白色矩形框既不是该<code>View</code>的父容器，也不是该<code>View</code>的子控件。</li>
+</ul>
+<p>需要注意，当<code>Window</code>的布局变化时，是不会主动刷新的，如果我们想要查看最新的布局情况，那么就要点击上方的<code>Load View Hierarchy</code>来刷新，而如果我们想要去查看别的<code>Window</code>布局，那么就需要点击下方操作栏最左边的按钮，重新进入选择<code>Window</code>的窗口。</p>
+<h2 id="2-2-单个布局元素分析"><a href="#2-2-单个布局元素分析" class="headerlink" title="2.2 单个布局元素分析"></a>2.2 单个布局元素分析</h2><p>对于<code>Tree View</code>中的每个节点，我们可以获得以下信息：</p>
+<ul>
+<li><code>View</code>的类名</li>
+<li><code>View</code>所存储的地址</li>
+<li><code>View</code>的<code>id</code>属性值</li>
+<li><code>View</code>绘制的<strong>相对耗时分析</strong>，它会根据<code>measure/layout/draw</code>这三个阶段，分为三个小点展示，而小点的颜色就代表了<strong>它在这个阶段相对于<code>View</code>树中的其他<code>View</code>在同一阶段的耗时对比结果</strong>：<ul>
+<li>绿色：在前<code>50%</code></li>
+<li>黄色：在后<code>50%</code></li>
+<li>红色：耗时最长</li>
+</ul>
+</li>
+<li><code>View</code>处于它的父容器的<code>index</code>。</li>
+</ul>
+<p>如果我们选择了一个<code>View</code>，那么会有更加详细的信息：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-7fa620a1c1ec6d19.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<ul>
+<li><code>View</code>和它的子<code>View</code>在当前在屏幕上的结果。</li>
+<li><code>View</code>的子<code>View</code>个数。</li>
+<li><code>View</code>各绘制阶段耗时，单位为<code>ms</code>，包括了它自己和它的子<code>View</code>的耗时。</li>
+</ul>
+<h2 id="2-3-如何调试"><a href="#2-3-如何调试" class="headerlink" title="2.3 如何调试"></a>2.3 如何调试</h2><p>上面我们看到<code>Hierarchy View</code>可以得到绘制阶段的耗时，这些耗时是在上一次绘制的时候计算出的，我们也可以通过这个工具主动地触发重绘，以得到最新的结果，操作步骤为：</p>
+<ul>
+<li>选取一个<code>View</code></li>
+<li>点击窗口上方的<code>invalidate</code>把这个<code>View</code>标记为需要重绘，那么在下次请求绘制的时候就会重绘它。</li>
+<li>点击窗口上方的<code>request layout</code>，来发起一次请求，这样它和它的子<code>View</code>以及需要重绘的<code>View</code>都会重新执行三个过程。</li>
+</ul>
+<h1 id="2-4-如何优化"><a href="#2-4-如何优化" class="headerlink" title="2.4 如何优化"></a>2.4 如何优化</h1><p><code>Hierarchy View</code>对于我们平时开发中的作用主要是以下几点：</p>
+<ul>
+<li>查看整个布局的深度，是否可以去掉一些不必要的层级，以尽量使<code>View</code>树保持扁平。</li>
+<li>查看<code>measure、layout、draw</code>当中那些红色或者黄色的节点，但是由于这些节点的颜色是包含了它和它的子<code>View</code>的时间，因此我们分析的时候，需要根据具体情况看究竟是由于<code>ViewGroup</code>的子<code>View</code>过多，还是<code>View</code>过于复杂引起的这一问题。</li>
+</ul>
+<h1 id="三、小结"><a href="#三、小结" class="headerlink" title="三、小结"></a>三、小结</h1><p>今天主要介绍了<code>Hierarchy Viewer</code>和分析性能有关的用法，如果对于<code>Inspect Screenshot</code>有兴趣的同学可以查看下面官方文档的其它部分：</p>
+<blockquote>
+<p><a href="http://android.xsoftlab.net/tools/debugging/debugging-ui.html" target="_blank" rel="external"><code>http://android.xsoftlab.net/tools/debugging/debugging-ui.html</code></a></p>
+</blockquote>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/03/26/性能优化工具/性能优化工具知识梳理(3)---调试GPU过度绘制-&-GPU呈现模式分析/" rel="next" title="性能优化工具知识梳理(3) - 调试GPU过度绘制 & GPU呈现模式分析">
+                <i class="fa fa-chevron-left"></i> 性能优化工具知识梳理(3) - 调试GPU过度绘制 & GPU呈现模式分析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/03/27/性能优化工具/性能优化工具知识梳理(5)---MAT/" rel="prev" title="性能优化工具知识梳理(5) - MAT">
+                性能优化工具知识梳理(5) - MAT <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="John Doe" />
+          <p class="site-author-name" itemprop="name">John Doe</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">104</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">23</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、概述"><span class="nav-number">1.</span> <span class="nav-text">一、概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、Hierarchy分析"><span class="nav-number">2.</span> <span class="nav-text">二、Hierarchy分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-整体布局分析"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 整体布局分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-单个布局元素分析"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 单个布局元素分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-如何调试"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 如何调试</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-4-如何优化"><span class="nav-number">3.</span> <span class="nav-text">2.4 如何优化</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、小结"><span class="nav-number">4.</span> <span class="nav-text">三、小结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

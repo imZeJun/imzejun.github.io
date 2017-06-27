@@ -1,0 +1,807 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="一、ThreadPoolExecutor 简介1.1 优点在 多线程知识梳理(5) - 线程池四部曲之 Executor 框架 中，我们对Executor框架以及它的调度模型进行了简要的介绍，其中用于对线程进行调度和管理的线程池是整个框架的核心，通过线程池我们可以：  重复利用已经创建的线程降低线程创建和销毁造成的消耗。 当任务到达时，任务可以不需要等到线程创建就能够立即执行，提高响应速度。 利用">
+<meta property="og:type" content="article">
+<meta property="og:title" content="多线程知识梳理(6) - 线程池四部曲之 ThreadPoolExecutor">
+<meta property="og:url" content="http://yoursite.com/2017/05/09/多线程/多线程知识梳理(6)---线程池四部曲之-ThreadPoolExecutor/index.html">
+<meta property="og:site_name" content="泽毛">
+<meta property="og:description" content="一、ThreadPoolExecutor 简介1.1 优点在 多线程知识梳理(5) - 线程池四部曲之 Executor 框架 中，我们对Executor框架以及它的调度模型进行了简要的介绍，其中用于对线程进行调度和管理的线程池是整个框架的核心，通过线程池我们可以：  重复利用已经创建的线程降低线程创建和销毁造成的消耗。 当任务到达时，任务可以不需要等到线程创建就能够立即执行，提高响应速度。 利用">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-aca0b0febc6d67f7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-0be76c6302873a50.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-3eb034651bb1551b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-715e0672bd284b2c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-699a13da01269de3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2017-06-27T14:14:51.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="多线程知识梳理(6) - 线程池四部曲之 ThreadPoolExecutor">
+<meta name="twitter:description" content="一、ThreadPoolExecutor 简介1.1 优点在 多线程知识梳理(5) - 线程池四部曲之 Executor 框架 中，我们对Executor框架以及它的调度模型进行了简要的介绍，其中用于对线程进行调度和管理的线程池是整个框架的核心，通过线程池我们可以：  重复利用已经创建的线程降低线程创建和销毁造成的消耗。 当任务到达时，任务可以不需要等到线程创建就能够立即执行，提高响应速度。 利用">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-aca0b0febc6d67f7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/05/09/多线程/多线程知识梳理(6)---线程池四部曲之-ThreadPoolExecutor/"/>
+
+
+
+
+
+  <title>多线程知识梳理(6) - 线程池四部曲之 ThreadPoolExecutor | 泽毛</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">泽毛</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/05/09/多线程/多线程知识梳理(6)---线程池四部曲之-ThreadPoolExecutor/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="泽毛">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">多线程知识梳理(6) - 线程池四部曲之 ThreadPoolExecutor</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-09T21:59:00+08:00">
+                2017-05-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/多线程知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">多线程知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="一、ThreadPoolExecutor-简介"><a href="#一、ThreadPoolExecutor-简介" class="headerlink" title="一、ThreadPoolExecutor 简介"></a>一、ThreadPoolExecutor 简介</h1><h2 id="1-1-优点"><a href="#1-1-优点" class="headerlink" title="1.1 优点"></a>1.1 优点</h2><p>在 <a href="http://www.jianshu.com/p/80baeaf4eb32" target="_blank" rel="external">多线程知识梳理(5) - 线程池四部曲之 Executor 框架</a> 中，我们对<code>Executor</code>框架以及它的调度模型进行了简要的介绍，其中用于对线程进行调度和管理的线程池是整个框架的核心，通过线程池我们可以：</p>
+<ul>
+<li>重复利用已经创建的线程降低线程创建和销毁造成的消耗。</li>
+<li>当任务到达时，任务可以不需要等到线程创建就能够立即执行，提高响应速度。</li>
+<li>利用线程池对线程进行统一分配、调优和监控，提供线程的可管理性。</li>
+</ul>
+<h2 id="1-2-处理流程"><a href="#1-2-处理流程" class="headerlink" title="1.2 处理流程"></a>1.2 处理流程</h2><p>在<code>JDK</code>包中，<code>ThreadPoolExecutor</code>就是线程池的具体实现，在阅读源码之前，我们先对它的处理流程进行简要介绍，当我们通过<code>execute/submit</code>方法提交一个任务到线程池后，会经过以下的处理流程：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-aca0b0febc6d67f7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>1) 如果当前运行的线程小于 <code>corePoolSize</code>，则创建新线程来执行任务。<br>2) 如果运行的线程等于或多于 <code>corePoolSize</code>，则将任务加入到等待队列中。<br>3) 如果无法将任务加入到等待队列，则继续创建新的线程来执行任务。<br>4) 如果创建新线程使得当前运行的线程超过<code>maximumPoolSize</code>，任务将被拒绝。</p>
+<p>以上就是<code>ThreadPoolExecutor</code>对于任务的处理流程，其中有几点需要说明：</p>
+<ul>
+<li>当创建一个新线程来执行任务时，需要获取全局锁，而如果仅仅是将任务加入到等待队列中则不需要，</li>
+<li>当新线程执行完创建它时所指派的第一个任务之后，并不会马上退出，它会反复从等待队列中获取新的任务来执行。</li>
+<li>如果一个线程在指定的时间内一直没有获取到新任务，那么我们会根据当前线程池当中活动的线程数量来决定是否销毁它：如果当前线程池数量大于<code>corePoolSize</code>，那么销毁该线程，否则只有当设置了<code>allowCoreThreadTimeOut</code>，才会销毁该线程。</li>
+</ul>
+<h1 id="二、ThreadPoolExecutor-实现"><a href="#二、ThreadPoolExecutor-实现" class="headerlink" title="二、ThreadPoolExecutor 实现"></a>二、ThreadPoolExecutor 实现</h1><h2 id="2-1-参数配置"><a href="#2-1-参数配置" class="headerlink" title="2.1 参数配置"></a>2.1 参数配置</h2><p>从上面的处理流程可以看出，<code>ThreadPoolExecutor</code>对于任务的处理流程，会受到<code>corePoolSize</code>、等待队列、<code>maximumPoolSize</code>等参数的影响，而这些参数都是可以由<code>ThreadPoolExecutor</code>的创建者去指定的，正是鉴于这种灵活性，使得我们仅仅通过简单的配置就可以实现适用于不同的场景的<code>ThreadPoolExecutor</code>，下面，我们就来介绍一一介绍这些参数的含义：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">public ThreadPoolExecutor(int corePoolSize,</div><div class="line">                              int maximumPoolSize,</div><div class="line">                              long keepAliveTime,</div><div class="line">                              TimeUnit unit,</div><div class="line">                              BlockingQueue&lt;Runnable&gt; workQueue,</div><div class="line">                              ThreadFactory threadFactory,</div><div class="line">                              RejectedExecutionHandler handler)</div></pre></td></tr></table></figure></p>
+<p><strong>(1) int corePoolSize</strong></p>
+<p>指定核心线程池的大小，当线程的数量没有大于<code>corePoolSize</code>之前，始终会创建新线程来执行分配的任务。如果调用了<code>preStartAllCoreThreads()</code>方法，线程池会提前创建并启动所有核心线程。</p>
+<p><strong>(2) int maximumPoolSize</strong></p>
+<p>指定线程池的最大数量，当加入新任务时，如果发现等待队列已经满了，那么我们会尝试通过创建新线程的方式来执行该任务，而如果此时线程池内线程的数量已经等于<code>maximumPoolSize</code>，那么会采用指定的拒绝策略来处理该任务。</p>
+<p><strong>(3) long keepAliveTime 和 TimeUnit unit</strong></p>
+<p>当一个线程在执行完分配给它的任务之后，会尝试从等待队列中取出任务去执行，如果经过<code>keepAliveTime</code>之后仍然不能从队列中获取到任务，说明此时系统中可能并没有那么多的任务需要去处理，那么就会根据线程池此时的状态来决定是否销毁该线程，以保证在能够迅速响应任务的同时，又不至于有太多空闲的存活线程。</p>
+<p><strong>(4) BlockingQueue<runnable> workQueue</runnable></strong></p>
+<p>指定等待队列的实现方式，我们可以根据需要选择以下几种等待队列：</p>
+<ul>
+<li><code>ArrayBlockingQueue</code>：基于数组结构的有界等待队列，按先进先出原则排序任务</li>
+<li><code>LinkedBlockingQueue</code>：基于链表结构的阻塞队列，同样按照先进先出原则排序任务，吞吐量要高于<code>ArrayBlockingQueue</code></li>
+<li><code>SynchronousQueue</code>：对于这种阻塞队列而言，每个插入操作必须要等到另一个线程调用移除操作，否则插入操作一直处于阻塞状态。</li>
+<li><code>PriorityBlockingQueue</code>：一个具有优先级的无限阻塞队列。</li>
+</ul>
+<p><strong>(5) ThreadFactory threadFactory</strong></p>
+<p>用于创建线程的工厂。</p>
+<p><strong>(6) RejectedExecutionHandler handler</strong></p>
+<p>系统内置了以下几种策略，用于队列和线程池都满了的情况：</p>
+<ul>
+<li><code>AbortPolicy</code>：抛出异常，这也是默认的策略</li>
+<li><code>CallerRunsPolicy</code>：使用调用者所在线程来执行任务</li>
+<li><code>DiscardOldestPolicy</code>：先丢弃队列中最末尾的任务，再重新通过<code>execute</code>方法执行该任务。</li>
+<li><code>DiscardPolicy</code>：不做任何处理，直接丢弃</li>
+</ul>
+<h2 id="2-2-内置-ThreadPoolExecutor"><a href="#2-2-内置-ThreadPoolExecutor" class="headerlink" title="2.2 内置 ThreadPoolExecutor"></a>2.2 内置 ThreadPoolExecutor</h2><p>在 <a href="http://www.jianshu.com/p/80baeaf4eb32" target="_blank" rel="external">多线程知识梳理(5) - 线程池四部曲之 Executor 框架</a> 中，我们介绍了几种<code>ThreadPoolExecutor</code>的实现：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-0be76c6302873a50.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>它们其实都是<code>ThreadPoolExecutor</code>，只是在构造时传入了不同的参数，如下表所示：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-3eb034651bb1551b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>结合之前对于处理流程和核心参数的分析，对它们进行进一步的介绍：</p>
+<p><strong>(1) FixedThreadPool</strong></p>
+<ul>
+<li>传入的<code>nThread</code>参数将被作为核心线程数和最大线程数，当线程池的数量达到<code>nThread</code>后，之后的任务将会被加入到无界的等待队列当中</li>
+<li>除非某个线程因为异常而结束，否则当线程池的数量达到<code>nThread</code>之后将会一直保持不变</li>
+<li>由于使用的是无界队列，因此线程池不会拒绝任务</li>
+</ul>
+<p><strong>(2) SingleThreadPoolExecutor</strong></p>
+<ul>
+<li>如果当前线程池中无运行的线程时，将创建一个新线程来执行任务</li>
+<li>由于最大线程数被设置为<code>1</code>，因此之后的任务都被加入到无界队列当中，并且由线程池中这个唯一的线程从等待队列中，按照添加的顺序依次执行任务</li>
+</ul>
+<p><strong>(3) CachedThreadPool</strong></p>
+<ul>
+<li>由于等待队列使用的是<code>SynchonousQueue</code>，它的每个插入操作都必须等待另一个线程的移除操作，对于线程池而言，也就是说：在添加任务到等待队列时，必须要有一个空闲线程正在尝试从等待队列获取任务，才有可能添加成功。</li>
+<li>因此，当一个任务被添加进入线程池时，会有以下两种情况：<ul>
+<li>如果当前有空闲线程正在尝试从等待队列中获取任务，那么这个任务将会被交给这个空闲线程进行处理</li>
+<li>如果当前没有空闲线程尝试从等待队列中获取任务，那么将会创建一个新线程来执行任务</li>
+</ul>
+</li>
+<li>由于设置了等待超时时间，因此某个线程在<code>60s</code>内都无法获取到新的任务，那么它将会被销毁。</li>
+</ul>
+<h1 id="三、ThreadPoolExecutor-源码走读"><a href="#三、ThreadPoolExecutor-源码走读" class="headerlink" title="三、ThreadPoolExecutor 源码走读"></a>三、ThreadPoolExecutor 源码走读</h1><h2 id="3-1-ctl"><a href="#3-1-ctl" class="headerlink" title="3.1 ctl"></a>3.1 ctl</h2><p>在<code>ThreadPoolExector</code>中，有一个关键变量 - <code>ctl</code>，理解它是我们进行源码走读的基础。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">private final AtomicInteger ctl = new AtomicInteger(ctlOf(RUNNING, 0))</div></pre></td></tr></table></figure></p>
+<p>这个原子操作类包含了两部分信息：<strong>线程池的状态</strong>、<strong>线程池中的存活线程数目</strong>，它们用<code>32</code>位的整型数来表示，其中高<code>3</code>位表示线程池的状态，低位表示当前线程池中存活的线程数。</p>
+<p>在某一时刻，线程池会处于以下五种状态之一：</p>
+<ul>
+<li><code>RUNNING</code>：<code>Accept new tasks and process queued tasks</code></li>
+<li><code>SHUTDOWN</code>：<code>Don&#39;t accept new tasks, but process queued tasks</code></li>
+<li><code>STOP</code>：<code>Don&#39;t accept new tasks, don&#39;t process queued tasks, and interrupt in-progress tasks</code></li>
+<li><code>TIDYING</code>：<code>All tasks have terminated, workerCount is zero, the thread transitioning to state TIDYING will run the terminated() hook method</code></li>
+<li><code>TERMINATED</code>：<code>terminated() has completed</code></li>
+</ul>
+<p>这五种状态之间转换转换图为：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-715e0672bd284b2c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<p>对于<code>ctl</code>变量，以下三个函数可以用来拆解和组装：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">//获取线程池的状态信息</div><div class="line">private static int runStateOf(int c)     &#123; return c &amp; ~CAPACITY; &#125;</div><div class="line">//获取线程池的存活线程数</div><div class="line">private static int workerCountOf(int c)  &#123; return c &amp; CAPACITY; &#125;</div><div class="line">//将状态信息和存活线程数进行组合</div><div class="line">private static int ctlOf(int rs, int wc) &#123; return rs | wc; &#125;</div></pre></td></tr></table></figure></p>
+<h2 id="3-2-任务执行过程"><a href="#3-2-任务执行过程" class="headerlink" title="3.2 任务执行过程"></a>3.2 任务执行过程</h2><p>下面，我们通过模拟一个任务的执行来对<code>ThreadPoolExecutor</code>的源码进行简单的走读，整个流程如下图所示，红色字部分为我们所要关注的关键方法：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-699a13da01269de3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br><strong>(1) public void execute(Runnable command)</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">public void execute(Runnable command) &#123;</div><div class="line">    if (command == null)</div><div class="line">        throw new NullPointerException();</div><div class="line">    int c = ctl.get();</div><div class="line">    if (workerCountOf(c) &lt; corePoolSize) &#123;</div><div class="line">        if (addWorker(command, true))</div><div class="line">            return;</div><div class="line">        c = ctl.get();</div><div class="line">    &#125;</div><div class="line">    if (isRunning(c) &amp;&amp; workQueue.offer(command)) &#123;</div><div class="line">        int recheck = ctl.get();</div><div class="line">        if (! isRunning(recheck) &amp;&amp; remove(command))</div><div class="line">            reject(command);</div><div class="line">        else if (workerCountOf(recheck) == 0)</div><div class="line">            addWorker(null, false);</div><div class="line">    &#125; else if (!addWorker(command, false)) &#123;</div><div class="line">        reject(command);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>前面我们说过，向一个线程池中提交任务有两种方法，<code>execute/submit</code>，它们最终都会调用到上面的这个<code>execute</code>当中，这一函数的逻辑分为三步：</p>
+<ul>
+<li>当线程池中的存活线程数小于指定的核心线程数时，尝试通过<code>addWorker(firstTask, core)</code>创建一个新的线程来执行任务，这里将传入的<code>runnable</code>作为该线程的第一个任务，并且<code>core</code>参数为<code>true</code>，如果创建成功，那么直接返回，否则重新获取一次<code>ctl</code>变量，跳转到步骤<code>2</code></li>
+<li>接着通过<code>ctl</code>变量判断如果当前线程池处于<code>running</code>状态，那么将<code>runnable</code>添加到等待队列<code>workQueue</code>当中，如果添加失败跳转到步骤<code>3</code>，添加成功则进行二次检查，当发现了下面这两种情况之一，那么还需要进行额外的处理：<ul>
+<li>如果发现线程池变为了非<code>running</code>状态，那么会将该任务从等待队列中移除；</li>
+<li>如果当前线程池已经没有存活的线程，那么为了让等待队列中的任务可以运行，我们需要通过<code>addWorker</code>方法启动一个新线程，与第一步不同的是，该线程的第一个任务为空。</li>
+</ul>
+</li>
+<li>通过<code>addWorker</code>方法创建新线程来执行该任务，和第一步的唯一区别就是<code>core</code>参数为<code>false</code>，如果创建失败，那么执行拒绝策略。</li>
+</ul>
+<p><strong>(2) private boolean addWorker(Runnable firstTask, boolean core)</strong><br>下面，我们再来看一下这个核心的函数<code>addWorker</code>，它的最终目的就是创建一个新的线程来执行任务：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div></pre></td><td class="code"><pre><div class="line">private boolean addWorker(Runnable firstTask, boolean core) &#123;</div><div class="line">     retry:</div><div class="line">     for (;;) &#123;</div><div class="line">         int c = ctl.get();</div><div class="line">         int rs = runStateOf(c);</div><div class="line"></div><div class="line">         //第一部分：当前线程池的状态是否满足加入的条件</div><div class="line">         if (rs &gt;= SHUTDOWN &amp;&amp;</div><div class="line">             ! (rs == SHUTDOWN &amp;&amp;</div><div class="line">                firstTask == null &amp;&amp;</div><div class="line">                ! workQueue.isEmpty()))</div><div class="line">             return false;</div><div class="line">         //第二部分：当前线程池的容量是否满足加入的条件</div><div class="line">         for (;;) &#123;</div><div class="line">             int wc = workerCountOf(c);</div><div class="line">             if (wc &gt;= CAPACITY ||</div><div class="line">                 wc &gt;= (core ? corePoolSize : maximumPoolSize))</div><div class="line">                 return false;</div><div class="line">             if (compareAndIncrementWorkerCount(c))</div><div class="line">                 break retry;</div><div class="line">             c = ctl.get();  // Re-read ctl</div><div class="line">             if (runStateOf(c) != rs)</div><div class="line">                 continue retry;</div><div class="line">             // else CAS failed due to workerCount change; retry inner loop</div><div class="line">         &#125;</div><div class="line">     &#125;</div><div class="line"></div><div class="line">     boolean workerStarted = false;</div><div class="line">     boolean workerAdded = false;</div><div class="line">     Worker w = null;</div><div class="line">     try &#123;</div><div class="line">         //第三部分：创建工作类Worker</div><div class="line">         w = new Worker(firstTask);</div><div class="line">         final Thread t = w.thread;</div><div class="line">         if (t != null) &#123;</div><div class="line">             final ReentrantLock mainLock = this.mainLock;</div><div class="line">             mainLock.lock();</div><div class="line">             try &#123;</div><div class="line">                 // Recheck while holding lock.</div><div class="line">                 // Back out on ThreadFactory failure or if</div><div class="line">                 // shut down before lock acquired.</div><div class="line">                 int rs = runStateOf(ctl.get());</div><div class="line"></div><div class="line">                 if (rs &lt; SHUTDOWN ||</div><div class="line">                     (rs == SHUTDOWN &amp;&amp; firstTask == null)) &#123;</div><div class="line">                     if (t.isAlive()) </div><div class="line">                         throw new IllegalThreadStateException();</div><div class="line">                     //第四部分：将Worker加入到线程池中</div><div class="line">                     workers.add(w);</div><div class="line">                     int s = workers.size();</div><div class="line">                     if (s &gt; largestPoolSize)</div><div class="line">                         largestPoolSize = s;</div><div class="line">                     workerAdded = true;</div><div class="line">                 &#125;</div><div class="line">             &#125; finally &#123;</div><div class="line">                 mainLock.unlock();</div><div class="line">             &#125;</div><div class="line">             if (workerAdded) &#123;</div><div class="line">                 //第五部分：启动线程</div><div class="line">                 t.start();</div><div class="line">                 workerStarted = true;</div><div class="line">             &#125;</div><div class="line">         &#125;</div><div class="line">     &#125; finally &#123;</div><div class="line">         if (! workerStarted)</div><div class="line">             addWorkerFailed(w);</div><div class="line">     &#125;</div><div class="line">     return workerStarted;</div><div class="line"> &#125;</div></pre></td></tr></table></figure></p>
+<p>整个<code>addWorker</code>进行了以下几步操作：</p>
+<ul>
+<li>根据当前线程池的状态，判断是否允许新建线程</li>
+<li>根据当前线程池的工作线程数，判断是否允许新建线程</li>
+<li><p>创建一个<code>Worker</code>对象，这个<code>Worker</code>类中包含了一个线程</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Worker(Runnable firstTask) &#123;</div><div class="line">    setState(-1); </div><div class="line">    this.firstTask = firstTask;</div><div class="line">    this.thread = getThreadFactory().newThread(this);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>将新建的<code>Worker</code>对象加入到线程池中</p>
+</li>
+<li>启动<code>Worker</code>中的线程</li>
+</ul>
+<p><strong>(3) final void runWorker(Worker w)</strong></p>
+<p>在第<code>(2)</code>步中，我们启动了<code>Worker</code>对象中的线程<code>t</code>，它会调用<code>Worker</code>对象的<code>run()</code>函数，接着会执行<code>runWorker</code>方法：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line">final void runWorker(Worker w) &#123;</div><div class="line">        Thread wt = Thread.currentThread();</div><div class="line">        Runnable task = w.firstTask;</div><div class="line">        w.firstTask = null;</div><div class="line">        w.unlock(); </div><div class="line">        boolean completedAbruptly = true;</div><div class="line">        try &#123;</div><div class="line">            while (task != null || (task = getTask()) != null) &#123;</div><div class="line">                w.lock();</div><div class="line">                if ((runStateAtLeast(ctl.get(), STOP) ||</div><div class="line">                     (Thread.interrupted() &amp;&amp;</div><div class="line">                      runStateAtLeast(ctl.get(), STOP))) &amp;&amp;</div><div class="line">                    !wt.isInterrupted())</div><div class="line">                    wt.interrupt();</div><div class="line">                try &#123;</div><div class="line">                    beforeExecute(wt, task);</div><div class="line">                    Throwable thrown = null;</div><div class="line">                    try &#123;</div><div class="line">                        task.run();</div><div class="line">                    &#125; catch (RuntimeException x) &#123;</div><div class="line">                        thrown = x; throw x;</div><div class="line">                    &#125; catch (Error x) &#123;</div><div class="line">                        thrown = x; throw x;</div><div class="line">                    &#125; catch (Throwable x) &#123;</div><div class="line">                        thrown = x; throw new Error(x);</div><div class="line">                    &#125; finally &#123;</div><div class="line">                        afterExecute(task, thrown);</div><div class="line">                    &#125;</div><div class="line">                &#125; finally &#123;</div><div class="line">                    task = null;</div><div class="line">                    w.completedTasks++;</div><div class="line">                    w.unlock();</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">            completedAbruptly = false;</div><div class="line">        &#125; finally &#123;</div><div class="line">            processWorkerExit(w, completedAbruptly);</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure></p>
+<p>这里面的<code>task</code>就是我们通过<code>execute</code>方法传入的<code>Runnable</code>，如果<code>Worker</code>的第一个任务不为空，那么会首先执行该任务，如果第一个任务执行完毕，那么会调用<code>getTask()</code>方法来尝试去获取下一个任务，当<code>getTask()</code>方法不返回（等待队列为空）时，会一直阻塞在这里，而当这个<code>while</code>循环退出的时候，那么<code>Worker</code>所对应的线程就会被销毁。</p>
+<p><strong>(4) private Runnable getTask()</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div></pre></td><td class="code"><pre><div class="line">private Runnable getTask() &#123;</div><div class="line">        boolean timedOut = false; // Did the last poll() time out?</div><div class="line"></div><div class="line">        for (;;) &#123;</div><div class="line">            int c = ctl.get();</div><div class="line">            int rs = runStateOf(c);</div><div class="line"></div><div class="line">            // Check if queue empty only if necessary.</div><div class="line">            if (rs &gt;= SHUTDOWN &amp;&amp; (rs &gt;= STOP || workQueue.isEmpty())) &#123;</div><div class="line">                decrementWorkerCount();</div><div class="line">                return null;</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            int wc = workerCountOf(c);</div><div class="line"></div><div class="line">            // Are workers subject to culling?</div><div class="line">            boolean timed = allowCoreThreadTimeOut || wc &gt; corePoolSize;</div><div class="line"></div><div class="line">            if ((wc &gt; maximumPoolSize || (timed &amp;&amp; timedOut))</div><div class="line">                &amp;&amp; (wc &gt; 1 || workQueue.isEmpty())) &#123;</div><div class="line">                if (compareAndDecrementWorkerCount(c))</div><div class="line">                    return null;</div><div class="line">                continue;</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            try &#123;</div><div class="line">                Runnable r = timed ?</div><div class="line">                    workQueue.poll(keepAliveTime, TimeUnit.NANOSECONDS) :</div><div class="line">                    workQueue.take();</div><div class="line">                if (r != null)</div><div class="line">                    return r;</div><div class="line">                timedOut = true;</div><div class="line">            &#125; catch (InterruptedException retry) &#123;</div><div class="line">                timedOut = false;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<p><code>getTask()</code>方法会去在第<code>(1)</code>步中的等待队列<code>workerQueue</code>取任务，在获取任务的时候会考虑超时时间<code>keepAliveTime</code>，如果超时时间到了仍然没有获取到任务，那么<code>getTask()</code>方法就会返回<code>null</code>，从而<code>runWorker()</code>中的<code>while</code>循环就会结束，之后在<code>finally</code>代码块中通过<code>processWorkerExit(w, completedAbruptly)</code>销毁该线程。</p>
+<h1 id="四、关闭线程池"><a href="#四、关闭线程池" class="headerlink" title="四、关闭线程池"></a>四、关闭线程池</h1><p>关闭线程池有两种方法：<code>shutdown</code>和<code>shutdownNow</code>。</p>
+<ul>
+<li><code>shutdown</code>：将线程池的状态设置成<code>SHUTDOWN</code>状态，然后中断所有没有正在执行任务的线程。</li>
+<li><code>shutdownNow</code>：将线程池的状态设置为<code>STOP</code>，尝试停止所有正在执行或暂停任务的线程，并返回等待执行任务的列表。</li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/05/07/多线程/多线程知识梳理(5)---线程池四部曲之-Executor-框架/" rel="next" title="多线程知识梳理(5) - 线程池四部曲之 Executor 框架">
+                <i class="fa fa-chevron-left"></i> 多线程知识梳理(5) - 线程池四部曲之 Executor 框架
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/05/13/Framework-源码解析/Framework-源码解析知识梳理(1)---应用程序与-AMS-的通信实现/" rel="prev" title="Framework 源码解析知识梳理(1) - 应用进程与 AMS 的通信实现">
+                Framework 源码解析知识梳理(1) - 应用进程与 AMS 的通信实现 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="John Doe" />
+          <p class="site-author-name" itemprop="name">John Doe</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">104</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">23</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、ThreadPoolExecutor-简介"><span class="nav-number">1.</span> <span class="nav-text">一、ThreadPoolExecutor 简介</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-1-优点"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 优点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-2-处理流程"><span class="nav-number">1.2.</span> <span class="nav-text">1.2 处理流程</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、ThreadPoolExecutor-实现"><span class="nav-number">2.</span> <span class="nav-text">二、ThreadPoolExecutor 实现</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-参数配置"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 参数配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-内置-ThreadPoolExecutor"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 内置 ThreadPoolExecutor</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、ThreadPoolExecutor-源码走读"><span class="nav-number">3.</span> <span class="nav-text">三、ThreadPoolExecutor 源码走读</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-ctl"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 ctl</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-任务执行过程"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 任务执行过程</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四、关闭线程池"><span class="nav-number">4.</span> <span class="nav-text">四、关闭线程池</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

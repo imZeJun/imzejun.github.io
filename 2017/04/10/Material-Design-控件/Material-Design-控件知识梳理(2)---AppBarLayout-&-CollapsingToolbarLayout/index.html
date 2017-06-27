@@ -1,0 +1,789 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="Material Design 控件知识梳理(1) - Android Design Support Library 是什么Material Design 控件知识梳理(2) - AppBarLayout &amp;amp; CollapsingToolbarLayoutMaterial Design 控件知识梳理(3) - BottomSheet &amp;amp;&amp;amp; BottomSheetDialo">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Material Design 控件知识梳理(2) - AppBarLayout &amp; CollapsingToolbarLayout">
+<meta property="og:url" content="http://yoursite.com/2017/04/10/Material-Design-控件/Material-Design-控件知识梳理(2)---AppBarLayout-&-CollapsingToolbarLayout/index.html">
+<meta property="og:site_name" content="泽毛">
+<meta property="og:description" content="Material Design 控件知识梳理(1) - Android Design Support Library 是什么Material Design 控件知识梳理(2) - AppBarLayout &amp;amp; CollapsingToolbarLayoutMaterial Design 控件知识梳理(3) - BottomSheet &amp;amp;&amp;amp; BottomSheetDialo">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-0ff0b7ba0b40806f.gif?imageMogr2/auto-orient/strip">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-537ba9a66e5b59a9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-23b90898e3033d08.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-47305f37a40a046f.gif?imageMogr2/auto-orient/strip">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-4460ecdd1e7b0d30.gif?imageMogr2/auto-orient/strip">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-d4a497862458435a.gif?imageMogr2/auto-orient/strip">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-342e04d7a33ae7b8.gif?imageMogr2/auto-orient/strip">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-2c63914954616250.gif?imageMogr2/auto-orient/strip">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-21e872414217f7fd.gif?imageMogr2/auto-orient/strip">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-18cecd7767b4b8b0.gif?imageMogr2/auto-orient/strip">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-3e36e33a7ebb06c9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-1234b39e6e2a0f61.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-881e7fa4a273a18a.gif?imageMogr2/auto-orient/strip">
+<meta property="og:updated_time" content="2017-06-27T14:59:23.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Material Design 控件知识梳理(2) - AppBarLayout &amp; CollapsingToolbarLayout">
+<meta name="twitter:description" content="Material Design 控件知识梳理(1) - Android Design Support Library 是什么Material Design 控件知识梳理(2) - AppBarLayout &amp;amp; CollapsingToolbarLayoutMaterial Design 控件知识梳理(3) - BottomSheet &amp;amp;&amp;amp; BottomSheetDialo">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-0ff0b7ba0b40806f.gif?imageMogr2/auto-orient/strip">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/04/10/Material-Design-控件/Material-Design-控件知识梳理(2)---AppBarLayout-&-CollapsingToolbarLayout/"/>
+
+
+
+
+
+  <title>Material Design 控件知识梳理(2) - AppBarLayout & CollapsingToolbarLayout | 泽毛</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">泽毛</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/04/10/Material-Design-控件/Material-Design-控件知识梳理(2)---AppBarLayout-&-CollapsingToolbarLayout/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="泽毛">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Material Design 控件知识梳理(2) - AppBarLayout & CollapsingToolbarLayout</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-10T22:14:00+08:00">
+                2017-04-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Material-Design-控件知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">Material Design 控件知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p><a href="http://www.jianshu.com/p/32b2638a1785" target="_blank" rel="external">Material Design 控件知识梳理(1) - Android Design Support Library 是什么</a><br><a href="http://www.jianshu.com/p/d4fd636d7c44" target="_blank" rel="external">Material Design 控件知识梳理(2) - AppBarLayout &amp; CollapsingToolbarLayout</a><br><a href="http://www.jianshu.com/p/2a5be29123e5" target="_blank" rel="external">Material Design 控件知识梳理(3) - BottomSheet &amp;&amp; BottomSheetDialog &amp;&amp; BottomSheetDialogFragment</a><br><a href="http://www.jianshu.com/p/5a354e318019" target="_blank" rel="external">Material Design 控件知识梳理(4) - FloatingActionButton</a><br><a href="http://www.jianshu.com/p/d70cfd724c7f" target="_blank" rel="external">Material Design 控件知识梳理(5) - DrawerLayout &amp;&amp; NavigationView</a><br><a href="http://www.jianshu.com/p/6aea94f9ae2f" target="_blank" rel="external">Material Design 控件知识梳理(6) - Snackbar</a><br><a href="http://www.jianshu.com/p/22ec4fc1cb71" target="_blank" rel="external">Material Design 控件知识梳理(7) - BottomNavigationBar</a><br><a href="http://www.jianshu.com/p/5dd04fda13ab" target="_blank" rel="external">Material Design 控件知识梳理(8) - TabLayout</a><br><a href="http://www.jianshu.com/p/ed9642fc8634" target="_blank" rel="external">Material Design 控件知识梳理(9) - TextInputLayout</a></p>
+</blockquote>
+<h1 id="一、概述"><a href="#一、概述" class="headerlink" title="一、概述"></a>一、概述</h1><p>在某些<code>App</code>当中，我们经常会见到类似于下面的这种设计：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-0ff0b7ba0b40806f.gif?imageMogr2/auto-orient/strip" alt=""><br>这种设计的目的是为了在初始时刻展示重要的信息，但是当用户需要查看列表的时候，不至于被封面占据过多的可视的区域，<code>Google</code>为这种设计提供了几个类，让我们只用实现很少的代码就能够实现这种效果，避免了我们通过去监听列表的滚动状态来去改变头部区域的显示，这篇文章，我们就一步步来学习如何实现这种效果。<br>要实现上面这种效果，需要对下面几方面的知识有所了解：</p>
+<ul>
+<li><code>CoordinatorLayout</code></li>
+<li><code>AppBarLayout</code></li>
+<li><code>CollapsingToolbarLayout</code></li>
+<li>实现了<code>NestedScrollingChild</code>接口的滚动布局，例如<code>RecyclerView</code>、<code>NestedScrollView</code>等</li>
+</ul>
+<p>这四者的关系可以用下面这张图来表示：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-537ba9a66e5b59a9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<p>其中<code>CollapsingToolbarLayout</code>需要依赖于<code>AppBarLayout</code>，因此我打算把文章的讨论分为两部分：</p>
+<ul>
+<li>只采用<code>AppBarLayout</code>实现</li>
+<li>采用<code>AppBarLayout + CollapsingToolbarLayout</code>实现</li>
+</ul>
+<h1 id="二、只采用AppBarLayout实现"><a href="#二、只采用AppBarLayout实现" class="headerlink" title="二、只采用AppBarLayout实现"></a>二、只采用<code>AppBarLayout</code>实现</h1><p>当只采用<code>AppBarLayout</code>时，我们的布局层次一般是下面这样：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-23b90898e3033d08.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h2 id="2-1-CoordinatorLayout"><a href="#2-1-CoordinatorLayout" class="headerlink" title="2.1 CoordinatorLayout"></a>2.1 <code>CoordinatorLayout</code></h2><p><code>CoordinatorLayout</code>是一个重写的<code>ViewGroup</code>，它负责<code>AppBarLayout</code>以及可滚动布局之间的关系，因此，它是作为这两者的直接父控件。</p>
+<h2 id="2-2-AppBarLayout下的列表"><a href="#2-2-AppBarLayout下的列表" class="headerlink" title="2.2 AppBarLayout下的列表"></a>2.2 <code>AppBarLayout</code>下的列表</h2><p>一般是<code>RecyclerView</code>或者<code>ViewPager</code>，为了能让它和<code>AppBarLayout</code>协同工作，需要<strong>给列表控件添加下面这个属性，这样列表就会显示在<code>AppBarLayout</code>的下方</strong>：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">app:layout_behavior=&quot;@string/appbar_scrolling_view_behavior&quot;</div></pre></td></tr></table></figure></p>
+<h2 id="2-3-AppBarLayout的标志位"><a href="#2-3-AppBarLayout的标志位" class="headerlink" title="2.3 AppBarLayout的标志位"></a>2.3 <code>AppBarLayout</code>的标志位</h2><p>需要<strong>将<code>AppBarLayout</code>作为<code>CoordinatorLayout</code>的直接子<code>View</code></strong>，同时它也是一个<code>LinearLayout</code>，因此它的所有子<code>View</code>都是线性排列的，而它对子<code>View</code>的滚动显示管理是通过子<code>View</code>的<code>app:layout_scrollFlags</code>属性，注意，<strong>这个标志位是在<code>AppBarLayout</code>的子<code>View</code>中声明的，而不是<code>AppBarLayout</code>中</strong>。</p>
+<p><code>app:layout_scrollFlags</code>的值有下面五种可选：</p>
+<ul>
+<li><code>scroll</code></li>
+<li><code>exitUntilCollapsed</code></li>
+<li><code>enterAlways</code></li>
+<li><code>enterAlwaysCollapsed</code></li>
+<li><code>snap</code></li>
+</ul>
+<h2 id="2-3-1-scroll"><a href="#2-3-1-scroll" class="headerlink" title="2.3.1 scroll"></a>2.3.1 <code>scroll</code></h2><p>使得<code>AppBarLayout</code>的子<code>View</code>伴随着滚动而收起或者展开，有两点需要注意：</p>
+<ul>
+<li>这个标志位是其它四个标志位生效的前提</li>
+<li>带有<code>scroll</code>标志位的子<code>View</code>必须放在<code>AppBarLayout</code>中的最前面</li>
+</ul>
+<p>现在我们给<code>RecyclerView</code>设置了<code>app:layout_behavior</code>，而<code>AppBarLayout</code>中的两个子<code>View</code>都没有设置<code>scroll</code>标志位：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</div><div class="line">&lt;android.support.design.widget.CoordinatorLayout</div><div class="line">    xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;</div><div class="line">    xmlns:app=&quot;http://schemas.android.com/apk/res-auto&quot;</div><div class="line">    android:layout_width=&quot;match_parent&quot;</div><div class="line">    android:layout_height=&quot;match_parent&quot;&gt;</div><div class="line">    &lt;android.support.design.widget.AppBarLayout</div><div class="line">        android:id=&quot;@+id/al_title&quot;</div><div class="line">        android:layout_width=&quot;match_parent&quot;</div><div class="line">        android:layout_height=&quot;wrap_content&quot;&gt;</div><div class="line">        &lt;TextView</div><div class="line">            android:gravity=&quot;center&quot;</div><div class="line">            android:text=&quot;layout_scrollFlags=scroll&quot;</div><div class="line">            android:textColor=&quot;@android:color/white&quot;</div><div class="line">            android:background=&quot;@android:color/holo_green_dark&quot;</div><div class="line">            android:layout_width=&quot;match_parent&quot;</div><div class="line">            android:layout_height=&quot;100dp&quot;/&gt;</div><div class="line">        &lt;TextView</div><div class="line">            android:gravity=&quot;center&quot;</div><div class="line">            android:text=&quot;没有设置layout_scrollFlags&quot;</div><div class="line">            android:textColor=&quot;@android:color/white&quot;</div><div class="line">            android:background=&quot;@android:color/holo_orange_dark&quot;</div><div class="line">            android:layout_width=&quot;match_parent&quot;</div><div class="line">            android:layout_height=&quot;100dp&quot;/&gt;</div><div class="line">    &lt;/android.support.design.widget.AppBarLayout&gt;</div><div class="line">    &lt;android.support.v7.widget.RecyclerView</div><div class="line">        android:id=&quot;@+id/rv_content&quot;</div><div class="line">        android:layout_width=&quot;match_parent&quot;</div><div class="line">        android:layout_height=&quot;match_parent&quot;</div><div class="line">        app:layout_behavior=&quot;@string/appbar_scrolling_view_behavior&quot;/&gt;</div><div class="line">&lt;/android.support.design.widget.CoordinatorLayout&gt;</div></pre></td></tr></table></figure></p>
+<p>此时<code>AppBarLayout</code>中的子<code>View</code>都一直固定在<code>CoordinatorLayout</code>的顶部：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-47305f37a40a046f.gif?imageMogr2/auto-orient/strip" alt=""><br>下面，我们给<code>AppBarLayout</code>中的第一个子<code>View</code>加上<code>app:layout_scrollFlags=&quot;scroll|exitUntilCollapsed&quot;</code>标志位：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"> &lt;android.support.design.widget.AppBarLayout</div><div class="line">        android:id=&quot;@+id/al_title&quot;</div><div class="line">        android:layout_width=&quot;match_parent&quot;</div><div class="line">        android:layout_height=&quot;wrap_content&quot;&gt;</div><div class="line">        &lt;TextView</div><div class="line">            android:gravity=&quot;center&quot;</div><div class="line">            android:text=&quot;layout_scrollFlags=scroll&quot;</div><div class="line">            android:textColor=&quot;@android:color/white&quot;</div><div class="line">            android:background=&quot;@android:color/holo_green_dark&quot;</div><div class="line">            android:layout_width=&quot;match_parent&quot;</div><div class="line">            android:layout_height=&quot;100dp&quot;</div><div class="line">            app:layout_scrollFlags=&quot;scroll&quot;/&gt;  //注意看这里!</div><div class="line">        &lt;TextView</div><div class="line">            android:gravity=&quot;center&quot;</div><div class="line">            android:text=&quot;没有设置layout_scrollFlags&quot;</div><div class="line">            android:textColor=&quot;@android:color/white&quot;</div><div class="line">            android:background=&quot;@android:color/holo_orange_dark&quot;</div><div class="line">            android:layout_width=&quot;match_parent&quot;</div><div class="line">            android:layout_height=&quot;100dp&quot;/&gt;</div><div class="line">&lt;/android.support.design.widget.AppBarLayout&gt;</div></pre></td></tr></table></figure></p>
+<p>那么此时滑动情况为：</p>
+<ul>
+<li>设置了<code>scroll</code>的子<code>View</code>可以在滚动后收起，而没有设置的则不可以。</li>
+<li>在手指向上移动的时候，优先收起<code>AppBarLayout</code>中的可收起<code>View</code>，当它处于收起状态时，下面的列表内容才开始向尾部滚动。</li>
+<li>在手指往下移动的时候，优先让下面的列表内容向顶部滚动，当列表滚动到顶端时，<code>AppBarLayout</code>的可收起<code>View</code>才展开。<br><img src="http://upload-images.jianshu.io/upload_images/1949836-4460ecdd1e7b0d30.gif?imageMogr2/auto-orient/strip" alt=""></li>
+</ul>
+<h2 id="2-3-2-exitUntilCollapsed"><a href="#2-3-2-exitUntilCollapsed" class="headerlink" title="2.3.2 exitUntilCollapsed"></a>2.3.2 <code>exitUntilCollapsed</code></h2><p>对于可收起的子<code>View</code>来说有两种状态：<code>Enter</code>和<code>Collapsed</code>。<strong>手指向上移动的时候，会优先收起<code>AppBarLayout</code>中的子<code>View</code>，而收起的最小高度为<code>0</code></strong>，假如希望它在收起时仍然保留部分可见，那么就需要使用<code>exitUntilCollapsed + minHeight</code>属性，<strong><code>minHeight</code>就决定了收起时的最小高度是多少</strong>，也就是<code>Collapsed</code>状态。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">&lt;android.support.design.widget.AppBarLayout</div><div class="line">        android:id=&quot;@+id/al_title&quot;</div><div class="line">        android:layout_width=&quot;match_parent&quot;</div><div class="line">        android:layout_height=&quot;wrap_content&quot;&gt;</div><div class="line">        &lt;TextView</div><div class="line">            android:gravity=&quot;center&quot;</div><div class="line">            android:text=&quot;layout_scrollFlags=scroll&quot;</div><div class="line">            android:textColor=&quot;@android:color/white&quot;</div><div class="line">            android:background=&quot;@android:color/holo_green_dark&quot;</div><div class="line">            android:layout_width=&quot;match_parent&quot;</div><div class="line">            android:layout_height=&quot;100dp&quot;</div><div class="line">            android:minHeight=&quot;50dp&quot;</div><div class="line">            app:layout_scrollFlags=&quot;scroll|exitUntilCollapsed&quot;/&gt;</div><div class="line">        &lt;TextView</div><div class="line">            android:gravity=&quot;center&quot;</div><div class="line">            android:text=&quot;没有设置layout_scrollFlags&quot;</div><div class="line">            android:textColor=&quot;@android:color/white&quot;</div><div class="line">            android:background=&quot;@android:color/holo_orange_dark&quot;</div><div class="line">            android:layout_width=&quot;match_parent&quot;</div><div class="line">            android:layout_height=&quot;100dp&quot;/&gt;</div><div class="line">&lt;/android.support.design.widget.AppBarLayout&gt;</div></pre></td></tr></table></figure></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1949836-d4a497862458435a.gif?imageMogr2/auto-orient/strip" alt=""></p>
+<h3 id="2-3-3-enterAlways"><a href="#2-3-3-enterAlways" class="headerlink" title="2.3.3 enterAlways"></a>2.3.3 <code>enterAlways</code></h3><p><code>exitUntilCollapsed</code>决定了<strong>手指向上移动时</strong><code>AppBarLayout</code>怎么收起它的子<code>View</code>，而<code>enterAlways</code>则决定了<strong>手指向下移动时</strong>的行为。默认情况下，在手指向下移动时，会优先让列表滚动到顶部，而如果设置了<code>enterAlways</code>，那么会优先让<code>AppBarLayout</code>中的子<code>View</code>滚动到展开。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">&lt;android.support.design.widget.AppBarLayout</div><div class="line">        android:id=&quot;@+id/al_title&quot;</div><div class="line">        android:layout_width=&quot;match_parent&quot;</div><div class="line">        android:layout_height=&quot;wrap_content&quot;&gt;</div><div class="line">        &lt;!-- 需要设置属性 --&gt;</div><div class="line">        &lt;TextView</div><div class="line">            android:gravity=&quot;center&quot;</div><div class="line">            android:text=&quot;layout_scrollFlags=scroll|enterAlways&quot;</div><div class="line">            android:textColor=&quot;@android:color/white&quot;</div><div class="line">            android:background=&quot;@android:color/holo_green_dark&quot;</div><div class="line">            android:layout_width=&quot;match_parent&quot;</div><div class="line">            android:layout_height=&quot;100dp&quot;</div><div class="line">            app:layout_scrollFlags=&quot;scroll|enterAlways&quot;/&gt;</div><div class="line">        &lt;TextView</div><div class="line">            android:gravity=&quot;center&quot;</div><div class="line">            android:text=&quot;没有设置layout_scrollFlags&quot;</div><div class="line">            android:textColor=&quot;@android:color/white&quot;</div><div class="line">            android:background=&quot;@android:color/holo_orange_dark&quot;</div><div class="line">            android:layout_width=&quot;match_parent&quot;</div><div class="line">            android:layout_height=&quot;100dp&quot;/&gt;</div><div class="line">&lt;/android.support.design.widget.AppBarLayout&gt;</div></pre></td></tr></table></figure></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1949836-342e04d7a33ae7b8.gif?imageMogr2/auto-orient/strip" alt=""></p>
+<h3 id="2-3-4-enterAlwaysCollapsed"><a href="#2-3-4-enterAlwaysCollapsed" class="headerlink" title="2.3.4 enterAlwaysCollapsed"></a>2.3.4 <code>enterAlwaysCollapsed</code></h3><p><code>enterAlwaysCollapsed</code>，<code>enterAlways</code>以及<code>minHeight</code>属性一起配合使用，采用这个标志位，主要是为了使得手指向下移动时出现下面这个效果：</p>
+<ul>
+<li>优先滚动<code>AppBarLayout</code>中的子<code>View</code>，但是并不是滚动到全部展开，而是只滚动到<code>minHeight</code></li>
+<li><code>AppBarLayout</code>中的子<code>View</code>滚动到<code>minHeight</code>之后，开始滚动列表，直到列表滚动到头部</li>
+<li>列表滚动到头部之后，开始滚动<code>AppBarLayout</code>中的子<code>View</code>，直到它完全展开</li>
+</ul>
+<p>注意和<code>exitUntilCollapsed</code>的<code>minHeight</code>区分开来；</p>
+<ul>
+<li><code>enterAlways|enterAlwaysCollapsed</code>的<code>minHeight</code>，决定的是<strong>手指向下移动且列表没有滚动到顶端</strong>的<strong>最大高度</strong></li>
+<li><code>exitUntilCollapsed</code>的<code>minHeight</code>，决定的是<strong>手指向上移动</strong>时的<strong>最小高度</strong></li>
+</ul>
+<p>这两个标志位和<code>minHeight</code>是相互依赖的关系，如果声明对应的标志位，那么<code>minHeight</code>是没有任何意义的；而如果只声明了标志位，没有声明<code>minHeight</code>，那么默认<code>minHeight</code>为<code>0</code>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">&lt;android.support.design.widget.AppBarLayout</div><div class="line">        android:id=&quot;@+id/al_title&quot;</div><div class="line">        android:layout_width=&quot;match_parent&quot;</div><div class="line">        android:layout_height=&quot;wrap_content&quot;&gt;</div><div class="line">        &lt;!-- 需要设置属性 --&gt;</div><div class="line">        &lt;TextView</div><div class="line">            android:gravity=&quot;center&quot;</div><div class="line">            android:text=&quot;layout_scrollFlags=scroll|enterAlways|enterAlwaysCollapsed, minHeight=50dp&quot;</div><div class="line">            android:textColor=&quot;@android:color/white&quot;</div><div class="line">            android:background=&quot;@android:color/holo_green_dark&quot;</div><div class="line">            android:layout_width=&quot;match_parent&quot;</div><div class="line">            android:layout_height=&quot;100dp&quot;</div><div class="line">            android:minHeight=&quot;50dp&quot;</div><div class="line">            app:layout_scrollFlags=&quot;scroll|enterAlways|enterAlwaysCollapsed&quot;/&gt;</div><div class="line">        &lt;TextView</div><div class="line">            android:gravity=&quot;center&quot;</div><div class="line">            android:text=&quot;没有设置layout_scrollFlags&quot;</div><div class="line">            android:textColor=&quot;@android:color/white&quot;</div><div class="line">            android:background=&quot;@android:color/holo_orange_dark&quot;</div><div class="line">            android:layout_width=&quot;match_parent&quot;</div><div class="line">            android:layout_height=&quot;100dp&quot;/&gt;</div><div class="line">&lt;/android.support.design.widget.AppBarLayout&gt;</div></pre></td></tr></table></figure>
+<p><img src="http://upload-images.jianshu.io/upload_images/1949836-2c63914954616250.gif?imageMogr2/auto-orient/strip" alt=""></p>
+<h3 id="2-3-5-snap"><a href="#2-3-5-snap" class="headerlink" title="2.3.5 snap"></a>2.3.5 <code>snap</code></h3><p>默认情况下，在手指从屏幕上抬起之后，<code>AppBarLayout</code>中子<code>View</code>的状态就不会变化了，而如果我们设置了<code>snap</code>标志位，那么在手指抬起之后，会根据子<code>View</code>当前的偏移量，决定是让它变为收起还是展开状态。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">&lt;android.support.design.widget.AppBarLayout</div><div class="line">        android:id=&quot;@+id/al_title&quot;</div><div class="line">        android:layout_width=&quot;match_parent&quot;</div><div class="line">        android:layout_height=&quot;wrap_content&quot;&gt;</div><div class="line">        &lt;!-- 需要设置属性 --&gt;</div><div class="line">        &lt;TextView</div><div class="line">            android:gravity=&quot;center&quot;</div><div class="line">            android:text=&quot;layout_scrollFlags=scroll|snap&quot;</div><div class="line">            android:textColor=&quot;@android:color/white&quot;</div><div class="line">            android:background=&quot;@android:color/holo_green_dark&quot;</div><div class="line">            android:layout_width=&quot;match_parent&quot;</div><div class="line">            android:layout_height=&quot;100dp&quot;</div><div class="line">            app:layout_scrollFlags=&quot;scroll|snap&quot;/&gt;</div><div class="line">        &lt;TextView</div><div class="line">            android:gravity=&quot;center&quot;</div><div class="line">            android:text=&quot;没有设置layout_scrollFlags&quot;</div><div class="line">            android:textColor=&quot;@android:color/white&quot;</div><div class="line">            android:background=&quot;@android:color/holo_orange_dark&quot;</div><div class="line">            android:layout_width=&quot;match_parent&quot;</div><div class="line">            android:layout_height=&quot;100dp&quot;/&gt;</div><div class="line">&lt;/android.support.design.widget.AppBarLayout&gt;</div></pre></td></tr></table></figure></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1949836-21e872414217f7fd.gif?imageMogr2/auto-orient/strip" alt=""></p>
+<h2 id="2-4-监听AppBarLayout的滚动状态"><a href="#2-4-监听AppBarLayout的滚动状态" class="headerlink" title="2.4 监听AppBarLayout的滚动状态"></a>2.4 监听<code>AppBarLayout</code>的滚动状态</h2><p><code>AppBarLayout</code>提供了监听滚动状态的接口，我们可以根据这个偏移值来改变界面的状态：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">private void setAppBar() &#123;</div><div class="line">        final TextView moveView = (TextView) findViewById(R.id.iv_move_title);</div><div class="line">        AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.al_title);</div><div class="line">        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() &#123;</div><div class="line"></div><div class="line">            @Override</div><div class="line">            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) &#123;</div><div class="line">                Log.d(&quot;AppBarLayout&quot;, &quot;offset=&quot; + verticalOffset);</div><div class="line">                int height = moveView.getHeight();</div><div class="line">                int minHeight = moveView.getMinHeight();</div><div class="line">                float fraction = verticalOffset / (float) (minHeight - height);</div><div class="line">                moveView.setAlpha(1 - fraction);</div><div class="line">            &#125;</div><div class="line"></div><div class="line">        &#125;);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这里，我们根据<code>offset</code>的值来改变<code>alpha</code>，最终达到下面的效果：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-18cecd7767b4b8b0.gif?imageMogr2/auto-orient/strip" alt="scroll_7.gif"><br>在手指往上移动的过程当中，<code>verticalOffset</code>从<code>0</code>变为负值：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-3e36e33a7ebb06c9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h2 id="2-6-AppBarLayout小结"><a href="#2-6-AppBarLayout小结" class="headerlink" title="2.6 AppBarLayout小结"></a>2.6 <code>AppBarLayout</code>小结</h2><p><code>AppBarLayout</code>主要是掌握两点：</p>
+<ul>
+<li><code>app:layout_scrollFlags</code>几种标志位之前的区别</li>
+<li>如何监听<code>AppBarLayout</code>的滚动</li>
+</ul>
+<p>掌握完这两点之后，我们就可以自由发挥，做出自己想要的效果了。</p>
+<h1 id="三、AppBarLayout和CollapsingToolbarLayout结合"><a href="#三、AppBarLayout和CollapsingToolbarLayout结合" class="headerlink" title="三、AppBarLayout和CollapsingToolbarLayout结合"></a>三、<code>AppBarLayout</code>和<code>CollapsingToolbarLayout</code>结合</h1><p><code>CollapsingToolbarLayout</code>用于对<code>Toolbar</code>进行包装，因此，它是<code>AppBarLayout</code>的直接子<code>View</code>，同时也是<code>Toolbar</code>的直接父<code>View</code>，当使用<code>CollapsingToolbarLayout</code>时我们的界面布局一般是这样的：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-1234b39e6e2a0f61.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br><code>CollapsingToolbarLayout</code>的标志比较多，而且需要和<code>Toolbar</code>相结合，下面，我们就以一种比较常见的例子，来讲解几个比较重要的标志位，先看效果：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-881e7fa4a273a18a.gif?imageMogr2/auto-orient/strip" alt=""><br><code>AppBarLayout</code>的布局如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">&lt;android.support.design.widget.AppBarLayout</div><div class="line">        android:id=&quot;@+id/al_title&quot;</div><div class="line">        android:layout_width=&quot;match_parent&quot;</div><div class="line">        android:layout_height=&quot;wrap_content&quot;&gt;</div><div class="line">        &lt;android.support.design.widget.CollapsingToolbarLayout</div><div class="line">            android:id=&quot;@+id/ctl_title&quot;</div><div class="line">            android:layout_width=&quot;match_parent&quot;</div><div class="line">            android:layout_height=&quot;wrap_content&quot;</div><div class="line">            app:contentScrim=&quot;@color/colorPrimaryDark&quot;</div><div class="line">            app:layout_scrollFlags=&quot;scroll|exitUntilCollapsed&quot;&gt;</div><div class="line">            &lt;ImageView</div><div class="line">                android:id=&quot;@+id/iv_title&quot;</div><div class="line">                android:src=&quot;@drawable/ic_bg&quot;</div><div class="line">                android:layout_width=&quot;match_parent&quot;</div><div class="line">                android:scaleType=&quot;centerCrop&quot;</div><div class="line">                android:layout_height=&quot;150dp&quot;</div><div class="line">                app:layout_collapseParallaxMultiplier=&quot;0.5&quot;</div><div class="line">                app:layout_collapseMode=&quot;parallax&quot;/&gt;</div><div class="line">            &lt;android.support.v7.widget.Toolbar</div><div class="line">                android:id=&quot;@+id/toolbar&quot;</div><div class="line">                android:title=&quot;@string/app_name&quot;</div><div class="line">                android:layout_width=&quot;match_parent&quot;</div><div class="line">                android:layout_height=&quot;50dp&quot;</div><div class="line">                app:title=&quot;Collapse&quot;</div><div class="line">                app:navigationIcon=&quot;@android:drawable/ic_media_play&quot;</div><div class="line">                app:layout_collapseMode=&quot;pin&quot;/&gt;</div><div class="line">        &lt;/android.support.design.widget.CollapsingToolbarLayout&gt;</div><div class="line">&lt;/android.support.design.widget.AppBarLayout&gt;</div></pre></td></tr></table></figure></p>
+<p>下面，我们就来介绍上面这个布局中比较重要的标志位：</p>
+<ul>
+<li><code>app:contentScrim</code><br>设置收起之后<code>CollapsingToolbarLayout</code>的颜色，正如例子中的那样，在收起之后，<code>ImageView</code>的背景被我们设置的<code>contentScrim</code>所覆盖。</li>
+<li><code>app:layout_scrollFlags=&quot;scroll|exitUntilCollapsed&quot;</code><br><code>scroll</code>标志位是必须设置的，<code>exitUntilCollapsed</code>保证了我们在手指上移的时候，<code>CollapsingToolbarLayout</code>最多收起到<code>Toolbar</code>的高度，使得它始终保持可见。</li>
+<li><code>app:layout_collapseMode=&quot;parallax&quot;</code>和<code>app:layout_collapseParallaxMultiplier=&quot;0.5&quot;</code><br><code>layout_collapseMode</code>有两种模式，<code>parallax</code>表示视差效果，简单地说，就是当<code>CollapsingToolbarLayout</code>滑动的距离不等于背景滑动的距离，从而产生一种视差效果，而视差效果的大小由<code>app:layout_collapseParallaxMultiplier</code>决定。</li>
+<li><code>app:layout_collapseMode=&quot;pin&quot;</code><br><code>layout_collapseMode</code>的另一种模式，它使得<code>Toolbar</code>一直固定在顶端。</li>
+</ul>
+<p>除了上面这几个重要的标志位之外，相信大家还发现了<code>CollapsingToolbar</code>在全部展开的时候会把标题设置为比较大，而当上移时，标题慢慢缩小为<code>Toolbar</code>的标题大小，并移动到<code>Toolbar</code>的标题所在位置。</p>
+<h1 id="四、总结"><a href="#四、总结" class="headerlink" title="四、总结"></a>四、总结</h1><p>以上就是对于使用<code>CoordinatorLayout</code>、<code>AppBarLayout</code>、<code>CollapsingToolbarLayout</code>实现标题跟随列表滚动的简要介绍，最主要的是掌握<code>layout_scrollFlags</code>几种标志之间的区别。</p>
+<h1 id="五、参考文献"><a href="#五、参考文献" class="headerlink" title="五、参考文献"></a>五、参考文献</h1><p><a href="http://www.jianshu.com/p/ac56f11e7ce1" target="_blank" rel="external">Material Design之 AppbarLayout 开发实践总结</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/04/08/动画体系/动画体系知识梳理(2)---转场动画-ContentTransition-实践篇/" rel="next" title="动画体系知识梳理(2) - 转场动画 ContentTransition 实践篇">
+                <i class="fa fa-chevron-left"></i> 动画体系知识梳理(2) - 转场动画 ContentTransition 实践篇
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/04/12/Material-Design-控件/Material-Design-控件知识梳理(3)---BottomSheet-&&-BottomSheetDialog-&&-Bottom/" rel="prev" title="Material Design 控件知识梳理(3) - BottomSheet && BottomSheetDialog && BottomSheetDialogFragment">
+                Material Design 控件知识梳理(3) - BottomSheet && BottomSheetDialog && BottomSheetDialogFragment <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="John Doe" />
+          <p class="site-author-name" itemprop="name">John Doe</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">104</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">23</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、概述"><span class="nav-number">1.</span> <span class="nav-text">一、概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、只采用AppBarLayout实现"><span class="nav-number">2.</span> <span class="nav-text">二、只采用AppBarLayout实现</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-CoordinatorLayout"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 CoordinatorLayout</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-AppBarLayout下的列表"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 AppBarLayout下的列表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-AppBarLayout的标志位"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 AppBarLayout的标志位</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-1-scroll"><span class="nav-number">2.4.</span> <span class="nav-text">2.3.1 scroll</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-2-exitUntilCollapsed"><span class="nav-number">2.5.</span> <span class="nav-text">2.3.2 exitUntilCollapsed</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-3-enterAlways"><span class="nav-number">2.5.1.</span> <span class="nav-text">2.3.3 enterAlways</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-4-enterAlwaysCollapsed"><span class="nav-number">2.5.2.</span> <span class="nav-text">2.3.4 enterAlwaysCollapsed</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-5-snap"><span class="nav-number">2.5.3.</span> <span class="nav-text">2.3.5 snap</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-4-监听AppBarLayout的滚动状态"><span class="nav-number">2.6.</span> <span class="nav-text">2.4 监听AppBarLayout的滚动状态</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-6-AppBarLayout小结"><span class="nav-number">2.7.</span> <span class="nav-text">2.6 AppBarLayout小结</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、AppBarLayout和CollapsingToolbarLayout结合"><span class="nav-number">3.</span> <span class="nav-text">三、AppBarLayout和CollapsingToolbarLayout结合</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四、总结"><span class="nav-number">4.</span> <span class="nav-text">四、总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#五、参考文献"><span class="nav-number">5.</span> <span class="nav-text">五、参考文献</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

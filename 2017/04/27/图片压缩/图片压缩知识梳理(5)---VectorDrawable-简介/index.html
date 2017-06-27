@@ -1,0 +1,728 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="一、为什么要使用 VectorDrawable虽然目前已经有很多针对于PNG/JPG的压缩算法，但是这些算法最终的压缩效果仍然是有限的，因此，人们开始尝试寻找一种新的图片格式来替代它们，今天我们所介绍的VectorDrawable就是Android平台上一种新的图片存储格式，它采用了一种矢量图形的思想。 二、光栅图像（Raster Image）在介绍VectorDrawable之前，我们先简单了解">
+<meta property="og:type" content="article">
+<meta property="og:title" content="图片压缩知识梳理(5) - VectorDrawable 简介">
+<meta property="og:url" content="http://yoursite.com/2017/04/27/图片压缩/图片压缩知识梳理(5)---VectorDrawable-简介/index.html">
+<meta property="og:site_name" content="泽毛">
+<meta property="og:description" content="一、为什么要使用 VectorDrawable虽然目前已经有很多针对于PNG/JPG的压缩算法，但是这些算法最终的压缩效果仍然是有限的，因此，人们开始尝试寻找一种新的图片格式来替代它们，今天我们所介绍的VectorDrawable就是Android平台上一种新的图片存储格式，它采用了一种矢量图形的思想。 二、光栅图像（Raster Image）在介绍VectorDrawable之前，我们先简单了解">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-df98210f19d6a963.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-a720a3fd81e61a85.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-1a92d76ce68bfba8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2017-06-27T14:24:09.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="图片压缩知识梳理(5) - VectorDrawable 简介">
+<meta name="twitter:description" content="一、为什么要使用 VectorDrawable虽然目前已经有很多针对于PNG/JPG的压缩算法，但是这些算法最终的压缩效果仍然是有限的，因此，人们开始尝试寻找一种新的图片格式来替代它们，今天我们所介绍的VectorDrawable就是Android平台上一种新的图片存储格式，它采用了一种矢量图形的思想。 二、光栅图像（Raster Image）在介绍VectorDrawable之前，我们先简单了解">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-df98210f19d6a963.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/04/27/图片压缩/图片压缩知识梳理(5)---VectorDrawable-简介/"/>
+
+
+
+
+
+  <title>图片压缩知识梳理(5) - VectorDrawable 简介 | 泽毛</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">泽毛</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/04/27/图片压缩/图片压缩知识梳理(5)---VectorDrawable-简介/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="泽毛">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">图片压缩知识梳理(5) - VectorDrawable 简介</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-27T12:34:00+08:00">
+                2017-04-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/图片压缩知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">图片压缩知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="一、为什么要使用-VectorDrawable"><a href="#一、为什么要使用-VectorDrawable" class="headerlink" title="一、为什么要使用 VectorDrawable"></a>一、为什么要使用 VectorDrawable</h1><p>虽然目前已经有很多针对于<code>PNG/JPG</code>的压缩算法，但是这些算法最终的压缩效果仍然是有限的，因此，人们开始尝试寻找一种新的图片格式来替代它们，今天我们所介绍的<code>VectorDrawable</code>就是<code>Android</code>平台上一种新的图片存储格式，它采用了一种<strong>矢量图形</strong>的思想。</p>
+<h1 id="二、光栅图像（Raster-Image）"><a href="#二、光栅图像（Raster-Image）" class="headerlink" title="二、光栅图像（Raster Image）"></a>二、光栅图像（Raster Image）</h1><p>在介绍<code>VectorDrawable</code>之前，我们先简单了解一下最常见的光栅图像。</p>
+<p><strong>光栅图像</strong>也叫做位图、点阵图、像素图，它是有一个个小的像素点组成，而每个像素点由通过一系列的颜色通道（<code>RGB</code>）来组合成它的颜色，我们平时谈到的<code>PNG</code>、<code>JPG</code>就是光栅图像的子类。</p>
+<p>当我们在应用中使用这种类型的图片时，会面临如下几个问题：</p>
+<ul>
+<li>图片的大小会随着像素个数的增加而线性增大</li>
+<li>图片的压缩率会受到图片中各像素点的自相似性影响，其表现为：当图片中相同颜色的像素点越多，那么压缩率就越高。</li>
+<li>为了适应多种机型的分辨率，我们还需要在<code>APK</code>中内置多种分辨率的图片，这无形中就增加了<code>APK</code>的大小。</li>
+</ul>
+<h1 id="三、矢量图形（Vector-Image）"><a href="#三、矢量图形（Vector-Image）" class="headerlink" title="三、矢量图形（Vector Image）"></a>三、矢量图形（Vector Image）</h1><h2 id="3-1-矢量图形的基本概念"><a href="#3-1-矢量图形的基本概念" class="headerlink" title="3.1 矢量图形的基本概念"></a>3.1 矢量图形的基本概念</h2><p>为了解决以上的几个问题，<strong>矢量图形</strong>的想法就被提出了：它包含的不是图片中的各个像素点的描述，而是对于图片的绘制命令，当我们解析图片的时候，会运行这一系列的绘制命令来最终得到光栅图像。</p>
+<h2 id="3-2-SVG-和-VectorDrawable"><a href="#3-2-SVG-和-VectorDrawable" class="headerlink" title="3.2 SVG 和 VectorDrawable"></a>3.2 SVG 和 VectorDrawable</h2><p><code>SVG</code>就是矢量图形的一种具体实现，它包含了一系列的绘制命令，例如下图，我们使用<code>xml</code>文件的多个标签进行组合，最终把图像描述出来：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-df98210f19d6a963.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>然而<code>SVG</code>的缺点是它包含了许多在<code>Android</code>中并不必要的组件，而<code>Android</code>平台又非常在意<code>APK</code>的大小，因此它对<code>SVG</code>的协议进行了裁剪，定义了自己的矢量图形格式 - <code>VectorDrawable</code>。</p>
+<p><code>VectorDrawable</code>的工作原理和<code>SVG</code>类似，但是它只包含<code>SVG</code>绘制命令的一小部分。其整个处理过程为加载<code>VD</code>，对其进行栅格化处理，使用栅格化处理后的<code>Bitmap</code>，下图就是一个<code>VectorDrawable</code>的例子：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-a720a3fd81e61a85.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br><code>VectorDrawable</code>和光栅图像相比有以下几点优势：</p>
+<ul>
+<li>在<code>aapt</code>打包的过程中会把<code>VectorDrawable</code>所对应的<code>xml</code>文件转换为二进制流的格式，这样就可以进一步缩减文件的大小</li>
+<li>由于<code>VectorDrawable</code>是通过绘制的命令来描述一个图像，因此它能做到一个文件，适配多种分辨率的机型</li>
+<li>可以对<code>VectorDrawable</code>中的各个部分添加动画，也就是<code>AnimatedVectorDrawable</code></li>
+</ul>
+<h1 id="四、VectorDrawable-的适用范围"><a href="#四、VectorDrawable-的适用范围" class="headerlink" title="四、VectorDrawable 的适用范围"></a>四、VectorDrawable 的适用范围</h1><p>虽然说<code>VectorDrawable</code>有很多的优点，但是也有它的局限性，例如下面这两点：</p>
+<h2 id="4-1-适用于较小的图片"><a href="#4-1-适用于较小的图片" class="headerlink" title="4.1 适用于较小的图片"></a>4.1 适用于较小的图片</h2><p>在<code>Android</code>当中，<code>VectorDrawable</code>到光栅图像的栅格化处理是通过<code>CPU</code>进行的。而这一光栅处理的时间和图片的大小成正比，因此，如果图片很大，那么加载的时间将会很长，这种情况就不适合使用<code>VectorDrawable</code>了。</p>
+<h2 id="4-2-适用于较为简单的图片"><a href="#4-2-适用于较为简单的图片" class="headerlink" title="4.2 适用于较为简单的图片"></a>4.2 适用于较为简单的图片</h2><p><code>VectorDrawable</code>还有一点限制，就是你只能通过一系列简单的图形（矩形、圆形、弧形）和连线来组成最终的图像，因此，如果图形很复杂，那么就需要更多的命令来描述这个图形，最终就导致了文件的增大和加载时间的增加，因此，尽量只用<code>VectorDrawable</code>来表示较为简单的图形。</p>
+<h1 id="五、简化-VectorDrawable-的-Path"><a href="#五、简化-VectorDrawable-的-Path" class="headerlink" title="五、简化 VectorDrawable 的 Path"></a>五、简化 VectorDrawable 的 Path</h1><p>在使用<code>VectorDrawable</code>的时候，我们一般是先产生一个原始的<code>SVG</code>图像，再通过第三方工具将它转换成为<code>Vector</code>格式。在这一转换的过程当中，最需要关注的一点就是转换后所生成的<code>vector</code>文件中的<code>pathData</code>属性：</p>
+<ul>
+<li>当需要描述一个较为复杂的图像时，<code>pathData</code>通常会变得非常大。有的时候，仅仅对<code>SVG</code>图像进行一些微小的调整，都可能使得<code>pathData</code>发生很大的变化。</li>
+<li>应用程序在需要将一个<code>VectorDrawable</code>所描述的图像展现在屏幕上之前，首先会通过<code>Path</code>进行栅格化处理，这一处理过程所耗费的时间而资源将会随着<code>pathData</code>的增大而增加。</li>
+</ul>
+<p>也就是说，使用<code>VectorDrawable</code>所耗费的成本而<code>pathData</code>的大小是成正比的，因此我们应该<strong>尽可能地简化 <code>VectorDrawable</code>的<code>Path</code>数据</strong>。</p>
+<h1 id="六、在必要时使用-ShapeDrawable"><a href="#六、在必要时使用-ShapeDrawable" class="headerlink" title="六、在必要时使用 ShapeDrawable"></a>六、在必要时使用 ShapeDrawable</h1><p>对于某些图像，如果我们能用原始的图形（圆形、矩形、椭圆等等）来替换<code>Path</code>，那么将有可能进一步的减小栅格化过程所耗费的性能，以及图片文件的大小。</p>
+<p><code>ShapeDrawable</code>就是一种很好的替代方式，它使用一系列简单的图形来描述图像，例如下面这样：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-1a92d76ce68bfba8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h1 id="七、文献"><a href="#七、文献" class="headerlink" title="七、文献"></a>七、文献</h1><p><a href="https://medium.com/@duhroach/how-vectordrawable-works-fed96e110e35" target="_blank" rel="external">Image compression - How VectorDrawable works</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/04/25/图片压缩/图片压缩知识梳理(2)---减小-PNG-大小/" rel="next" title="图片压缩知识梳理(2) - 减小 PNG 大小">
+                <i class="fa fa-chevron-left"></i> 图片压缩知识梳理(2) - 减小 PNG 大小
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/04/27/图片压缩/图片压缩知识梳理(9)---选择合适的图片格式/" rel="prev" title="图片压缩知识梳理(9) - 选择合适的图片格式">
+                图片压缩知识梳理(9) - 选择合适的图片格式 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="John Doe" />
+          <p class="site-author-name" itemprop="name">John Doe</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">104</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">23</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、为什么要使用-VectorDrawable"><span class="nav-number">1.</span> <span class="nav-text">一、为什么要使用 VectorDrawable</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、光栅图像（Raster-Image）"><span class="nav-number">2.</span> <span class="nav-text">二、光栅图像（Raster Image）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、矢量图形（Vector-Image）"><span class="nav-number">3.</span> <span class="nav-text">三、矢量图形（Vector Image）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-矢量图形的基本概念"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 矢量图形的基本概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-SVG-和-VectorDrawable"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 SVG 和 VectorDrawable</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四、VectorDrawable-的适用范围"><span class="nav-number">4.</span> <span class="nav-text">四、VectorDrawable 的适用范围</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#4-1-适用于较小的图片"><span class="nav-number">4.1.</span> <span class="nav-text">4.1 适用于较小的图片</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-2-适用于较为简单的图片"><span class="nav-number">4.2.</span> <span class="nav-text">4.2 适用于较为简单的图片</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#五、简化-VectorDrawable-的-Path"><span class="nav-number">5.</span> <span class="nav-text">五、简化 VectorDrawable 的 Path</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#六、在必要时使用-ShapeDrawable"><span class="nav-number">6.</span> <span class="nav-text">六、在必要时使用 ShapeDrawable</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#七、文献"><span class="nav-number">7.</span> <span class="nav-text">七、文献</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

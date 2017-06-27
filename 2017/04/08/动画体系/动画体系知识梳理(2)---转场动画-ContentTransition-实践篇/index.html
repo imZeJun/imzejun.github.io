@@ -1,0 +1,738 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="一、概述在 转场动画理论篇 中，我们介绍了Content Transition的基本理论，今天，我们来一起学习Content Transition使用当中的细节问题。 二、基本使用2.1 启动Activity方式如果我们希望在Activity切换的时候加上Content Transition动画，那么需要使用下面的启动方式：12345678910private void startTargetAc">
+<meta property="og:type" content="article">
+<meta property="og:title" content="动画体系知识梳理(2) - 转场动画 ContentTransition 实践篇">
+<meta property="og:url" content="http://yoursite.com/2017/04/08/动画体系/动画体系知识梳理(2)---转场动画-ContentTransition-实践篇/index.html">
+<meta property="og:site_name" content="泽毛">
+<meta property="og:description" content="一、概述在 转场动画理论篇 中，我们介绍了Content Transition的基本理论，今天，我们来一起学习Content Transition使用当中的细节问题。 二、基本使用2.1 启动Activity方式如果我们希望在Activity切换的时候加上Content Transition动画，那么需要使用下面的启动方式：12345678910private void startTargetAc">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-b718c6894024aad4.gif?imageMogr2/auto-orient/strip">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-7368faad34576583.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-71fd3a1c9b60ed01.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-30f718bdde34048b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-7674350103ab09b3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-328b02c3133d8cad.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-e188be4fa9fc40fa.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-d4bed815588bd736.gif?imageMogr2/auto-orient/strip">
+<meta property="og:updated_time" content="2017-06-27T14:09:09.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="动画体系知识梳理(2) - 转场动画 ContentTransition 实践篇">
+<meta name="twitter:description" content="一、概述在 转场动画理论篇 中，我们介绍了Content Transition的基本理论，今天，我们来一起学习Content Transition使用当中的细节问题。 二、基本使用2.1 启动Activity方式如果我们希望在Activity切换的时候加上Content Transition动画，那么需要使用下面的启动方式：12345678910private void startTargetAc">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-b718c6894024aad4.gif?imageMogr2/auto-orient/strip">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/04/08/动画体系/动画体系知识梳理(2)---转场动画-ContentTransition-实践篇/"/>
+
+
+
+
+
+  <title>动画体系知识梳理(2) - 转场动画 ContentTransition 实践篇 | 泽毛</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">泽毛</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/04/08/动画体系/动画体系知识梳理(2)---转场动画-ContentTransition-实践篇/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="泽毛">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">动画体系知识梳理(2) - 转场动画 ContentTransition 实践篇</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-08T11:57:00+08:00">
+                2017-04-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/动画体系知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">动画体系知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="一、概述"><a href="#一、概述" class="headerlink" title="一、概述"></a>一、概述</h1><p>在 <a href="http://www.jianshu.com/p/510e415c56f2" target="_blank" rel="external">转场动画理论篇</a> 中，我们介绍了<code>Content Transition</code>的基本理论，今天，我们来一起学习<code>Content Transition</code>使用当中的细节问题。</p>
+<h1 id="二、基本使用"><a href="#二、基本使用" class="headerlink" title="二、基本使用"></a>二、基本使用</h1><h2 id="2-1-启动Activity方式"><a href="#2-1-启动Activity方式" class="headerlink" title="2.1 启动Activity方式"></a>2.1 启动<code>Activity</code>方式</h2><p>如果我们希望在<code>Activity</code>切换的时候加上<code>Content Transition</code>动画，那么需要使用下面的启动方式：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">private void startTargetActivity(int position) &#123;</div><div class="line">    if (position == 0) &#123;</div><div class="line">        List&lt;Pair&gt; pairs = new ArrayList&lt;&gt;();</div><div class="line">        //1.得到ActivityOptionsCompact对象</div><div class="line">        ActivityOptionsCompat compat = ActivityOptionsCompat.makeSceneTransitionAnimation(mActivity, pairs.toArray(new android.support.v4.util.Pair[pairs.size()]));</div><div class="line">        Intent intent = new Intent(mActivity, CTTargetActivity.class);</div><div class="line">        //2.调用第1步生成的ActivityOptionsCompact的toBundle方法</div><div class="line">        mActivity.startActivity(intent, compat.toBundle());</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><code>makeSceneTransitionAnimation</code>有两个重载方法：</p>
+<ul>
+<li><code>makeSceneTransitionAnimation(Activity activity, View sharedElement, String sharedElementName)</code></li>
+<li><code>makeSceneTransitionAnimation(Activity activity, Pair&lt;View, String&gt;... sharedElements)</code></li>
+</ul>
+<p><code>Activity</code>就对应于当前所在的<code>Activity</code>，而后面的参数则用于<code>Shared Element Transition</code>，这一节我们介绍的是<code>Content Transition</code>，因此，直接传一个空的数组就可以了。</p>
+<h1 id="2-2-设置对应的Transition"><a href="#2-2-设置对应的Transition" class="headerlink" title="2.2 设置对应的Transition"></a>2.2 设置对应的<code>Transition</code></h1><p>在基础理论篇中，我们说过在<code>Activity</code>的切换过程中，每个<code>Acitivity</code>包括了四种<code>Transition</code>，我们可以通过<code>Acitivity</code>所在<code>Window</code>的<code>setxxxTransition</code>方法来设置：</p>
+<ul>
+<li><code>getWindow().setExitTransition</code></li>
+<li><code>getWindow().setEnterTransition</code></li>
+<li><code>getWindow().setReturnTransition</code></li>
+<li><code>getWindow().setReenterTransition</code></li>
+</ul>
+<p>例如，我们<strong>被启动的<code>Acitivity</code></strong>设置<code>Enter</code>和<code>Return</code>，那么需要像下面这样：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">public class CTTargetActivity extends Activity &#123;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    protected void onCreate(Bundle savedInstanceState) &#123;</div><div class="line">        super.onCreate(savedInstanceState);</div><div class="line">        setContentView(R.layout.activity_ct_target);</div><div class="line">        setUpNormalTransition();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private void setUpNormalTransition() &#123;</div><div class="line">        Window window = getWindow();</div><div class="line">        LogFadeTransition transition = new LogFadeTransition();</div><div class="line">        window.setEnterTransition(transition);</div><div class="line">        window.setReturnTransition(transition);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>而如果我们希望对某个过程加上多个<code>Transition</code>，那么可以传入一个<code>TransitionSet</code>：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">private void setUpNormalTransition() &#123;</div><div class="line">    Window window = getWindow();</div><div class="line">    LogFadeTransition transition = new LogFadeTransition();</div><div class="line">    Slide slide = new Slide();</div><div class="line">    TransitionSet set = new TransitionSet();</div><div class="line">    set.addTransition(slide);</div><div class="line">    set.addTransition(transition);</div><div class="line">    window.setEnterTransition(set);</div><div class="line">    window.setReturnTransition(set);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="2-3-Transition各方法回调验证"><a href="#2-3-Transition各方法回调验证" class="headerlink" title="2.3 Transition各方法回调验证"></a>2.3 <code>Transition</code>各方法回调验证</h2><p>我们验证一下在上一篇文章中所谈到的<code>captureXXX</code>、<code>onAppear</code>、<code>onDisappear</code>的调用情况，下面是我们被启动<code>CTTargetActivity</code>的布局，为了在<code>Transition</code>的回调方法中，确定是哪个<code>View</code>，给每个<code>View</code>都加上了<code>Tag</code>：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</div><div class="line">&lt;LinearLayout</div><div class="line">    xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;</div><div class="line">    android:tag=&quot;rootView&quot;</div><div class="line">    android:orientation=&quot;vertical&quot;</div><div class="line">    android:layout_width=&quot;match_parent&quot;</div><div class="line">    android:layout_height=&quot;match_parent&quot;&gt;</div><div class="line">    &lt;RelativeLayout</div><div class="line">        android:id=&quot;@+id/ll_header&quot;</div><div class="line">        android:tag=&quot;ll_header&quot;</div><div class="line">        android:gravity=&quot;center&quot;</div><div class="line">        android:layout_width=&quot;match_parent&quot;</div><div class="line">        android:layout_height=&quot;150dp&quot;&gt;</div><div class="line">        &lt;ImageView</div><div class="line">            android:id=&quot;@+id/iv_bg&quot;</div><div class="line">            android:tag=&quot;iv_bg&quot;</div><div class="line">            android:src=&quot;@drawable/ic_bg&quot;</div><div class="line">            android:layout_width=&quot;match_parent&quot;</div><div class="line">            android:layout_height=&quot;match_parent&quot; /&gt;</div><div class="line">        &lt;ImageView</div><div class="line">            android:id=&quot;@+id/iv_header&quot;</div><div class="line">            android:tag=&quot;iv_header&quot;</div><div class="line">            android:layout_centerInParent=&quot;true&quot;</div><div class="line">            android:src=&quot;@drawable/ic_1&quot;</div><div class="line">            android:layout_width=&quot;50dp&quot;</div><div class="line">            android:layout_height=&quot;50dp&quot;</div><div class="line">            android:layout_marginBottom=&quot;10dp&quot;/&gt;</div><div class="line">        &lt;TextView</div><div class="line">            android:id=&quot;@+id/tv_header&quot;</div><div class="line">            android:tag=&quot;tv_header&quot;</div><div class="line">            android:layout_alignBottom=&quot;@id/iv_header&quot;</div><div class="line">            android:layout_centerHorizontal=&quot;true&quot;</div><div class="line">            android:layout_alignParentBottom=&quot;true&quot;</div><div class="line">            android:layout_marginBottom=&quot;30dp&quot;</div><div class="line">            android:text=&quot;我是标题&quot;</div><div class="line">            android:textSize=&quot;18sp&quot;</div><div class="line">            android:textColor=&quot;@android:color/white&quot;</div><div class="line">            android:layout_width=&quot;wrap_content&quot;</div><div class="line">            android:layout_height=&quot;wrap_content&quot; /&gt;</div><div class="line">    &lt;/RelativeLayout&gt;</div><div class="line">    &lt;TextView</div><div class="line">        android:id=&quot;@+id/tv_content&quot;</div><div class="line">        android:tag=&quot;tv_content&quot;</div><div class="line">        android:layout_width=&quot;match_parent&quot;</div><div class="line">        android:padding=&quot;30dp&quot;</div><div class="line">        android:textColor=&quot;@android:color/white&quot;</div><div class="line">        android:background=&quot;#1F000000&quot;</div><div class="line">        android:text=&quot;我是内容;我是内容;我是内容;我是内容;我是内容;我是内容;我是内容;我是内容;我是内容;我是内容;我是内容;我是内容;我是内容;我是内容;我是内容;我是内容;我是内容;我是内容;我是内容;我是内容;我是内容;我是内容;我是内容;我是内容;&quot;</div><div class="line">        android:layout_height=&quot;match_parent&quot;/&gt;</div><div class="line">&lt;/LinearLayout&gt;</div></pre></td></tr></table></figure></p>
+<p>当我们从别的<code>Activity</code>通过<code>2.1</code>的方式启动它时，效果是这样的：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-b718c6894024aad4.gif?imageMogr2/auto-orient/strip" alt=""><br>当<code>CTTargetActivity</code>被启动的时候，打印的<code>Log</code>为，此时会调用每个<code>transitionView</code>的<code>onAppear</code>方法来获得一个渐显的<code>Animator</code>：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-7368faad34576583.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>而如果我们从<code>CTTargetActivity</code>返回到之前启动它的那个<code>Activity</code>，这时候打印的<code>Log</code>为，此时会调用每个<code>transitionView</code>的<code>onDisappear</code>方法来获得一个渐隐的<code>Animator</code>：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-71fd3a1c9b60ed01.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h2 id="2-4-指定transitionView"><a href="#2-4-指定transitionView" class="headerlink" title="2.4 指定transitionView"></a>2.4 指定<code>transitionView</code></h2><p>在默认情况下，需要执行<code>Transition</code>的<code>View</code>是通过系统遍历得到的，如果我们希望改变这一集合，那么可以通过<code>Transition</code>的<code>addXXX</code>和<code>excludeXXX</code>方法：</p>
+<ul>
+<li><code>addTarget</code>，默认情况下是通过遍历<code>View</code>树的方式得到<code>transitionViews</code>，而如果我们使用了<code>addTarget</code>方法，那么会使得这一过程失效，最后变化的<code>transitionViews</code>只是<code>addTarget</code>所指定的<code>View</code>：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-30f718bdde34048b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>例如我们像下面这样操作：<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">private void setUpNormalTransition() &#123;</div><div class="line">    Window window = getWindow();</div><div class="line">    LogFadeTransition transition = new LogFadeTransition();</div><div class="line">    transition.addTarget(R.id.iv_bg);</div><div class="line">    window.setEnterTransition(transition);</div><div class="line">    window.setReturnTransition(transition);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>那么此时就只会对<code>iv_bg</code>进行变换：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-7674350103ab09b3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<ul>
+<li><code>excludeChildren</code>：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-328b02c3133d8cad.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>把这个<code>View</code>的所有子<code>View</code>从<code>transition</code>的列表中去除，例如，类似于<code>ListView</code>，如果我们希望他的每个<code>Item</code>不做变换，那么就可以使用这个标志位。</li>
+<li><code>excludeTarget</code>：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-e188be4fa9fc40fa.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>排除某个具体的<code>View</code>。</li>
+</ul>
+<h2 id="2-5-Transition过程监听"><a href="#2-5-Transition过程监听" class="headerlink" title="2.5 Transition过程监听"></a>2.5 <code>Transition</code>过程监听</h2><p>某些时候，我们希望在<code>Transition</code>完成之后再进行某些操作，那么可以通过下面这个方法来监听整个过程：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">contentTransition.addListener(new Transition.TransitionListener() &#123;</div><div class="line">            @Override</div><div class="line">            public void onTransitionStart(Transition transition) &#123;&#125;</div><div class="line">            @Override</div><div class="line">            public void onTransitionEnd(Transition transition) &#123;&#125;</div><div class="line">            @Override</div><div class="line">            public void onTransitionCancel(Transition transition) &#123;&#125;</div><div class="line">            @Override</div><div class="line">            public void onTransitionPause(Transition transition) &#123;&#125;</div><div class="line">            @Override</div><div class="line">            public void onTransitionResume(Transition transition) &#123;&#125;</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<h1 id="三、自定义Transition"><a href="#三、自定义Transition" class="headerlink" title="三、自定义Transition"></a>三、自定义<code>Transition</code></h1><p>经过这么长篇幅的介绍，相信大家一定对<code>Transition</code>有了一定的了解了，下面，我们就开始设置自己的<code>Transition</code>，这是我们最终的效果：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-d4bed815588bd736.gif?imageMogr2/auto-orient/strip" alt=""><br>在我们的<code>Transition</code>中，根据<code>View</code>的<code>Tag</code>来进行区分动画：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div></pre></td><td class="code"><pre><div class="line">public class CustomContentTransition extends Visibility &#123;</div><div class="line"></div><div class="line">    public static final String TAG = &quot;CustomContentTransition&quot;;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void captureStartValues(TransitionValues transitionValues) &#123;</div><div class="line">        super.captureStartValues(transitionValues);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void captureEndValues(TransitionValues transitionValues) &#123;</div><div class="line">        super.captureEndValues(transitionValues);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public Animator onAppear(ViewGroup sceneRoot, final View view, TransitionValues startValues, TransitionValues endValues) &#123;</div><div class="line">        Animator animator = null;</div><div class="line">        String viewTag = (String) view.getTag();</div><div class="line">        if (&quot;transition_reveal&quot;.equals(viewTag)) &#123;</div><div class="line">            animator = createRevealAnimator(view, false);</div><div class="line">        &#125; else if (&quot;transition_translationY&quot;.equals(viewTag)) &#123;</div><div class="line">            animator = createTranslateYAnimator(view, 200, 0, false);</div><div class="line">        &#125; else if (&quot;transition_scale&quot;.equals(viewTag)) &#123;</div><div class="line">            animator = createScaleAnimator(view, .8f, 1f, false);</div><div class="line">        &#125;</div><div class="line">        return animator;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public Animator onDisappear(ViewGroup sceneRoot, View view, TransitionValues startValues, TransitionValues endValues) &#123;</div><div class="line">        Animator animator = null;</div><div class="line">        String viewTag = (String) view.getTag();</div><div class="line">        if (&quot;transition_reveal&quot;.equals(viewTag)) &#123;</div><div class="line">            animator = createRevealAnimator(view, true);</div><div class="line">        &#125; else if (&quot;transition_translationY&quot;.equals(viewTag)) &#123;</div><div class="line">            animator = createTranslateYAnimator(view, 0, 200, true);</div><div class="line">        &#125; else if (&quot;transition_scale&quot;.equals(viewTag)) &#123;</div><div class="line">            animator = createScaleAnimator(view, 1f, .8f, true);</div><div class="line">        &#125;</div><div class="line">        return animator;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private Animator createScaleAnimator(final View view, float startValue, final float endValues, final boolean dismiss) &#123;</div><div class="line">        ValueAnimator animator = ValueAnimator.ofFloat(startValue, endValues);</div><div class="line">        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() &#123;</div><div class="line">            @Override</div><div class="line">            public void onAnimationUpdate(ValueAnimator animation) &#123;</div><div class="line">                float scale = (Float) animation.getAnimatedValue();</div><div class="line">                float faction = animation.getAnimatedFraction();</div><div class="line">                view.setScaleX(scale);</div><div class="line">                view.setScaleY(scale);</div><div class="line">                view.setAlpha(dismiss ? (1 - faction) : faction);</div><div class="line">            &#125;</div><div class="line">        &#125;);</div><div class="line">        return animator;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private Animator createTranslateYAnimator(final View view, final int startValue, int endValue, final boolean dismiss) &#123;</div><div class="line">        ValueAnimator animator = ValueAnimator.ofInt(startValue, endValue);</div><div class="line">        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() &#123;</div><div class="line"></div><div class="line">            @Override</div><div class="line">            public void onAnimationUpdate(ValueAnimator animation) &#123;</div><div class="line">                int translationY = (Integer) animation.getAnimatedValue();</div><div class="line">                float faction = animation.getAnimatedFraction();</div><div class="line">                view.setTranslationY(translationY);</div><div class="line">                view.setAlpha(dismiss ? (1 - faction) : faction);</div><div class="line">            &#125;</div><div class="line">        &#125;);</div><div class="line">        return animator;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private Animator createRevealAnimator(final View view, boolean dismiss) &#123;</div><div class="line">        int cx = (view.getLeft() + view.getRight()) / 2 - 270;</div><div class="line">        int cy = (view.getTop() + view.getBottom()) / 2 - 120;</div><div class="line">        float maxRadius = (float) Math.hypot(view.getWidth(), view.getHeight());</div><div class="line">        float startRadius = dismiss ? maxRadius : 0;</div><div class="line">        float finalRadius = dismiss ? 0 : maxRadius;</div><div class="line">        return ViewAnimationUtils.createCircularReveal(view, cx, cy, startRadius, finalRadius);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>在布局当中，给<code>View</code>添加不同的<code>Tag</code>：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div></pre></td><td class="code"><pre><div class="line">&lt;LinearLayout</div><div class="line">    xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;</div><div class="line">    android:tag=&quot;rootView&quot;</div><div class="line">    android:orientation=&quot;vertical&quot;</div><div class="line">    android:layout_width=&quot;match_parent&quot;</div><div class="line">    android:layout_height=&quot;match_parent&quot;&gt;</div><div class="line">    &lt;RelativeLayout</div><div class="line">        android:id=&quot;@+id/ll_header&quot;</div><div class="line">        android:tag=&quot;ll_header&quot;</div><div class="line">        android:gravity=&quot;center&quot;</div><div class="line">        android:layout_width=&quot;match_parent&quot;</div><div class="line">        android:layout_height=&quot;150dp&quot;&gt;</div><div class="line">        &lt;ImageView</div><div class="line">            android:id=&quot;@+id/iv_bg&quot;</div><div class="line">            //***</div><div class="line">            android:tag=&quot;transition_reveal&quot;</div><div class="line">            android:src=&quot;@drawable/ic_bg&quot;</div><div class="line">            android:layout_width=&quot;match_parent&quot;</div><div class="line">            android:layout_height=&quot;match_parent&quot; /&gt;</div><div class="line">        &lt;ImageView</div><div class="line">            android:id=&quot;@+id/iv_header&quot;</div><div class="line">            //***</div><div class="line">            android:tag=&quot;transition_scale&quot;</div><div class="line">            android:layout_centerInParent=&quot;true&quot;</div><div class="line">            android:src=&quot;@drawable/ic_1&quot;</div><div class="line">            android:layout_width=&quot;50dp&quot;</div><div class="line">            android:layout_height=&quot;50dp&quot;</div><div class="line">            android:layout_marginBottom=&quot;10dp&quot;/&gt;</div><div class="line">        &lt;TextView</div><div class="line">            android:id=&quot;@+id/tv_header&quot;</div><div class="line">            //***</div><div class="line">            android:tag=&quot;transition_scale&quot;</div><div class="line">            android:layout_alignBottom=&quot;@id/iv_header&quot;</div><div class="line">            android:layout_centerHorizontal=&quot;true&quot;</div><div class="line">            android:layout_alignParentBottom=&quot;true&quot;</div><div class="line">            android:layout_marginBottom=&quot;30dp&quot;</div><div class="line">            android:text=&quot;我是标题&quot;</div><div class="line">            android:textSize=&quot;18sp&quot;</div><div class="line">            android:textColor=&quot;@android:color/white&quot;</div><div class="line">            android:layout_width=&quot;wrap_content&quot;</div><div class="line">            android:layout_height=&quot;wrap_content&quot; /&gt;</div><div class="line">    &lt;/RelativeLayout&gt;</div><div class="line">    &lt;TextView</div><div class="line">        android:id=&quot;@+id/tv_content&quot;</div><div class="line">        //***</div><div class="line">        android:tag=&quot;transition_translationY&quot;</div><div class="line">        android:layout_width=&quot;match_parent&quot;</div><div class="line">        android:padding=&quot;30dp&quot;</div><div class="line">        android:textColor=&quot;@android:color/white&quot;</div><div class="line">        android:background=&quot;#1F000000&quot;</div><div class="line">        android:text=&quot;我是内容;我是内容;我是内容;我是内容;我是内容;我是内容;我是内容;我是内容;我是内容;我是内容;我是内容;我是内容;我是内容;我是内容;我是内容;我是内容;我是内容;我是内容;我是内容;我是内容;我是内容;我是内容;我是内容;我是内容;&quot;</div><div class="line">        android:layout_height=&quot;match_parent&quot;/&gt;</div><div class="line">&lt;/LinearLayout&gt;</div></pre></td></tr></table></figure></p>
+<p>最后，我们需要在<code>Activity</code>中把这个自定义的<code>Transition</code>设置给<code>Window</code>：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">private void setUpNormalTransition() &#123;</div><div class="line">    Window window = getWindow();</div><div class="line">    CustomContentTransition contentTransition = new CustomContentTransition();</div><div class="line">    contentTransition.addTarget(R.id.iv_bg);</div><div class="line">    contentTransition.addTarget(R.id.tv_header);</div><div class="line">    contentTransition.addTarget(R.id.iv_header);</div><div class="line">    contentTransition.addTarget(R.id.tv_content);</div><div class="line">    contentTransition.setDuration(500);</div><div class="line">    window.setEnterTransition(contentTransition);</div><div class="line">    window.setReturnTransition(contentTransition);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h1 id="五、总结"><a href="#五、总结" class="headerlink" title="五、总结"></a>五、总结</h1><p>至此，我们对于<code>Content Transition</code>的学习就结束了，转场动画<code>Content Transition</code>其实并不难，主要就是要知道<code>VISIBILITY</code>中各回调的调用时机，以及个参数的含义，然后通过<code>onAppear</code>和<code>onDisappear</code>返回自定义的<code>Animator</code>。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/04/07/动画体系/动画体系知识梳理(1)---转场动画-ContentTransition-理论篇/" rel="next" title="动画体系知识梳理(1) - 转场动画 ContentTransition 理论篇">
+                <i class="fa fa-chevron-left"></i> 动画体系知识梳理(1) - 转场动画 ContentTransition 理论篇
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/04/10/Material-Design-控件/Material-Design-控件知识梳理(2)---AppBarLayout-&-CollapsingToolbarLayout/" rel="prev" title="Material Design 控件知识梳理(2) - AppBarLayout & CollapsingToolbarLayout">
+                Material Design 控件知识梳理(2) - AppBarLayout & CollapsingToolbarLayout <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="John Doe" />
+          <p class="site-author-name" itemprop="name">John Doe</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">104</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">23</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、概述"><span class="nav-number">1.</span> <span class="nav-text">一、概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、基本使用"><span class="nav-number">2.</span> <span class="nav-text">二、基本使用</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-启动Activity方式"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 启动Activity方式</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-2-设置对应的Transition"><span class="nav-number">3.</span> <span class="nav-text">2.2 设置对应的Transition</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-Transition各方法回调验证"><span class="nav-number">3.1.</span> <span class="nav-text">2.3 Transition各方法回调验证</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-4-指定transitionView"><span class="nav-number">3.2.</span> <span class="nav-text">2.4 指定transitionView</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-5-Transition过程监听"><span class="nav-number">3.3.</span> <span class="nav-text">2.5 Transition过程监听</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、自定义Transition"><span class="nav-number">4.</span> <span class="nav-text">三、自定义Transition</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#五、总结"><span class="nav-number">5.</span> <span class="nav-text">五、总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

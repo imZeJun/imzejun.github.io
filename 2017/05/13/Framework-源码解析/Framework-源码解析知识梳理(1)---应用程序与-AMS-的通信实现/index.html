@@ -1,0 +1,755 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="一、前言我们在许多和Framework解析相关的文章中，都会看到ActivityManagerService这个类，但是在上层的应用开发中，却很少直接会使用到他。 那么我们为什么要学习它的呢，一个最直接的好处就是它是我们理解应用程序启动过程的基础，只有把和ActivityManagerService以及和它相关的类的关系都理解透了，我们才能理清应用程序启动的过程。 今天这篇文章，我们就来对Acti">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Framework 源码解析知识梳理(1) - 应用进程与 AMS 的通信实现">
+<meta property="og:url" content="http://yoursite.com/2017/05/13/Framework-源码解析/Framework-源码解析知识梳理(1)---应用程序与-AMS-的通信实现/index.html">
+<meta property="og:site_name" content="泽毛">
+<meta property="og:description" content="一、前言我们在许多和Framework解析相关的文章中，都会看到ActivityManagerService这个类，但是在上层的应用开发中，却很少直接会使用到他。 那么我们为什么要学习它的呢，一个最直接的好处就是它是我们理解应用程序启动过程的基础，只有把和ActivityManagerService以及和它相关的类的关系都理解透了，我们才能理清应用程序启动的过程。 今天这篇文章，我们就来对Acti">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-cb52ae8bbe56ba5e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-e8f9c8e3fa3fa081.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2017-06-27T14:48:39.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Framework 源码解析知识梳理(1) - 应用进程与 AMS 的通信实现">
+<meta name="twitter:description" content="一、前言我们在许多和Framework解析相关的文章中，都会看到ActivityManagerService这个类，但是在上层的应用开发中，却很少直接会使用到他。 那么我们为什么要学习它的呢，一个最直接的好处就是它是我们理解应用程序启动过程的基础，只有把和ActivityManagerService以及和它相关的类的关系都理解透了，我们才能理清应用程序启动的过程。 今天这篇文章，我们就来对Acti">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-cb52ae8bbe56ba5e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/05/13/Framework-源码解析/Framework-源码解析知识梳理(1)---应用程序与-AMS-的通信实现/"/>
+
+
+
+
+
+  <title>Framework 源码解析知识梳理(1) - 应用进程与 AMS 的通信实现 | 泽毛</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">泽毛</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/05/13/Framework-源码解析/Framework-源码解析知识梳理(1)---应用程序与-AMS-的通信实现/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="泽毛">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Framework 源码解析知识梳理(1) - 应用进程与 AMS 的通信实现</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-13T12:36:00+08:00">
+                2017-05-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Framework-源码解析知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">Framework 源码解析知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>一、前言<br>我们在许多和<code>Framework</code>解析相关的文章中，都会看到<code>ActivityManagerService</code>这个类，但是在上层的应用开发中，却很少直接会使用到他。</p>
+<p>那么我们为什么要学习它的呢，一个最直接的好处就是它是我们理解应用程序启动过程的基础，只有把和<code>ActivityManagerService</code>以及和它相关的类的关系都理解透了，我们才能理清应用程序启动的过程。</p>
+<p>今天这篇文章，我们就来对<code>ActivityManagerService</code>与应用进程之间的通信方式做一个简单的总结，这里我们根据进程之间的通信方向，分为两个部分来讨论：</p>
+<ul>
+<li><p>从应用程序进程到管理者进程</p>
+<p><strong>(a) IActivityManager</strong><br><strong>(b) ActivityManagerNative</strong><br><strong>(c) ActivityManagerProxy</strong><br><strong>(d) ActivityManagerService</strong></p>
+</li>
+<li><p>从管理者进程到应用程序进程</p>
+<p><strong>(a) IApplicationThread</strong><br><strong>(b) ApplicationThreadNative</strong><br><strong>(c) ApplicationThreadProxy</strong><br><strong>(d) ApplicationThread</strong></p>
+</li>
+</ul>
+<h1 id="二、从应用程序进程到管理者进程"><a href="#二、从应用程序进程到管理者进程" class="headerlink" title="二、从应用程序进程到管理者进程"></a>二、从应用程序进程到管理者进程</h1><p>在这一方向上的通信，应用程序进程作为客户端，而管理者进程则作为服务端。举一个最简单的例子，当我们启动一个<code>Activity</code>，就需要通知全局的管理者，让它去负责启动，这个全局的管理者就运行在另外一个进程，这里就涉及到了从应用程序进程到管理者进程的通信。</p>
+<p>这一个方向上通信过程所涉及到的类包括：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-cb52ae8bbe56ba5e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h2 id="2-1-应用程序进程向管理者进程发送消息"><a href="#2-1-应用程序进程向管理者进程发送消息" class="headerlink" title="2.1 应用程序进程向管理者进程发送消息"></a>2.1 应用程序进程向管理者进程发送消息</h2><p>当我们想要启动一个<code>Activity</code>，会首先调用到<code>Activity</code>的：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">@Override</div><div class="line">public void startActivityForResult(</div><div class="line">        String who, Intent intent, int requestCode, @Nullable Bundle options) &#123;</div><div class="line">    //...</div><div class="line">    Instrumentation.ActivityResult ar =</div><div class="line">        mInstrumentation.execStartActivity(</div><div class="line">            this, mMainThread.getApplicationThread(), mToken, who,</div><div class="line">            intent, requestCode, options);</div><div class="line">    //...</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>之后调用到<code>Instrumentation</code>的：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">public ActivityResult execStartActivity(</div><div class="line">        Context who, IBinder contextThread, IBinder token, Activity target,</div><div class="line">        Intent intent, int requestCode, Bundle options) &#123;</div><div class="line">        //....</div><div class="line">        int result = ActivityManagerNative.getDefault()</div><div class="line">            .startActivity(whoThread, who.getBasePackageName(), intent,</div><div class="line">                    intent.resolveTypeIfNeeded(who.getContentResolver()),</div><div class="line">                    token, target != null ? target.mEmbeddedID : null,</div><div class="line">                    requestCode, 0, null, options);</div><div class="line">        //...</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这里我们看到了上面<code>UML</code>图中<code>ActivityManagerNative</code>，它的<code>getDefault()</code>方法返回的是一个<code>IActivityManager</code>的实现类：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">private static final Singleton&lt;IActivityManager&gt; gDefault = new Singleton&lt;IActivityManager&gt;() &#123;</div><div class="line">    protected IActivityManager create() &#123;</div><div class="line">        //1.得到一个代理对象</div><div class="line">        IBinder b = ServiceManager.getService(&quot;activity&quot;);</div><div class="line">        //2.将这个代理对象再经过一层封装</div><div class="line">        IActivityManager am = asInterface(b);</div><div class="line">        return am;</div><div class="line">    &#125;</div><div class="line">&#125;;</div><div class="line"></div><div class="line">static public IActivityManager getDefault() &#123;</div><div class="line">    return gDefault.get();</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这里，对于<code>gDefault</code>变量有两点说明：</p>
+<ul>
+<li>这是一个<code>static</code>类型的变量，因此在程序中的任何地方调用<code>getDefault()</code>方法访问的是内存中的同一个对象</li>
+<li>这里采用了<code>Singleton</code>模式，也就是懒汉模式的单例，只有第一次调用<code>get()</code>方法时，才会通过<code>create()</code>方法来创建一个对象</li>
+</ul>
+<p><code>create()</code>做了两件事：</p>
+<ul>
+<li>通过<code>ServieManager</code>得到<code>IBinder</code>，这个<code>IBinder</code>是管理进程在应用程序进程的代理对象，通过<code>IBinder</code>的<code>transact</code>方法，我们就可以向管理进程发送消息：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">public boolean transact(int code, Parcel data, Parcel reply, int flags)</div></pre></td></tr></table></figure>
+<ul>
+<li>将<code>IBinder</code>传入<code>asInterface(IBinder b)</code>构建一个<code>IActivityManager</code>的实现类，可以看到，这里返回的是一个<code>ActivityManagerProxy</code>对象：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">static public IActivityManager asInterface(IBinder obj) &#123;</div><div class="line">    if (obj == null) &#123;</div><div class="line">        return null;</div><div class="line">    &#125;</div><div class="line">    //这一步先忽略....</div><div class="line">    IActivityManager in = (IActivityManager)obj.queryLocalInterface(descriptor);</div><div class="line">    if (in != null) &#123;</div><div class="line">        return in;</div><div class="line">    &#125;</div><div class="line">    return new ActivityManagerProxy(obj);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>下面，我们在来看一下这个<code>ActivityManagerProxy</code>，它实现了<code>IActivityManager</code>接口，我们可以看到它所实现的<code>IActivityManager</code>接口方法都是通过构造这个对象时所传入的<code>IBinder.transact(xxxx)</code>来调用的，这些方法之间的区别就在于消息的类型以及参数。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">class ActivityManagerProxy implements IActivityManager &#123;</div><div class="line"></div><div class="line">    public ActivityManagerProxy(IBinder remote) &#123;</div><div class="line">        mRemote = remote;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public IBinder asBinder() &#123;</div><div class="line">        return mRemote;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public int startActivity(IApplicationThread caller, String callingPackage, Intent intent,</div><div class="line">            String resolvedType, IBinder resultTo, String resultWho, int requestCode,</div><div class="line">            int startFlags, ProfilerInfo profilerInfo, Bundle options) throws RemoteException &#123;</div><div class="line">        Parcel data = Parcel.obtain();</div><div class="line">        Parcel reply = Parcel.obtain();</div><div class="line">        //这个也很重要，我们之后分析..</div><div class="line">        data.writeStrongBinder(caller != null ? caller.asBinder() : null);</div><div class="line">        //发送消息到管理者进程...</div><div class="line">        mRemote.transact(START_ACTIVITY_TRANSACTION, data, reply, 0);</div><div class="line">        reply.readException();</div><div class="line">        int result = reply.readInt();</div><div class="line">        reply.recycle();</div><div class="line">        data.recycle();</div><div class="line">        return result;</div><div class="line">    &#125;</div><div class="line"> &#125;</div></pre></td></tr></table></figure></p>
+<p>经过上面的分析，我们用一句话总结：</p>
+<blockquote>
+<p>应用程序进程通过<code>ActivityManagerProxy</code>内部的<code>IBinder.transact(...)</code>向管理者进程发送消息，这个<code>IBinder</code>是管理者进程在应用程序进程的一个代理对象，它是通过<code>ServieManager</code>获得的。</p>
+</blockquote>
+<h2 id="2-2-管理者进程处理消息"><a href="#2-2-管理者进程处理消息" class="headerlink" title="2.2 管理者进程处理消息"></a>2.2 管理者进程处理消息</h2><p>下面，我们看一下管理者进程对于消息的处理，在管理者进程中，最终是通过<code>ActivityManagerService</code>对各个应用程序进行管理的。</p>
+<p>它继承了<code>ActivityManagerNative</code>类，并重写了<code>Binder</code>类的<code>onTransact(...)</code>方法，我们前面通过<code>ActivityManagerProxy</code>的<code>IBinder</code>对象发送的消息最终会调用到管理者进程中的这个函数当中，<code>ActivityManagerNative</code>对该方法进行了重写：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">@Override</div><div class="line">public boolean onTransact(int code, Parcel data, Parcel reply, int flags) throws RemoteException &#123;</div><div class="line">  switch (code) &#123;</div><div class="line">      case START_ACTIVITY_TRANSACTION:</div><div class="line">          data.enforceInterface(IActivityManager.descriptor);</div><div class="line">          IBinder b = data.readStrongBinder();</div><div class="line">          IApplicationThread app = ApplicationThreadNative.asInterface(b);</div><div class="line">          String callingPackage = data.readString();</div><div class="line">          Intent intent = Intent.CREATOR.createFromParcel(data);</div><div class="line">          String resolvedType = data.readString();</div><div class="line">          IBinder resultTo = data.readStrongBinder();</div><div class="line">          String resultWho = data.readString();</div><div class="line">          int requestCode = data.readInt();</div><div class="line">          int startFlags = data.readInt();</div><div class="line">          ProfilerInfo profilerInfo = data.readInt() != 0</div><div class="line">                  ? ProfilerInfo.CREATOR.createFromParcel(data) : null;</div><div class="line">          Bundle options = data.readInt() != 0</div><div class="line">                  ? Bundle.CREATOR.createFromParcel(data) : null;</div><div class="line">          //这里在管理者进程进行处理操作....</div><div class="line">          int result = startActivity(app, callingPackage, intent, resolvedType,</div><div class="line">                  resultTo, resultWho, requestCode, startFlags, profilerInfo, options);</div><div class="line">          reply.writeNoException();</div><div class="line">          reply.writeInt(result);</div><div class="line">          return true;</div><div class="line">    //...</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>在<code>onTransact(xxx)</code>方法中，会根据收到的消息类型，调用<code>IActivityManager</code>接口中所定义的不同接口，而<code>ActivityManagerNative</code>是没有实现这些接口的，真正的处理在<code>ActivityManagerService</code>中，<code>ActivityManagerService</code>开始进行一系列复杂的操作，这里之后我们介绍应用程序启动过程的时候再详细分析。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">@Override</div><div class="line">public final int startActivity(IApplicationThread caller, String callingPackage,</div><div class="line">        Intent intent, String resolvedType, IBinder resultTo, String resultWho, int requestCode,</div><div class="line">        int startFlags, ProfilerInfo profilerInfo, Bundle bOptions) &#123;</div><div class="line">    return startActivityAsUser(caller, callingPackage, intent, resolvedType, resultTo,</div><div class="line">            resultWho, requestCode, startFlags, profilerInfo, bOptions,</div><div class="line">            UserHandle.getCallingUserId());</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>同样的，我们也用一句话总结：</p>
+<blockquote>
+<p>管理者进程通过<code>onTransact(xxxx)</code>处理应用程序发送过来的消息</p>
+</blockquote>
+<h1 id="三、从管理者进程到应用程序进程"><a href="#三、从管理者进程到应用程序进程" class="headerlink" title="三、从管理者进程到应用程序进程"></a>三、从管理者进程到应用程序进程</h1><p>接着，我们考虑另一个方向上的通信方式，从管理者进程到应用程序进程，这一方向上的通信过程涉及到下面的类：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-e8f9c8e3fa3fa081.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>可以看到，<code>ApplicationThread</code>的整个框架和上面很类似，只不过在这一个方向上，管理者进程作为客户端，而应用程序进行则作为服务端。</p>
+<h2 id="3-1-管理者进程向应用程序进程发送消息"><a href="#3-1-管理者进程向应用程序进程发送消息" class="headerlink" title="3.1 管理者进程向应用程序进程发送消息"></a>3.1 管理者进程向应用程序进程发送消息</h2><p>前面我们分析的时候，应用程序进程向管理者进程发送消息的时候，是通过<code>IBinder</code>这个管理者进程在应用程序进程中的代理对象来实现的，而这个<code>IBinder</code>则是通过<code>ServiceManager</code>获取的：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">IBinder b = ServiceManager.getService(&quot;activity&quot;);</div></pre></td></tr></table></figure></p>
+<p>同理，如果管理者进程希望向应用程序进程发送消息，那么它也必须设法得到一个应用程序进程在它这边的代理对象。</p>
+<p>我们回忆一下，在第二节的分析中，应用者进程向管理者进程发送消息的同时，通过<code>writeStringBinder</code>，放入了下面这个对象：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">public int startActivity(IApplicationThread caller, ...) &#123;</div><div class="line">    //...</div><div class="line">    data.writeStrongBinder(caller != null ? caller.asBinder() : null);</div><div class="line">    //...</div><div class="line">    mRemote.transact(START_ACTIVITY_TRANSACTION, data, reply, 0);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这个<code>caller</code>是在最开始调用<code>startActivityForResult</code>时传入的：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">ActivityThread mMainThread;</div><div class="line"></div><div class="line">@Override</div><div class="line">public void startActivityForResult(</div><div class="line">        String who, Intent intent, int requestCode, @Nullable Bundle options) &#123;</div><div class="line">    //...</div><div class="line">    Instrumentation.ActivityResult ar =</div><div class="line">        mInstrumentation.execStartActivity(</div><div class="line">            this, mMainThread.getApplicationThread(), mToken, who,</div><div class="line">            intent, requestCode, options);</div><div class="line">    //...</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>通过查看<code>ActivityThread</code>的代码，我们可以看到它其实是一个定义在<code>ApplicationThread</code>中的<code>ApplicationThread</code>对象，它的<code>asBinder</code>实现是在<code>ApplicationThreadNative</code>当中：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">public IBinder asBinder() &#123;</div><div class="line">    return this;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>在管理者进程接收消息的时候，就可以通过<code>readStrongBinder</code>获得这个<code>ApplicationThread</code>对象在管理者进程的代理对象<code>IBinder</code>：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">@Override</div><div class="line">public boolean onTransact(int code, Parcel data, Parcel reply, int flags)</div><div class="line">          throws RemoteException &#123;</div><div class="line">    switch (code) &#123;</div><div class="line">      case START_ACTIVITY_TRANSACTION:</div><div class="line">          //取出传入的ApplicationThread对象，之后调用asInterface方法..</div><div class="line">          IBinder b = data.readStrongBinder();</div><div class="line">          IApplicationThread app = ApplicationThreadNative.asInterface(b);</div><div class="line">          //...</div><div class="line">          int result = startActivity(app, callingPackage, intent, resolvedType,</div><div class="line">                  resultTo, resultWho, requestCode, startFlags, profilerInfo, options);</div><div class="line">          return true;</div><div class="line">   &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>接着，它再通过<code>asInterface(IBinder xx)</code>方法把传入的代理对象通过<code>ApplicationThreadProxy</code>进行了一层封装：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">static public IApplicationThread asInterface(IBinder obj) &#123;</div><div class="line">    if (obj == null) &#123;</div><div class="line">        return null;</div><div class="line">    &#125;</div><div class="line">    IApplicationThread in = (IApplicationThread) obj.queryLocalInterface(descriptor);</div><div class="line">    if (in != null) &#123;</div><div class="line">        return in;</div><div class="line">    &#125;</div><div class="line">    return new ApplicationThreadProxy(obj);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>之后，管理者进程就可以通过这个代理对象的<code>transact(xxxx)</code>方法向应用程序进程发送消息了：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">class ApplicationThreadProxy implements IApplicationThread &#123;</div><div class="line"></div><div class="line">    private final IBinder mRemote;</div><div class="line"></div><div class="line">    public ApplicationThreadProxy(IBinder remote) &#123;</div><div class="line">        mRemote = remote;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public final IBinder asBinder() &#123;</div><div class="line">        return mRemote;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public final void schedulePauseActivity(IBinder token, boolean finished,</div><div class="line">            boolean userLeaving, int configChanges, boolean dontReport) throws RemoteException &#123;</div><div class="line">        //....</div><div class="line">        mRemote.transact(SCHEDULE_PAUSE_ACTIVITY_TRANSACTION, data, null, IBinder.FLAG_ONEWAY);</div><div class="line">        //...</div><div class="line">    &#125;</div></pre></td></tr></table></figure></p>
+<p>这一个过程可以总结为：</p>
+<blockquote>
+<p>管理者进程通过<code>ApplicationThreadProxy</code>内部的<code>IBinder</code>向应用程序进程发送消息，这个<code>IBinder</code>是应用程序进程在管理者进程的代理对象，它是在管理者进程接收应用程序进程发送过来的消息中获得的。</p>
+</blockquote>
+<h2 id="3-2-用户进程接收消息"><a href="#3-2-用户进程接收消息" class="headerlink" title="3.2 用户进程接收消息"></a>3.2 用户进程接收消息</h2><p>在用户程序进程中，<code>ApplicationThread</code>的<code>onTransact(....)</code>就可以收到管理者进程发送的消息，之后再调用<code>ApplicationThread</code>所实现的<code>IApplicationThread</code>的接口方法进行消息的处理：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">@Override</div><div class="line">public boolean onTransact(int code, Parcel data, Parcel reply, int flags)</div><div class="line">          throws RemoteException &#123;</div><div class="line">      switch (code) &#123;</div><div class="line">      case SCHEDULE_PAUSE_ACTIVITY_TRANSACTION: </div><div class="line">          data.enforceInterface(IApplicationThread.descriptor);</div><div class="line">          IBinder b = data.readStrongBinder();</div><div class="line">          boolean finished = data.readInt() != 0;</div><div class="line">          boolean userLeaving = data.readInt() != 0;</div><div class="line">          int configChanges = data.readInt();</div><div class="line">          boolean dontReport = data.readInt() != 0;</div><div class="line">          schedulePauseActivity(b, finished, userLeaving, configChanges, dontReport);</div><div class="line">          return true;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h1 id="三、小结"><a href="#三、小结" class="headerlink" title="三、小结"></a>三、小结</h1><p>以上就是应用程序进程和管理者进程之间的通信方式，究其根本，都是通过获取对方进程的代理对象的<code>transact(xxxx)</code>方法发送消息，而对方进程则在<code>onTransact(xxxx)</code>方法中进行消息的处理，从而实现了进程之间的通信。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/05/09/多线程/多线程知识梳理(6)---线程池四部曲之-ThreadPoolExecutor/" rel="next" title="多线程知识梳理(6) - 线程池四部曲之 ThreadPoolExecutor">
+                <i class="fa fa-chevron-left"></i> 多线程知识梳理(6) - 线程池四部曲之 ThreadPoolExecutor
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/05/14/Framework-源码解析/Framework-源码解析知识梳理(2)---应用进程与-WMS-的通信实现/" rel="prev" title="Framework 源码解析知识梳理(2) - 应用进程与 WMS 的通信实现">
+                Framework 源码解析知识梳理(2) - 应用进程与 WMS 的通信实现 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="John Doe" />
+          <p class="site-author-name" itemprop="name">John Doe</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">104</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">23</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#二、从应用程序进程到管理者进程"><span class="nav-number">1.</span> <span class="nav-text">二、从应用程序进程到管理者进程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-应用程序进程向管理者进程发送消息"><span class="nav-number">1.1.</span> <span class="nav-text">2.1 应用程序进程向管理者进程发送消息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-管理者进程处理消息"><span class="nav-number">1.2.</span> <span class="nav-text">2.2 管理者进程处理消息</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、从管理者进程到应用程序进程"><span class="nav-number">2.</span> <span class="nav-text">三、从管理者进程到应用程序进程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-管理者进程向应用程序进程发送消息"><span class="nav-number">2.1.</span> <span class="nav-text">3.1 管理者进程向应用程序进程发送消息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-用户进程接收消息"><span class="nav-number">2.2.</span> <span class="nav-text">3.2 用户进程接收消息</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、小结"><span class="nav-number">3.</span> <span class="nav-text">三、小结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

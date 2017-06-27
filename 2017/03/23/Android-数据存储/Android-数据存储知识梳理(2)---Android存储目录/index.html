@@ -1,0 +1,768 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="一、概述对于Android系统中的存储，一般分为以下三个方面：  内部存储 外部存储 外部缓存目录 外部永久目录   SD卡存储  二、内部存储2.1 内部存储的特点内部存储指的是下面这个路径下的文件夹或者文件：1/data/data/应用包名/ 截图如下：对于内部存储来说，有这么几个特点：  应用不需要声明读写权限就能操作这个目录下的文件夹或者文件 一般情况下，只有应用本身具有操作该目录的权利">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android 数据存储知识梳理(2) - Android存储目录">
+<meta property="og:url" content="http://yoursite.com/2017/03/23/Android-数据存储/Android-数据存储知识梳理(2)---Android存储目录/index.html">
+<meta property="og:site_name" content="泽毛">
+<meta property="og:description" content="一、概述对于Android系统中的存储，一般分为以下三个方面：  内部存储 外部存储 外部缓存目录 外部永久目录   SD卡存储  二、内部存储2.1 内部存储的特点内部存储指的是下面这个路径下的文件夹或者文件：1/data/data/应用包名/ 截图如下：对于内部存储来说，有这么几个特点：  应用不需要声明读写权限就能操作这个目录下的文件夹或者文件 一般情况下，只有应用本身具有操作该目录的权利">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-e150b57fb12568df.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-281e0b6fca591ec7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-ada660f77dffcf90.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-e0ce2ea133d4fd79.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-fb66e68876e111ca.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2017-06-27T14:38:13.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android 数据存储知识梳理(2) - Android存储目录">
+<meta name="twitter:description" content="一、概述对于Android系统中的存储，一般分为以下三个方面：  内部存储 外部存储 外部缓存目录 外部永久目录   SD卡存储  二、内部存储2.1 内部存储的特点内部存储指的是下面这个路径下的文件夹或者文件：1/data/data/应用包名/ 截图如下：对于内部存储来说，有这么几个特点：  应用不需要声明读写权限就能操作这个目录下的文件夹或者文件 一般情况下，只有应用本身具有操作该目录的权利">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-e150b57fb12568df.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/03/23/Android-数据存储/Android-数据存储知识梳理(2)---Android存储目录/"/>
+
+
+
+
+
+  <title>Android 数据存储知识梳理(2) - Android存储目录 | 泽毛</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">泽毛</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/03/23/Android-数据存储/Android-数据存储知识梳理(2)---Android存储目录/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="泽毛">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Android 数据存储知识梳理(2) - Android存储目录</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-23T19:46:00+08:00">
+                2017-03-23
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android-数据存储知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">Android 数据存储知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="一、概述"><a href="#一、概述" class="headerlink" title="一、概述"></a>一、概述</h1><p>对于<code>Android</code>系统中的存储，一般分为以下三个方面：</p>
+<ul>
+<li>内部存储</li>
+<li>外部存储<ul>
+<li>外部缓存目录</li>
+<li>外部永久目录</li>
+</ul>
+</li>
+<li><code>SD</code>卡存储</li>
+</ul>
+<h1 id="二、内部存储"><a href="#二、内部存储" class="headerlink" title="二、内部存储"></a>二、内部存储</h1><h2 id="2-1-内部存储的特点"><a href="#2-1-内部存储的特点" class="headerlink" title="2.1 内部存储的特点"></a>2.1 内部存储的特点</h2><p>内部存储指的是下面这个路径下的文件夹或者文件：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">/data/data/应用包名/</div></pre></td></tr></table></figure></p>
+<p>截图如下：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-e150b57fb12568df.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>对于内部存储来说，有这么几个特点：</p>
+<ul>
+<li>应用不需要声明读写权限就能操作这个目录下的文件夹或者文件</li>
+<li>一般情况下，只有应用本身具有操作该目录的权利</li>
+<li>当应用卸载之后，该目录也会被删除</li>
+<li>这部分目录，普通用户通过手机自带的文件管理器是看不到的，除非使用<code>Root Explorer</code>等工具才可以看到，并且要申请<code>Root</code>权限才能进行读写操作。</li>
+</ul>
+<p><code>Android</code>提供了一些方法来操作内部存储的路径，我们可以选择它作为我们提供的标准目录，也可以自己创建目录，下面我们开始介绍。</p>
+<h2 id="2-2-标准文件目录-data-data-应用包名-files"><a href="#2-2-标准文件目录-data-data-应用包名-files" class="headerlink" title="2.2 标准文件目录/data/data/应用包名/files"></a>2.2 标准文件目录<code>/data/data/应用包名/files</code></h2><ul>
+<li><p>在<code>files</code>目录下创建、读写文件，可以用下面这一对方法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div></pre></td><td class="code"><pre><div class="line">public static void writeToPrivateFile(Context context, String str, String path) &#123;</div><div class="line">    FileOutputStream fileOutputStream = null;</div><div class="line">    BufferedWriter bufferedWriter;</div><div class="line">    try &#123;</div><div class="line">        fileOutputStream = context.openFileOutput(path, Context.MODE_APPEND);</div><div class="line">        bufferedWriter = new BufferedWriter(new OutputStreamWriter(fileOutputStream));</div><div class="line">        bufferedWriter.write(str);</div><div class="line">    &#125; catch (Exception e) &#123;</div><div class="line">        e.printStackTrace();</div><div class="line">    &#125; finally &#123;</div><div class="line">        try &#123;</div><div class="line">            if (fileOutputStream != null) &#123;</div><div class="line">                fileOutputStream.close();</div><div class="line">            &#125;</div><div class="line">        &#125; catch (Exception e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">public static String readFromPrivateFile(Context context, String path) &#123;</div><div class="line">    FileInputStream fileInputStream = null;</div><div class="line">    BufferedReader bufferedReader;</div><div class="line">    String result = null;</div><div class="line">    try &#123;</div><div class="line">        fileInputStream = context.openFileInput(path);</div><div class="line">        bufferedReader = new BufferedReader(new InputStreamReader(fileInputStream));</div><div class="line">        String line;</div><div class="line">        while ((line = bufferedReader.readLine()) != null) &#123;</div><div class="line">            result += line;</div><div class="line">        &#125;</div><div class="line">    &#125; catch (Exception e) &#123;</div><div class="line">        e.printStackTrace();</div><div class="line">    &#125; finally &#123;</div><div class="line">        try &#123;</div><div class="line">            if (fileInputStream != null) &#123;</div><div class="line">                fileInputStream.close();</div><div class="line">            &#125;</div><div class="line">        &#125; catch (Exception e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    return result != null ? result : &quot;&quot;;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>在<code>files</code>目录下创建新的目录<br>上面的方法是直接打开输入输出流，读写位于<code>files</code>根目录下的文件，如果我们希望进行更灵活的操作，那么通过下面方法可以获得<code>files</code>文件夹所指向的<code>File</code>对象，再通过这个返回的<code>File</code>对象操作：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">File file = context.getFilesDir();</div></pre></td></tr></table></figure>
+</li>
+<li><p>列出<code>files</code>目录下的所有文件名</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">String[] files = context.fileList();</div></pre></td></tr></table></figure>
+</li>
+<li><p>删除<code>files</code>目录下的文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">context.deleteFile(path);</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="2-3-标准缓存目录data-data-应用包名-cache"><a href="#2-3-标准缓存目录data-data-应用包名-cache" class="headerlink" title="2.3 标准缓存目录data/data/应用包名/cache"></a>2.3 标准缓存目录<code>data/data/应用包名/cache</code></h2><p>和<code>files</code>目录相比，<code>cache</code>目录有一个特点：就是当系统存储空间不足时，会删除其中的文件夹：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">File cacheFile = context.getCacheDir();</div></pre></td></tr></table></figure></p>
+<h2 id="2-4-代码缓存目录data-data-应用-code-cache"><a href="#2-4-代码缓存目录data-data-应用-code-cache" class="headerlink" title="2.4 代码缓存目录data/data/应用/code_cache"></a>2.4 代码缓存目录<code>data/data/应用/code_cache</code></h2><p>它和上面<code>cache</code>目录类似，都是只能得到一个<code>File</code>对象，同样的，它也有一个特点，就是当<code>App</code>升级时，会删除该目录下的内容，这个<code>API</code>要求大于<code>21</code>：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">File code = context.getCodeCacheDir()</div></pre></td></tr></table></figure></p>
+<h2 id="2-5-SharePreference和数据库保存的目录"><a href="#2-5-SharePreference和数据库保存的目录" class="headerlink" title="2.5 SharePreference和数据库保存的目录"></a>2.5 <code>SharePreference</code>和数据库保存的目录</h2><p>在平时的开发中，我们经常会用到<code>SharePreference</code>来保存数据，这些数据就位于：<code>/data/data/应用包名/shared_prefs</code>目录下，而数据库则保存在<code>/data/data/应用包名/databases</code>下。</p>
+<h2 id="2-6-根目录"><a href="#2-6-根目录" class="headerlink" title="2.6 根目录"></a>2.6 根目录</h2><p>除了使用上面四种根目录之外，我们还可以直接在<code>data/data/应用包名</code>目录下新建目录，调用下面的方法会我们在<code>/data/data/应用包名/</code>目录下新建一个名字为<code>app_&lt;path&gt;</code>的文件夹，并返回这个文件夹的<code>File</code>对象，之后，我们再通过这个对象进行相应的操作：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">File dir = context.getDir(path, Context.MODE_APPEND);</div></pre></td></tr></table></figure></p>
+<h1 id="三、外部存储"><a href="#三、外部存储" class="headerlink" title="三、外部存储"></a>三、外部存储</h1><p>这里指的外部存储是我们平时常说的<code>32g/64g</code>，它是手机出厂时自带的，不需要再额外的插入<code>SD</code>卡，它主要解决上面内部存储的两个问题：</p>
+<ul>
+<li>外部应用无法访问</li>
+<li>数据随着应用数据被卸载而被删除了</li>
+</ul>
+<p>也就是下面截图中部分的存储：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-281e0b6fca591ec7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h2 id="3-1-独立于应用的外部存储"><a href="#3-1-独立于应用的外部存储" class="headerlink" title="3.1 独立于应用的外部存储"></a>3.1 独立于应用的外部存储</h2><p>这部分存储的特点是：</p>
+<ul>
+<li>需要申请读写权限才能访问</li>
+<li>任何有权限的应用都可以访问它</li>
+<li>不会随着应用的卸载而被删除</li>
+</ul>
+<p>由于这部分的存储和应用无关，因此它的方法都不是通过<code>Context</code>来调用，而是通过<code>Environment</code>的静态方法来返回一个<code>File</code>对象，我们再通过这个<code>File</code>对象进行操作。</p>
+<ul>
+<li><code>getRootDirectory</code><br>返回是<code>/system</code>目录，它和<code>/sdcard</code>以及<code>/data</code>是同级的.</li>
+<li><code>getExternalStorageDirectory</code><br>返回的是外部存储的根目录，也就是我们平时从文件管理器中能看到的最顶级目录，它的<code>File</code>绝对路径为：<code>/storage/emulated/0</code></li>
+<li><code>getDownloadCacheDirectory</code><br>返回是<code>/cache</code>目录，它和<code>/system</code>以及<code>/data</code>是同级的.</li>
+<li><code>getExternalStoragePublicDirectory(String type)</code><br>其中，<code>type</code>的选项有如下几种：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-ada660f77dffcf90.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>最终得到的文件夹管理器下面的几个一级目录，例如<code>DIRECTORY_DCIM</code>得到的就是下面这个目录：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-e0ce2ea133d4fd79.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></li>
+</ul>
+<h2 id="3-2-和应用相关的外部存储"><a href="#3-2-和应用相关的外部存储" class="headerlink" title="3.2 和应用相关的外部存储"></a>3.2 和应用相关的外部存储</h2><p>这部分存储的特点是：</p>
+<ul>
+<li><code>4.4</code>以后不需要申请读写权限也能访问</li>
+<li>随着应用的卸载而被删除</li>
+<li>该目录可以被其它应用访问</li>
+</ul>
+<p>这部分存储的位置位于<code>/Android/data/应用包名/</code>下，例如下面这样，就是<code>com.android.browser</code>的应用相关外部存储：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-fb66e68876e111ca.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<ul>
+<li><code>getExternalCacheDir()</code><br>返回的是<code>/Android/data/应用包名/cache</code>目录所对应的<code>File</code>对象</li>
+<li><code>getExternalFilesDir(String type)</code><br><code>type</code>和<code>Environment</code>中定义的类型相同，根据<code>type</code>的不同返回不同的<code>File</code>对象，例如<code>DIRECTORY_DCIM</code>，那么得到的是<code>/Android/data/应用包名/files/DCIM</code>所对应的<code>File</code>对象。</li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/03/22/图片基础/图片基础知识梳理(3)---Bitmap&BitmapFactory-解析/" rel="next" title="图片基础知识梳理(3) - Bitmap&BitmapFactory 解析">
+                <i class="fa fa-chevron-left"></i> 图片基础知识梳理(3) - Bitmap&BitmapFactory 解析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/03/25/性能优化工具/性能优化工具知识梳理(1)---TraceView/" rel="prev" title="插性能优化工具知识梳理(1) - TraceView">
+                插性能优化工具知识梳理(1) - TraceView <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="John Doe" />
+          <p class="site-author-name" itemprop="name">John Doe</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">104</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">23</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、概述"><span class="nav-number">1.</span> <span class="nav-text">一、概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、内部存储"><span class="nav-number">2.</span> <span class="nav-text">二、内部存储</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-内部存储的特点"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 内部存储的特点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-标准文件目录-data-data-应用包名-files"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 标准文件目录/data/data/应用包名/files</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-标准缓存目录data-data-应用包名-cache"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 标准缓存目录data/data/应用包名/cache</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-4-代码缓存目录data-data-应用-code-cache"><span class="nav-number">2.4.</span> <span class="nav-text">2.4 代码缓存目录data/data/应用/code_cache</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-5-SharePreference和数据库保存的目录"><span class="nav-number">2.5.</span> <span class="nav-text">2.5 SharePreference和数据库保存的目录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-6-根目录"><span class="nav-number">2.6.</span> <span class="nav-text">2.6 根目录</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、外部存储"><span class="nav-number">3.</span> <span class="nav-text">三、外部存储</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-独立于应用的外部存储"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 独立于应用的外部存储</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-和应用相关的外部存储"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 和应用相关的外部存储</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

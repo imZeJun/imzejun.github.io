@@ -1,0 +1,755 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="一、概述在上一篇文章当中，我们简要介绍了PNG的结构，以及PNG压缩的原理，对于压缩的各个阶段可以总结出一些优化的点：  减少原始图像的颜色种类 优化差分编码器，使得经过差分编码后的图像有尽可能多的零值和相同的值 优化Deflate的算法，获得更高的压缩率 去除PNG文件中不需要的信息   今天，我们就来一起学习一些关于减小PNG文件大小的方法。 二、减小PNG大小2.1 使用PNG优化工具目前，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="图片压缩知识梳理(2) - 减小 PNG 大小">
+<meta property="og:url" content="http://yoursite.com/2017/04/25/图片压缩/图片压缩知识梳理(2)---减小-PNG-大小/index.html">
+<meta property="og:site_name" content="泽毛">
+<meta property="og:description" content="一、概述在上一篇文章当中，我们简要介绍了PNG的结构，以及PNG压缩的原理，对于压缩的各个阶段可以总结出一些优化的点：  减少原始图像的颜色种类 优化差分编码器，使得经过差分编码后的图像有尽可能多的零值和相同的值 优化Deflate的算法，获得更高的压缩率 去除PNG文件中不需要的信息   今天，我们就来一起学习一些关于减小PNG文件大小的方法。 二、减小PNG大小2.1 使用PNG优化工具目前，">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-6b781dcf95349223.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-01b19aa16ce02452.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-1f91d33cdeaf7fba.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-76b692775750f9ec.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-a3eb75df25bb116d.gif?imageMogr2/auto-orient/strip">
+<meta property="og:updated_time" content="2017-06-27T14:23:40.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="图片压缩知识梳理(2) - 减小 PNG 大小">
+<meta name="twitter:description" content="一、概述在上一篇文章当中，我们简要介绍了PNG的结构，以及PNG压缩的原理，对于压缩的各个阶段可以总结出一些优化的点：  减少原始图像的颜色种类 优化差分编码器，使得经过差分编码后的图像有尽可能多的零值和相同的值 优化Deflate的算法，获得更高的压缩率 去除PNG文件中不需要的信息   今天，我们就来一起学习一些关于减小PNG文件大小的方法。 二、减小PNG大小2.1 使用PNG优化工具目前，">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-6b781dcf95349223.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/04/25/图片压缩/图片压缩知识梳理(2)---减小-PNG-大小/"/>
+
+
+
+
+
+  <title>图片压缩知识梳理(2) - 减小 PNG 大小 | 泽毛</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">泽毛</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/04/25/图片压缩/图片压缩知识梳理(2)---减小-PNG-大小/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="泽毛">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">图片压缩知识梳理(2) - 减小 PNG 大小</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-25T13:21:00+08:00">
+                2017-04-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/图片压缩知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">图片压缩知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="一、概述"><a href="#一、概述" class="headerlink" title="一、概述"></a>一、概述</h1><p>在上一篇文章当中，我们简要介绍了<code>PNG</code>的结构，以及<code>PNG</code>压缩的原理，对于压缩的各个阶段可以总结出一些优化的点：</p>
+<ul>
+<li>减少原始图像的颜色种类</li>
+<li>优化差分编码器，使得经过差分编码后的图像有尽可能多的零值和相同的值</li>
+<li>优化<code>Deflate</code>的算法，获得更高的压缩率</li>
+<li>去除<code>PNG</code>文件中不需要的信息</li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/1949836-6b781dcf95349223.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<p>今天，我们就来一起学习一些关于减小<code>PNG</code>文件大小的方法。</p>
+<h1 id="二、减小PNG大小"><a href="#二、减小PNG大小" class="headerlink" title="二、减小PNG大小"></a>二、减小<code>PNG</code>大小</h1><h2 id="2-1-使用PNG优化工具"><a href="#2-1-使用PNG优化工具" class="headerlink" title="2.1 使用PNG优化工具"></a>2.1 使用<code>PNG</code>优化工具</h2><p>目前，已经有很多为开发者提供的<code>PNG</code>优化工具，例如：</p>
+<ul>
+<li><a href="https://pngquant.org/" target="_blank" rel="external">PNGQuant</a> </li>
+<li><a href="https://tinypng.com/" target="_blank" rel="external">TinyPNG</a></li>
+<li><a href="https://github.com/google/zopfli" target="_blank" rel="external">zopfliPNG</a></li>
+</ul>
+<p>这些工具都针对<code>PNG</code>压缩的某一方面进行了优化，我们可以根据需要选择适合的工具。</p>
+<h2 id="2-2-手动减少PNG中的颜色的种类"><a href="#2-2-手动减少PNG中的颜色的种类" class="headerlink" title="2.2 手动减少PNG中的颜色的种类"></a>2.2 手动减少<code>PNG</code>中的颜色的种类</h2><p>在我们使用工具进行优化之前，可以先进行一些预处理，例如<strong>减少图片当中颜色的种类</strong>。之所以这么做是因为颜色的种类的个数会直接影响到整个<code>PNG</code>压缩过程的压缩率：</p>
+<ul>
+<li>在<code>Filter</code>阶段，减少颜色的种类可以使得临近像素之间的区别变少。</li>
+<li>因此，到了<code>Deflate</code>阶段，就可以得到更多重复的值，那么就会获得更高的压缩率。</li>
+</ul>
+<p>减少图片中的颜色的种类意味着有可能导致图片的失真，因此这一过程更多的需要人为地去干预，而不是通过工具来处理。</p>
+<h2 id="2-3-选择正确的PNG格式"><a href="#2-3-选择正确的PNG格式" class="headerlink" title="2.3 选择正确的PNG格式"></a>2.3 选择正确的<code>PNG</code>格式</h2><p>在前面介绍<code>PNG</code>的格式时，谈到了<code>PNG</code>可以分为<code>8/24/32</code>三种类型，我们应当根据需要选择正确的格式。</p>
+<p>例如，如果图片中没有<code>Alpha</code>通道，那么就应当使用<code>PNG 24</code>，而不是使用<code>PNG 32</code>。类似，如果是灰度的图片，那么应当使用<code>PNG 8</code>。</p>
+<h2 id="2-4-使用索引格式的PNG"><a href="#2-4-使用索引格式的PNG" class="headerlink" title="2.4 使用索引格式的PNG"></a>2.4 使用索引格式的<code>PNG</code></h2><p>如果图片中的颜色种类小于<code>256</code>，那么就可以使用索引格式的<code>PNG</code>。它会将这<code>256</code>种颜色放到调色板当中，而图片中的每个像素则转换为调色板中颜色的坐标：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-01b19aa16ce02452.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>经过这一转换之后：</p>
+<ul>
+<li>每个像素所占的位数就由<code>32</code>位减少到了<code>8</code>位</li>
+<li>减少了颜色的种类，这和我们在<code>2.2</code>中讨论的优点相同。</li>
+</ul>
+<p>因此，如果我们能够把颜色减少到<code>256</code>种以下，那么<code>PNG</code>的大小将会大大减少。</p>
+<h2 id="2-5-对于图片中透明像素点的处理"><a href="#2-5-对于图片中透明像素点的处理" class="headerlink" title="2.5 对于图片中透明像素点的处理"></a>2.5 对于图片中透明像素点的处理</h2><p>如果图片中有完全透明的像素点，我们根据<code>PNG</code>的格式分为 <strong>索引PNG</strong> 和 <strong>普通PNG</strong> 两部分来讨论。</p>
+<h3 id="2-5-1-索引-PNG"><a href="#2-5-1-索引-PNG" class="headerlink" title="2.5.1 索引 PNG"></a>2.5.1 索引 PNG</h3><p>如果使用的是索引<code>PNG</code>，那么只需要把”透明色”当作调色板中的一个颜色就可以了。</p>
+<h3 id="2-5-2-普通-PNG"><a href="#2-5-2-普通-PNG" class="headerlink" title="2.5.2 普通 PNG"></a>2.5.2 普通 PNG</h3><p>而如果我们使用的是普通<code>PNG</code>，那么就需要注意对于这些“不可见像素点”的处理，例如下面这幅图：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-1f91d33cdeaf7fba.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>表面上看来，这两幅图是一样的，但是左图却要比右图大，如果我们去掉<code>Alpha</code>通道，那么效果是下面这样：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-76b692775750f9ec.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>造成它们大小之间差别的原因就在于：<strong>虽然左图中的某些像素点由于<code>Alpha</code>通道的值为<code>0</code>而变成透明的了，但是它们的<code>RBG</code>通道仍然有不相同的值</strong>，因此在<code>filer</code>和<code>deflate</code>阶段仍然要处理这些元素，并将它们压缩。</p>
+<p>因此，对于普通<code>PNG</code>图片，如果是<code>ARGB</code>全彩的格式，对于那些<code>Alpha</code>通道为<code>0</code>的像素点，说明它们是不可见的。那么<strong>我们应当保证这些不可见像素点的<code>RGB</code>通道相同</strong>，这将能够有效减少一行当中的颜色种类，从而获得更好的压缩效果。</p>
+<h2 id="2-6-采用-Vector-Quantization-减少图片中颜色的种类"><a href="#2-6-采用-Vector-Quantization-减少图片中颜色的种类" class="headerlink" title="2.6 采用 Vector Quantization 减少图片中颜色的种类"></a>2.6 采用 Vector Quantization 减少图片中颜色的种类</h2><p>如果图像中的颜色种类小于<code>256</code>，那么我们可以把它转换为索引<code>PNG</code>格式，而如果图片原本的颜色大于<code>256</code>种，那么可以通过<strong>矢量量化</strong>的方法来创建一个索引<code>PNG</code>格式。</p>
+<p>在矢量量化的过程中，会把所有的像素基于它们之间颜色的相似程度进行分组，一个组内像素的颜色会比较接近。之后根据组内的所有颜色，计算出一个中心点颜色，组内的所有颜色会被替换成为该中心点的颜色。<br><img src="http://upload-images.jianshu.io/upload_images/1949836-a3eb75df25bb116d.gif?imageMogr2/auto-orient/strip" alt=""><br>在上图当中</p>
+<ul>
+<li>绿色的点表示原始的像素颜色</li>
+<li>蓝色的范围则表示一个分组</li>
+<li>红色的点则为根据该组中的颜色，所计算出的中心点颜色</li>
+</ul>
+<p>矢量量化会通过<strong>将相近颜色替换成同一种颜色的方法，来减少图片中颜色的种类</strong>，因此有可能会使得图片失真。</p>
+<p>我们可以通过指定图片中最多可以允许的颜色种类个数来控制量化的效果，<a href="https://pngquant.org/" target="_blank" rel="external">pngquant</a> 就是根据这一原理实现的。</p>
+<h1 id="三、AAPT"><a href="#三、AAPT" class="headerlink" title="三、AAPT"></a>三、<code>AAPT</code></h1><p><code>aapt</code>工具会对满足一定条件的<code>PNG</code>图片进行优化，然而当它和其它工具结合起来的时候，反而有可能会使得经过<code>aapt</code>处理后的图片重新增大。</p>
+<h2 id="3-1-AAPT对于PNG图片的优化"><a href="#3-1-AAPT对于PNG图片的优化" class="headerlink" title="3.1 AAPT对于PNG图片的优化"></a>3.1 <code>AAPT</code>对于<code>PNG</code>图片的优化</h2><p><code>Android</code>的资源文件是通过<code>aapt(Android Asset Package Tool)</code>打包到<code>Apk</code>文件里的，而在这一打包的过程当中，会对<code>res/drawable</code>下的符合以下三个条件之一的图片进行优化：</p>
+<p><strong>情况一</strong>：图片中每个像素点的<code>RGB</code>三个通道的值相同<br>在这种情况下，<code>PNG</code>会被转换成为<code>grayscale</code>格式，也就是每一个像素仅占<code>8bit</code>。</p>
+<p><strong>情况二</strong>：图片中每个像素点的<code>Alpha</code>通道的值都为<code>1</code>，这表示该图片是完全透明的。</p>
+<p><strong>情况三</strong>：图片中总的颜色种类小于<code>256</code>种，那么会将该图片转换成为前面提到过的索引<code>PNG</code>格式。</p>
+<p>对于以上三种情况的处理，都是完全无损的处理方式，也就是经过<code>aapt</code>处理后的图片和原始的图片质量相同。</p>
+<h2 id="3-2-使用aapt的注意点"><a href="#3-2-使用aapt的注意点" class="headerlink" title="3.2 使用aapt的注意点"></a>3.2 使用<code>aapt</code>的注意点</h2><p>对于现代的压缩算法而言，它们都不可能做到循环压缩。也就是说，如果你尝试去压缩一张已经被压缩过的图片，那么有可能会使得该图片变大，最好的情况也就是使得新的图片和原始图片大小相同。</p>
+<p>因此，如果我们已经通过别的工具对<code>png</code>图片进行了压缩操作，之后再通过<code>aapt</code>进行优化，那么有可能会使图片增大<code>10%</code>，如果需要解决这一问题，可以在<code>build.gradle</code>中禁止除了<code>.9.png</code>之外的图片的<code>aapt</code>的优化操作：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">aaptOptions &#123; </div><div class="line">    cruncherEnabled = false </div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这样，你就可以使用自己的<code>png</code>优化工具进行优化，而不用担心<code>aapt</code>的优化操作会使得图片进一步变大。</p>
+<h1 id="四、总结"><a href="#四、总结" class="headerlink" title="四、总结"></a>四、总结</h1><p>在第二节中谈到的这六点优化点，其实它们最核心的思想就是<strong>减少图片中颜色的种类</strong>，然而减少颜色的种类就意味会导致图片的失真，因此，如何选取这一平衡点是减少<code>PNG</code>的难点所在。</p>
+<h1 id="五、参考文献"><a href="#五、参考文献" class="headerlink" title="五、参考文献"></a>五、参考文献</h1><p><a href="https://medium.com/@duhroach/reducing-png-file-size-8473480d0476" target="_blank" rel="external">Reducing PNG file Size</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/04/22/图片压缩/图片压缩知识梳理(1)---PNG-原理/" rel="next" title="图片压缩知识梳理(1) - PNG 原理">
+                <i class="fa fa-chevron-left"></i> 图片压缩知识梳理(1) - PNG 原理
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/04/27/图片压缩/图片压缩知识梳理(5)---VectorDrawable-简介/" rel="prev" title="图片压缩知识梳理(5) - VectorDrawable 简介">
+                图片压缩知识梳理(5) - VectorDrawable 简介 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="John Doe" />
+          <p class="site-author-name" itemprop="name">John Doe</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">104</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">23</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、概述"><span class="nav-number">1.</span> <span class="nav-text">一、概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、减小PNG大小"><span class="nav-number">2.</span> <span class="nav-text">二、减小PNG大小</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-使用PNG优化工具"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 使用PNG优化工具</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-手动减少PNG中的颜色的种类"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 手动减少PNG中的颜色的种类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-选择正确的PNG格式"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 选择正确的PNG格式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-4-使用索引格式的PNG"><span class="nav-number">2.4.</span> <span class="nav-text">2.4 使用索引格式的PNG</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-5-对于图片中透明像素点的处理"><span class="nav-number">2.5.</span> <span class="nav-text">2.5 对于图片中透明像素点的处理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5-1-索引-PNG"><span class="nav-number">2.5.1.</span> <span class="nav-text">2.5.1 索引 PNG</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5-2-普通-PNG"><span class="nav-number">2.5.2.</span> <span class="nav-text">2.5.2 普通 PNG</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-6-采用-Vector-Quantization-减少图片中颜色的种类"><span class="nav-number">2.6.</span> <span class="nav-text">2.6 采用 Vector Quantization 减少图片中颜色的种类</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、AAPT"><span class="nav-number">3.</span> <span class="nav-text">三、AAPT</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-AAPT对于PNG图片的优化"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 AAPT对于PNG图片的优化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-使用aapt的注意点"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 使用aapt的注意点</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四、总结"><span class="nav-number">4.</span> <span class="nav-text">四、总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#五、参考文献"><span class="nav-number">5.</span> <span class="nav-text">五、参考文献</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,765 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="Material Design 控件知识梳理(1) - Android Design Support Library 是什么Material Design 控件知识梳理(2) - AppBarLayout &amp;amp; CollapsingToolbarLayoutMaterial Design 控件知识梳理(3) - BottomSheet &amp;amp;&amp;amp; BottomSheetDialo">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Material Design 控件知识梳理(5) - DrawerLayout &amp;&amp; NavigationView">
+<meta property="og:url" content="http://yoursite.com/2017/04/14/Material-Design-控件/Material-Design-控件知识梳理(5)---DrawerLayout-&&-NavigationView/index.html">
+<meta property="og:site_name" content="泽毛">
+<meta property="og:description" content="Material Design 控件知识梳理(1) - Android Design Support Library 是什么Material Design 控件知识梳理(2) - AppBarLayout &amp;amp; CollapsingToolbarLayoutMaterial Design 控件知识梳理(3) - BottomSheet &amp;amp;&amp;amp; BottomSheetDialo">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-6fb023e17962d713.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-1144aac08d7c3c39.gif?imageMogr2/auto-orient/strip">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-1d3a0fb9a3b2b230.gif?imageMogr2/auto-orient/strip">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-a7ec4e677e155375.gif?imageMogr2/auto-orient/strip">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-0e663bb42383a968.gif?imageMogr2/auto-orient/strip">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-eab173f5f979d168.gif?imageMogr2/auto-orient/strip">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-ae594221e75338de.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-23fe41c79e745d68.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-b5c67dfc10e36bed.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-6d4963e204420402.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2017-06-27T15:00:41.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Material Design 控件知识梳理(5) - DrawerLayout &amp;&amp; NavigationView">
+<meta name="twitter:description" content="Material Design 控件知识梳理(1) - Android Design Support Library 是什么Material Design 控件知识梳理(2) - AppBarLayout &amp;amp; CollapsingToolbarLayoutMaterial Design 控件知识梳理(3) - BottomSheet &amp;amp;&amp;amp; BottomSheetDialo">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-6fb023e17962d713.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/04/14/Material-Design-控件/Material-Design-控件知识梳理(5)---DrawerLayout-&&-NavigationView/"/>
+
+
+
+
+
+  <title>Material Design 控件知识梳理(5) - DrawerLayout && NavigationView | 泽毛</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">泽毛</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/04/14/Material-Design-控件/Material-Design-控件知识梳理(5)---DrawerLayout-&&-NavigationView/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="泽毛">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Material Design 控件知识梳理(5) - DrawerLayout && NavigationView</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-14T20:38:00+08:00">
+                2017-04-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Material-Design-控件知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">Material Design 控件知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p><a href="http://www.jianshu.com/p/32b2638a1785" target="_blank" rel="external">Material Design 控件知识梳理(1) - Android Design Support Library 是什么</a><br><a href="http://www.jianshu.com/p/d4fd636d7c44" target="_blank" rel="external">Material Design 控件知识梳理(2) - AppBarLayout &amp; CollapsingToolbarLayout</a><br><a href="http://www.jianshu.com/p/2a5be29123e5" target="_blank" rel="external">Material Design 控件知识梳理(3) - BottomSheet &amp;&amp; BottomSheetDialog &amp;&amp; BottomSheetDialogFragment</a><br><a href="http://www.jianshu.com/p/5a354e318019" target="_blank" rel="external">Material Design 控件知识梳理(4) - FloatingActionButton</a><br><a href="http://www.jianshu.com/p/d70cfd724c7f" target="_blank" rel="external">Material Design 控件知识梳理(5) - DrawerLayout &amp;&amp; NavigationView</a><br><a href="http://www.jianshu.com/p/6aea94f9ae2f" target="_blank" rel="external">Material Design 控件知识梳理(6) - Snackbar</a><br><a href="http://www.jianshu.com/p/22ec4fc1cb71" target="_blank" rel="external">Material Design 控件知识梳理(7) - BottomNavigationBar</a><br><a href="http://www.jianshu.com/p/5dd04fda13ab" target="_blank" rel="external">Material Design 控件知识梳理(8) - TabLayout</a><br><a href="http://www.jianshu.com/p/ed9642fc8634" target="_blank" rel="external">Material Design 控件知识梳理(9) - TextInputLayout</a></p>
+</blockquote>
+<h1 id="一、概述"><a href="#一、概述" class="headerlink" title="一、概述"></a>一、概述</h1><p>今天，我们来介绍两个和侧滑菜单有关的<code>MD</code>控件：</p>
+<ul>
+<li><code>DrawerLayout</code>：实现侧滑菜单的基础。</li>
+<li><code>NavigationView</code>：作为侧滑菜单布局的一种实现方式。</li>
+</ul>
+<h1 id="二、DrawerLayout"><a href="#二、DrawerLayout" class="headerlink" title="二、DrawerLayout"></a>二、<code>DrawerLayout</code></h1><h2 id="2-1-基本原理"><a href="#2-1-基本原理" class="headerlink" title="2.1 基本原理"></a>2.1 基本原理</h2><p>当我们需要使用到侧滑菜单时，可以通过<code>DrawerLayout</code>来实现，<code>DrawerLayout</code>、侧滑菜单布局、普通布局这三者的关系为：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-6fb023e17962d713.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br><code>layout_gravity</code>决定了将哪个菜单作为侧滑布局，<code>DrawerLayout</code>会根据是否声明了<code>layout_gravity</code>属性，把它内部的直接子<code>View</code>分成两类：</p>
+<ul>
+<li>对于没有声明<code>layout_gravity</code>的布局，那么它会将它们当作普通布局，并按照<code>FrameLayout</code>的方式来排列它们。</li>
+<li>对于声明了<code>layout_gravity=&quot;start&quot;</code>或者<code>layout_gravity=&quot;left&quot;</code>的布局，在普通情况下会将它们隐藏起来，当从屏幕的最左侧往右移动手指时，这个布局会渐渐展现出来，对于<code>DrawerLayout</code>的所有子<code>View</code>来说，只允许有一个子<code>View</code>的该属性为<code>start/left</code>，这就是我们的侧滑布局。</li>
+<li><code>layout_gravity=&quot;end/right&quot;</code>和上面类似，只不过它的调出是从屏幕的右侧向左侧移动。</li>
+</ul>
+<h2 id="2-2-简单事例"><a href="#2-2-简单事例" class="headerlink" title="2.2 简单事例"></a>2.2 简单事例</h2><p>下面是一个使用<code>DrawerLayout</code>的最简单的例子：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">&lt;android.support.v4.widget.DrawerLayout</div><div class="line">    xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;</div><div class="line">    xmlns:tools=&quot;http://schemas.android.com/tools&quot;</div><div class="line">    android:layout_width=&quot;match_parent&quot;</div><div class="line">    android:layout_height=&quot;match_parent&quot;</div><div class="line">    tools:context=&quot;.DrawerLayoutActivity&quot;&gt;</div><div class="line">    &lt;!-- 普通布局 --&gt;</div><div class="line">    &lt;FrameLayout</div><div class="line">        android:id=&quot;@+id/fl_content&quot;</div><div class="line">        android:background=&quot;@android:color/holo_orange_dark&quot;</div><div class="line">        android:layout_width=&quot;match_parent&quot;</div><div class="line">        android:layout_height=&quot;match_parent&quot;&gt;</div><div class="line">        &lt;TextView</div><div class="line">            android:text=&quot;我是内容布局&quot;</div><div class="line">            android:layout_gravity=&quot;center&quot;</div><div class="line">            android:layout_width=&quot;wrap_content&quot;</div><div class="line">            android:layout_height=&quot;wrap_content&quot;/&gt;</div><div class="line">    &lt;/FrameLayout&gt;</div><div class="line">    &lt;!-- 侧滑布局 --&gt;</div><div class="line">    &lt;include layout=&quot;@layout/layout_drawer_normal&quot;/&gt;</div><div class="line">&lt;/android.support.v4.widget.DrawerLayout&gt;</div></pre></td></tr></table></figure></p>
+<p><code>layout_drawer_normal</code>就是侧滑菜单，我们将它的<code>layout_gravity</code>定义为<code>start</code>，按照前面的分析，它应当位于屏幕的左侧：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">&lt;LinearLayout</div><div class="line">    xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;</div><div class="line">    android:orientation=&quot;vertical&quot;</div><div class="line">    android:layout_gravity=&quot;start&quot;</div><div class="line">    android:layout_width=&quot;200dp&quot;</div><div class="line">    android:background=&quot;@android:color/holo_green_dark&quot;</div><div class="line">    android:layout_height=&quot;match_parent&quot;&gt;</div><div class="line">    &lt;TextView</div><div class="line">        android:text=&quot;我是侧滑布局&quot;</div><div class="line">        android:layout_gravity=&quot;center&quot;</div><div class="line">        android:textColor=&quot;@android:color/white&quot;</div><div class="line">        android:gravity=&quot;center&quot;</div><div class="line">        android:layout_width=&quot;match_parent&quot;</div><div class="line">        android:layout_height=&quot;match_parent&quot;/&gt;</div><div class="line">&lt;/LinearLayout&gt;</div></pre></td></tr></table></figure></p>
+<p>下面是最终的效果：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-1144aac08d7c3c39.gif?imageMogr2/auto-orient/strip" alt=""></p>
+<h2 id="2-3-监听DrawerLayout的状态变化"><a href="#2-3-监听DrawerLayout的状态变化" class="headerlink" title="2.3 监听DrawerLayout的状态变化"></a>2.3 监听<code>DrawerLayout</code>的状态变化</h2><p>如果我们希望监听<code>DrawerLayout</code>状态的变化，那么可以通过下面这个方法：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line">private Toolbar mToolbar;</div><div class="line">private ActionBarDrawerToggle mActionBarDrawerToggle;</div><div class="line">private DrawerLayout mDrawerLayout;</div><div class="line"></div><div class="line">@Override</div><div class="line">protected void onCreate(Bundle savedInstanceState) &#123;</div><div class="line">    super.onCreate(savedInstanceState);</div><div class="line">    setContentView(R.layout.activity_drawer_layout_simple);</div><div class="line">    mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);</div><div class="line">    mDrawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() &#123;</div><div class="line"></div><div class="line">        @Override</div><div class="line">        public void onDrawerSlide(View drawerView, float slideOffset) &#123;</div><div class="line">            Log.d(&quot;mDrawerLayout&quot;, &quot;onDrawerSlide, slideOffset=&quot; + slideOffset);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        @Override</div><div class="line">        public void onDrawerOpened(View drawerView) &#123;</div><div class="line">            Log.d(&quot;mDrawerLayout&quot;, &quot;onDrawerOpened&quot;);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        @Override</div><div class="line">        public void onDrawerClosed(View drawerView) &#123;</div><div class="line">            Log.d(&quot;mDrawerLayout&quot;, &quot;onDrawerClosed&quot;);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        @Override</div><div class="line">        public void onDrawerStateChanged(int newState) &#123;</div><div class="line">            Log.d(&quot;mDrawerLayout&quot;, &quot;onDrawerStateChanged, state=&quot; + newState);</div><div class="line"></div><div class="line">        &#125;</div><div class="line">    &#125;);</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>其中<code>opened</code>和<code>closed</code>方法都很好理解，就是对应展开和收起，而<code>onDrawerSlide</code>方法中的<code>slideOffset</code>，则对应于<code>DrawerLayout</code>展开的偏移值，全部展开时为<code>1</code>，全部收起时为<code>0</code>，<code>onDrawerStateChanged</code>对应于所处的状态：<code>STATE_IDLE/STATE_DRAGGING/STATE_SETTLING</code>。</p>
+<h1 id="三、DrawerLayout和Toolbar结合使用"><a href="#三、DrawerLayout和Toolbar结合使用" class="headerlink" title="三、DrawerLayout和Toolbar结合使用"></a>三、<code>DrawerLayout</code>和<code>Toolbar</code>结合使用</h1><h2 id="3-1-Toolbar的NavigationIcon跟随DrawerLayout变化"><a href="#3-1-Toolbar的NavigationIcon跟随DrawerLayout变化" class="headerlink" title="3.1 Toolbar的NavigationIcon跟随DrawerLayout变化"></a>3.1 <code>Toolbar</code>的<code>NavigationIcon</code>跟随<code>DrawerLayout</code>变化</h2><p>下面，我们看一下把<code>DrawerLayout</code>和<code>Toolbar</code>相结合，做出下面的效果，让<code>Toolbar</code>的<code>navigationIcon</code>跟随着<code>DrawerLayout</code>变化：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-1d3a0fb9a3b2b230.gif?imageMogr2/auto-orient/strip" alt=""><br>当拖动侧边栏的时候，<code>Toolbar</code>的按钮会跟随着进行状态的变化，我们也可以通过点击<code>Toolbar</code>的按钮来展开和收起侧边栏，首先看我们的布局<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</div><div class="line">&lt;LinearLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;</div><div class="line">    android:orientation=&quot;vertical&quot;</div><div class="line">    android:layout_width=&quot;match_parent&quot;</div><div class="line">    android:layout_height=&quot;match_parent&quot;&gt;</div><div class="line">    &lt;!-- Toolbar --&gt;</div><div class="line">    &lt;android.support.v7.widget.Toolbar</div><div class="line">        android:id=&quot;@+id/toolbar&quot;</div><div class="line">        android:background=&quot;@android:color/holo_green_dark&quot;</div><div class="line">        android:layout_width=&quot;match_parent&quot;</div><div class="line">        android:layout_height=&quot;?attr/actionBarSize&quot;/&gt;</div><div class="line">    &lt;android.support.v4.widget.DrawerLayout</div><div class="line">        android:id=&quot;@+id/drawer_layout&quot;</div><div class="line">        android:layout_width=&quot;match_parent&quot;</div><div class="line">        android:layout_height=&quot;match_parent&quot;&gt;</div><div class="line">        &lt;!-- 普通布局 --&gt;</div><div class="line">        &lt;FrameLayout</div><div class="line">            android:id=&quot;@+id/fl_content&quot;</div><div class="line">            android:background=&quot;@android:color/holo_orange_dark&quot;</div><div class="line">            android:layout_width=&quot;match_parent&quot;</div><div class="line">            android:layout_height=&quot;match_parent&quot;&gt;</div><div class="line">            &lt;TextView</div><div class="line">                android:text=&quot;我是内容布局&quot;</div><div class="line">                android:layout_gravity=&quot;center&quot;</div><div class="line">                android:layout_width=&quot;wrap_content&quot;</div><div class="line">                android:layout_height=&quot;wrap_content&quot;/&gt;</div><div class="line">        &lt;/FrameLayout&gt;</div><div class="line">        &lt;!-- 侧滑布局 --&gt;</div><div class="line">        &lt;include layout=&quot;@layout/layout_drawer_normal&quot;/&gt;</div><div class="line">    &lt;/android.support.v4.widget.DrawerLayout&gt;</div><div class="line">&lt;/LinearLayout&gt;</div></pre></td></tr></table></figure></p>
+<p>在<code>Activity</code>中，我们需要将<code>Toolbar</code>和<code>DrawerLayout</code>关联起来：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">public class DrawerLayoutActivity extends AppCompatActivity &#123;</div><div class="line"></div><div class="line">    private Toolbar mToolbar;</div><div class="line">    private ActionBarDrawerToggle mActionBarDrawerToggle;</div><div class="line">    private DrawerLayout mDrawerLayout;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    protected void onCreate(Bundle savedInstanceState) &#123;</div><div class="line">        super.onCreate(savedInstanceState);</div><div class="line">        setContentView(R.layout.activity_drawer_layout_under_toolbar);</div><div class="line">        initView();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private void initView() &#123;</div><div class="line">        mToolbar = (Toolbar) findViewById(R.id.toolbar);</div><div class="line">        setSupportActionBar(mToolbar);</div><div class="line">        getSupportActionBar().setDisplayHomeAsUpEnabled(true); //1.决定显示.</div><div class="line">        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);</div><div class="line">        mActionBarDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.drawer_open, R.string.drawer_close); //2.传入Toolbar可以点击.</div><div class="line">        mDrawerLayout.addDrawerListener(mActionBarDrawerToggle); //3.监听变化.</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    protected void onPostCreate(@Nullable Bundle savedInstanceState) &#123;</div><div class="line">        super.onPostCreate(savedInstanceState);</div><div class="line">        //4.同步状态</div><div class="line">        mActionBarDrawerToggle.syncState();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这里需要做的有四步工作：</p>
+<ul>
+<li>将<code>Toolbar</code>作为<code>ActionBar</code>，并调用<code>Toolbar</code>的<code>setDisplayHomeAsUpEnabled</code>，这样最左边的<code>Icon</code>才可以显示。</li>
+<li>实例化<code>ActionBarDrawerToggle</code>，并传入<code>Toolbar</code>和<code>DrawerLayout</code>。</li>
+<li>通过<code>DrawerLayout</code>的<code>addDrawerListener</code>方法，让<code>DrawerLayout</code>的状态能够回调到<code>ActionBarDrawerToggle</code>。</li>
+<li>在<code>onPostCreate</code>中，调用<code>ActionBarDrawerToggle</code>的<code>syncState</code>方法。</li>
+</ul>
+<h2 id="3-2-DrawerLayout覆盖Toolbar"><a href="#3-2-DrawerLayout覆盖Toolbar" class="headerlink" title="3.2 DrawerLayout覆盖Toolbar"></a>3.2 <code>DrawerLayout</code>覆盖<code>Toolbar</code></h2><p>在上面的实现方式中，侧滑菜单位于<code>Toolbar</code>的下方，如果我们希望它覆盖<code>Toolbar</code>，那么可以像下面这样布局：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line">&lt;android.support.v4.widget.DrawerLayout</div><div class="line">    xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;</div><div class="line">    android:id=&quot;@+id/drawer_layout&quot;</div><div class="line">    android:layout_width=&quot;match_parent&quot;</div><div class="line">    android:layout_height=&quot;match_parent&quot;&gt;</div><div class="line">    &lt;!-- 普通布局 --&gt;</div><div class="line">    &lt;LinearLayout</div><div class="line">        android:orientation=&quot;vertical&quot;</div><div class="line">        android:layout_width=&quot;match_parent&quot;</div><div class="line">        android:layout_height=&quot;match_parent&quot;&gt;</div><div class="line">        &lt;android.support.v7.widget.Toolbar</div><div class="line">            android:id=&quot;@+id/toolbar&quot;</div><div class="line">            android:background=&quot;@android:color/holo_green_dark&quot;</div><div class="line">            android:layout_width=&quot;match_parent&quot;</div><div class="line">            android:layout_height=&quot;?attr/actionBarSize&quot;/&gt;</div><div class="line">        &lt;FrameLayout</div><div class="line">            android:id=&quot;@+id/fl_content&quot;</div><div class="line">            android:background=&quot;@android:color/holo_orange_dark&quot;</div><div class="line">            android:layout_width=&quot;match_parent&quot;</div><div class="line">            android:layout_height=&quot;match_parent&quot;&gt;</div><div class="line">            &lt;TextView</div><div class="line">                android:text=&quot;我是内容布局&quot;</div><div class="line">                android:layout_gravity=&quot;center&quot;</div><div class="line">                android:layout_width=&quot;wrap_content&quot;</div><div class="line">                android:layout_height=&quot;wrap_content&quot;/&gt;</div><div class="line">        &lt;/FrameLayout&gt;</div><div class="line">    &lt;/LinearLayout&gt;</div><div class="line">    &lt;!-- 侧滑布局 --&gt;</div><div class="line">    &lt;include layout=&quot;@layout/layout_drawer_normal&quot;/&gt;</div><div class="line">&lt;/android.support.v4.widget.DrawerLayout&gt;</div></pre></td></tr></table></figure></p>
+<p>最终的效果为：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-a7ec4e677e155375.gif?imageMogr2/auto-orient/strip" alt=""></p>
+<h2 id="3-3-DrawerLayout和Toolbar延伸到状态栏上方"><a href="#3-3-DrawerLayout和Toolbar延伸到状态栏上方" class="headerlink" title="3.3 DrawerLayout和Toolbar延伸到状态栏上方"></a>3.3 <code>DrawerLayout</code>和<code>Toolbar</code>延伸到状态栏上方</h2><p>如果我们希望侧滑菜单的区域能够延伸到状态栏，那么可以进行以下三步的修改：</p>
+<ul>
+<li><p>第一步：修改<code>Activity</code>的<code>style</code>，让状态栏透明，并修改状态栏的颜色：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">&lt;resources&gt;</div><div class="line">    &lt;style name=&quot;AppTheme&quot; parent=&quot;Theme.AppCompat.Light.NoActionBar&quot;&gt;</div><div class="line">        &lt;!-- Customize your theme here. --&gt;</div><div class="line">        &lt;item name=&quot;colorPrimary&quot;&gt;@color/colorPrimary&lt;/item&gt;</div><div class="line">        &lt;item name=&quot;colorAccent&quot;&gt;@color/colorAccent&lt;/item&gt;</div><div class="line">        &lt;!-- 修改状态栏颜色 --&gt;</div><div class="line">        &lt;item name=&quot;colorPrimaryDark&quot;&gt;@android:color/holo_green_dark&lt;/item&gt;</div><div class="line">        &lt;!-- 状态栏透明 --&gt;</div><div class="line">        &lt;item name=&quot;android:windowTranslucentStatus&quot;&gt;true&lt;/item&gt;</div><div class="line">    &lt;/style&gt;</div><div class="line">&lt;/resources&gt;</div></pre></td></tr></table></figure>
+</li>
+<li><p>第二步：给<code>Activity</code>根布局设置<code>android:fitsSystemWindows=&quot;true&quot;</code>属性</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line">&lt;android.support.v4.widget.DrawerLayout</div><div class="line">    xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;</div><div class="line">    android:id=&quot;@+id/drawer_layout&quot;</div><div class="line">    android:layout_width=&quot;match_parent&quot;</div><div class="line">    android:layout_height=&quot;match_parent&quot;</div><div class="line">    android:fitsSystemWindows=&quot;true&quot;&gt;</div><div class="line">    &lt;!-- 普通布局 --&gt;</div><div class="line">    &lt;LinearLayout</div><div class="line">        android:orientation=&quot;vertical&quot;</div><div class="line">        android:layout_width=&quot;match_parent&quot;</div><div class="line">        android:layout_height=&quot;match_parent&quot;&gt;</div><div class="line">        &lt;android.support.v7.widget.Toolbar</div><div class="line">            android:id=&quot;@+id/toolbar&quot;</div><div class="line">            android:background=&quot;@android:color/holo_green_dark&quot;</div><div class="line">            android:layout_width=&quot;match_parent&quot;</div><div class="line">            android:layout_height=&quot;?attr/actionBarSize&quot;/&gt;</div><div class="line">        &lt;FrameLayout</div><div class="line">            android:id=&quot;@+id/fl_content&quot;</div><div class="line">            android:background=&quot;@android:color/holo_orange_dark&quot;</div><div class="line">            android:layout_width=&quot;match_parent&quot;</div><div class="line">            android:layout_height=&quot;match_parent&quot;&gt;</div><div class="line">            &lt;TextView</div><div class="line">                android:text=&quot;我是内容布局&quot;</div><div class="line">                android:layout_gravity=&quot;center&quot;</div><div class="line">                android:layout_width=&quot;wrap_content&quot;</div><div class="line">                android:layout_height=&quot;wrap_content&quot;/&gt;</div><div class="line">        &lt;/FrameLayout&gt;</div><div class="line">    &lt;/LinearLayout&gt;</div><div class="line">    &lt;!-- 侧滑布局 --&gt;</div><div class="line">    &lt;include layout=&quot;@layout/layout_drawer_normal&quot;/&gt;</div><div class="line">&lt;/android.support.v4.widget.DrawerLayout&gt;</div></pre></td></tr></table></figure>
+</li>
+<li><p>第三步：给侧滑布局设置<code>android:fitsSystemWindows=&quot;true&quot;</code>属性</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">&lt;LinearLayout</div><div class="line">    xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;</div><div class="line">    android:orientation=&quot;vertical&quot;</div><div class="line">    android:layout_gravity=&quot;start&quot;</div><div class="line">    android:layout_width=&quot;200dp&quot;</div><div class="line">    android:background=&quot;@android:color/holo_green_dark&quot;</div><div class="line">    android:layout_height=&quot;match_parent&quot;</div><div class="line">    android:fitsSystemWindows=&quot;true&quot;&gt;</div><div class="line">    &lt;TextView</div><div class="line">        android:text=&quot;我是侧滑布局&quot;</div><div class="line">        android:layout_gravity=&quot;center&quot;</div><div class="line">        android:textColor=&quot;@android:color/white&quot;</div><div class="line">        android:gravity=&quot;center&quot;</div><div class="line">        android:layout_width=&quot;match_parent&quot;</div><div class="line">        android:layout_height=&quot;match_parent&quot;/&gt;</div><div class="line">&lt;/LinearLayout&gt;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>通过以上三步，就可以达到沉浸式状态栏的效果：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-0e663bb42383a968.gif?imageMogr2/auto-orient/strip" alt=""></p>
+<h1 id="四、NavigationView"><a href="#四、NavigationView" class="headerlink" title="四、NavigationView"></a>四、<code>NavigationView</code></h1><h2 id="4-1-Navigation属性"><a href="#4-1-Navigation属性" class="headerlink" title="4.1 Navigation属性"></a>4.1 <code>Navigation</code>属性</h2><p>在使用<code>DrawerLayout</code>的时候，我们可以随意定义侧滑菜单的布局，<code>NavigationView</code>其实就是<code>Google</code>推荐的侧滑布局应该有的样子，它的效果类似于下面这样：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-eab173f5f979d168.gif?imageMogr2/auto-orient/strip" alt=""><br>我们先来看一个使用<code>Navigation</code>的简单例子：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">&lt;android.support.design.widget.NavigationView</div><div class="line">    xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;</div><div class="line">    xmlns:app=&quot;http://schemas.android.com/apk/res-auto&quot;</div><div class="line">    android:layout_width=&quot;300dp&quot;</div><div class="line">    android:layout_height=&quot;match_parent&quot;</div><div class="line">    android:layout_gravity=&quot;start&quot;</div><div class="line">    app:headerLayout=&quot;@layout/layout_drawer_navigation_header&quot;</div><div class="line">    app:menu=&quot;@menu/menu_navigation&quot;</div><div class="line">    app:itemIconTint=&quot;@android:color/white&quot;</div><div class="line">    app:itemBackground=&quot;@android:color/holo_green_dark&quot;</div><div class="line">    app:itemTextColor=&quot;@android:color/black&quot;&gt;</div><div class="line">&lt;/android.support.design.widget.NavigationView&gt;</div></pre></td></tr></table></figure></p>
+<p>上面<code>app</code>各属性对应到下图中就是这样：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-ae594221e75338de.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>可以看到，<code>Navigation</code>分为两个部分：头部和列表。</p>
+<ul>
+<li><p>头部是<code>app:headerLayout</code>所指定的布局：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">&lt;LinearLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;</div><div class="line">    android:orientation=&quot;vertical&quot;</div><div class="line">    android:layout_width=&quot;match_parent&quot;</div><div class="line">    android:layout_height=&quot;wrap_content&quot;&gt;</div><div class="line">    &lt;ImageView</div><div class="line">        android:src=&quot;@drawable/ic_bg&quot;</div><div class="line">        android:scaleType=&quot;centerCrop&quot;</div><div class="line">        android:layout_width=&quot;match_parent&quot;</div><div class="line">        android:layout_height=&quot;200dp&quot;/&gt;</div><div class="line">&lt;/LinearLayout&gt;</div></pre></td></tr></table></figure>
+</li>
+<li><p>列表通过<code>app:menu</code>所指定：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</div><div class="line">&lt;menu xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;&gt;</div><div class="line">    &lt;item</div><div class="line">        android:id=&quot;@+id/favorite&quot;</div><div class="line">        android:icon=&quot;@mipmap/ic_launcher&quot;</div><div class="line">        android:title=&quot;收藏&quot;/&gt;</div><div class="line">    &lt;item</div><div class="line">        android:id=&quot;@+id/wallet&quot;</div><div class="line">        android:icon=&quot;@mipmap/ic_launcher&quot;</div><div class="line">        android:title=&quot;钱包&quot;/&gt;</div><div class="line">    &lt;item</div><div class="line">        android:id=&quot;@+id/photo&quot;</div><div class="line">        android:icon=&quot;@mipmap/ic_launcher&quot;</div><div class="line">        android:title=&quot;相册&quot;/&gt;</div><div class="line">    &lt;item</div><div class="line">        android:id=&quot;@+id/file&quot;</div><div class="line">        android:icon=&quot;@mipmap/ic_launcher&quot;</div><div class="line">        android:title=&quot;文件&quot;/&gt;</div><div class="line">&lt;/menu&gt;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p><code>menu</code>当中的每个<code>item</code>就对应于列表当中的一项，而<code>item</code>的<code>icon</code>和<code>title</code>则分别对应列表项的图标和文字，如果希望对<code>item</code>进行分组，那么可以采用<code>group</code>的方式来组织<code>menu</code>：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">&lt;menu xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;&gt;</div><div class="line">    &lt;group android:id=&quot;@+id/group1&quot;&gt;</div><div class="line">        &lt;item</div><div class="line">            android:id=&quot;@+id/favorite&quot;</div><div class="line">            android:icon=&quot;@mipmap/ic_launcher&quot;</div><div class="line">            android:title=&quot;group1 - item1&quot;/&gt;</div><div class="line">        &lt;item</div><div class="line">            android:id=&quot;@+id/wallet&quot;</div><div class="line">            android:icon=&quot;@mipmap/ic_launcher&quot;</div><div class="line">            android:title=&quot;group1 - item2&quot;/&gt;</div><div class="line">    &lt;/group&gt;</div><div class="line">    &lt;group android:id=&quot;@+id/group2&quot;&gt;</div><div class="line">        &lt;item</div><div class="line">            android:id=&quot;@+id/photo&quot;</div><div class="line">            android:icon=&quot;@mipmap/ic_launcher&quot;</div><div class="line">            android:title=&quot;group2 - item1&quot;/&gt;</div><div class="line">        &lt;item</div><div class="line">            android:id=&quot;@+id/file&quot;</div><div class="line">            android:icon=&quot;@mipmap/ic_launcher&quot;</div><div class="line">            android:title=&quot;group2 - item2&quot;/&gt;</div><div class="line">    &lt;/group&gt;</div><div class="line">&lt;/menu&gt;</div></pre></td></tr></table></figure></p>
+<p>不同组之间就会被分割线隔开：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-23fe41c79e745d68.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>如果想要给某个分组添加标题，那么可以采用<code>subMenu</code>的方式：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line">&lt;menu xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;&gt;</div><div class="line">    &lt;group android:id=&quot;@+id/group1&quot;&gt;</div><div class="line">        &lt;item</div><div class="line">            android:id=&quot;@+id/item1&quot;</div><div class="line">            android:icon=&quot;@mipmap/ic_launcher&quot;</div><div class="line">            android:title=&quot;group1 - item1&quot;/&gt;</div><div class="line">        &lt;item</div><div class="line">            android:id=&quot;@+id/item2&quot;</div><div class="line">            android:icon=&quot;@mipmap/ic_launcher&quot;</div><div class="line">            android:title=&quot;group1 - item2&quot;/&gt;</div><div class="line">    &lt;/group&gt;</div><div class="line">    &lt;group android:id=&quot;@+id/group2&quot;&gt;</div><div class="line">        &lt;item</div><div class="line">            android:id=&quot;@+id/item3&quot;</div><div class="line">            android:icon=&quot;@mipmap/ic_launcher&quot;</div><div class="line">            android:title=&quot;group2 - item1&quot;/&gt;</div><div class="line">        &lt;item</div><div class="line">            android:id=&quot;@+id/item4&quot;</div><div class="line">            android:icon=&quot;@mipmap/ic_launcher&quot;</div><div class="line">            android:title=&quot;group2 - item2&quot;/&gt;</div><div class="line">    &lt;/group&gt;</div><div class="line">    &lt;item</div><div class="line">        android:id=&quot;@+id/item5&quot;</div><div class="line">        android:title=&quot;group3&quot;&gt;</div><div class="line">        &lt;menu&gt;</div><div class="line">            &lt;item</div><div class="line">                android:id=&quot;@+id/item6&quot;</div><div class="line">                android:icon=&quot;@mipmap/ic_launcher&quot;</div><div class="line">                android:title=&quot;group3 - item1&quot;/&gt;</div><div class="line">            &lt;item</div><div class="line">                android:id=&quot;@+id/item7&quot;</div><div class="line">                android:icon=&quot;@mipmap/ic_launcher&quot;</div><div class="line">                android:title=&quot;group3 - item2&quot;/&gt;</div><div class="line">        &lt;/menu&gt;</div><div class="line">    &lt;/item&gt;</div><div class="line">&lt;/menu&gt;</div></pre></td></tr></table></figure></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1949836-b5c67dfc10e36bed.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h2 id="4-2-Navigation点击监听"><a href="#4-2-Navigation点击监听" class="headerlink" title="4.2 Navigation点击监听"></a>4.2 <code>Navigation</code>点击监听</h2><h3 id="4-2-1-列表点击监听"><a href="#4-2-1-列表点击监听" class="headerlink" title="4.2.1 列表点击监听"></a>4.2.1 列表点击监听</h3><p>如果希望处理<code>Navigation</code>中列表的监听，那么可以使用现成的接口，根据<code>item</code>的<code>id</code>来判断是点击的是列表中的哪一项。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">mNavigationView = (NavigationView) findViewById(R.id.navigation);</div><div class="line">mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() &#123;</div><div class="line">    @Override</div><div class="line">    public boolean onNavigationItemSelected(@NonNull MenuItem item) &#123;</div><div class="line">        Log.d(&quot;onSelected&quot;, &quot;id=&quot; + item.getItemId());</div><div class="line">        return true;</div><div class="line">    &#125; </div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<h3 id="4-2-2-头部点击监听"><a href="#4-2-2-头部点击监听" class="headerlink" title="4.2.2 头部点击监听"></a>4.2.2 头部点击监听</h3><p><code>NavigationView</code>并没有提供头部点击的监听回调，因此，我们只能够通过<code>findViewById</code>的方法找到对应的<code>View</code>，对其设置监听，下面是整个<code>headerLayout</code>在<code>NavigationView</code>中的层次：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-6d4963e204420402.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h1 id="五、参考文献"><a href="#五、参考文献" class="headerlink" title="五、参考文献"></a>五、参考文献</h1><p><a href="http://blog.csdn.net/u012702547/article/details/51253222" target="_blank" rel="external">Android 5.0 之 NavigationView 的使用</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/04/13/Material-Design-控件/Material-Design-控件知识梳理(4)---FloatingActionButton/" rel="next" title="Material Design 控件知识梳理(4) - FloatingActionButton">
+                <i class="fa fa-chevron-left"></i> Material Design 控件知识梳理(4) - FloatingActionButton
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/04/14/Material-Design-控件/Material-Design-控件知识梳理(6)---Snackbar/" rel="prev" title="Material Design 控件知识梳理(6) - Snackbar">
+                Material Design 控件知识梳理(6) - Snackbar <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="John Doe" />
+          <p class="site-author-name" itemprop="name">John Doe</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">104</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">23</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、概述"><span class="nav-number">1.</span> <span class="nav-text">一、概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、DrawerLayout"><span class="nav-number">2.</span> <span class="nav-text">二、DrawerLayout</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-基本原理"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 基本原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-简单事例"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 简单事例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-监听DrawerLayout的状态变化"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 监听DrawerLayout的状态变化</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、DrawerLayout和Toolbar结合使用"><span class="nav-number">3.</span> <span class="nav-text">三、DrawerLayout和Toolbar结合使用</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-Toolbar的NavigationIcon跟随DrawerLayout变化"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 Toolbar的NavigationIcon跟随DrawerLayout变化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-DrawerLayout覆盖Toolbar"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 DrawerLayout覆盖Toolbar</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-3-DrawerLayout和Toolbar延伸到状态栏上方"><span class="nav-number">3.3.</span> <span class="nav-text">3.3 DrawerLayout和Toolbar延伸到状态栏上方</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四、NavigationView"><span class="nav-number">4.</span> <span class="nav-text">四、NavigationView</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#4-1-Navigation属性"><span class="nav-number">4.1.</span> <span class="nav-text">4.1 Navigation属性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-2-Navigation点击监听"><span class="nav-number">4.2.</span> <span class="nav-text">4.2 Navigation点击监听</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-1-列表点击监听"><span class="nav-number">4.2.1.</span> <span class="nav-text">4.2.1 列表点击监听</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-2-头部点击监听"><span class="nav-number">4.2.2.</span> <span class="nav-text">4.2.2 头部点击监听</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#五、参考文献"><span class="nav-number">5.</span> <span class="nav-text">五、参考文献</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

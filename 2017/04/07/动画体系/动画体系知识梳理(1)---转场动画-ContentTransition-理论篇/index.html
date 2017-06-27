@@ -1,0 +1,809 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="一、概述在Android 5.0当中，Google基于Android 4.4中的Transition框架引入了转场动画，设计转场动画的目的，在于让Activity之间或者Fragment之间的切换更加自然，其根本原因在于界面间切换时的动画不再是以Activity或者Fragment的整个布局作为切换时动画的执行单元，而是将动画的执行单元细分到了View。目前提供的转场动画分为两种：  Conten">
+<meta property="og:type" content="article">
+<meta property="og:title" content="动画体系知识梳理(1) - 转场动画 ContentTransition 理论篇">
+<meta property="og:url" content="http://yoursite.com/2017/04/07/动画体系/动画体系知识梳理(1)---转场动画-ContentTransition-理论篇/index.html">
+<meta property="og:site_name" content="泽毛">
+<meta property="og:description" content="一、概述在Android 5.0当中，Google基于Android 4.4中的Transition框架引入了转场动画，设计转场动画的目的，在于让Activity之间或者Fragment之间的切换更加自然，其根本原因在于界面间切换时的动画不再是以Activity或者Fragment的整个布局作为切换时动画的执行单元，而是将动画的执行单元细分到了View。目前提供的转场动画分为两种：  Conten">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-5f45b86758e1ca9e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-0c30ff98e872ae63.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-e321846ec6f9a8c7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-7b392f09a9cb6e21.gif?imageMogr2/auto-orient/strip">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-84ac8c8c3da765be.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2017-06-27T14:08:36.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="动画体系知识梳理(1) - 转场动画 ContentTransition 理论篇">
+<meta name="twitter:description" content="一、概述在Android 5.0当中，Google基于Android 4.4中的Transition框架引入了转场动画，设计转场动画的目的，在于让Activity之间或者Fragment之间的切换更加自然，其根本原因在于界面间切换时的动画不再是以Activity或者Fragment的整个布局作为切换时动画的执行单元，而是将动画的执行单元细分到了View。目前提供的转场动画分为两种：  Conten">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-5f45b86758e1ca9e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/04/07/动画体系/动画体系知识梳理(1)---转场动画-ContentTransition-理论篇/"/>
+
+
+
+
+
+  <title>动画体系知识梳理(1) - 转场动画 ContentTransition 理论篇 | 泽毛</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">泽毛</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/04/07/动画体系/动画体系知识梳理(1)---转场动画-ContentTransition-理论篇/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="泽毛">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">动画体系知识梳理(1) - 转场动画 ContentTransition 理论篇</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-07T14:52:00+08:00">
+                2017-04-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/动画体系知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">动画体系知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="一、概述"><a href="#一、概述" class="headerlink" title="一、概述"></a>一、概述</h1><p>在<code>Android 5.0</code>当中，<code>Google</code>基于<code>Android 4.4</code>中的<code>Transition</code>框架引入了转场动画，<strong>设计转场动画的目的，在于让<code>Activity</code>之间或者<code>Fragment</code>之间的切换更加自然</strong>，其根本原因在于界面间切换时的动画不再是以<code>Activity</code>或者<code>Fragment</code>的整个布局作为切换时动画的执行单元，而是将动画的执行单元细分到了<code>View</code>。目前提供的转场动画分为两种：</p>
+<ul>
+<li><code>Content Transition</code>：用于两个界面之间非共享的<code>View</code>。</li>
+<li><code>Shared Element Transition</code>：用于两个界面之间需要共享的<code>View</code>。</li>
+</ul>
+<h1 id="二、什么是Transition"><a href="#二、什么是Transition" class="headerlink" title="二、什么是Transition"></a>二、什么是<code>Transition</code></h1><h2 id="2-1-Transition的基本概念"><a href="#2-1-Transition的基本概念" class="headerlink" title="2.1 Transition的基本概念"></a>2.1 <code>Transition</code>的基本概念</h2><p>在学习<code>Content Transition</code>之前，我们先对转场动画所依赖的<code>Transition</code>框架做一个简要的介绍，这个框架是围绕着两个概念<strong><code>Scene</code>（场景）和<code>Transition</code>（变换）</strong>来建立的，在后面我们会多次提到它：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-5f45b86758e1ca9e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<ul>
+<li>场景（<code>Scene</code>）：表示<code>UI</code>所对应的状态，一般来说，会有两个场景：起点场景和终点场景，在这两个场景当中，<code>UI</code>有可能会有不同的状态。在上图当中，<code>SceneA</code>和<code>SceneB</code>就是两个不同的场景，<code>ViewA</code>在两个场景中对应的状态分别为<code>VISIBLE</code>和<code>INVISIBLE</code>。</li>
+<li>变换（<code>Transition</code>）：用来定义两个场景之间切换的规则，当场景发生发生变换时，<code>Transition</code>需要做的有两点：<ul>
+<li>确定<code>View</code>在起点场景和终点场景的状态。</li>
+<li>创建<code>View</code>从终点场景切换到终点场景所需的<code>Animator</code>。</li>
+</ul>
+</li>
+</ul>
+<h2 id="2-2-Transition的简单例子"><a href="#2-2-Transition的简单例子" class="headerlink" title="2.2 Transition的简单例子"></a>2.2 <code>Transition</code>的简单例子</h2><p>下面，我们通过一个简单的例子，对上面的概念有一个直观的感受：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line">public class ExampleActivity extends Activity implements View.OnClickListener &#123;</div><div class="line">    private ViewGroup mRootView;</div><div class="line">    private View mRedBox, mGreenBox, mBlueBox, mBlackBox;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    protected void onCreate(Bundle savedInstanceState) &#123;</div><div class="line">        super.onCreate(savedInstanceState);</div><div class="line">        setContentView(R.layout.activity_main);</div><div class="line"></div><div class="line">        mRootView = (ViewGroup) findViewById(R.id.layout_root_view);</div><div class="line">        mRootView.setOnClickListener(this);</div><div class="line"></div><div class="line">        mRedBox = findViewById(R.id.red_box);</div><div class="line">        mGreenBox = findViewById(R.id.green_box);</div><div class="line">        mBlueBox = findViewById(R.id.blue_box);</div><div class="line">        mBlackBox = findViewById(R.id.black_box);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void onClick(View v) &#123;</div><div class="line">        TransitionManager.beginDelayedTransition(mRootView, new Fade());</div><div class="line">        toggleVisibility(mRedBox, mGreenBox, mBlueBox, mBlackBox);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static void toggleVisibility(View... views) &#123;</div><div class="line">        for (View view : views) &#123;</div><div class="line">            boolean isVisible = view.getVisibility() == View.VISIBLE;</div><div class="line">            view.setVisibility(isVisible ? View.INVISIBLE : View.VISIBLE);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<ul>
+<li>第一步：通过<code>beginDelayedTranstion</code>传入场景对应布局的根节点（<code>mRootView</code>）以及场景变换的规则（<code>Fade</code>），此时系统理解调用<code>Transition</code>的<code>captureStartValues</code>方法，来确定场景当中所有子<code>View</code>的<code>visibility</code>。</li>
+<li>第二步：当<code>beginDeleyedTransition</code>返回后，我们将子<code>View</code>设置为不可见。</li>
+<li>第三步：在下一帧，系统调用<code>Transtion</code>的<code>captureEndValues()</code>方法获取场景当中所有子<code>View</code>的可见性。</li>
+<li>第四步：这时候系统发现在起始场景中<code>View</code>是<code>VISIBLE</code>的，而在终点场景中它变为了<code>INVISIBLE</code>，那么<code>Fade Transition</code>就会根据这些信息创建并返回<code>AnimatorSet</code>，用它来将那些发生变化的<code>View</code>的<code>alpha</code>值渐变为<code>0</code>，而不是直接设为不可见。</li>
+<li>第五步：系统启动这个<code>Animator</code>，使得这些<code>View</code>慢慢隐藏。</li>
+</ul>
+<h2 id="2-3-Transition小结"><a href="#2-3-Transition小结" class="headerlink" title="2.3 Transition小结"></a>2.3 <code>Transition</code>小结</h2><p>我们可以总结出<code>Transition</code>的两个特点：</p>
+<ul>
+<li><code>Animator</code>对于开发者而言是抽象的，开发者设置<code>View</code>的起始值和最终值，<code>Transition</code>会根据这两者的差异，自动地创建切换的<code>Animator</code>。</li>
+<li>可以随时通过替换<code>Transition</code>来改变切换的规则。</li>
+</ul>
+<h1 id="三、Content-Transition基本概念"><a href="#三、Content-Transition基本概念" class="headerlink" title="三、Content Transition基本概念"></a>三、<code>Content Transition</code>基本概念</h1><h2 id="3-1-旧的界面切换动画"><a href="#3-1-旧的界面切换动画" class="headerlink" title="3.1 旧的界面切换动画"></a>3.1 旧的界面切换动画</h2><p>回忆一下，在<code>5.0</code>之前：</p>
+<ul>
+<li>给<code>Activity</code>之间的切换添加动画，在启动<code>Activity</code>的地方加上<code>overridePendingTransition</code></li>
+<li>给<code>Fragment</code>之间的切换添加动画，通过<code>FragmentTransation</code>的<code>setCustomAnimation</code>。</li>
+</ul>
+<p>这两种方式都有一个共同的特点，那就是它们<strong>都是将<code>Activity</code>所在的窗口或<code>Fragment</code>所对应的布局作为切换动画的执行单元</strong>。</p>
+<h2 id="3-2-新的界面切换动画"><a href="#3-2-新的界面切换动画" class="headerlink" title="3.2 新的界面切换动画"></a>3.2 新的界面切换动画</h2><p>在新的切换方式当中，可以将布局中的每个<code>View</code>作为切换的执行单元，我们以<code>Activity</code>之间的切换为例。</p>
+<h3 id="3-2-1-启动BActivity"><a href="#3-2-1-启动BActivity" class="headerlink" title="3.2.1 启动BActivity"></a>3.2.1 启动<code>BActivity</code></h3><p>在<code>AActivity</code>启动中<code>BActivity</code>，这时候就会涉及到四种<code>Scene</code>和两种<code>Transition</code>：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-0c30ff98e872ae63.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<ul>
+<li><code>AActivity&#39;s Exit Transition</code>：它定义了<code>AActivity</code>中的元素如何从<code>VISIBLE</code>（起点场景）变为<code>INVISIBLE</code>（终点场景）。</li>
+<li><code>BActivity&#39;s Enter Transition</code>：它定义了<code>BActivity</code>中的元素如果从<code>INVISIBLE</code>（起点场景）变为<code>VISIBLE</code>（终点场景）。</li>
+</ul>
+<h4 id="3-2-1-1-确定需要执行Transition的View"><a href="#3-2-1-1-确定需要执行Transition的View" class="headerlink" title="3.2.1.1 确定需要执行Transition的View"></a>3.2.1.1 确定需要执行<code>Transition</code>的<code>View</code></h4><p>整个<code>Transition</code>的第一步，就是先要<strong>确定当前界面中需要执行<code>Transition</code>的动画切换单元</strong>，这一过程是通过对整个<code>View</code>树进行递归调用得到的，而递归的逻辑在<code>ViewGroup</code>当中：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">public void captureTransitioningViews(List&lt;View&gt; transitioningViews) &#123;</div><div class="line">        if (getVisibility() != View.VISIBLE) &#123;</div><div class="line">            return;</div><div class="line">        &#125;</div><div class="line">        if (isTransitionGroup()) &#123;</div><div class="line">            transitioningViews.add(this);</div><div class="line">        &#125; else &#123;</div><div class="line">            int count = getChildCount();</div><div class="line">            for (int i = 0; i &lt; count; i++) &#123;</div><div class="line">                View child = getChildAt(i);</div><div class="line">                child.captureTransitioningViews(transitioningViews);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>而在<code>View</code>中，该方法为：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">public void captureTransitioningViews(List&lt;View&gt; transitioningViews) &#123;</div><div class="line">        if (getVisibility() == View.VISIBLE) &#123;</div><div class="line">            transitioningViews.add(this);</div><div class="line">        &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>由此可见，所有需要变换的<code>ViewGroup/View</code>都保存在<code>transitioningViews</code>当中，关于这个集合的构成依据以下三点：</p>
+<ul>
+<li>节点不可见，那么它以及它的所有子节点都不加入集合。</li>
+<li>节点的<code>isTransitionGroup()</code>标志位为<code>true</code>，那么把它和它的所有子节点当成一个变换单元加入到集合当中。</li>
+<li>除了以上两种情况，那么<code>View</code>树的所有叶子节点都加入到集合当中。</li>
+</ul>
+<p>其中<code>isTransitionGroup()</code>的值我们可以通过<code>setTransitionGroup(boolean flag)</code>来改变，如果在场景当中用到了<code>WebView</code>，而我们希望将它作为一个整体进行变换，那么应当加上这个标志位。<br>除了系统默认的遍历，我们还可以通过<code>Transition</code>的<code>added</code>和<code>excluded</code>来改变这个集合。</p>
+<h4 id="3-2-1-2-Exit-Transition的执行过程"><a href="#3-2-1-2-Exit-Transition的执行过程" class="headerlink" title="3.2.1.2 Exit Transition的执行过程"></a>3.2.1.2 <code>Exit Transition</code>的执行过程</h4><p>下面，我们以<code>AActivity</code>的<code>Exit Transition</code>为例，描述一下它整个的执行过程：</p>
+<ul>
+<li>第一步：系统遍历<code>AActivity</code>的<code>View</code>树，并决定在<code>exit transition</code>运行时需要变换的<code>View</code>，把它们放在集合当中，也就是我们在<code>3.2.1.1</code>中所说的<code>transitionViews</code>。</li>
+<li>第二步：<code>AActivity</code>的<code>Exit Transition</code>获取集合中<code>View</code>的起始状态，调用的是<code>captureStartValues</code>方法。</li>
+<li>第三步：将集合中的<code>View</code>设为<code>INVISIBLE</code>。</li>
+<li>第四步：在下一帧时，<code>Exit Transition</code>获取集合中<code>View</code>的终点状态，调用的是<code>captureEndValues</code>方法。</li>
+<li>第五步：<code>Exit Transition</code>根据第二步中的起始状态和终点状态，创建一个<code>Animator</code>，并执行这个<code>Animator</code>，由于是从<code>VISIBLE</code>变为<code>INVISIBLE</code>，因此，是通过<code>onDisappear</code>方法得到<code>Animator</code>。</li>
+</ul>
+<h4 id="3-2-1-3-Enter-Transition的执行过程。"><a href="#3-2-1-3-Enter-Transition的执行过程。" class="headerlink" title="3.2.1.3 Enter Transition的执行过程。"></a>3.2.1.3 <code>Enter Transition</code>的执行过程。</h4><p><code>BActivity</code>的<code>Enter Transition</code>和<code>AActvity</code>的<code>Exit Transition</code>类似，只不过第三步操作是从<code>INVISIBLE</code>到<code>VISIBLE</code>。</p>
+<h3 id="3-2-2-从BActivity返回"><a href="#3-2-2-从BActivity返回" class="headerlink" title="3.2.2 从BActivity返回"></a>3.2.2 从<code>BActivity</code>返回</h3><p>而当我们从<code>BActivity</code>返回到<code>AActivity</code>，那么就会涉及到下面四种<code>Scene</code>和两种<code>Transition</code>：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-e321846ec6f9a8c7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<ul>
+<li><code>BActivity&#39;s Return Transition</code></li>
+<li><code>AActivity&#39;s Reenter Transition</code></li>
+</ul>
+<p>其原理和上面是相同的，就不多介绍了。</p>
+<h3 id="3-2-3-小结"><a href="#3-2-3-小结" class="headerlink" title="3.2.3 小结"></a>3.2.3 小结</h3><p>无论是<code>AActivity</code>启动<code>BActivity</code>，还是<code>BActivity</code>返回到<code>AActivity</code>，当<code>View</code>的可见性不断切换的时候，系统能保证根据状态信息来创建所需的动画。很显然，所有的<code>Content transition</code>对象都需要能够捕捉并记录<code>View</code>的起始状态和终点状态，幸运的是，抽象类<code>Visiblity</code>已经帮我们做了，我们只需要实现<code>onAppear</code>和<code>onDisappear</code>方法，在里面创建一个<code>Animator</code>来定义进入和退出场景的<code>View</code>的动画，系统默认提供了三种<code>Transition</code> - <code>Fade、Slide、Explode</code>，下面我们在分析<code>Fade</code>源码的时候，会详细解释这一过程。</p>
+<h2 id="3-3-Content-Transition和Shared-Element-Transition"><a href="#3-3-Content-Transition和Shared-Element-Transition" class="headerlink" title="3.3 Content Transition和Shared Element Transition"></a>3.3 <code>Content Transition</code>和<code>Shared Element Transition</code></h2><p>在上面的讨论当中，我们是从切换的角度来考虑的，而如果我们从<code>Transition</code>的角度来看，那么每个<code>Transition</code>又可以细分为两类：</p>
+<ul>
+<li><code>content transitions</code>：定义了<code>Activity</code>非共享<code>View</code>进入和退出场景的方式。</li>
+<li><code>shared element transitions</code>：定义了<code>Acitivity</code>共享<code>View</code>进入和退出场景的方法。</li>
+</ul>
+<h2 id="3-4-例子"><a href="#3-4-例子" class="headerlink" title="3.4 例子"></a>3.4 例子</h2><p>下面，我们以一个视频来解释一下上面谈到的四个<code>Transition</code>：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-7b392f09a9cb6e21.gif?imageMogr2/auto-orient/strip" alt=""><br>在这个视频当中，我们将列表页称为<code>AActivity</code>，详情页称为<code>BActivity</code>，此时，对应于上面提到的四种<code>Transition</code>：</p>
+<ul>
+<li><code>AActivity&#39;s Exit Transition</code>为<code>null</code></li>
+<li><code>AActivity&#39;s Reenter Transition</code>为<code>null</code></li>
+<li><code>BActivity&#39;s Enter Transition</code>则分为三个部分：<ul>
+<li>封面从小的圆形渐渐变成大的方形</li>
+<li>播放图标的半径渐渐变大</li>
+<li>底下的列表采用了自定义的<code>Slide-in</code>动画。</li>
+</ul>
+</li>
+<li><code>BActivity&#39;s Exit Transition</code>：<ul>
+<li>上半部分采用了<code>Slide(TOP)</code>的方式，而下半部分采用<code>Slide(BOTTOM)</code>的方式。</li>
+</ul>
+</li>
+</ul>
+<h1 id="四、源码分析"><a href="#四、源码分析" class="headerlink" title="四、源码分析"></a>四、源码分析</h1><p>系统默认自带了三种<code>Transition</code>，<code>Fade、Slide、Explode</code>，这一节，我们一起来分析一下它们的实现方式：</p>
+<h2 id="4-1-Fade"><a href="#4-1-Fade" class="headerlink" title="4.1 Fade"></a>4.1 <code>Fade</code></h2><h3 id="4-1-1-captureXXX函数"><a href="#4-1-1-captureXXX函数" class="headerlink" title="4.1.1 captureXXX函数"></a>4.1.1 <code>captureXXX</code>函数</h3><p>首先，我们看一下它获取起点和终点属性的函数：</p>
+<ul>
+<li><code>public void captureStartValues(TransitionValues transitionValues)</code></li>
+<li><code>public void captureEndValues(TransitionValues transitionValues)</code></li>
+</ul>
+<p><code>Fade</code>只重写了<code>captureStartValues</code>，在这里面，它把<code>View</code>当前的<code>translationAlpha</code>值保存起来，这个值表示的是在<code>Transition</code>开始之前<code>View</code>的<code>translationAlpha</code>的值：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">@Override</div><div class="line">public void captureStartValues(TransitionValues transitionValues) &#123;</div><div class="line">    super.captureStartValues(transitionValues);</div><div class="line">    transitionValues.values.put(PROPNAME_TRANSITION_ALPHA, transitionValues.view.getTransitionAlpha());</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h3 id="4-1-2-onAppear和onDisappear"><a href="#4-1-2-onAppear和onDisappear" class="headerlink" title="4.1.2 onAppear和onDisappear"></a>4.1.2 <code>onAppear</code>和<code>onDisappear</code></h3><p>在上面的分析当中，我们提到过，当<code>View</code>的可见性从<code>INVISIBLE</code>变为<code>VISIBLE</code>时会调用<code>Transition</code>中的<code>Animator</code>来执行这一变换的过程，例如从<code>AActivity</code>跳转到<code>BActivity</code>，那么<code>BActivity</code>中的<code>View</code>就会调用<code>onAppear</code>所返回的<code>Animator</code>：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">@Override</div><div class="line">public Animator onAppear(ViewGroup sceneRoot, View view, TransitionValues startValues, TransitionValues endValues) &#123;</div><div class="line">    float startAlpha = getStartAlpha(startValues, 0);</div><div class="line">    if (startAlpha == 1) &#123;</div><div class="line">        startAlpha = 0;</div><div class="line">    &#125;</div><div class="line">    return createAnimation(view, startAlpha, 1);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这里首先会通过<code>getStartAlpha</code>去获取起始的<code>transitionAlpha</code>值，它是把之前保存在<code>PROPNAME_TRANSITION_ALPHA</code>中的值取出来：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">private static float getStartAlpha(TransitionValues startValues, float fallbackValue) &#123;</div><div class="line">    float startAlpha = fallbackValue;</div><div class="line">    if (startValues != null) &#123;</div><div class="line">        Float startAlphaFloat = (Float) startValues.values.get(PROPNAME_TRANSITION_ALPHA);</div><div class="line">        if (startAlphaFloat != null) &#123;</div><div class="line">            startAlpha = startAlphaFloat;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    return startAlpha;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>下面，我们再回到<code>onAppear</code>函数当中，看一下<code>Animator</code>的创建过程：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">private Animator createAnimation(final View view, float startAlpha, final float endAlpha) &#123;</div><div class="line">    if (startAlpha == endAlpha) &#123;</div><div class="line">        return null;</div><div class="line">    &#125;</div><div class="line">    view.setTransitionAlpha(startAlpha);</div><div class="line">    final ObjectAnimator anim = ObjectAnimator.ofFloat(view, &quot;transitionAlpha&quot;, endAlpha);</div><div class="line">    final FadeAnimatorListener listener = new FadeAnimatorListener(view);</div><div class="line">    anim.addListener(listener);</div><div class="line">    addListener(new TransitionListenerAdapter() &#123;</div><div class="line">        @Override</div><div class="line">        public void onTransitionEnd(Transition transition) &#123;</div><div class="line">            view.setTransitionAlpha(1);</div><div class="line">        &#125;</div><div class="line">    &#125;);</div><div class="line">    return anim;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>从上面可以看出，它返回的是一个<code>ObjectAnimator</code>，这个<code>Animator</code>会把<code>View</code>的<code>translationAlpha</code>从<code>startAlpha</code>变为<code>1</code>，这也就是一个渐渐显示的过程。<br>再看一下<code>onDisappear</code>函数，它就是<code>onAppear</code>的反向过程：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">@Override</div><div class="line">public Animator onDisappear(ViewGroup sceneRoot, final View view, TransitionValues startValues,</div><div class="line">        TransitionValues endValues) &#123;</div><div class="line">    float startAlpha = getStartAlpha(startValues, 1);</div><div class="line">    return createAnimation(view, startAlpha, 0);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="4-2-Slide"><a href="#4-2-Slide" class="headerlink" title="4.2 Slide"></a>4.2 <code>Slide</code></h2><p>下面，我们来看一下另一种<code>Transition</code> - <code>Slide</code>的实现原理，和上面类似，我们先看一下<code>captureXXX</code>方都做了什么：</p>
+<h3 id="4-2-1-captureXXX"><a href="#4-2-1-captureXXX" class="headerlink" title="4.2.1 captureXXX"></a>4.2.1 <code>captureXXX</code></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">@Override</div><div class="line">public void captureStartValues(TransitionValues transitionValues) &#123;</div><div class="line">    super.captureStartValues(transitionValues);</div><div class="line">    captureValues(transitionValues);</div><div class="line">&#125;</div><div class="line"></div><div class="line">@Override</div><div class="line">public void captureEndValues(TransitionValues transitionValues) &#123;</div><div class="line">    super.captureEndValues(transitionValues);</div><div class="line">    captureValues(transitionValues);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>对于起点和终点值的获取都是调用了下面这个函数，它保存的是<code>View</code>在窗口中的位置：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">private void captureValues(TransitionValues transitionValues) &#123;</div><div class="line">    View view = transitionValues.view;</div><div class="line">    int[] position = new int[2];</div><div class="line">    view.getLocationOnScreen(position);</div><div class="line">    transitionValues.values.put(PROPNAME_SCREEN_POSITION, position);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h3 id="4-2-2-onAppear和onDisappear"><a href="#4-2-2-onAppear和onDisappear" class="headerlink" title="4.2.2 onAppear和onDisappear"></a>4.2.2 <code>onAppear</code>和<code>onDisappear</code></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">@Override</div><div class="line">public Animator onAppear(ViewGroup sceneRoot, View view, TransitionValues startValues, TransitionValues endValues) &#123;</div><div class="line">    if (endValues == null) &#123;</div><div class="line">        return null;</div><div class="line">    &#125;</div><div class="line">    int[] position = (int[]) endValues.values.get(PROPNAME_SCREEN_POSITION);</div><div class="line">    //终点值是确定的</div><div class="line">    float endX = view.getTranslationX();</div><div class="line">    float endY = view.getTranslationY();</div><div class="line">    //起点值则需要根据所选的模式来确定</div><div class="line">    float startX = mSlideCalculator.getGoneX(sceneRoot, view, mSlideFraction);</div><div class="line">    float startY = mSlideCalculator.getGoneY(sceneRoot, view, mSlideFraction);</div><div class="line">    //根据起点值、终点值、View所处窗口的位置，来得到一个`Animator`</div><div class="line">    return TranslationAnimationCreator.createAnimation(view, endValues, position[0], position[1], startX, startY, endX, endY, sDecelerate, this);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这里面，最关键的是<code>mSlideCalculator</code>，默认情况下为：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">private static final CalculateSlide sCalculateBottom = new CalculateSlideVertical() &#123;</div><div class="line">    @Override</div><div class="line">    public float getGoneY(ViewGroup sceneRoot, View view, float fraction) &#123;</div><div class="line">        return view.getTranslationY() + sceneRoot.getHeight() * fraction;</div><div class="line">    &#125;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>用一张图解解释一下上面的坐标：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-84ac8c8c3da765be.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>所以当我们采用这个<code>Transition</code>的时候，就可以看到它从屏幕的底端滑上来。<br>而<code>onDisappear</code>则也是一个反向的过程：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">@Override</div><div class="line">public Animator onDisappear(ViewGroup sceneRoot, View view, TransitionValues startValues, TransitionValues endValues) &#123;</div><div class="line">    if (startValues == null) &#123;</div><div class="line">        return null;</div><div class="line">    &#125;</div><div class="line">    int[] position = (int[]) startValues.values.get(PROPNAME_SCREEN_POSITION);</div><div class="line">    //这里的起始值和终点值正好是和onAppear相反的.</div><div class="line">    float startX = view.getTranslationX();</div><div class="line">    float startY = view.getTranslationY();</div><div class="line">    float endX = mSlideCalculator.getGoneX(sceneRoot, view, mSlideFraction);</div><div class="line">    float endY = mSlideCalculator.getGoneY(sceneRoot, view, mSlideFraction);</div><div class="line">    return TranslationAnimationCreator.createAnimation(view, startValues, position[0], position[1], startX, startY, endX, endY, sAccelerate, this);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="4-3-小结"><a href="#4-3-小结" class="headerlink" title="4.3 小结"></a>4.3 小结</h2><p>通过分析<code>Fade</code>和<code>Slide</code>的源码，它们的主要思想就是：</p>
+<ul>
+<li>在<code>capturexxx</code>方法中，把属性保存在<code>TranslationValues</code>中，这里，一定要记得调用对应的<code>super</code>方法让系统保存一些默认的状态。</li>
+<li>在<code>onAppear</code>和<code>onDisappear</code>中，根据起点和终点和终点的<code>TranslationValues</code>，构造一个改变<code>View</code>属性的<code>Animator</code>，同时在动画结束之后，还原它的属性。</li>
+</ul>
+<h1 id="五、总结"><a href="#五、总结" class="headerlink" title="五、总结"></a>五、总结</h1><p>这一篇我们分析了<code>Content Transition</code>的设计思想和原理，下一篇文章我们将着重讨论如何通过代码来实现上面的效果。</p>
+<h1 id="六、参考文献"><a href="#六、参考文献" class="headerlink" title="六、参考文献"></a>六、参考文献</h1><p><a href="http://www.androiddesignpatterns.com/2014/12/activity-fragment-transitions-in-android-lollipop-part1.html" target="_blank" rel="external">1.Getting Started with Activity &amp; Fragment Transitions (part 1)</a><br><a href="http://www.androiddesignpatterns.com/2014/12/activity-fragment-content-transitions-in-depth-part2.html" target="_blank" rel="external">2.Content Transitions In-Depth (part 2)</a><br><a href="https://github.com/lgvalle/Material-Animations" target="_blank" rel="external">3.Material-Animations</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/04/05/RecyclerView/RecyclerView-知识梳理(5)---ItemTouchHelper/" rel="next" title="RecyclerView 知识梳理(5) - ItemTouchHelper">
+                <i class="fa fa-chevron-left"></i> RecyclerView 知识梳理(5) - ItemTouchHelper
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/04/08/动画体系/动画体系知识梳理(2)---转场动画-ContentTransition-实践篇/" rel="prev" title="动画体系知识梳理(2) - 转场动画 ContentTransition 实践篇">
+                动画体系知识梳理(2) - 转场动画 ContentTransition 实践篇 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="John Doe" />
+          <p class="site-author-name" itemprop="name">John Doe</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">104</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">23</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、概述"><span class="nav-number">1.</span> <span class="nav-text">一、概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、什么是Transition"><span class="nav-number">2.</span> <span class="nav-text">二、什么是Transition</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-Transition的基本概念"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 Transition的基本概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-Transition的简单例子"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 Transition的简单例子</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-Transition小结"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 Transition小结</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、Content-Transition基本概念"><span class="nav-number">3.</span> <span class="nav-text">三、Content Transition基本概念</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-旧的界面切换动画"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 旧的界面切换动画</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-新的界面切换动画"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 新的界面切换动画</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-1-启动BActivity"><span class="nav-number">3.2.1.</span> <span class="nav-text">3.2.1 启动BActivity</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-1-1-确定需要执行Transition的View"><span class="nav-number">3.2.1.1.</span> <span class="nav-text">3.2.1.1 确定需要执行Transition的View</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-1-2-Exit-Transition的执行过程"><span class="nav-number">3.2.1.2.</span> <span class="nav-text">3.2.1.2 Exit Transition的执行过程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-1-3-Enter-Transition的执行过程。"><span class="nav-number">3.2.1.3.</span> <span class="nav-text">3.2.1.3 Enter Transition的执行过程。</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-2-从BActivity返回"><span class="nav-number">3.2.2.</span> <span class="nav-text">3.2.2 从BActivity返回</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-3-小结"><span class="nav-number">3.2.3.</span> <span class="nav-text">3.2.3 小结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-3-Content-Transition和Shared-Element-Transition"><span class="nav-number">3.3.</span> <span class="nav-text">3.3 Content Transition和Shared Element Transition</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-4-例子"><span class="nav-number">3.4.</span> <span class="nav-text">3.4 例子</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四、源码分析"><span class="nav-number">4.</span> <span class="nav-text">四、源码分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#4-1-Fade"><span class="nav-number">4.1.</span> <span class="nav-text">4.1 Fade</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-1-captureXXX函数"><span class="nav-number">4.1.1.</span> <span class="nav-text">4.1.1 captureXXX函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-2-onAppear和onDisappear"><span class="nav-number">4.1.2.</span> <span class="nav-text">4.1.2 onAppear和onDisappear</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-2-Slide"><span class="nav-number">4.2.</span> <span class="nav-text">4.2 Slide</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-1-captureXXX"><span class="nav-number">4.2.1.</span> <span class="nav-text">4.2.1 captureXXX</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-2-onAppear和onDisappear"><span class="nav-number">4.2.2.</span> <span class="nav-text">4.2.2 onAppear和onDisappear</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-3-小结"><span class="nav-number">4.3.</span> <span class="nav-text">4.3 小结</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#五、总结"><span class="nav-number">5.</span> <span class="nav-text">五、总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#六、参考文献"><span class="nav-number">6.</span> <span class="nav-text">六、参考文献</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

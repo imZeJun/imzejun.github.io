@@ -1,0 +1,718 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="一、概述有时候，我们希望对一个图片或一个复杂图形的颜色，进行处理，那么这时候可以采用Paint的setColorFilter方法，一个最常见的例子，就是图片的滤镜，当然，那里面的算法可能更加复杂。 二、ColorFilter的分类关于ColorFilter，源码中是这么解释的，它可以对Paint所绘制区域的每个像素进行颜色的改变。12345/** * A color filter can be u">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Canvas&amp;Paint 知识梳理(3) - 颜色合成 Paint#setColorFilter">
+<meta property="og:url" content="http://yoursite.com/2017/03/03/Canvas-&-Paint/Canvas&Paint-知识梳理(3)---颜色合成-Paint#setColorFilter/index.html">
+<meta property="og:site_name" content="泽毛">
+<meta property="og:description" content="一、概述有时候，我们希望对一个图片或一个复杂图形的颜色，进行处理，那么这时候可以采用Paint的setColorFilter方法，一个最常见的例子，就是图片的滤镜，当然，那里面的算法可能更加复杂。 二、ColorFilter的分类关于ColorFilter，源码中是这么解释的，它可以对Paint所绘制区域的每个像素进行颜色的改变。12345/** * A color filter can be u">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-0f4d46ced8a05590.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-34cfafcdf5f697a1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-2e90396d9fbaf8cd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2017-06-27T14:42:12.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Canvas&amp;Paint 知识梳理(3) - 颜色合成 Paint#setColorFilter">
+<meta name="twitter:description" content="一、概述有时候，我们希望对一个图片或一个复杂图形的颜色，进行处理，那么这时候可以采用Paint的setColorFilter方法，一个最常见的例子，就是图片的滤镜，当然，那里面的算法可能更加复杂。 二、ColorFilter的分类关于ColorFilter，源码中是这么解释的，它可以对Paint所绘制区域的每个像素进行颜色的改变。12345/** * A color filter can be u">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-0f4d46ced8a05590.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/03/03/Canvas-&-Paint/Canvas&Paint-知识梳理(3)---颜色合成-Paint#setColorFilter/"/>
+
+
+
+
+
+  <title>Canvas&Paint 知识梳理(3) - 颜色合成 Paint#setColorFilter | 泽毛</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">泽毛</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/03/03/Canvas-&-Paint/Canvas&Paint-知识梳理(3)---颜色合成-Paint#setColorFilter/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="泽毛">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Canvas&Paint 知识梳理(3) - 颜色合成 Paint#setColorFilter</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-03T19:58:00+08:00">
+                2017-03-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Canvas-Paint-知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">Canvas&Paint 知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="一、概述"><a href="#一、概述" class="headerlink" title="一、概述"></a>一、概述</h1><p>有时候，我们希望对一个图片或一个复杂图形的<strong>颜色</strong>，进行处理，那么这时候可以采用<code>Paint</code>的<code>setColorFilter</code>方法，一个最常见的例子，就是图片的滤镜，当然，那里面的算法可能更加复杂。</p>
+<h1 id="二、ColorFilter的分类"><a href="#二、ColorFilter的分类" class="headerlink" title="二、ColorFilter的分类"></a>二、<code>ColorFilter</code>的分类</h1><p>关于<code>ColorFilter</code>，源码中是这么解释的，它可以<strong>对<code>Paint</code>所绘制区域的每个像素进行颜色的改变</strong>。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">/**</div><div class="line"> * A color filter can be used with a &#123;@link Paint&#125; to modify the color of</div><div class="line"> * each pixel drawn with that paint. This is an abstract class that should</div><div class="line"> * never be used directly.</div><div class="line"> */</div></pre></td></tr></table></figure></p>
+<p>当我们使用<code>ColorFilter</code>的时候，不一样直接使用它，而是使用它的子类：</p>
+<ul>
+<li><code>ColorMatrixColorFilter</code></li>
+<li><code>LightingColorFilter</code></li>
+<li><code>PoterDuffColorFilter</code></li>
+</ul>
+<h2 id="2-1-ColorMatrixColorFilter"><a href="#2-1-ColorMatrixColorFilter" class="headerlink" title="2.1 ColorMatrixColorFilter"></a>2.1 <code>ColorMatrixColorFilter</code></h2><p><code>ColorMatrixColorFilter</code>的通过<code>ColorMatrix</code>构造，而<code>ColorMatrix</code>则由一个长度为<code>20</code>的<code>float</code>数组构造，传入该数组后把该数组先从左到右，再从上到下排列，形成一个<code>4*5</code>的矩阵。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">[ a, b, c, d, e,</div><div class="line">  f, g, h, i, j,</div><div class="line">  k, l, m, n, o,</div><div class="line">  p, q, r, s, t ]</div></pre></td></tr></table></figure></p>
+<p>之后，再用矩阵和目标的<code>RGBA</code>进行计算，最后得到新的<code>RGBA</code>，它的计算方法为：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">R’ = a*R + b*G + c*B + d*A + e;</div><div class="line">G’ = f*R + g*G + h*B + i*A + j;</div><div class="line">B’ = k*R + l*G + m*B + n*A + o;</div><div class="line">A’ = p*R + q*G + r*B + s*A + t;</div></pre></td></tr></table></figure></p>
+<p>注意，新的<code>RGBA</code>会被限制在<code>0-255</code>的范围内。在实际使用的时候，我们先通过一个<code>ColorMatrix</code>辅助类来确定需要相乘的这个颜色矩阵，之后再把它作为<code>ColorMatrixColorFilter</code>构造函数的参数来构造它。<br>我们一般有两种用法：改变画笔的颜色，或者改变整个<code>Bitmap</code>的像素点的颜色。下面我们用第二种方式来举例。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">private void drawColorMatrixFilter(Canvas canvas) &#123;</div><div class="line">    Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);</div><div class="line">    //1,得到一个颜色矩阵</div><div class="line">    ColorMatrix colorMatrix = new ColorMatrix();</div><div class="line">    colorMatrix.setSaturation(0.5f);</div><div class="line">    //2.通过颜色矩阵构建ColorMatrixColorFilter对象</div><div class="line">    ColorMatrixColorFilter colorMatrixColorFilter = new ColorMatrixColorFilter(colorMatrix);</div><div class="line">    Paint matrixPaint = new Paint();</div><div class="line">    //3.把构建的对象设置给Paint</div><div class="line">    matrixPaint.setColorFilter(colorMatrixColorFilter);</div><div class="line">    canvas.drawBitmap(bitmap, 0, 0, matrixPaint);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>最终我们会得到一个蒙了灰的图片：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-0f4d46ced8a05590.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>当然我们也可以先设置画笔的颜色，然后给它设置一个颜色矩阵，这样最后花上去的图形的就是就是等于画笔颜色和矩阵一起计算的结果。</p>
+<h2 id="2-2-LightingColorFilter"><a href="#2-2-LightingColorFilter" class="headerlink" title="2.2 LightingColorFilter"></a>2.2 <code>LightingColorFilter</code></h2><p>用来模拟光照的效果，它定义了两个参数来和原<code>color</code>相乘，第一个<code>colorMultiply</code>原来相乘，而第二个参数<code>colorAdd</code>用来相加，并且会忽略其中的<code>Aplha</code>参数，这个<code>32</code>位的表示<code>0xAARRGGBB</code>，计算的公式为：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">R&apos; = R * colorMultiply.R + colorAdd.R</div><div class="line">G&apos; = G * colorMultiply.G + colorAdd.G</div><div class="line">B&apos; = B * colorMultiply.B + colorAdd.B</div></pre></td></tr></table></figure></p>
+<p>需要注意的是这个倍数为整形，也就是我们只能增大，不能减小。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">private void drawLightingColorFilter(Canvas canvas) &#123;</div><div class="line">    Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);</div><div class="line">    //1.构建一个LightingColorFilter</div><div class="line">    LightingColorFilter lightingColorFilter = new LightingColorFilter(3, 0);</div><div class="line">    Paint matrixPaint = new Paint();</div><div class="line">    //2.设置给画笔</div><div class="line">    matrixPaint.setColorFilter(lightingColorFilter);</div><div class="line">    //3.绘制</div><div class="line">    canvas.drawBitmap(bitmap, 0, 0, matrixPaint);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>最终会得到下面的结果：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-34cfafcdf5f697a1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>可以看到，对于原本<code>RGB</code>为<code>0</code>的像素点，它不会做任何改变，它只会改变那些原本有颜色的像素点。</p>
+<h2 id="2-3-PorterDuffColorFilter"><a href="#2-3-PorterDuffColorFilter" class="headerlink" title="2.3 PorterDuffColorFilter"></a>2.3 <code>PorterDuffColorFilter</code></h2><p>混合模式，其构造函数为<code>PorterDuffColorFilter(int dstColor, PorterDuff.Mode mode)</code>，其中<code>color</code>为<code>16</code>进制的终点颜色，<code>mode</code>为混合策略，它会根据起点颜色<code>Sc</code>，起点透明度<code>Sa</code>，终点颜色<code>Dc</code>和终点透明度<code>Da</code>最终计算得出要显示的<code>RGBA</code>。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">* A color filter that can be used to tint the source pixels using a single</div><div class="line">* color and a specific &#123;@link PorterDuff Porter-Duff composite mode&#125;.</div></pre></td></tr></table></figure></p>
+<p>其中<code>mode</code>为<code>PorterDuff.Mode</code>，其对应的模式和计算公式如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div></pre></td><td class="code"><pre><div class="line">public enum Mode &#123;</div><div class="line">        /** [0, 0] */</div><div class="line">        CLEAR       (0),</div><div class="line">        /** [Sa, Sc] */</div><div class="line">        SRC         (1),</div><div class="line">        /** [Da, Dc] */</div><div class="line">        DST         (2),</div><div class="line">        /** [Sa + (1 - Sa)*Da, Rc = Sc + (1 - Sa)*Dc] */</div><div class="line">        SRC_OVER    (3),</div><div class="line">        /** [Sa + (1 - Sa)*Da, Rc = Dc + (1 - Da)*Sc] */</div><div class="line">        DST_OVER    (4),</div><div class="line">        /** [Sa * Da, Sc * Da] */</div><div class="line">        SRC_IN      (5),</div><div class="line">        /** [Sa * Da, Sa * Dc] */</div><div class="line">        DST_IN      (6),</div><div class="line">        /** [Sa * (1 - Da), Sc * (1 - Da)] */</div><div class="line">        SRC_OUT     (7),</div><div class="line">        /** [Da * (1 - Sa), Dc * (1 - Sa)] */</div><div class="line">        DST_OUT     (8),</div><div class="line">        /** [Da, Sc * Da + (1 - Sa) * Dc] */</div><div class="line">        SRC_ATOP    (9),</div><div class="line">        /** [Sa, Sa * Dc + Sc * (1 - Da)] */</div><div class="line">        DST_ATOP    (10),</div><div class="line">        /** [Sa + Da - 2 * Sa * Da, Sc * (1 - Da) + (1 - Sa) * Dc] */</div><div class="line">        XOR         (11),</div><div class="line">        /** [Sa + Da - Sa*Da,</div><div class="line">             Sc*(1 - Da) + Dc*(1 - Sa) + min(Sc, Dc)] */</div><div class="line">        DARKEN      (16),</div><div class="line">        /** [Sa + Da - Sa*Da,</div><div class="line">             Sc*(1 - Da) + Dc*(1 - Sa) + max(Sc, Dc)] */</div><div class="line">        LIGHTEN     (17),</div><div class="line">        /** [Sa * Da, Sc * Dc] */</div><div class="line">        MULTIPLY    (13),</div><div class="line">        /** [Sa + Da - Sa * Da, Sc + Dc - Sc * Dc] */</div><div class="line">        SCREEN      (14),</div><div class="line">        /** Saturate(S + D) */</div><div class="line">        ADD         (12),</div><div class="line">        OVERLAY     (15);</div><div class="line"></div><div class="line">        Mode(int nativeInt) &#123;</div><div class="line">            this.nativeInt = nativeInt;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        /**</div><div class="line">         * @hide</div><div class="line">         */</div><div class="line">        public final int nativeInt;</div><div class="line">    &#125;</div></pre></td></tr></table></figure></p>
+<p>其中，<code>Sa</code>表示起点的<code>Alpha</code>值，而<code>Sc</code>表示起点的<code>color</code>值，对于<code>Dx</code>也是同理，最终会得到<code>[Ra, Rc]</code>，这样组成之后就是终点对应像素点的颜色。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">private void drawPorterDuffColorFilter(Canvas canvas) &#123;</div><div class="line">    Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);</div><div class="line">    Paint paint = new Paint();</div><div class="line">    paint.setColorFilter(new PorterDuffColorFilter(Color.RED, PorterDuff.Mode.DARKEN));</div><div class="line">    canvas.drawBitmap(bitmap, 0, 0, paint);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>最终会得到下面的结果：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-2e90396d9fbaf8cd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>后面我们会发现<code>PorterDuff.Mode</code>中定义的这些<code>Mode</code>不仅仅用于颜色合成，还用于图像合成。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/03/02/Canvas-&-Paint/Canvas&Paint-知识梳理(2)---Canvas-的保存和恢复/" rel="next" title="Canvas&Paint 知识梳理(2) - Canvas 的保存和恢复">
+                <i class="fa fa-chevron-left"></i> Canvas&Paint 知识梳理(2) - Canvas 的保存和恢复
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/03/03/Canvas-&-Paint/Canvas&Paint-知识梳理(4)---图像合成-Paint#setXfermode/" rel="prev" title="Canvas&Paint 知识梳理(4) - 图像合成 Paint#setXfermode">
+                Canvas&Paint 知识梳理(4) - 图像合成 Paint#setXfermode <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="John Doe" />
+          <p class="site-author-name" itemprop="name">John Doe</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">104</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">23</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、概述"><span class="nav-number">1.</span> <span class="nav-text">一、概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、ColorFilter的分类"><span class="nav-number">2.</span> <span class="nav-text">二、ColorFilter的分类</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-ColorMatrixColorFilter"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 ColorMatrixColorFilter</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-LightingColorFilter"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 LightingColorFilter</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-PorterDuffColorFilter"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 PorterDuffColorFilter</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

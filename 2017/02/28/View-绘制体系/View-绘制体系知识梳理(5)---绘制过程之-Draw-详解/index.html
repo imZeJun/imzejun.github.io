@@ -1,0 +1,733 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="一、绘制的起点 - performTraversals和测量、布局的过程类似，绘制的起点也是从performTraversals开始的：123456789private void performTraversals() &amp;#123;    ......    final Rect dirty = mDirty;    ......    canvas = mSurface.lockCanvas(d">
+<meta property="og:type" content="article">
+<meta property="og:title" content="View 绘制体系知识梳理(6) - 绘制过程之 requestLayout 和 invalidate 详解">
+<meta property="og:url" content="http://yoursite.com/2017/02/28/View-绘制体系/View-绘制体系知识梳理(5)---绘制过程之-Draw-详解/index.html">
+<meta property="og:site_name" content="泽毛">
+<meta property="og:description" content="一、绘制的起点 - performTraversals和测量、布局的过程类似，绘制的起点也是从performTraversals开始的：123456789private void performTraversals() &amp;#123;    ......    final Rect dirty = mDirty;    ......    canvas = mSurface.lockCanvas(d">
+<meta property="og:updated_time" content="2017-06-27T15:13:34.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="View 绘制体系知识梳理(6) - 绘制过程之 requestLayout 和 invalidate 详解">
+<meta name="twitter:description" content="一、绘制的起点 - performTraversals和测量、布局的过程类似，绘制的起点也是从performTraversals开始的：123456789private void performTraversals() &amp;#123;    ......    final Rect dirty = mDirty;    ......    canvas = mSurface.lockCanvas(d">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/02/28/View-绘制体系/View-绘制体系知识梳理(5)---绘制过程之-Draw-详解/"/>
+
+
+
+
+
+  <title>View 绘制体系知识梳理(6) - 绘制过程之 requestLayout 和 invalidate 详解 | 泽毛</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">泽毛</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/02/28/View-绘制体系/View-绘制体系知识梳理(5)---绘制过程之-Draw-详解/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="泽毛">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">View 绘制体系知识梳理(6) - 绘制过程之 requestLayout 和 invalidate 详解</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-02-28T13:08:00+08:00">
+                2017-02-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/View-绘制体系知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">View 绘制体系知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="一、绘制的起点-performTraversals"><a href="#一、绘制的起点-performTraversals" class="headerlink" title="一、绘制的起点 - performTraversals"></a>一、绘制的起点 - <code>performTraversals</code></h1><p>和测量、布局的过程类似，绘制的起点也是从<code>performTraversals</code>开始的：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">private void performTraversals() &#123;</div><div class="line">    ......</div><div class="line">    final Rect dirty = mDirty;</div><div class="line">    ......</div><div class="line">    canvas = mSurface.lockCanvas(dirty);</div><div class="line">    ......</div><div class="line">    mView.draw(canvas);</div><div class="line">    ......</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h1 id="二、绘制的关键方法：draw-Canvas-canvas-onDraw-Canvas-canvas-dispatchDraw"><a href="#二、绘制的关键方法：draw-Canvas-canvas-onDraw-Canvas-canvas-dispatchDraw" class="headerlink" title="二、绘制的关键方法：draw(Canvas canvas) onDraw(Canvas canvas) dispatchDraw()"></a>二、绘制的关键方法：<code>draw(Canvas canvas) onDraw(Canvas canvas) dispatchDraw()</code></h1><p>和绘制过程的前两个阶段不同的是，与<code>draw</code>过程相关的函数，不仅有<code>draw</code>、<code>onDraw</code>还有一个<code>dispatchDraw</code>，下面我们分析一下这几个函数在<code>View</code>和<code>ViewGroup</code>中的<strong>定义</strong>：</p>
+<ul>
+<li><p><code>View</code></p>
+<ul>
+<li><p>首先是<code>draw(Canvas)</code>方法，它是<code>public</code>的，我们通过注释可以看到它最多会执行6步操作，分别是：绘制背景、保存<code>canvas</code>，绘制<code>View</code>本身内容，绘制子<code>View</code>，恢复<code>canvas</code>，绘制装饰类（如滚动条）。其中第二、五步不是必要的。<br>对于整个绘制事件的分发，我们需要关注的是第三、四步：调用<code>onDraw(Canvas)</code>绘制<code>View</code>本身的的内容，调用<code>dispatchDraw(Canvas)</code>绘制子<code>View</code>，也就是我们上面说的其它两个方法。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div><div class="line">156</div><div class="line">157</div><div class="line">158</div><div class="line">159</div><div class="line">160</div><div class="line">161</div><div class="line">162</div><div class="line">163</div><div class="line">164</div><div class="line">165</div><div class="line">166</div><div class="line">167</div><div class="line">168</div><div class="line">169</div><div class="line">170</div><div class="line">171</div><div class="line">172</div><div class="line">173</div><div class="line">174</div><div class="line">175</div><div class="line">176</div><div class="line">177</div><div class="line">178</div><div class="line">179</div><div class="line">180</div><div class="line">181</div><div class="line">182</div><div class="line">183</div><div class="line">184</div><div class="line">185</div><div class="line">186</div><div class="line">187</div><div class="line">188</div><div class="line">189</div><div class="line">190</div><div class="line">191</div><div class="line">192</div><div class="line">193</div><div class="line">194</div></pre></td><td class="code"><pre><div class="line">@CallSuper</div><div class="line">    public void draw(Canvas canvas) &#123;</div><div class="line">        final int privateFlags = mPrivateFlags;</div><div class="line">        final boolean dirtyOpaque = (privateFlags &amp; PFLAG_DIRTY_MASK) == PFLAG_DIRTY_OPAQUE &amp;&amp;</div><div class="line">                (mAttachInfo == null || !mAttachInfo.mIgnoreDirtyState);</div><div class="line">        mPrivateFlags = (privateFlags &amp; ~PFLAG_DIRTY_MASK) | PFLAG_DRAWN;</div><div class="line"></div><div class="line">        /*</div><div class="line">         * Draw traversal performs several drawing steps which must be executed</div><div class="line">         * in the appropriate order:</div><div class="line">         *</div><div class="line">         *      1. Draw the background</div><div class="line">         *      2. If necessary, save the canvas&apos; layers to prepare for fading</div><div class="line">         *      3. Draw view&apos;s content</div><div class="line">         *      4. Draw children</div><div class="line">         *      5. If necessary, draw the fading edges and restore layers</div><div class="line">         *      6. Draw decorations (scrollbars for instance)</div><div class="line">         */</div><div class="line"></div><div class="line">        // Step 1, draw the background, if needed</div><div class="line">        int saveCount;</div><div class="line"></div><div class="line">        if (!dirtyOpaque) &#123;</div><div class="line">            drawBackground(canvas);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        // skip step 2 &amp; 5 if possible (common case)</div><div class="line">        final int viewFlags = mViewFlags;</div><div class="line">        boolean horizontalEdges = (viewFlags &amp; FADING_EDGE_HORIZONTAL) != 0;</div><div class="line">        boolean verticalEdges = (viewFlags &amp; FADING_EDGE_VERTICAL) != 0;</div><div class="line">        if (!verticalEdges &amp;&amp; !horizontalEdges) &#123;</div><div class="line">            // Step 3, draw the content</div><div class="line">            if (!dirtyOpaque) onDraw(canvas);</div><div class="line"></div><div class="line">            // Step 4, draw the children</div><div class="line">            dispatchDraw(canvas);</div><div class="line"></div><div class="line">            // Overlay is part of the content and draws beneath Foreground</div><div class="line">            if (mOverlay != null &amp;&amp; !mOverlay.isEmpty()) &#123;</div><div class="line">                mOverlay.getOverlayView().dispatchDraw(canvas);</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            // Step 6, draw decorations (foreground, scrollbars)</div><div class="line">            onDrawForeground(canvas);</div><div class="line"></div><div class="line">            // we&apos;re done...</div><div class="line">            return;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        /*</div><div class="line">         * Here we do the full fledged routine...</div><div class="line">         * (this is an uncommon case where speed matters less,</div><div class="line">         * this is why we repeat some of the tests that have been</div><div class="line">         * done above)</div><div class="line">         */</div><div class="line"></div><div class="line">        boolean drawTop = false;</div><div class="line">        boolean drawBottom = false;</div><div class="line">        boolean drawLeft = false;</div><div class="line">        boolean drawRight = false;</div><div class="line"></div><div class="line">        float topFadeStrength = 0.0f;</div><div class="line">        float bottomFadeStrength = 0.0f;</div><div class="line">        float leftFadeStrength = 0.0f;</div><div class="line">        float rightFadeStrength = 0.0f;</div><div class="line"></div><div class="line">        // Step 2, save the canvas&apos; layers</div><div class="line">        int paddingLeft = mPaddingLeft;</div><div class="line"></div><div class="line">        final boolean offsetRequired = isPaddingOffsetRequired();</div><div class="line">        if (offsetRequired) &#123;</div><div class="line">            paddingLeft += getLeftPaddingOffset();</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        int left = mScrollX + paddingLeft;</div><div class="line">        int right = left + mRight - mLeft - mPaddingRight - paddingLeft;</div><div class="line">        int top = mScrollY + getFadeTop(offsetRequired);</div><div class="line">        int bottom = top + getFadeHeight(offsetRequired);</div><div class="line"></div><div class="line">        if (offsetRequired) &#123;</div><div class="line">            right += getRightPaddingOffset();</div><div class="line">            bottom += getBottomPaddingOffset();</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        final ScrollabilityCache scrollabilityCache = mScrollCache;</div><div class="line">        final float fadeHeight = scrollabilityCache.fadingEdgeLength;</div><div class="line">        int length = (int) fadeHeight;</div><div class="line"></div><div class="line">        // clip the fade length if top and bottom fades overlap</div><div class="line">        // overlapping fades produce odd-looking artifacts</div><div class="line">        if (verticalEdges &amp;&amp; (top + length &gt; bottom - length)) &#123;</div><div class="line">            length = (bottom - top) / 2;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        // also clip horizontal fades if necessary</div><div class="line">        if (horizontalEdges &amp;&amp; (left + length &gt; right - length)) &#123;</div><div class="line">            length = (right - left) / 2;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        if (verticalEdges) &#123;</div><div class="line">            topFadeStrength = Math.max(0.0f, Math.min(1.0f, getTopFadingEdgeStrength()));</div><div class="line">            drawTop = topFadeStrength * fadeHeight &gt; 1.0f;</div><div class="line">            bottomFadeStrength = Math.max(0.0f, Math.min(1.0f, getBottomFadingEdgeStrength()));</div><div class="line">            drawBottom = bottomFadeStrength * fadeHeight &gt; 1.0f;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        if (horizontalEdges) &#123;</div><div class="line">            leftFadeStrength = Math.max(0.0f, Math.min(1.0f, getLeftFadingEdgeStrength()));</div><div class="line">            drawLeft = leftFadeStrength * fadeHeight &gt; 1.0f;</div><div class="line">            rightFadeStrength = Math.max(0.0f, Math.min(1.0f, getRightFadingEdgeStrength()));</div><div class="line">            drawRight = rightFadeStrength * fadeHeight &gt; 1.0f;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        saveCount = canvas.getSaveCount();</div><div class="line"></div><div class="line">        int solidColor = getSolidColor();</div><div class="line">        if (solidColor == 0) &#123;</div><div class="line">            final int flags = Canvas.HAS_ALPHA_LAYER_SAVE_FLAG;</div><div class="line"></div><div class="line">            if (drawTop) &#123;</div><div class="line">                canvas.saveLayer(left, top, right, top + length, null, flags);</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            if (drawBottom) &#123;</div><div class="line">                canvas.saveLayer(left, bottom - length, right, bottom, null, flags);</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            if (drawLeft) &#123;</div><div class="line">                canvas.saveLayer(left, top, left + length, bottom, null, flags);</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            if (drawRight) &#123;</div><div class="line">                canvas.saveLayer(right - length, top, right, bottom, null, flags);</div><div class="line">            &#125;</div><div class="line">        &#125; else &#123;</div><div class="line">            scrollabilityCache.setFadeColor(solidColor);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        // Step 3, draw the content</div><div class="line">        if (!dirtyOpaque) onDraw(canvas);</div><div class="line"></div><div class="line">        // Step 4, draw the children</div><div class="line">        dispatchDraw(canvas);</div><div class="line"></div><div class="line">        // Step 5, draw the fade effect and restore layers</div><div class="line">        final Paint p = scrollabilityCache.paint;</div><div class="line">        final Matrix matrix = scrollabilityCache.matrix;</div><div class="line">        final Shader fade = scrollabilityCache.shader;</div><div class="line"></div><div class="line">        if (drawTop) &#123;</div><div class="line">            matrix.setScale(1, fadeHeight * topFadeStrength);</div><div class="line">            matrix.postTranslate(left, top);</div><div class="line">            fade.setLocalMatrix(matrix);</div><div class="line">            p.setShader(fade);</div><div class="line">            canvas.drawRect(left, top, right, top + length, p);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        if (drawBottom) &#123;</div><div class="line">            matrix.setScale(1, fadeHeight * bottomFadeStrength);</div><div class="line">            matrix.postRotate(180);</div><div class="line">            matrix.postTranslate(left, bottom);</div><div class="line">            fade.setLocalMatrix(matrix);</div><div class="line">            p.setShader(fade);</div><div class="line">            canvas.drawRect(left, bottom - length, right, bottom, p);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        if (drawLeft) &#123;</div><div class="line">            matrix.setScale(1, fadeHeight * leftFadeStrength);</div><div class="line">            matrix.postRotate(-90);</div><div class="line">            matrix.postTranslate(left, top);</div><div class="line">            fade.setLocalMatrix(matrix);</div><div class="line">            p.setShader(fade);</div><div class="line">            canvas.drawRect(left, top, left + length, bottom, p);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        if (drawRight) &#123;</div><div class="line">            matrix.setScale(1, fadeHeight * rightFadeStrength);</div><div class="line">            matrix.postRotate(90);</div><div class="line">            matrix.postTranslate(right, top);</div><div class="line">            fade.setLocalMatrix(matrix);</div><div class="line">            p.setShader(fade);</div><div class="line">            canvas.drawRect(right - length, top, right, bottom, p);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        canvas.restoreToCount(saveCount);</div><div class="line"></div><div class="line">        // Overlay is part of the content and draws beneath Foreground</div><div class="line">        if (mOverlay != null &amp;&amp; !mOverlay.isEmpty()) &#123;</div><div class="line">            mOverlay.getOverlayView().dispatchDraw(canvas);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        // Step 6, draw decorations (foreground, scrollbars)</div><div class="line">        onDrawForeground(canvas);</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p><code>onDraw(Canvas canvas)</code>方法是一个空实现，因为绘制应当由具体的控件来实现。</p>
+</li>
+<li>由于单纯的<code>View</code>来说，它没有子<code>View</code>，因此<code>dispatchDraw</code>方法也是一个空实现。</li>
+</ul>
+</li>
+<li><p><code>ViewGroup</code></p>
+<ul>
+<li>没有重写<code>draw(Canvas canvas)</code>方法。</li>
+<li>没有重写<code>onDraw(Canvas canvas)</code>方法。</li>
+<li>由于<code>ViewGroup</code>要负责将绘制的消息通知子<code>View</code>，所以它重写了<code>dispatchDraw</code>方法，并在里面调用<code>drawChild</code>一级级把绘制的消息传递下去。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">protected void dispatchDraw(Canvas canvas) &#123;</div><div class="line">        //....</div><div class="line">        for (int i = 0; i &lt; childrenCount; i++) &#123;</div><div class="line">            while (transientIndex &gt;= 0 &amp;&amp; mTransientIndices.get(transientIndex) == i) &#123;</div><div class="line">                final View transientChild = mTransientViews.get(transientIndex);</div><div class="line">                if ((transientChild.mViewFlags &amp; VISIBILITY_MASK) == VISIBLE ||</div><div class="line">                        transientChild.getAnimation() != null) &#123;</div><div class="line">                    more |= drawChild(canvas, transientChild, drawingTime);</div><div class="line">                &#125;</div><div class="line">                transientIndex++;</div><div class="line">                if (transientIndex &gt;= transientCount) &#123;</div><div class="line">                    transientIndex = -1;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">            int childIndex = customOrder ? getChildDrawingOrder(childrenCount, i) : i;</div><div class="line">            final View child = (preorderedList == null)</div><div class="line">                    ? children[childIndex] : preorderedList.get(childIndex);</div><div class="line">            if ((child.mViewFlags &amp; VISIBILITY_MASK) == VISIBLE || child.getAnimation() != null) &#123;</div><div class="line">                more |= drawChild(canvas, child, drawingTime);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        //...</div><div class="line">&#125;</div><div class="line">protected boolean drawChild(Canvas canvas, View child, long drawingTime) &#123;</div><div class="line">        return child.draw(canvas, this, drawingTime);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>通过分析<code>View/ViewGroup</code>的这三个方法的定义，那么整个由<code>DecorView</code>到个叶节点<code>View</code>的绘制过程就很清楚了：</p>
+<ul>
+<li>首先调用了<code>mView</code>的<code>draw</code>方法，之前我们分析过它其实就是类型为<code>FrameLayout</code>的<code>DecorView</code>，由于<code>FrameLayout</code>和<code>ViewGroup</code>都没有重写<code>draw</code>方法，它其实是调用了<code>View</code>当中的<code>draw</code>执行前面分析过的那些步骤，首先是调用自己的<code>onDraw</code>方法来绘制自己，然后调用<code>ViewGroup</code>的<code>dispatchDraw</code>来绘制子<code>View</code>，最终会调用到这些子<code>View</code>的<code>draw</code>方法。</li>
+<li>当第一步的这些子<code>View</code>的<code>draw</code>方法被调用时，都会先执行它的<code>onDraw</code>方法，这个大家都是一样的，但是注意到对于每个具体的子<code>View</code>，由于<code>dispatchDraw</code>方法决定了事件是否会被分发，所以我们会有以下几种情况：<ul>
+<li>继承于<code>ViewGroup</code>的控件，但是没有下一级子<code>View</code>，虽然<code>ViewGroup</code>重写了<code>dispatchDraw</code>方法，但是此时<code>childCount==0</code>，因此<code>drawChild</code>不会被调用，整个传递过程终止。</li>
+<li>继承于<code>View</code>的控件，此时<code>dispatchDraw</code>方法是一个空实现，因此不会继续传递下去。</li>
+<li>继承于<code>ViewGroup</code>的控件，并且有子<code>View</code>，由于<code>ViewGroup</code>重写了<code>dispatchDraw</code>方法，因此会继续调用子<code>View</code>的<code>draw</code>方法传递下去。</li>
+</ul>
+</li>
+</ul>
+<h1 id="三、小结"><a href="#三、小结" class="headerlink" title="三、小结"></a>三、小结</h1><p>对于这三个关键的方法，简单的总结一下它们的作用：</p>
+<ul>
+<li><code>draw</code>：作为整个父容器和子<code>View</code>之间绘制事件传递的纽带。</li>
+<li><code>onDraw</code>：负责<code>View</code>本身的具体绘制。</li>
+<li><code>dispatchDraw</code>：负责将绘制分发给下一级的子<code>View</code>。</li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/02/25/View-绘制体系/View-绘制体系知识梳理(4)---绘制过程之-Layout-详解/" rel="next" title="绘制过程 - Layout">
+                <i class="fa fa-chevron-left"></i> 绘制过程 - Layout
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/02/28/View-绘制体系/View-绘制体系知识梳理(6)---绘制过程之-requestLayout-和-invalidate-详解/" rel="prev" title="View 绘制体系知识梳理(6) - 绘制过程之 requestLayout 和 invalidate 详解">
+                View 绘制体系知识梳理(6) - 绘制过程之 requestLayout 和 invalidate 详解 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="John Doe" />
+          <p class="site-author-name" itemprop="name">John Doe</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">104</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">23</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、绘制的起点-performTraversals"><span class="nav-number">1.</span> <span class="nav-text">一、绘制的起点 - performTraversals</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、绘制的关键方法：draw-Canvas-canvas-onDraw-Canvas-canvas-dispatchDraw"><span class="nav-number">2.</span> <span class="nav-text">二、绘制的关键方法：draw(Canvas canvas) onDraw(Canvas canvas) dispatchDraw()</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、小结"><span class="nav-number">3.</span> <span class="nav-text">三、小结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

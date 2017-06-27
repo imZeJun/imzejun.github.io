@@ -1,0 +1,763 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="一、概述在实际的开发当中，我们经常会涉及到绘制路径，这里我们总结一下Path的常用API。 二、基本用法对于一个Path来说，它其中有很多的”子路径“，对于每个”子路径“，它又会有两个变量，”源点”和”当前点”，也就是源码当中所描述的：1The Path class encapsulates compound (multiple contour) geometric paths 2.1 简单连线">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Canvas&amp;Paint 知识梳理(6) - 绘制路线 Path 基本用法">
+<meta property="og:url" content="http://yoursite.com/2017/03/05/Canvas-&-Paint/Canvas&Paint-知识梳理(6)---绘制路线-Path-基本用法/index.html">
+<meta property="og:site_name" content="泽毛">
+<meta property="og:description" content="一、概述在实际的开发当中，我们经常会涉及到绘制路径，这里我们总结一下Path的常用API。 二、基本用法对于一个Path来说，它其中有很多的”子路径“，对于每个”子路径“，它又会有两个变量，”源点”和”当前点”，也就是源码当中所描述的：1The Path class encapsulates compound (multiple contour) geometric paths 2.1 简单连线">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-f47481e9098317be.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-b9a34e2eb6becd58.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-776e94d2da5d2bd0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-3c49324fb4ddb3a7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-c7f1474265694a5a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-883424da8329f23f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-1d4450c3285b8718.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-c5a14b5a15b36e3e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-45409e8d802fe768.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-c5a14b5a15b36e3e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-c5a14b5a15b36e3e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-7c3bbd58997d58da.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-8015ddb9fe3fb3b2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2017-06-27T14:43:34.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Canvas&amp;Paint 知识梳理(6) - 绘制路线 Path 基本用法">
+<meta name="twitter:description" content="一、概述在实际的开发当中，我们经常会涉及到绘制路径，这里我们总结一下Path的常用API。 二、基本用法对于一个Path来说，它其中有很多的”子路径“，对于每个”子路径“，它又会有两个变量，”源点”和”当前点”，也就是源码当中所描述的：1The Path class encapsulates compound (multiple contour) geometric paths 2.1 简单连线">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-f47481e9098317be.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/03/05/Canvas-&-Paint/Canvas&Paint-知识梳理(6)---绘制路线-Path-基本用法/"/>
+
+
+
+
+
+  <title>Canvas&Paint 知识梳理(6) - 绘制路线 Path 基本用法 | 泽毛</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">泽毛</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/03/05/Canvas-&-Paint/Canvas&Paint-知识梳理(6)---绘制路线-Path-基本用法/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="泽毛">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Canvas&Paint 知识梳理(6) - 绘制路线 Path 基本用法</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-05T22:58:00+08:00">
+                2017-03-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Canvas-Paint-知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">Canvas&Paint 知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="一、概述"><a href="#一、概述" class="headerlink" title="一、概述"></a>一、概述</h1><p>在实际的开发当中，我们经常会涉及到绘制路径，这里我们总结一下<code>Path</code>的常用<code>API</code>。</p>
+<h1 id="二、基本用法"><a href="#二、基本用法" class="headerlink" title="二、基本用法"></a>二、基本用法</h1><p>对于一个<code>Path</code>来说，它其中有很多的”子路径“，对于每个”子路径“，它又会有两个变量，”源点”和”当前点”，也就是源码当中所描述的：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">The Path class encapsulates compound (multiple contour) geometric paths</div></pre></td></tr></table></figure></p>
+<h2 id="2-1-简单连线-xxxTo"><a href="#2-1-简单连线-xxxTo" class="headerlink" title="2.1 简单连线 - xxxTo"></a>2.1 简单连线 - <code>xxxTo</code></h2><p>下面是<code>Path</code>当中和连线相关的方法：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1949836-f47481e9098317be.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">public void moveTo(float x, float y)</div><div class="line">public void rMoveTo(float dx, float dy)</div></pre></td></tr></table></figure></p>
+<p>每次调用完<code>moveTo/rMoveTo</code>方法，都会生成一条新的子路径，这两者的区别在于：<br><code>1.</code>新建一条路径，<code>(x, y)</code>作为这个新路径的“源点”的值，在图上不会产生新的连线。<br><code>2.</code>相对于当前路径的”当前点”的值，移动坐标<code>(dx, dy)</code>，作为新路径的”源点”，在图上不会产生新的连线。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">public void lineTo(float x, float y)</div><div class="line">public void rLineTo(float dx, float dy)</div></pre></td></tr></table></figure>
+<p><code>1.</code>从当前点位置，直线连接到绝对坐标<code>(x, y)</code>，如果没有调用过<code>moveTo/rMoveTo</code>，那么会先调用<code>moveTo(0, 0)</code>来生成一条从源点开始的子路径。<br><code>2.</code>相对于当前点坐标，移动<code>(dx, dy)</code>作为终点坐标，并连接起点和终点。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">public void quadTo(float x1, float y1, float x2, float y2)</div><div class="line">public void rQuadTo(float dx1, float dy1, float dx2, float dy2)</div></pre></td></tr></table></figure></p>
+<p><code>1.</code>从当前点位置开始，以<code>(x1, y1)</code>为控制点，按一阶贝塞尔曲线计算方法连接到<code>(x2, y2)</code>，如果之前没有调用过<code>moveTo/rMoveTo</code>，也会先调用一次<code>moveTo(0, 0)</code>方法。<br><code>2.</code>类似于上面，只不过终点坐标是相对于当前点坐标移动了<code>(dx2, dy2)</code>后的值。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">public void cubicTo(float x1, float y1, float x2, float y2, float x3, float y3)</div><div class="line">public void rCubicTo(float x1, float y1, float x2, float y2, float x3, float y3)</div></pre></td></tr></table></figure>
+<p>和一阶贝塞尔曲线类似，不过是多了一个控制点<code>(x2, y2)</code>。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">public void arcTo(RectF oval, float startAngle, float sweepAngle, boolean forceMoveTo)</div><div class="line">public void arcTo(RectF oval, float startAngle, float sweepAngle)</div><div class="line">public void arcTo(float left, float top, float right, float bottom, float startAngle, float sweepAngle, boolean forceMoveTo)</div></pre></td></tr></table></figure></p>
+<p>上面这三个函数，最终都是调用了同一个方法：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">native_arcTo(mNativePath, left, top, right, bottom, startAngle, sweepAngle, forceMoveTo)</div></pre></td></tr></table></figure></p>
+<p>它的原理就是：首先根据<code>RectF</code>或者<code>4</code>个点的坐标来确定一个矩形区域，之后得到这个矩形的内切椭圆，然后再根据<code>startAngle</code>和<code>sweepAngle</code>来确定这个内切源的一段弧，这段弧就是新绘制的路径。但是这段弧的起点很有可能和<code>Path</code>的当前点不是重合的，这时候就根据<code>forceMoveTo</code>来决定是否产生一条新的子路径，从最终的结果看，就是是否需要绘制一条从<code>Path</code>当前点到这段弧起点的连线，如果为<code>forceMoveTo=false</code>，那么就绘制这么一条直线，反之，则不绘制，<code>forceMoveTo</code>的默认值为<code>false</code>。<br><code>forceMoveTo=false</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">private void drawArcTo(Canvas canvas) &#123;</div><div class="line">    setLayerType(LAYER_TYPE_SOFTWARE, null);</div><div class="line">    Path path = new Path();</div><div class="line">    path.moveTo(0, 300);</div><div class="line">    path.lineTo(300, 300);</div><div class="line">    path.arcTo(0, 0, 500, 500, 0, -90, false);</div><div class="line">    path.rLineTo(0, 250);</div><div class="line">    canvas.drawPath(path, mPaint);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1949836-b9a34e2eb6becd58.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<p><code>forceMoveTo=true</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">private void drawArcTo(Canvas canvas) &#123;</div><div class="line">    setLayerType(LAYER_TYPE_SOFTWARE, null);</div><div class="line">    Path path = new Path();</div><div class="line">    path.moveTo(0, 300);</div><div class="line">    path.lineTo(300, 300);</div><div class="line">    path.arcTo(0, 0, 500, 500, 0, -90, true);</div><div class="line">    path.rLineTo(0, 250);</div><div class="line">    canvas.drawPath(path, mPaint);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1949836-776e94d2da5d2bd0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<p><code>forceMoveTo=true + path.close()</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">private void drawArcTo(Canvas canvas) &#123;</div><div class="line">    setLayerType(LAYER_TYPE_SOFTWARE, null);</div><div class="line">    Path path = new Path();</div><div class="line">    path.moveTo(0, 300);</div><div class="line">    path.lineTo(300, 300);</div><div class="line">    path.arcTo(0, 0, 500, 500, 0, -90, true);</div><div class="line">    path.rLineTo(0, 250);</div><div class="line">    path.close();</div><div class="line">    canvas.drawPath(path, mPaint);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>对于这种情况，由于采用了<code>true</code>标志位，因此生成了一条新的”子路径“，所以在调用<code>close</code>方法之后，连接的是当前子路径的源点和当前点。<br><img src="http://upload-images.jianshu.io/upload_images/1949836-3c49324fb4ddb3a7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">public void close()</div></pre></td></tr></table></figure>
+<p>如果对于当前”子路径“来说，它的”当前点”和”源点”不重合，那么会绘制一条从当前点到源点的直线。</p>
+<h2 id="2-2-直接增加新的路径"><a href="#2-2-直接增加新的路径" class="headerlink" title="2.2 直接增加新的路径"></a>2.2 直接增加新的路径</h2><p>除了采用连线的方法来确定一条路径，<code>Path</code>还提供了<code>addXXX</code>来直接地增加一整段的路径，下面是相关的方法：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-c7f1474265694a5a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>效果其实从函数名上就可以很清楚地看出来，当调用完<code>addXXX</code>方法之后，会增加一条子路径到<code>Path</code>当中，并把该子路径作为<code>Path</code>的当前子路径。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">private void drawAddArc(Canvas canvas) &#123;</div><div class="line">    setLayerType(LAYER_TYPE_SOFTWARE, null);</div><div class="line">    Path path = new Path();</div><div class="line">    path.moveTo(0, 250);</div><div class="line">    path.lineTo(500, 250);</div><div class="line">    path.addArc(0, 0, 500, 500, 0, -90);</div><div class="line">    path.close();</div><div class="line">    canvas.drawPath(path, mPaint);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>下面是运行的结果：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-883424da8329f23f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h2 id="2-3-填充类型FillType"><a href="#2-3-填充类型FillType" class="headerlink" title="2.3 填充类型FillType"></a>2.3 填充类型<code>FillType</code></h2><p>关于填充类型的方法有如下这些：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-1d4450c3285b8718.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>我们先来看一下<code>FillType</code>的定义有哪些：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">public enum FillType &#123;</div><div class="line">    // these must match the values in SkPath.h</div><div class="line">    /**</div><div class="line">     * Specifies that &quot;inside&quot; is computed by a non-zero sum of signed</div><div class="line">     * edge crossings.</div><div class="line">     */</div><div class="line">    WINDING         (0),</div><div class="line">    /**</div><div class="line">     * Specifies that &quot;inside&quot; is computed by an odd number of edge</div><div class="line">     * crossings.</div><div class="line">     */</div><div class="line">    EVEN_ODD        (1),</div><div class="line">    /**</div><div class="line">     * Same as &#123;@link #WINDING&#125;, but draws outside of the path, rather than inside.</div><div class="line">     */</div><div class="line">    INVERSE_WINDING (2),</div><div class="line">    /**</div><div class="line">     * Same as &#123;@link #EVEN_ODD&#125;, but draws outside of the path, rather than inside.</div><div class="line">     */</div><div class="line">    INVERSE_EVEN_ODD(3);</div><div class="line"></div><div class="line">    FillType(int ni) &#123;</div><div class="line">        nativeInt = ni;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    final int nativeInt;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>关于这个<code>FillType</code>的理解，下面这篇文章的作者说的很好：</p>
+<blockquote>
+<p><a href="http://blog.csdn.net/u013831257/article/details/51477575" target="_blank" rel="external"><code>http://blog.csdn.net/u013831257/article/details/51477575</code></a></p>
+</blockquote>
+<p>我这里只是稍微地总结一下：</p>
+<h3 id="2-3-1-FillType的意义"><a href="#2-3-1-FillType的意义" class="headerlink" title="2.3.1 FillType的意义"></a>2.3.1 <code>FillType</code>的意义</h3><p>我们都知道<code>Paint</code>有三种模式：<code>FILL/FILL_AND_STROKE/STROKE</code>，对于<code>STROKE</code>来说，是只绘制轮廓，而两种模式都涉及到”填充“，那么”填充“就涉及到怎么定义一个<code>Path</code>所组成的图形的内部，<code>FillType</code>就是用来确定这个所谓的”内部“的定义的，需要注意，只讨论封闭图形的情况。</p>
+<h3 id="2-3-2-FillType的类型的含义"><a href="#2-3-2-FillType的类型的含义" class="headerlink" title="2.3.2 FillType的类型的含义"></a>2.3.2 <code>FillType</code>的类型的含义</h3><ul>
+<li><code>EVEN_ODD</code>表示奇偶规则：奇数表示在图形内，偶数表示在图形外，并绘制内部。<br>从任意位置<code>p</code>作一条射线， 若与该射线相交的图形边的数目为奇数，则<code>p</code>是图形内部点，否则是外部点。</li>
+<li><code>INVERSE_EVEN_ODD</code>：和<code>EVEN_ODD</code>对应，绘制外部。</li>
+<li><code>WINDING</code>表示非零环绕数规则：若环绕数为<code>0</code>表示在图形外，非零表示在图形内，并绘制内部。<br>首先使图形的边变为矢量。将环绕数初始化为零。再从任意位置<code>p</code>作一条射线。当从<code>p</code>点沿射线方向移动时，对在每个方向上穿过射线的边计数，每当图形的边从右到左穿过射线时，环绕数加<code>1</code>，从左到右时，环绕数减<code>1</code>。处理完图形的所有相关边之后，若环绕数为非零，则<code>p</code>为内部点，否则，<code>p</code>是外部点。</li>
+<li><code>INVERSE_WINDING</code>：和<code>WINDING</code>对应，绘制外部。</li>
+</ul>
+<h3 id="2-3-3-示例"><a href="#2-3-3-示例" class="headerlink" title="2.3.3 示例"></a>2.3.3 示例</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">private void drawFillType(Canvas canvas) &#123;</div><div class="line">    setLayerType(LAYER_TYPE_SOFTWARE, null);</div><div class="line">    Path fillTypePath = new Path();</div><div class="line">    //两个圆圈都为顺时针的情况.</div><div class="line">    fillTypePath.addCircle(250, 250, 250, Path.Direction.CW);</div><div class="line">    fillTypePath.addCircle(500, 500, 250, Path.Direction.CW);</div><div class="line">    //填充类型采用奇偶原则.</div><div class="line">    fillTypePath.setFillType(Path.FillType.EVEN_ODD);</div><div class="line">    canvas.drawPath(fillTypePath, mPaint);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><img src="http://upload-images.jianshu.io/upload_images/1949836-c5a14b5a15b36e3e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">private void drawFillType(Canvas canvas) &#123;</div><div class="line">    setLayerType(LAYER_TYPE_SOFTWARE, null);</div><div class="line">    Path fillTypePath = new Path();</div><div class="line">    //两个圆圈都为顺时针的情况.</div><div class="line">    fillTypePath.addCircle(250, 250, 250, Path.Direction.CW);</div><div class="line">    fillTypePath.addCircle(500, 500, 250, Path.Direction.CW);</div><div class="line">    //填充类型采用非零环绕数规则.</div><div class="line">    fillTypePath.setFillType(Path.FillType.WINDING);</div><div class="line">    canvas.drawPath(fillTypePath, mPaint);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1949836-45409e8d802fe768.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">private void drawFillType(Canvas canvas) &#123;</div><div class="line">    setLayerType(LAYER_TYPE_SOFTWARE, null);</div><div class="line">    Path fillTypePath = new Path();</div><div class="line">    //第一个圆圈为顺时针,第二个圆圈为逆时针的情况.</div><div class="line">    fillTypePath.addCircle(250, 250, 250, Path.Direction.CW);</div><div class="line">    fillTypePath.addCircle(500, 500, 250, Path.Direction.CCW);</div><div class="line">    //填充类型采用奇偶原则.</div><div class="line">    fillTypePath.setFillType(Path.FillType.EVEN_ODD);</div><div class="line">    canvas.drawPath(fillTypePath, mPaint);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1949836-c5a14b5a15b36e3e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">private void drawFillType(Canvas canvas) &#123;</div><div class="line">    setLayerType(LAYER_TYPE_SOFTWARE, null);</div><div class="line">    Path fillTypePath = new Path();</div><div class="line">    //第一个圆圈为顺时针,第二个圆圈为逆时针的情况.</div><div class="line">    fillTypePath.addCircle(250, 250, 250, Path.Direction.CW);</div><div class="line">    fillTypePath.addCircle(500, 500, 250, Path.Direction.CCW);</div><div class="line">    //填充类型采用非零环绕数规则.</div><div class="line">    fillTypePath.setFillType(Path.FillType.WINDING);</div><div class="line">    canvas.drawPath(fillTypePath, mPaint);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1949836-c5a14b5a15b36e3e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>可以看到，对于<code>2</code>和<code>4</code>，由于<code>Path.FillType.WINDING</code>会涉及到路径的方向，因此路径方向不同会影响它的结果，但是对比<code>1</code>和<code>3</code>，由于<code>EVEN_ODD</code>的判断只涉及到边，不涉及到路径的方向，因此不会影响它的结果。</p>
+<h2 id="2-4-Path的计算"><a href="#2-4-Path的计算" class="headerlink" title="2.4 Path的计算"></a>2.4 <code>Path</code>的计算</h2><p>关于<code>Path</code>的计算，有下面这两个方法：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-7c3bbd58997d58da.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>其中，第一个表示对当前<code>Path</code>和参数中的<code>Path</code>进行计算，计算结果放入当前<code>Path</code>当中；第二个表示对参数内的两个<code>Path</code>进行计算，计算的结果放入到当前<code>Path</code>中，计算的类型有以下几种：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">public enum Op &#123;</div><div class="line">    /**</div><div class="line">     * Subtract the second path from the first path.</div><div class="line">     */</div><div class="line">    DIFFERENCE,</div><div class="line">    /**</div><div class="line">     * Intersect the two paths.</div><div class="line">     */</div><div class="line">    INTERSECT,</div><div class="line">    /**</div><div class="line">     * Union (inclusive-or) the two paths.</div><div class="line">     */</div><div class="line">    UNION,</div><div class="line">    /**</div><div class="line">     * Exclusive-or the two paths.</div><div class="line">     */</div><div class="line">    XOR,</div><div class="line">    /**</div><div class="line">     * Subtract the first path from the second path.</div><div class="line">     */</div><div class="line">    REVERSE_DIFFERENCE</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<ul>
+<li><code>DIFFERENCE</code>：从<code>Path1</code>中减去<code>Path2</code>。</li>
+<li><code>INTERSECT</code>：取<code>Path1</code>和<code>Path2</code>的交集。</li>
+<li><code>UNION</code>：取<code>Path1</code>和<code>Path2</code>的并集。</li>
+<li><code>XOR</code>：从<code>Path1</code>和<code>Path2</code>的并集中，减去它们的交集。</li>
+<li><code>REVERSE_DIFFERENCE</code>：从<code>Path2</code>中减去<code>Path1</code>。</li>
+</ul>
+<p>我们以<code>XOR</code>为例子：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">private void drawOp(Canvas canvas) &#123;</div><div class="line">    setLayerType(LAYER_TYPE_SOFTWARE, null);</div><div class="line">    Path path1 = new Path();</div><div class="line">    //Path1为顺时针.</div><div class="line">    path1.addCircle(250, 250, 250, Path.Direction.CW);</div><div class="line">    Path path2 = new Path();</div><div class="line">    //Path2为逆时针</div><div class="line">    path2.addCircle(400, 250, 250, Path.Direction.CCW);</div><div class="line">    path1.op(path2, Path.Op.XOR);</div><div class="line">    canvas.drawPath(path1, mPaint);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>最后的结果为：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-8015ddb9fe3fb3b2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h2 id="2-5-重置方法"><a href="#2-5-重置方法" class="headerlink" title="2.5 重置方法"></a>2.5 重置方法</h2><p><code>Path</code>提供了两种重置方法：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">/**</div><div class="line"> * Clear any lines and curves from the path, making it empty.</div><div class="line"> * This does NOT change the fill-type setting.</div><div class="line"> */</div><div class="line">public void reset()</div><div class="line"></div><div class="line">/**</div><div class="line"> * Rewinds the path: clears any lines and curves from the path but</div><div class="line"> * keeps the internal data structure for faster reuse.</div><div class="line"> */</div><div class="line">public void rewind()</div></pre></td></tr></table></figure></p>
+<ul>
+<li><code>reset()</code>：清除路径及其信息，但保留<code>FillType</code>。</li>
+<li><code>rewind()</code>：清除路径，但保留信息。</li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/03/04/Canvas-&-Paint/Canvas&Paint-知识梳理(5)---Paint#setShader/" rel="next" title="Canvas&Paint 知识梳理(5) - Paint#setShader">
+                <i class="fa fa-chevron-left"></i> Canvas&Paint 知识梳理(5) - Paint#setShader
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/03/06/Android-数据存储/Android-数据存储知识梳理(1)---SQLiteOpenHelper-源码解析/" rel="prev" title="Android 数据存储知识梳理(1) - SQLiteOpenHelper 源码解析">
+                Android 数据存储知识梳理(1) - SQLiteOpenHelper 源码解析 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="John Doe" />
+          <p class="site-author-name" itemprop="name">John Doe</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">104</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">23</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、概述"><span class="nav-number">1.</span> <span class="nav-text">一、概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、基本用法"><span class="nav-number">2.</span> <span class="nav-text">二、基本用法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-简单连线-xxxTo"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 简单连线 - xxxTo</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-直接增加新的路径"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 直接增加新的路径</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-填充类型FillType"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 填充类型FillType</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-1-FillType的意义"><span class="nav-number">2.3.1.</span> <span class="nav-text">2.3.1 FillType的意义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-2-FillType的类型的含义"><span class="nav-number">2.3.2.</span> <span class="nav-text">2.3.2 FillType的类型的含义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-3-示例"><span class="nav-number">2.3.3.</span> <span class="nav-text">2.3.3 示例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-4-Path的计算"><span class="nav-number">2.4.</span> <span class="nav-text">2.4 Path的计算</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-5-重置方法"><span class="nav-number">2.5.</span> <span class="nav-text">2.5 重置方法</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

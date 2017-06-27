@@ -1,0 +1,740 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="Material Design 控件知识梳理(1) - Android Design Support Library 是什么Material Design 控件知识梳理(2) - AppBarLayout &amp;amp; CollapsingToolbarLayoutMaterial Design 控件知识梳理(3) - BottomSheet &amp;amp;&amp;amp; BottomSheetDialo">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Material Design 控件知识梳理(1) - Android Design Support Library 是什么">
+<meta property="og:url" content="http://yoursite.com/2017/02/20/Material-Design-控件/Material-Design-控件知识梳理(1)---Android-Design-Support-Library-是什么/index.html">
+<meta property="og:site_name" content="泽毛">
+<meta property="og:description" content="Material Design 控件知识梳理(1) - Android Design Support Library 是什么Material Design 控件知识梳理(2) - AppBarLayout &amp;amp; CollapsingToolbarLayoutMaterial Design 控件知识梳理(3) - BottomSheet &amp;amp;&amp;amp; BottomSheetDialo">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-079345fe835d80b5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-ab9804972696c062.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2017-06-27T14:59:02.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Material Design 控件知识梳理(1) - Android Design Support Library 是什么">
+<meta name="twitter:description" content="Material Design 控件知识梳理(1) - Android Design Support Library 是什么Material Design 控件知识梳理(2) - AppBarLayout &amp;amp; CollapsingToolbarLayoutMaterial Design 控件知识梳理(3) - BottomSheet &amp;amp;&amp;amp; BottomSheetDialo">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-079345fe835d80b5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/02/20/Material-Design-控件/Material-Design-控件知识梳理(1)---Android-Design-Support-Library-是什么/"/>
+
+
+
+
+
+  <title>Material Design 控件知识梳理(1) - Android Design Support Library 是什么 | 泽毛</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">泽毛</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/02/20/Material-Design-控件/Material-Design-控件知识梳理(1)---Android-Design-Support-Library-是什么/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="泽毛">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Material Design 控件知识梳理(1) - Android Design Support Library 是什么</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-02-20T22:14:00+08:00">
+                2017-02-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Material-Design-控件知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">Material Design 控件知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p><a href="http://www.jianshu.com/p/32b2638a1785" target="_blank" rel="external">Material Design 控件知识梳理(1) - Android Design Support Library 是什么</a><br><a href="http://www.jianshu.com/p/d4fd636d7c44" target="_blank" rel="external">Material Design 控件知识梳理(2) - AppBarLayout &amp; CollapsingToolbarLayout</a><br><a href="http://www.jianshu.com/p/2a5be29123e5" target="_blank" rel="external">Material Design 控件知识梳理(3) - BottomSheet &amp;&amp; BottomSheetDialog &amp;&amp; BottomSheetDialogFragment</a><br><a href="http://www.jianshu.com/p/5a354e318019" target="_blank" rel="external">Material Design 控件知识梳理(4) - FloatingActionButton</a><br><a href="http://www.jianshu.com/p/d70cfd724c7f" target="_blank" rel="external">Material Design 控件知识梳理(5) - DrawerLayout &amp;&amp; NavigationView</a><br><a href="http://www.jianshu.com/p/6aea94f9ae2f" target="_blank" rel="external">Material Design 控件知识梳理(6) - Snackbar</a><br><a href="http://www.jianshu.com/p/22ec4fc1cb71" target="_blank" rel="external">Material Design 控件知识梳理(7) - BottomNavigationBar</a><br><a href="http://www.jianshu.com/p/5dd04fda13ab" target="_blank" rel="external">Material Design 控件知识梳理(8) - TabLayout</a><br><a href="http://www.jianshu.com/p/ed9642fc8634" target="_blank" rel="external">Material Design 控件知识梳理(9) - TextInputLayout</a></p>
+</blockquote>
+<h1 id="一、为什么需要Support包"><a href="#一、为什么需要Support包" class="headerlink" title="一、为什么需要Support包"></a>一、为什么需要<code>Support</code>包</h1><p>由于应用除了会依赖<code>library</code>和<code>jar</code>包外，还需要依赖安卓系统本身的代码，也就是我们在<code>SDK</code>每个版本中看到的<code>android.jar</code>，这里面集成了<code>Android</code>的所有<code>API</code>，随着<code>SDK</code>版本的升级，高版本的<code>SDK</code>中会增加新的<code>API</code>，如果在低版本中要使用这些新增的<code>API</code>，那么只能将新增的<code>API</code>以依赖包的形式集成到需要使用高版本<code>API</code>的应用当中，也就是<code>support</code>包。</p>
+<h1 id="二、Support包的结构"><a href="#二、Support包的结构" class="headerlink" title="二、Support包的结构"></a>二、<code>Support</code>包的结构</h1><p><img src="http://upload-images.jianshu.io/upload_images/1949836-079345fe835d80b5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<h2 id="2-1-V4"><a href="#2-1-V4" class="headerlink" title="2.1 V4"></a>2.1 <code>V4</code></h2><p>在<code>Android Support Library 24.2.0</code>以前，<code>v4</code>包支持的最小<code>API</code>为4，而在之后的版本，移除了8及以下版本的支持，同时，将<code>v4</code>包拆分成了独立的5个包。</p>
+<ul>
+<li><code>com.android.support:support-compat:24.2.1</code><br>说明：兼容一些<code>framework API</code>，例如<code>Context.getDrawable</code>和<code>View.performAccessibilityAction</code>。</li>
+<li><code>com.android.support:support-core-utils:24.2.1</code><br>说明：提供一些核心的工具类，如<code>AsyncTaskLoader</code>和<code>PermissionChecker</code>。</li>
+<li><code>com.android.support:support-core-ui:24.2.1</code><br>说明：提供一系列核心的<code>UI</code>，例如<code>ViewPager</code>、<code>NestedScrollView</code>和<code>DrawerLayout</code>。</li>
+<li><code>com.android.support:support-media-compat:24.2.1</code><br>说明：媒体<code>android.media</code>兼容库，包括<code>MediaBrowser</code>和<code>MediaSession</code>。</li>
+<li><code>com.android.support:support-fragment:24.2.1</code><br>说明：依赖了其它4个子库，一旦导入这个包就会导入其余的库。</li>
+</ul>
+<p>依赖关系：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1949836-ab9804972696c062.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<h2 id="2-2-V7"><a href="#2-2-V7" class="headerlink" title="2.2 V7"></a>2.2 <code>V7</code></h2><p><code>V7</code>也包含多个独立包，从<code>24.2.0</code>开始，将<code>V7</code>支持的最低版本升为9。</p>
+<ul>
+<li><code>com.android.support:appcompat-v7:24.2.1</code><br>说明：这个支持对<code>ActionBar</code>接口的设计模式，<code>Material Design</code>接口的实现等，核心类包括<code>ActionBar</code>、<code>AppCompactActivity</code>、<code>AppCompactDialog</code>、<code>ShareActionProvider</code>等。</li>
+<li><code>com.android.support:cardview-v7:24.2.1</code><br>说明：<code>CardView</code>控件</li>
+<li><code>com.android.support:gridlayout-v7:24.2.1</code><br>说明：<code>GridLayout</code>布局</li>
+<li><code>com.android.support:mediarouter-v7:24.2.1</code><br>说明：用于设备间音频、视频交换显示的<code>support</code>包。</li>
+<li><code>com.android.support:palette-v7:24.2.1</code><br>说明：提取图片中的主题色</li>
+<li><code>com.android.support:recyclerview-v7:24.2.1</code><br>说明：<code>RecyclerView</code></li>
+<li><code>com.android.support:preference-v7:24.2.1</code><br>说明：支持控件存储配置数据的，例如<code>CheckBoxPreference</code>和<code>ListPreference</code>。</li>
+</ul>
+<h2 id="2-3-V8"><a href="#2-3-V8" class="headerlink" title="2.3 V8"></a>2.3 <code>V8</code></h2><p>用于渲染脚本的<code>support</code>包</p>
+<h2 id="2-4-V13"><a href="#2-4-V13" class="headerlink" title="2.4 V13"></a>2.4 <code>V13</code></h2><p>为<code>API</code>为13或以上的<code>Fragment</code>提供更多特性的支持。</p>
+<p>##2.5 <code>com.android.support:multidex:1.0.0</code><br>用于使用多<code>Dex</code>技术编译<code>APP</code>，当一个应用的方法数大于65536时，需要使用<code>multidex</code>配置。</p>
+<h2 id="2-6-com-android-support-support-annotations-24-2-1"><a href="#2-6-com-android-support-support-annotations-24-2-1" class="headerlink" title="2.6 com.android.support:support-annotations:24.2.1"></a>2.6 <code>com.android.support:support-annotations:24.2.1</code></h2><p>支持注解。</p>
+<h2 id="2-7-com-android-support-design-24-2-1"><a href="#2-7-com-android-support-design-24-2-1" class="headerlink" title="2.7 com.android.support:design:24.2.1"></a>2.7 <code>com.android.support:design:24.2.1</code></h2><p>用于支持<code>Design Patterns</code>的<code>Support</code>包，它提供了<code>Material Design</code>设计风格的控件：</p>
+<ul>
+<li><code>FloatingActionButton</code></li>
+<li><code>Snackbar</code></li>
+<li><code>TextInputLayout</code></li>
+<li><code>TabLayout</code></li>
+<li><code>AppBarLayout</code></li>
+<li><code>CollapsingToolbarLayout</code></li>
+<li><code>CoordinatorLayout</code></li>
+<li><code>NavigationView</code></li>
+</ul>
+<h2 id="2-8-com-android-support-customtabs-24-2-1"><a href="#2-8-com-android-support-customtabs-24-2-1" class="headerlink" title="2.8 com.android.support:customtabs:24.2.1"></a>2.8 <code>com.android.support:customtabs:24.2.1</code></h2><p>在应用中添加和管理<code>Custom Tabs</code>的<code>support</code>包，提供了一种新的打开网页的方式。</p>
+<h2 id="2-9-com-android-support-percent-24-2-1"><a href="#2-9-com-android-support-percent-24-2-1" class="headerlink" title="2.9 com.android.support:percent:24.2.1"></a>2.9 <code>com.android.support:percent:24.2.1</code></h2><p>支持百分比布局的<code>support</code>包。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/02/20/Android-异步任务/Android-异步任务知识梳理(3)---AsyncQueryHandler-源码解析/" rel="next" title="Android 异步任务知识梳理(3) - AsyncQueryHandler 源码解析">
+                <i class="fa fa-chevron-left"></i> Android 异步任务知识梳理(3) - AsyncQueryHandler 源码解析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/02/20/Activity/Activity-知识梳理(2)---Activity-栈/" rel="prev" title="Activity 知识梳理(2) - Activity 栈">
+                Activity 知识梳理(2) - Activity 栈 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="John Doe" />
+          <p class="site-author-name" itemprop="name">John Doe</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">104</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">23</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、为什么需要Support包"><span class="nav-number">1.</span> <span class="nav-text">一、为什么需要Support包</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、Support包的结构"><span class="nav-number">2.</span> <span class="nav-text">二、Support包的结构</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-V4"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 V4</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-V7"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 V7</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-V8"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 V8</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-4-V13"><span class="nav-number">2.4.</span> <span class="nav-text">2.4 V13</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-6-com-android-support-support-annotations-24-2-1"><span class="nav-number">2.5.</span> <span class="nav-text">2.6 com.android.support:support-annotations:24.2.1</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-7-com-android-support-design-24-2-1"><span class="nav-number">2.6.</span> <span class="nav-text">2.7 com.android.support:design:24.2.1</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-8-com-android-support-customtabs-24-2-1"><span class="nav-number">2.7.</span> <span class="nav-text">2.8 com.android.support:customtabs:24.2.1</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-9-com-android-support-percent-24-2-1"><span class="nav-number">2.8.</span> <span class="nav-text">2.9 com.android.support:percent:24.2.1</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

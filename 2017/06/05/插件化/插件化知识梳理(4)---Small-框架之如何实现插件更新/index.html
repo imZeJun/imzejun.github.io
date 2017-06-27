@@ -1,0 +1,737 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="插件化知识梳理(1) - Small 框架之如何引入应用插件插件化知识梳理(2) - Small 框架之如何引入公共库插件插件化知识梳理(3) - Small 框架之宿主分身插件化知识梳理(4) - Small 框架之如何实现插件更新插件化知识梳理(5) - Small 框架之如何不将插件打包到宿主中插件化知识梳理(6) - Small 源码分析之 Hook 原理插件化知识梳理(7) - 类的动">
+<meta property="og:type" content="article">
+<meta property="og:title" content="插件化知识梳理(4) - Small 框架之如何实现插件更新">
+<meta property="og:url" content="http://yoursite.com/2017/06/05/插件化/插件化知识梳理(4)---Small-框架之如何实现插件更新/index.html">
+<meta property="og:site_name" content="泽毛">
+<meta property="og:description" content="插件化知识梳理(1) - Small 框架之如何引入应用插件插件化知识梳理(2) - Small 框架之如何引入公共库插件插件化知识梳理(3) - Small 框架之宿主分身插件化知识梳理(4) - Small 框架之如何实现插件更新插件化知识梳理(5) - Small 框架之如何不将插件打包到宿主中插件化知识梳理(6) - Small 源码分析之 Hook 原理插件化知识梳理(7) - 类的动">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-35ba36fc126b9a73.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-b156133f96f9ee76.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-4aad035018c530b1.gif?imageMogr2/auto-orient/strip">
+<meta property="og:updated_time" content="2017-06-27T13:57:26.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="插件化知识梳理(4) - Small 框架之如何实现插件更新">
+<meta name="twitter:description" content="插件化知识梳理(1) - Small 框架之如何引入应用插件插件化知识梳理(2) - Small 框架之如何引入公共库插件插件化知识梳理(3) - Small 框架之宿主分身插件化知识梳理(4) - Small 框架之如何实现插件更新插件化知识梳理(5) - Small 框架之如何不将插件打包到宿主中插件化知识梳理(6) - Small 源码分析之 Hook 原理插件化知识梳理(7) - 类的动">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-35ba36fc126b9a73.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/06/05/插件化/插件化知识梳理(4)---Small-框架之如何实现插件更新/"/>
+
+
+
+
+
+  <title>插件化知识梳理(4) - Small 框架之如何实现插件更新 | 泽毛</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">泽毛</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/05/插件化/插件化知识梳理(4)---Small-框架之如何实现插件更新/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="泽毛">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">插件化知识梳理(4) - Small 框架之如何实现插件更新</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-05T22:50:00+08:00">
+                2017-06-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/插件化知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">插件化知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p><a href="http://www.jianshu.com/p/07f88d4924db" target="_blank" rel="external">插件化知识梳理(1) - Small 框架之如何引入应用插件</a><br><a href="http://www.jianshu.com/p/f882c1f6b68b" target="_blank" rel="external">插件化知识梳理(2) - Small 框架之如何引入公共库插件</a><br><a href="http://www.jianshu.com/p/2162a4ce4560" target="_blank" rel="external">插件化知识梳理(3) - Small 框架之宿主分身</a><br><a href="http://www.jianshu.com/p/dee27b35f72f" target="_blank" rel="external">插件化知识梳理(4) - Small 框架之如何实现插件更新</a><br><a href="http://www.jianshu.com/p/e023e5d83992" target="_blank" rel="external">插件化知识梳理(5) - Small 框架之如何不将插件打包到宿主中</a><br><a href="http://www.jianshu.com/p/95b0f9894aa1" target="_blank" rel="external">插件化知识梳理(6) - Small 源码分析之 Hook 原理</a><br><a href="http://www.jianshu.com/p/ef4c8ffef374" target="_blank" rel="external">插件化知识梳理(7) - 类的动态加载入门</a><br><a href="http://www.jianshu.com/p/6b4a7a4fb39a" target="_blank" rel="external">插件化知识梳理(8) - 类的动态加载源码分析</a></p>
+</blockquote>
+<h1 id="一、前言"><a href="#一、前言" class="headerlink" title="一、前言"></a>一、前言</h1><p>通过前面三节：</p>
+<p><a href="http://www.jianshu.com/p/07f88d4924db" target="_blank" rel="external">插件化知识梳理(1) - Small 框架之如何引入应用插件</a><br><a href="http://www.jianshu.com/p/f882c1f6b68b" target="_blank" rel="external">插件化知识梳理(2) - Small 框架之如何引入公共库插件</a><br><a href="http://www.jianshu.com/p/2162a4ce4560" target="_blank" rel="external">插件化知识梳理(3) - Small 框架之宿主分身</a></p>
+<p>相信大家已经对<code>Small</code>的使用有了一个基本的认识，今天讲解另一个比较重要的知识点，插件更新。</p>
+<h1 id="二、示例"><a href="#二、示例" class="headerlink" title="二、示例"></a>二、示例</h1><p>原始的工程包括两个部分：</p>
+<ul>
+<li>宿主模块 - <code>app</code></li>
+<li>应用插件模块 - <code>app.upgrade</code></li>
+<li>原始路由文件 - <code>bundle.json</code></li>
+</ul>
+<p>如果要进行插件更新，那么我们需要：</p>
+<ul>
+<li>新的路由文件 - <code>bundle.json</code>，通过该文件，我们获取需要更新的插件的包名以及获取插件的路径。</li>
+<li>新的插件文件</li>
+</ul>
+<p><code>Github</code>地址为：<strong><a href="https://github.com/imZeJun/SmallUpdate" target="_blank" rel="external">SmallUpdate</a></strong></p>
+<h1 id="2-1-准备原始的工程"><a href="#2-1-准备原始的工程" class="headerlink" title="2.1 准备原始的工程"></a>2.1 准备原始的工程</h1><p>这里的步骤和 <a href="http://www.jianshu.com/p/07f88d4924db" target="_blank" rel="external">插件化知识梳理(1) - Small 框架之如何引入应用插件</a> 相同，就是新建一个宿主模块<code>app</code>和一个应用插件模块<code>app.upgrade</code>，从宿主模块中可以跳转到应用插件模块的<code>Activity</code>，该<code>Activity</code>的布局如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</div><div class="line">&lt;LinearLayout</div><div class="line">    xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;</div><div class="line">    xmlns:tools=&quot;http://schemas.android.com/tools&quot;</div><div class="line">    android:layout_width=&quot;match_parent&quot;</div><div class="line">    android:layout_height=&quot;match_parent&quot;</div><div class="line">    tools:context=&quot;com.demo.small.update.app.upgrade.UpgradeActivity&quot;&gt;</div><div class="line"></div><div class="line">    &lt;TextView</div><div class="line">        android:layout_width=&quot;wrap_content&quot;</div><div class="line">        android:layout_height=&quot;wrap_content&quot;</div><div class="line">        android:text=&quot;Version 0!&quot;/&gt;</div><div class="line"></div><div class="line">&lt;/LinearLayout&gt;</div></pre></td></tr></table></figure></p>
+<p>整个工程结构如下：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-35ba36fc126b9a73.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h2 id="2-2-准备新的插件"><a href="#2-2-准备新的插件" class="headerlink" title="2.2 准备新的插件"></a>2.2 准备新的插件</h2><p><strong>(1) 新的路由文件</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  &quot;version&quot;: &quot;1.0.0&quot;,</div><div class="line">  &quot;bundles&quot;: [</div><div class="line">    &#123;</div><div class="line">      &quot;uri&quot;: &quot;upgrade&quot;,</div><div class="line">      &quot;pkg&quot;: &quot;com.demo.small.update.app.upgrade&quot;</div><div class="line">    &#125;</div><div class="line">  ],</div><div class="line">  &quot;updates&quot;: [</div><div class="line">    &#123;</div><div class="line">      &quot;pkg&quot;: &quot;com.demo.small.update.app.upgrade&quot;,</div><div class="line">      &quot;url&quot;: &quot;libcom_demo_small_update_app_upgrade.so&quot;</div><div class="line">    &#125;</div><div class="line">  ]</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这里的区别就是增加了<code>updates</code>字段，用于标志需要更新的插件包名以及新插件的路径，之后，把这个文件<code>push</code>到手机根目录下的<code>Small</code>文件夹中。</p>
+<p><strong>(2) 新的插件模块</strong></p>
+<p>我们修改<code>app.upgrade</code>的<code>build.gradle</code>的版本号为<code>2.0</code>：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">android &#123;</div><div class="line">    defaultConfig &#123;</div><div class="line">        //....</div><div class="line">        versionCode 2</div><div class="line">        versionName &quot;2.0&quot;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>并修改<code>Activity</code>的布局文件，将显示的字符串从<code>Version 0!</code>改为<code>Version 2!</code>：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</div><div class="line">&lt;LinearLayout</div><div class="line">    xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;</div><div class="line">    xmlns:tools=&quot;http://schemas.android.com/tools&quot;</div><div class="line">    android:layout_width=&quot;match_parent&quot;</div><div class="line">    android:layout_height=&quot;match_parent&quot;</div><div class="line">    tools:context=&quot;com.demo.small.update.app.upgrade.UpgradeActivity&quot;&gt;</div><div class="line"></div><div class="line">    &lt;TextView</div><div class="line">        android:layout_width=&quot;wrap_content&quot;</div><div class="line">        android:layout_height=&quot;wrap_content&quot;</div><div class="line">        android:text=&quot;Version 2!&quot;/&gt; &lt;!-- 区别，旧的插件版本为 Version 0! --&gt;</div><div class="line"></div><div class="line">&lt;/LinearLayout&gt;</div></pre></td></tr></table></figure></p>
+<p>用于验证我们的插件是否更新。之后，通过命令编译出新的插件文件<code>so</code>，把它<code>push</code>到手机根目录下的<code>Small</code>文件夹中。</p>
+<p>最终，在<code>sdcard/Small</code>目录保存了以上两部分的更新信息：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-b156133f96f9ee76.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h2 id="2-3-插件更新"><a href="#2-3-插件更新" class="headerlink" title="2.3 插件更新"></a>2.3 插件更新</h2><p>以上准备工作做好之后，就开始真正的更新步骤了，我们把更新的操作都封装在<code>SmallManager</code>中，外部只需要调用<code>requestUpgrade()</code>方法，就可以实现插件的更新：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div><div class="line">156</div><div class="line">157</div></pre></td><td class="code"><pre><div class="line">public class SmallManager &#123;</div><div class="line"></div><div class="line">    private static final String TAG = &quot;SmallManager&quot;;</div><div class="line">    private static final String PATCH_PATH = Environment.getExternalStorageDirectory().toString() + &quot;/Small/bundle.json&quot;;</div><div class="line"></div><div class="line">    private Handler mWorkerHandler;</div><div class="line">    private Handler mUiHandler;</div><div class="line"></div><div class="line">    private SmallManager() &#123;</div><div class="line">        HandlerThread workThread = new HandlerThread(&quot;workThread&quot;);</div><div class="line">        workThread.start();</div><div class="line">        mWorkerHandler = new MHandler(workThread.getLooper());</div><div class="line">        mUiHandler = new MHandler(Looper.getMainLooper());</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void requestUpgrade() &#123;</div><div class="line">        mWorkerHandler.sendEmptyMessage(MHandler.MSG_REQ_UPGRADE);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private void onUpgraded(boolean success) &#123;</div><div class="line">        Log.d(TAG, &quot;onUpgraded, success=&quot; + success);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private void upgrade() &#123;</div><div class="line">        Log.d(TAG, &quot;upgrade&quot;);</div><div class="line">        try &#123;</div><div class="line">            //1.获取插件更新信息。</div><div class="line">            UpgradeInfo upgradeInfo = getUpgradeInfo();</div><div class="line">            if (upgradeInfo != null) &#123;</div><div class="line">                if (upgradeInfo.manifest != null) &#123;</div><div class="line">                    if (!Small.updateManifest(upgradeInfo.manifest, false)) &#123;</div><div class="line">                        mUiHandler.sendMessage(mUiHandler.obtainMessage(MHandler.MSG_UPGRADE_FINISHED, false));</div><div class="line">                        return;</div><div class="line">                    &#125;</div><div class="line">                &#125;</div><div class="line">                List&lt;UpdateInfo&gt; updates = upgradeInfo.updates;</div><div class="line">                for (UpdateInfo update : updates) &#123;</div><div class="line">                    //2.获得对应包名的Bundle</div><div class="line">                    Bundle bundle = Small.getBundle(update.packageName);</div><div class="line">                    //3.利用更新信息来更新对应包名的Bundle。</div><div class="line">                    boolean result = upgradeBundle(bundle, update);</div><div class="line">                    Log.d(TAG, &quot;pkg=&quot; + update.packageName + &quot;,result=&quot; + result);</div><div class="line">                &#125;</div><div class="line">                mUiHandler.sendMessage(mUiHandler.obtainMessage(MHandler.MSG_UPGRADE_FINISHED, true));</div><div class="line">                return;</div><div class="line">            &#125;</div><div class="line">        &#125; catch (Exception e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line">        mUiHandler.sendMessage(mUiHandler.obtainMessage(MHandler.MSG_UPGRADE_FINISHED, false));</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private UpgradeInfo getUpgradeInfo() &#123;</div><div class="line">        try &#123;</div><div class="line">            File patchFile = new File(PATCH_PATH);</div><div class="line">            //获得新的bundle.json，这实际情况下可以通过访问网络进行下载的方式实现，这里我们用读取外部存储的方式代替，原理是一样的。</div><div class="line">            FileInputStream fileInputStream = new FileInputStream(patchFile);</div><div class="line">            StringBuilder sb = new StringBuilder();</div><div class="line">            byte[] buffer = new byte[1024];</div><div class="line">            int length;</div><div class="line">            while ((length = fileInputStream.read(buffer)) != -1) &#123;</div><div class="line">                sb.append(new String(buffer, 0, length));</div><div class="line">            &#125;</div><div class="line">            JSONObject jo = new JSONObject(sb.toString());</div><div class="line">            //manifest部分的更新。</div><div class="line">            JSONObject mf = jo.has(&quot;manifest&quot;) ? jo.getJSONObject(&quot;manifest&quot;) : null;</div><div class="line">            //每个插件部分的更新，包含了包名以及新的插件so路径。</div><div class="line">            JSONArray updateJson = jo.getJSONArray(&quot;updates&quot;);</div><div class="line">            int N = updateJson.length();</div><div class="line">            List&lt;UpdateInfo&gt; updates = new ArrayList&lt;&gt;(N);</div><div class="line">            for (int i = 0; i &lt; N; i++) &#123;</div><div class="line">                JSONObject o = updateJson.getJSONObject(i);</div><div class="line">                UpdateInfo info = new UpdateInfo();</div><div class="line">                info.packageName = o.getString(&quot;pkg&quot;);</div><div class="line">                info.soPath = o.getString(&quot;url&quot;);</div><div class="line">                updates.add(info);</div><div class="line">            &#125;</div><div class="line">            //将更新的信息封装起来，用于下一步的更新操作。</div><div class="line">            UpgradeInfo ui = new UpgradeInfo();</div><div class="line">            ui.manifest = mf;</div><div class="line">            ui.updates = updates;</div><div class="line">            return ui;</div><div class="line">        &#125; catch (Exception e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line">        return null;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private boolean upgradeBundle(Bundle origin, UpdateInfo updateInfo) &#123;</div><div class="line">        try &#123;</div><div class="line">            //获得Bundle的PatchFile。</div><div class="line">            File file = origin.getPatchFile();</div><div class="line">            //获取新的so，也就是新的插件，实际情况下可以通过访问网络进行下载的方式实现，这里我们用读取外部存储的方式代替，原理是一样的。</div><div class="line">            File updateFile = new File(Environment.getExternalStorageDirectory().toString() + &quot;/Small/&quot; + updateInfo.soPath);</div><div class="line">            FileInputStream updateFileInput = new FileInputStream(updateFile);</div><div class="line">            OutputStream outputStream = new FileOutputStream(file);</div><div class="line">            byte[] buffer = new byte[1024];</div><div class="line">            int length;</div><div class="line">            //将更新的插件so，写入到Bundle的PatchFile。</div><div class="line">            while ((length = updateFileInput.read(buffer)) != -1) &#123;</div><div class="line">                outputStream.write(buffer, 0, length);</div><div class="line">            &#125;</div><div class="line">            outputStream.flush();</div><div class="line">            outputStream.close();</div><div class="line">            updateFileInput.close();</div><div class="line">            //调用Bundle的upgrade方法。</div><div class="line">            origin.upgrade();</div><div class="line">            return true;</div><div class="line">        &#125; catch (Exception e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line">        return false;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static class UpdateInfo &#123;</div><div class="line">        private String packageName;</div><div class="line">        private String soPath;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static class UpgradeInfo &#123;</div><div class="line">        private JSONObject manifest;</div><div class="line">        private List&lt;UpdateInfo&gt; updates;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private class MHandler extends Handler &#123;</div><div class="line"></div><div class="line">        private static final int MSG_REQ_UPGRADE = 0;</div><div class="line">        private static final int MSG_UPGRADE_FINISHED = 1;</div><div class="line"></div><div class="line">        public MHandler(Looper looper) &#123;</div><div class="line">            super(looper);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        @Override</div><div class="line">        public void handleMessage(Message msg) &#123;</div><div class="line">            super.handleMessage(msg);</div><div class="line">            switch (msg.what) &#123;</div><div class="line">                case MSG_REQ_UPGRADE:</div><div class="line">                    upgrade();</div><div class="line">                    break;</div><div class="line">                case MSG_UPGRADE_FINISHED:</div><div class="line">                    onUpgraded((boolean) msg.obj);</div><div class="line">                    break;</div><div class="line">                default:</div><div class="line">                    break;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static SmallManager getInstance() &#123;</div><div class="line">        return Holder.INSTANCE;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static class Holder &#123;</div><div class="line">        private static SmallManager INSTANCE = new SmallManager();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>通过<code>Handler + HandlerThread</code>的方式，保证了耗时的更新操作<code>upgrade()</code>在子线程当中执行，整个更新操作分为以下几步，简要地解释一下：</p>
+<p><strong>(1) 获取更新信息</strong></p>
+<p>通过<code>getUpgradeInfo</code>方法，我们把所有需要更新的信息保存在<code>UpgradeInfo</code>结构中，这里我们从存储中读取了前面<code>push</code>到手机中的<code>bundle.json</code>文件，通过解析其中的<code>updates</code>阶段，得到更新的信息，也就是<strong>包名</strong>以及<strong>新插件的路径</strong>。</p>
+<p>这里，我们是从存储中读取的，实际情况下，我们可以将这份文件放在服务器上，然后去下载。</p>
+<p><strong>(2) 更新插件</strong></p>
+<p>在<code>(1)</code>中，我们已经知道了要更新的插件的包名，现在，我们通过<code>Small</code>提供的这个方法，获得与该包名对应的<code>Bundle</code>，而<code>upgradeBundle</code>则进行真正的更新操作。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Bundle bundle = Small.getBundle(update.packageName);</div></pre></td></tr></table></figure></p>
+<p>在第<code>(1)</code>步中，我们获取到了新的插件所处的位置，然后现在我们通过该字段来获取插件，之后将该插件的内容通过输入输出流，写入到<code>Bundle</code>的<code>PatchFile</code>当中，写入完毕之后，再通过<code>Bundle</code>的<code>upgrade</code>方法进行更新。</p>
+<p>与上面类似，这里也是从本地读取插件，实际情况下应当将该插件放在服务器上，需要更新的时候再去下载。</p>
+<p>其实一路下来，最核心的部分就是先根据包名获取到对应的<code>Bundle</code>，然后将新的插件通过文件流的形式写入到<code>Bundle</code>的<code>PatchFile</code>中，最终调用该<code>Bundle</code>的<code>upgrade()</code>方法，至于内部是如何更新的，<code>Small</code>已经帮我们处理好了，我们完全不需要去操心。</p>
+<h2 id="2-4-演示效果"><a href="#2-4-演示效果" class="headerlink" title="2.4 演示效果"></a>2.4 演示效果</h2><p><img src="http://upload-images.jianshu.io/upload_images/1949836-4aad035018c530b1.gif?imageMogr2/auto-orient/strip" alt=""></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/06/03/插件化/插件化知识梳理(3)---Small-框架之宿主分身/" rel="next" title="插件化知识梳理(3) - Small 框架之宿主分身">
+                <i class="fa fa-chevron-left"></i> 插件化知识梳理(3) - Small 框架之宿主分身
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/06/06/插件化/插件化知识梳理(5)---Small-框架之如何不将插件打包到宿主中/" rel="prev" title="插件化知识梳理(5) - Small 框架之如何不将插件打包到宿主中">
+                插件化知识梳理(5) - Small 框架之如何不将插件打包到宿主中 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="John Doe" />
+          <p class="site-author-name" itemprop="name">John Doe</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">104</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">23</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、前言"><span class="nav-number">1.</span> <span class="nav-text">一、前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、示例"><span class="nav-number">2.</span> <span class="nav-text">二、示例</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-1-准备原始的工程"><span class="nav-number">3.</span> <span class="nav-text">2.1 准备原始的工程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-准备新的插件"><span class="nav-number">3.1.</span> <span class="nav-text">2.2 准备新的插件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-插件更新"><span class="nav-number">3.2.</span> <span class="nav-text">2.3 插件更新</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-4-演示效果"><span class="nav-number">3.3.</span> <span class="nav-text">2.4 演示效果</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

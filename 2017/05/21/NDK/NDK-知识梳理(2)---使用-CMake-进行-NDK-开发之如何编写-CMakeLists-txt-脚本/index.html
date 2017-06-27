@@ -1,0 +1,800 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="一、前言在前一篇文章 NDK 知识梳理(1) - 使用 CMake 进行 NDK 开发之初体验 中，我们一起学习了如何在Android Studio中使用CMake来进行NDK开发，而编写CMakeLists.txt构建脚本是其中一个重要的环节，今天我们就来一起学习CMakeLists.txt的一些应用，介绍它在下面三种场景的用法：  从原生代码构建一个原生库 添加Android NDK的API">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NDK 知识梳理(2) - 使用 CMake 进行 NDK 开发之如何编写 CMakeLists.txt 脚本">
+<meta property="og:url" content="http://yoursite.com/2017/05/21/NDK/NDK-知识梳理(2)---使用-CMake-进行-NDK-开发之如何编写-CMakeLists-txt-脚本/index.html">
+<meta property="og:site_name" content="泽毛">
+<meta property="og:description" content="一、前言在前一篇文章 NDK 知识梳理(1) - 使用 CMake 进行 NDK 开发之初体验 中，我们一起学习了如何在Android Studio中使用CMake来进行NDK开发，而编写CMakeLists.txt构建脚本是其中一个重要的环节，今天我们就来一起学习CMakeLists.txt的一些应用，介绍它在下面三种场景的用法：  从原生代码构建一个原生库 添加Android NDK的API">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-ed248e5db30ad7d4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-1eb7f0d29713c385.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-e40ec6409684dfe6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-46f9c05b228d06e7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-480efe7d3ca43abf.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-323a50fe9f136c8e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-9ac567d97d30d67e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2017-06-27T15:06:41.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="NDK 知识梳理(2) - 使用 CMake 进行 NDK 开发之如何编写 CMakeLists.txt 脚本">
+<meta name="twitter:description" content="一、前言在前一篇文章 NDK 知识梳理(1) - 使用 CMake 进行 NDK 开发之初体验 中，我们一起学习了如何在Android Studio中使用CMake来进行NDK开发，而编写CMakeLists.txt构建脚本是其中一个重要的环节，今天我们就来一起学习CMakeLists.txt的一些应用，介绍它在下面三种场景的用法：  从原生代码构建一个原生库 添加Android NDK的API">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-ed248e5db30ad7d4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/05/21/NDK/NDK-知识梳理(2)---使用-CMake-进行-NDK-开发之如何编写-CMakeLists-txt-脚本/"/>
+
+
+
+
+
+  <title>NDK 知识梳理(2) - 使用 CMake 进行 NDK 开发之如何编写 CMakeLists.txt 脚本 | 泽毛</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">泽毛</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/05/21/NDK/NDK-知识梳理(2)---使用-CMake-进行-NDK-开发之如何编写-CMakeLists-txt-脚本/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="泽毛">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">NDK 知识梳理(2) - 使用 CMake 进行 NDK 开发之如何编写 CMakeLists.txt 脚本</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-21T21:34:00+08:00">
+                2017-05-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/NDK-知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">NDK 知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="一、前言"><a href="#一、前言" class="headerlink" title="一、前言"></a>一、前言</h1><p>在前一篇文章 <a href="http://www.jianshu.com/p/716641d15ee8" target="_blank" rel="external">NDK 知识梳理(1) - 使用 CMake 进行 NDK 开发之初体验</a> 中，我们一起学习了如何在<code>Android Studio</code>中使用<code>CMake</code>来进行<code>NDK</code>开发，而编写<code>CMakeLists.txt</code>构建脚本是其中一个重要的环节，今天我们就来一起学习<code>CMakeLists.txt</code>的一些应用，介绍它在下面三种场景的用法：</p>
+<ul>
+<li>从原生代码构建一个原生库</li>
+<li>添加<code>Android NDK</code>的<code>API</code></li>
+<li>引入第三方<code>so</code></li>
+</ul>
+<h1 id="二、从原生代码构建一个原生库"><a href="#二、从原生代码构建一个原生库" class="headerlink" title="二、从原生代码构建一个原生库"></a>二、从原生代码构建一个原生库</h1><h2 id="2-1-指定-CMake-最低版本"><a href="#2-1-指定-CMake-最低版本" class="headerlink" title="2.1 指定 CMake 最低版本"></a>2.1 指定 CMake 最低版本</h2><p><code>cmake_minimum_required</code>用于指定<code>CMake</code>的最低版本信息，不加入会收到警告。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cmake_minimum_required(VERSION 3.4.1)</div></pre></td></tr></table></figure></p>
+<h2 id="2-2-从原生代码构建一个原生库"><a href="#2-2-从原生代码构建一个原生库" class="headerlink" title="2.2 从原生代码构建一个原生库"></a>2.2 从原生代码构建一个原生库</h2><p><code>add_library()</code>用于指示<code>CMake</code>从原生代码构建一个原生库，通俗地说，就是从<code>.cpp</code>经过编译得到<code>.so</code>文件。正如我们在 <a href="http://www.jianshu.com/p/716641d15ee8" target="_blank" rel="external">NDK 知识梳理(1) - 使用 CMake 进行 NDK 开发之初体验</a> 中看到的那样，我们通过<code>add_library</code>让<code>CMake</code>根据<code>native-lib.cpp</code>源文件构建一个名为<code>native-lib</code>的共享库：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"># Specifies a library name, specifies whether the library is STATIC or</div><div class="line"># SHARED, and provides relative paths to the source code. You can</div><div class="line"># define multiple libraries by adding multiple add.library() commands,</div><div class="line"># and CMake builds them for you. When you build your app, Gradle</div><div class="line"># automatically packages shared libraries with your APK.</div><div class="line"></div><div class="line">add_library( # Specifies the name of the library.</div><div class="line">             native-lib</div><div class="line"></div><div class="line">             # Sets the library as a shared library.</div><div class="line">             SHARED</div><div class="line"></div><div class="line">             # Provides a relative path to your source file(s).</div><div class="line">             src/main/cpp/native-lib.cpp )</div></pre></td></tr></table></figure></p>
+<p>对于<code>add_library()</code>括号中的内容，可以分为三个部分：</p>
+<p><strong>(1) 指定原生库的名字</strong></p>
+<p><code>add_library</code>的第一个参数，决定了最终生成的共享库的名字，例如我们将共享库的名字定义为<code>native-lib</code>，那么最终生成的<code>so</code>文件将在前面加上<code>lib</code>前缀，也就是<code>libnative-lib.so</code>，但是我们在代码中加载该共享库的时候，仍然应当使用<code>native-lib</code>，也就是像下面这样：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">static &#123;</div><div class="line">    System.loadLibrary(“native-lib”);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><strong>(2) 静态库 or 共享库</strong></p>
+<p>通过第二个参数，我们可以指定根据源文件编译出来的是静态库还是共享库，分别对应<code>STATIC/SHARED</code>关键字，这里简单提一下两者的区别：</p>
+<ul>
+<li>静态库：以<code>.a</code>结尾。静态库在程序链接的时候使用，链接器会将程序中使用到函数的代码从库文件中拷贝到应用程序中。一旦链接完成，在执行程序的时候就不需要静态库了。</li>
+<li>共享库：以<code>.so</code>结尾。在程序的链接时候并不像静态库那样在拷贝使用函数的代码，而只是作些标记。然后在程序开始启动运行的时候，动态地加载所需模块。</li>
+</ul>
+<p><strong>(3) 指定源文件</strong></p>
+<p>指定编译的源文件，这里是一个和<code>CMakeLists.txt</code>相关的相对路径，如果我们有多个源文件，那么就在后面添加文件的路径即可。</p>
+<h2 id="2-3-关联多个源文件的例子"><a href="#2-3-关联多个源文件的例子" class="headerlink" title="2.3 关联多个源文件的例子"></a>2.3 关联多个源文件的例子</h2><p>下面，我们对 <a href="http://www.jianshu.com/p/716641d15ee8" target="_blank" rel="external">NDK 知识梳理(1) - 使用 CMake 进行 NDK 开发之初体验</a> 中的计算器的例子进行优化，把加法和减法的操作放在另一个<code>.cpp</code>文件中实现，以演示关联多个<code>.cpp</code>文件的例子，整个目录的结构变为：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-ed248e5db30ad7d4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<ul>
+<li><code>addition_subtraction.cpp</code></li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">int addition(int a, int b) &#123;</div><div class="line">    return a + b;</div><div class="line">&#125;</div><div class="line"></div><div class="line">int subtraction(int a, int b) &#123;</div><div class="line">    return a - b;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li><code>addition_subtraction.h</code></li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">#ifndef CMAKEOLDDEMO_ADDITION_SUBTRACTION_H</div><div class="line">#define CMAKEOLDDEMO_ADDITION_SUBTRACTION_H</div><div class="line"></div><div class="line">//加法</div><div class="line">int addition(int a, int b);</div><div class="line"></div><div class="line">//减法</div><div class="line">int subtraction(int a, int b);</div><div class="line"></div><div class="line">#endif</div></pre></td></tr></table></figure>
+<ul>
+<li><code>calculator.cpp</code></li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">#include &lt;jni.h&gt;</div><div class="line">#include &quot;../include/addition_subtraction.h&quot;</div><div class="line"></div><div class="line">extern &quot;C&quot;</div><div class="line">JNIEXPORT jint JNICALL</div><div class="line">Java_com_demo_lizejun_cmakeolddemo_NativeCalculator_addition(JNIEnv *env, jobject instance, jint a, jint b) &#123;</div><div class="line">    return addition(a, b);</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">extern &quot;C&quot;</div><div class="line">JNIEXPORT jint JNICALL</div><div class="line">Java_com_demo_lizejun_cmakeolddemo_NativeCalculator_subtraction(JNIEnv *env, jobject instance,  jint a, jint b) &#123;</div><div class="line">    return subtraction(a, b);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>那么我们需要将<code>add_library</code>改写为：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">cmake_minimum_required(VERSION 3.4.1)</div><div class="line"></div><div class="line">add_library(calculator SHARED src/main/cpp/calculator/calculator.cpp src/main/cpp/calculator/addition_subtraction.cpp)</div><div class="line"></div><div class="line">include_directories(src/main/cpp/include/)</div></pre></td></tr></table></figure></p>
+<h1 id="三、添加-NDK-API"><a href="#三、添加-NDK-API" class="headerlink" title="三、添加 NDK API"></a>三、添加 NDK API</h1><p>在<code>Android</code>系统当中，预制了一些标准的<code>NDK</code>库，这些库函数的目的就是让开发者能够在原生方法中实现之前在<code>Java</code>层开发的一些功能，我们可以通过 <a href="https://developer.android.google.cn/ndk/guides/stable_apis.html" target="_blank" rel="external">NDK 库</a> 查找所需要的<code>API</code>。<br><img src="http://upload-images.jianshu.io/upload_images/1949836-1eb7f0d29713c385.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<p>因为这些库已经预制在系统当中了，所以如果我们要调用这些库中的函数，那么不需要将其打包到<code>APK</code>当中，所需要做的就是向<code>CMake</code>提供希望使用的库名称，并将其关联到自己的原生库，最后在原生代码中引入相应的头文件，调用方法就可以了。</p>
+<p>下面，我们就介绍一个调用<code>Android Native API</code>的例子。我们给<code>Calculator</code>加上一个新的接口，而在其本地方法中调用<code>Android NDK</code>的方法来打印一串<code>Java</code>层传过来的字符。</p>
+<p><strong>(1) 增加接口</strong></p>
+<p>我们在<code>NativeCalculator.java</code>中增加一个接口<code>logByNative</code>：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">public class NativeCalculator &#123;</div><div class="line"></div><div class="line">    private static final String SELF_LIB_NAME = &quot;calculator&quot;;</div><div class="line"></div><div class="line">    static &#123;</div><div class="line">        System.loadLibrary(SELF_LIB_NAME);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public native int addition(int a, int b);</div><div class="line"></div><div class="line">    public native int subtraction(int a, int b);</div><div class="line">    </div><div class="line">    public native void logByNative(String tag, String log);</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><strong>(2) 在 CMakeLists.txt 引入 Android NDK 的 log 库并把它和 calculator 关联</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">cmake_minimum_required(VERSION 3.4.1)</div><div class="line"></div><div class="line">add_library(calculator SHARED src/main/cpp/calculator/calculator.cpp src/main/cpp/calculator/addition_subtraction.cpp)</div><div class="line"></div><div class="line">include_directories(src/main/cpp/include/)</div><div class="line"></div><div class="line">find_library(log-lib log)</div><div class="line"></div><div class="line">target_link_libraries(calculator $&#123;log-lib&#125;)</div></pre></td></tr></table></figure></p>
+<p>对比于之前，我们增加了下面这两句：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">find_library(log-lib log)</div><div class="line"></div><div class="line">target_link_libraries(calculator $&#123;log-lib&#125;)</div></pre></td></tr></table></figure></p>
+<p>它们的作用分别是：</p>
+<ul>
+<li><code>find_library</code>：将一个变量和<code>Android NDK</code>的某个库建立关联关系。该函数的第二个参数为<code>Android NDK</code>中对应的库名称，而调用该方法之后，它就被和第一个参数所指定的变量关联在一起。<br>在这种关联建立以后，我们就可以使用这个变量在构建脚本的其它部分引用该变量所关联的<code>NDK</code>库。</li>
+<li><code>target_link_libraries</code>：把<code>NDK</code>库和我们自己的原生库<code>calculator</code>进行关联，这样，我们就可以调用该<code>NDK</code>库中的函数了。</li>
+</ul>
+<p><strong>(3) 在 Calculator.cpp 引入头文件并调用打印 Log 的函数</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">#include &lt;jni.h&gt;</div><div class="line">#include &quot;../include/addition_subtraction.h&quot;</div><div class="line">#include &lt;android/log.h&gt;</div><div class="line"></div><div class="line">extern &quot;C&quot;</div><div class="line">JNIEXPORT jint JNICALL</div><div class="line">Java_com_demo_lizejun_cmakeolddemo_NativeCalculator_addition(JNIEnv *env, jobject instance, jint a, jint b) &#123;</div><div class="line">    return addition(a, b);</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">extern &quot;C&quot;</div><div class="line">JNIEXPORT jint JNICALL</div><div class="line">Java_com_demo_lizejun_cmakeolddemo_NativeCalculator_subtraction(JNIEnv *env, jobject instance,  jint a, jint b) &#123;</div><div class="line">    return subtraction(a, b);</div><div class="line">&#125;</div><div class="line"></div><div class="line">extern &quot;C&quot;</div><div class="line">JNIEXPORT void JNICALL</div><div class="line">Java_com_demo_lizejun_cmakeolddemo_NativeCalculator_logByNative(JNIEnv *env, jobject instance, jstring tag_, jstring log_) &#123;</div><div class="line">    const char *tag = env-&gt;GetStringUTFChars(tag_, 0);</div><div class="line">    const char *log = env-&gt;GetStringUTFChars(log_, 0);</div><div class="line">    __android_log_write(ANDROID_LOG_DEBUG, tag, log);</div><div class="line">    env-&gt;ReleaseStringUTFChars(tag_, tag);</div><div class="line">    env-&gt;ReleaseStringUTFChars(log_, log);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这里需要做的就是两步：</p>
+<ul>
+<li>引入头文件</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">#include &lt;android/log.h&gt;</div></pre></td></tr></table></figure>
+<ul>
+<li>调用<code>NDK</code>库中的方法</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">__android_log_write(ANDROID_LOG_DEBUG, tag, log);</div></pre></td></tr></table></figure>
+<p><strong>(4) 在 Java 中调用，观察结果</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">public class MainActivity extends AppCompatActivity &#123;</div><div class="line"></div><div class="line">    private NativeCalculator mNativeCalculator;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    protected void onCreate(Bundle savedInstanceState) &#123;</div><div class="line">        super.onCreate(savedInstanceState);</div><div class="line">        setContentView(R.layout.activity_main);</div><div class="line">        mNativeCalculator = new NativeCalculator();</div><div class="line">        Log.d(&quot;Calculator&quot;, &quot;11 + 12 = &quot; + (mNativeCalculator.addition(11,12)));</div><div class="line">        Log.d(&quot;Calculator&quot;, &quot;11 - 12 = &quot; + (mNativeCalculator.subtraction(11,12)));</div><div class="line">        mNativeCalculator.logByNative(&quot;Calculator&quot;, &quot;Log By Native&quot;);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>最终的打印结果为：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-e40ec6409684dfe6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h1 id="四、引入第三方的-so库"><a href="#四、引入第三方的-so库" class="headerlink" title="四、引入第三方的.so库"></a>四、引入第三方的<code>.so</code>库</h1><p>最后一部分，我们举一个通过第三方<code>.so</code>库来实现乘除法的例子，为了得到一个<code>.so</code>库，我们通过新建一个工程，然后将它编译出的<code>.apk</code>文件解压，取出其中的<code>.so</code>文件。</p>
+<p>这里获得第三方<code>so</code>的原理其实和我们之前一直谈到的其实是一样的，我们只是借助了<code>Android Studio</code>来模拟了这个流程。</p>
+<h2 id="3-1-获得第三方-so-库"><a href="#3-1-获得第三方-so-库" class="headerlink" title="3.1 获得第三方 so 库"></a>3.1 获得第三方 so 库</h2><p>新建工程的目录结构为：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-46f9c05b228d06e7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<ul>
+<li><code>multiplication_division.h</code></li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">#ifndef SOMAKER_MULTIPLICATION_DIVISION_H</div><div class="line">#define SOMAKER_MULTIPLICATION_DIVISION_H</div><div class="line"></div><div class="line">int multiplication(int a, int b);</div><div class="line"></div><div class="line">int division(int a, int b);</div><div class="line"></div><div class="line">#endif</div></pre></td></tr></table></figure>
+<ul>
+<li><code>multiplication_division.cpp</code></li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">int multiplication(int a, int b) &#123;</div><div class="line">    return a * b;</div><div class="line">&#125;</div><div class="line"></div><div class="line">int division(int a, int b) &#123;</div><div class="line">    return a / b;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li><code>CMakeLists.txt</code></li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">cmake_minimum_required(VERSION 3.4.1)</div><div class="line"></div><div class="line">add_library(multiplication_division SHARED src/main/cpp/multiplication_division.cpp)</div><div class="line"></div><div class="line">include_directories(src/main/cpp/include/)</div></pre></td></tr></table></figure>
+<p>在<code>build.gradle</code>的<code>android</code>节点下，增加构建任务：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">externalNativeBuild &#123;</div><div class="line">    cmake &#123;</div><div class="line">        path &apos;CMakeLists.txt&apos;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这个工程编译完毕之后，去<code>app/build/outputs/apk/</code>目录下将编译出来的<code>APK</code>文件解压，得到<code>libmultiplication_division.so</code>库，我们将它作为第三方的<code>so</code>库导入到计算器的例子当中。<br><img src="http://upload-images.jianshu.io/upload_images/1949836-480efe7d3ca43abf.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h2 id="3-2-引入第三方-so-库"><a href="#3-2-引入第三方-so-库" class="headerlink" title="3.2 引入第三方 so 库"></a>3.2 引入第三方 so 库</h2><p><strong>(1) 将 so 库和头文件拷贝到对应的目录</strong><br><img src="http://upload-images.jianshu.io/upload_images/1949836-323a50fe9f136c8e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<p><strong>(2) 修改 CMakeLists.txt 文件</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">cmake_minimum_required(VERSION 3.4.1)</div><div class="line"></div><div class="line">add_library(calculator SHARED src/main/cpp/calculator/calculator.cpp src/main/cpp/calculator/addition_subtraction.cpp)</div><div class="line"></div><div class="line">include_directories(src/main/cpp/include/)</div><div class="line"></div><div class="line">add_library(multiplication_division SHARED IMPORTED)</div><div class="line"></div><div class="line">set_target_properties(multiplication_division PROPERTIES IMPORTED_LOCATION $&#123;CMAKE_SOURCE_DIR&#125;/src/main/jniLibs/$&#123;ANDROID_ABI&#125;/libmultiplication_division.so )</div><div class="line"></div><div class="line">find_library(log-lib log)</div><div class="line"></div><div class="line">target_link_libraries(calculator multiplication_division $&#123;log-lib&#125;)</div></pre></td></tr></table></figure></p>
+<p>这里相比于之前，修改了以下三句：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">add_library(multiplication_division SHARED IMPORTED)</div><div class="line"></div><div class="line">set_target_properties(multiplication_division PROPERTIES IMPORTED_LOCATION $&#123;CMAKE_SOURCE_DIR&#125;/src/main/jniLibs/$&#123;ANDROID_ABI&#125;/libmultiplication_division.so )</div><div class="line"></div><div class="line">target_link_libraries(calculator multiplication_division $&#123;log-lib&#125;)</div></pre></td></tr></table></figure></p>
+<p>这三句话的作用分别为：</p>
+<ul>
+<li><p>添加第三方<code>so</code>库<br>这里和之前在第二步中介绍的创建一个新的原生库类似，区别在于最后一个参数，我们通过<code>IMPORTANT</code>标志告知<code>CMake</code>只希望将库导入到项目中。</p>
+</li>
+<li><p>指定目标库的路径<br>这里有几点需要说明：</p>
+<ul>
+<li><code>${CMAKE_SOURCE_DIR}</code>表示的是<code>CMakeLists.txt</code>所在的路径，我们指定第三方<code>so</code>所在路径时，应当以这个常量为起点。</li>
+<li>按理来说，我们应当为每种<code>ABI</code>接口提供单独的软件包，那么，我们就可以在<code>jinLibs</code>下建立多个文件夹，每个文件夹对应一种<code>ABI</code>接口类型，之后再通过<code>${ANDROID_ABI}</code>来泛化这一层目录的结构，这样将有助于充分利用特定的<code>CPU</code>架构。</li>
+</ul>
+</li>
+<li><p>将第三方的库关联到原生库<br>这里和将<code>NDK</code>库关联到原生库的原理是一样的。</p>
+</li>
+</ul>
+<p><strong>(3) 声明新的接口，并在 Calculator.cpp 引入第三方的头文件，调用函数</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">package com.demo.lizejun.cmakeolddemo;</div><div class="line"></div><div class="line">public class NativeCalculator &#123;</div><div class="line"></div><div class="line">    private static final String SELF_LIB_NAME = &quot;calculator&quot;;</div><div class="line"></div><div class="line">    static &#123;</div><div class="line">        System.loadLibrary(SELF_LIB_NAME);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public native int addition(int a, int b);</div><div class="line"></div><div class="line">    public native int subtraction(int a, int b);</div><div class="line"></div><div class="line">    public native void logByNative(String tag, String log);</div><div class="line"></div><div class="line">    public native int multiplication(int a, int b);</div><div class="line"></div><div class="line">    public native int division(int a, int b);</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line">#include &lt;jni.h&gt;</div><div class="line">#include &quot;../include/addition_subtraction.h&quot;</div><div class="line">#include &lt;android/log.h&gt;</div><div class="line">#include &quot;../include/multiplication_division.h&quot;</div><div class="line"></div><div class="line">extern &quot;C&quot;</div><div class="line">JNIEXPORT jint JNICALL</div><div class="line">Java_com_demo_lizejun_cmakeolddemo_NativeCalculator_addition(JNIEnv *env, jobject instance, jint a, jint b) &#123;</div><div class="line">    return addition(a, b);</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">extern &quot;C&quot;</div><div class="line">JNIEXPORT jint JNICALL</div><div class="line">Java_com_demo_lizejun_cmakeolddemo_NativeCalculator_subtraction(JNIEnv *env, jobject instance,  jint a, jint b) &#123;</div><div class="line">    return subtraction(a, b);</div><div class="line">&#125;</div><div class="line"></div><div class="line">extern &quot;C&quot;</div><div class="line">JNIEXPORT void JNICALL</div><div class="line">Java_com_demo_lizejun_cmakeolddemo_NativeCalculator_logByNative(JNIEnv *env, jobject instance, jstring tag_, jstring log_) &#123;</div><div class="line">    const char *tag = env-&gt;GetStringUTFChars(tag_, 0);</div><div class="line">    const char *log = env-&gt;GetStringUTFChars(log_, 0);</div><div class="line">    __android_log_write(ANDROID_LOG_DEBUG, tag, log);</div><div class="line">    env-&gt;ReleaseStringUTFChars(tag_, tag);</div><div class="line">    env-&gt;ReleaseStringUTFChars(log_, log);</div><div class="line">&#125;</div><div class="line"></div><div class="line">extern &quot;C&quot;</div><div class="line">JNIEXPORT jint JNICALL</div><div class="line">Java_com_demo_lizejun_cmakeolddemo_NativeCalculator_multiplication(JNIEnv *env, jobject instance, jint a, jint b) &#123;</div><div class="line">    return multiplication(a, b);</div><div class="line">&#125;</div><div class="line"></div><div class="line">extern &quot;C&quot;</div><div class="line">JNIEXPORT jint JNICALL</div><div class="line">Java_com_demo_lizejun_cmakeolddemo_NativeCalculator_division(JNIEnv *env, jobject instance, jint a, jint b) &#123;</div><div class="line">    return division(a, b);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>之前的步骤完成之后就很简单了，我们只需要引入该<code>so</code>库对应的头文件，再调用它提供的方法就可以了。</p>
+<p><strong>(4) 在 Java 中调用本地方法</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">public class MainActivity extends AppCompatActivity &#123;</div><div class="line"></div><div class="line">    private NativeCalculator mNativeCalculator;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    protected void onCreate(Bundle savedInstanceState) &#123;</div><div class="line">        super.onCreate(savedInstanceState);</div><div class="line">        setContentView(R.layout.activity_main);</div><div class="line">        mNativeCalculator = new NativeCalculator();</div><div class="line">        Log.d(&quot;Calculator&quot;, &quot;11 + 12 = &quot; + (mNativeCalculator.addition(11,12)));</div><div class="line">        Log.d(&quot;Calculator&quot;, &quot;11 - 12 = &quot; + (mNativeCalculator.subtraction(11,12)));</div><div class="line">        mNativeCalculator.logByNative(&quot;Calculator&quot;, &quot;Log By Native&quot;);</div><div class="line">        Log.d(&quot;Calculator&quot;, &quot;11 * 12 = &quot; + (mNativeCalculator.multiplication(11,12)));</div><div class="line">        Log.d(&quot;Calculator&quot;, &quot;11 / 12 = &quot; + (mNativeCalculator.division(11,12)));</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>运行程序，最终打印的结果为：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-9ac567d97d30d67e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h1 id="四、小结"><a href="#四、小结" class="headerlink" title="四、小结"></a>四、小结</h1><p>这一篇文章，我们简要地总结了<code>CMakeLists.txt</code>在几种场景下应该如何编写。在学习的过程中，感觉之前学的<code>C/C++</code>都忘光了，头文件、静态库/动态库、<code>extern</code>关键字，都不记得了，打算先好好复习一下相关的知识再继续<code>NDK</code>的学习了。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/05/20/NDK/NDK-知识梳理(1)---使用-CMake-进行-NDK-开发之初体验/" rel="next" title="NDK 知识梳理(1) - 使用 CMake 进行 NDK 开发之初体验">
+                <i class="fa fa-chevron-left"></i> NDK 知识梳理(1) - 使用 CMake 进行 NDK 开发之初体验
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/06/01/Retrofit/Retrofit-知识梳理(2)---Retrofit-动态代理内部实现/" rel="prev" title="Retrofit 知识梳理(2) - Retrofit 动态代理内部实现">
+                Retrofit 知识梳理(2) - Retrofit 动态代理内部实现 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="John Doe" />
+          <p class="site-author-name" itemprop="name">John Doe</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">104</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">23</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、前言"><span class="nav-number">1.</span> <span class="nav-text">一、前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、从原生代码构建一个原生库"><span class="nav-number">2.</span> <span class="nav-text">二、从原生代码构建一个原生库</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-指定-CMake-最低版本"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 指定 CMake 最低版本</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-从原生代码构建一个原生库"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 从原生代码构建一个原生库</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-关联多个源文件的例子"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 关联多个源文件的例子</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、添加-NDK-API"><span class="nav-number">3.</span> <span class="nav-text">三、添加 NDK API</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四、引入第三方的-so库"><span class="nav-number">4.</span> <span class="nav-text">四、引入第三方的.so库</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-获得第三方-so-库"><span class="nav-number">4.1.</span> <span class="nav-text">3.1 获得第三方 so 库</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-引入第三方-so-库"><span class="nav-number">4.2.</span> <span class="nav-text">3.2 引入第三方 so 库</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四、小结"><span class="nav-number">5.</span> <span class="nav-text">四、小结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

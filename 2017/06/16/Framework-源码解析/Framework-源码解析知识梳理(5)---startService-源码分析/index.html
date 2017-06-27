@@ -1,0 +1,754 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="一、前言最近在看关于插件化的知识，遇到了如何实现Service插件化的问题，因此，先学习一下Service内部的实现原理，这里面会涉及到应用进程和ActivityManagerService的通信，建议大家先阅读一下之前的这篇文章 Framework 源码解析知识梳理(1) - 应用进程与 AMS 的通信实现，整个Service的启动过程离不开和AMS的通信，从整个宏观上来看，它的模型如下，是不是">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Framework 源码解析知识梳理(5) - startService 源码分析">
+<meta property="og:url" content="http://yoursite.com/2017/06/16/Framework-源码解析/Framework-源码解析知识梳理(5)---startService-源码分析/index.html">
+<meta property="og:site_name" content="泽毛">
+<meta property="og:description" content="一、前言最近在看关于插件化的知识，遇到了如何实现Service插件化的问题，因此，先学习一下Service内部的实现原理，这里面会涉及到应用进程和ActivityManagerService的通信，建议大家先阅读一下之前的这篇文章 Framework 源码解析知识梳理(1) - 应用进程与 AMS 的通信实现，整个Service的启动过程离不开和AMS的通信，从整个宏观上来看，它的模型如下，是不是">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-32a15a52b33012d7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-62cfa3cd3380a609.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-18ff48b6a33fc9a7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-786654e5dffcab63.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-16ec590cd0223326.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-f980431008ca981f.png">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-388eab689362fc69.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-563e7d8759949e9d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-bde768cfc3c0996a.png">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-07207273aeb686bc.png">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-835648e9419a3d12.png">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-4fffdc1e72f26448.png">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-28bf510901e9eb23.png">
+<meta property="og:updated_time" content="2017-06-27T14:50:21.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Framework 源码解析知识梳理(5) - startService 源码分析">
+<meta name="twitter:description" content="一、前言最近在看关于插件化的知识，遇到了如何实现Service插件化的问题，因此，先学习一下Service内部的实现原理，这里面会涉及到应用进程和ActivityManagerService的通信，建议大家先阅读一下之前的这篇文章 Framework 源码解析知识梳理(1) - 应用进程与 AMS 的通信实现，整个Service的启动过程离不开和AMS的通信，从整个宏观上来看，它的模型如下，是不是">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-32a15a52b33012d7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/06/16/Framework-源码解析/Framework-源码解析知识梳理(5)---startService-源码分析/"/>
+
+
+
+
+
+  <title>Framework 源码解析知识梳理(5) - startService 源码分析 | 泽毛</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">泽毛</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/16/Framework-源码解析/Framework-源码解析知识梳理(5)---startService-源码分析/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="泽毛">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Framework 源码解析知识梳理(5) - startService 源码分析</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-16T23:01:00+08:00">
+                2017-06-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Framework-源码解析知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">Framework 源码解析知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="一、前言"><a href="#一、前言" class="headerlink" title="一、前言"></a>一、前言</h1><p>最近在看关于插件化的知识，遇到了如何实现<code>Service</code>插件化的问题，因此，先学习一下<code>Service</code>内部的实现原理，这里面会涉及到应用进程和<code>ActivityManagerService</code>的通信，建议大家先阅读一下之前的这篇文章 <a href="http://www.jianshu.com/p/f26a76e19a2d" target="_blank" rel="external">Framework 源码解析知识梳理(1) - 应用进程与 AMS 的通信实现</a>，整个<code>Service</code>的启动过程离不开和<code>AMS</code>的通信，从整个宏观上来看，它的模型如下，是不是和我们之前分析的通信过程一模一样：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-32a15a52b33012d7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h1 id="二、源码分析"><a href="#二、源码分析" class="headerlink" title="二、源码分析"></a>二、源码分析</h1><p>当我们在<code>Activity/Service/Application</code>中，通过下面这个方法启动<code>Service</code>时：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">public ComponentName startService(Intent service)</div></pre></td></tr></table></figure></p>
+<p>与之前分析过的很多源码类似，最终会调用到<code>ContextImpl</code>的同名方法当中，而该方法又会调用内部的<code>startServiceCommon(Intent, UserHandle)</code>：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-62cfa3cd3380a609.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>在该方法中，主要做了两件事：</p>
+<ul>
+<li>校验<code>Intent</code>的合法性，对于<code>Android 5.0</code>以后，我们要求<code>Intent</code>中需要制定<code>Package</code>和<code>Component</code>中至少一个，否则会抛出异常。</li>
+<li>通过<code>Binder</code>通信调用到<code>ActivityManagerService</code>的对应方法，关于调用的详细过程可以参考 <a href="http://www.jianshu.com/p/f26a76e19a2d" target="_blank" rel="external">Framework 源码解析知识梳理(1) - 应用进程与 AMS 的通信实现</a> 中对于应用进程到<code>ActivityManagerService</code>的通信部分分析。</li>
+</ul>
+<p><code>ActivityManagerService</code>中的实现为：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-18ff48b6a33fc9a7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>这里面，通过<code>mServices</code>变量来去实现<code>Service</code>的启动，而<code>mServices</code>的类型为<code>ActiveServices</code>，它是<code>ActivityManagerService</code>中负责处理<code>Service</code>相关业务的类，无论我们是通过<code>start</code>还是<code>bind</code>方式启动的<code>Service</code>，都是通过它来实现的，它也被称为“应用服务”的管理类。</p>
+<p>从通过<code>ActiveServices</code>调用<code>startServiceLocked</code>，到<code>Service</code>真正被启动的过程如下图所示，下面，我们就来一一分析每一个阶段究竟做了什么：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-786654e5dffcab63.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<p>我们首先来看入口函数<code>startServiceLocked</code>的内部实现：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div></pre></td><td class="code"><pre><div class="line">ComponentName startServiceLocked(IApplicationThread caller, Intent service, String resolvedType,</div><div class="line">        int callingPid, int callingUid, String callingPackage, final int userId)</div><div class="line">        throws TransactionTooLargeException &#123;</div><div class="line"></div><div class="line">    final boolean callerFg;</div><div class="line">    //caller是调用者进程在AMS的远程代理对象，类型为ApplicationThreadProxy。</div><div class="line">    if (caller != null) &#123;</div><div class="line">        //获得调用者的进程信息。</div><div class="line">        final ProcessRecord callerApp = mAm.getRecordForAppLocked(caller);</div><div class="line">        if (callerApp == null) &#123;</div><div class="line">            throw new SecurityException(</div><div class="line">                    &quot;Unable to find app for caller &quot; + caller</div><div class="line">                    + &quot; (pid=&quot; + Binder.getCallingPid()</div><div class="line">                    + &quot;) when starting service &quot; + service);</div><div class="line">        &#125;</div><div class="line">        callerFg = callerApp.setSchedGroup != ProcessList.SCHED_GROUP_BACKGROUND;</div><div class="line">    &#125; else &#123;</div><div class="line">        callerFg = true;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    //通过传递的信息，解析出要启动的Service，封装在ServiceLookupResult中。</div><div class="line">    ServiceLookupResult res =</div><div class="line">        retrieveServiceLocked(service, resolvedType, callingPackage,</div><div class="line">                callingPid, callingUid, userId, true, callerFg, false);</div><div class="line">    if (res == null) &#123;</div><div class="line">        return null;</div><div class="line">    &#125;</div><div class="line">    if (res.record == null) &#123;</div><div class="line">        return new ComponentName(&quot;!&quot;, res.permission != null</div><div class="line">                ? res.permission : &quot;private to package&quot;);</div><div class="line">    &#125;</div><div class="line">    //对于每个被启动的Service，它们在AMS端的数据结构为ServiceRecord。</div><div class="line">    ServiceRecord r = res.record;</div><div class="line"></div><div class="line">    if (!mAm.mUserController.exists(r.userId)) &#123;</div><div class="line">        Slog.w(TAG, &quot;Trying to start service with non-existent user! &quot; + r.userId);</div><div class="line">        return null;</div><div class="line">    &#125;</div><div class="line">    //判断是否允许启动该服务。</div><div class="line">    if (!r.startRequested) &#123;</div><div class="line">        final long token = Binder.clearCallingIdentity();</div><div class="line">        try &#123;</div><div class="line">            final int allowed = mAm.checkAllowBackgroundLocked(</div><div class="line">                    r.appInfo.uid, r.packageName, callingPid, true);</div><div class="line">            if (allowed != ActivityManager.APP_START_MODE_NORMAL) &#123;</div><div class="line">                Slog.w(TAG, &quot;Background start not allowed: service &quot;</div><div class="line">                        + service + &quot; to &quot; + r.name.flattenToShortString()</div><div class="line">                        + &quot; from pid=&quot; + callingPid + &quot; uid=&quot; + callingUid</div><div class="line">                        + &quot; pkg=&quot; + callingPackage);</div><div class="line">                return null;</div><div class="line">            &#125;</div><div class="line">        &#125; finally &#123;</div><div class="line">            Binder.restoreCallingIdentity(token);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    //是否需要配置相应的权限。</div><div class="line">    NeededUriGrants neededGrants = mAm.checkGrantUriPermissionFromIntentLocked(</div><div class="line">            callingUid, r.packageName, service, service.getFlags(), null, r.userId);</div><div class="line"></div><div class="line">    if (Build.PERMISSIONS_REVIEW_REQUIRED) &#123;</div><div class="line">        if (!requestStartTargetPermissionsReviewIfNeededLocked(r, callingPackage,</div><div class="line">                callingUid, service, callerFg, userId)) &#123;</div><div class="line">            return null;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    //如果该Service正在等待被重新启动，那么移除它。</div><div class="line">    if (unscheduleServiceRestartLocked(r, callingUid, false)) &#123;</div><div class="line">        if (DEBUG_SERVICE) Slog.v(TAG_SERVICE, &quot;START SERVICE WHILE RESTART PENDING: &quot; + r);</div><div class="line">    &#125;</div><div class="line">    //给ServiceRecord添加必要的信息。</div><div class="line">    r.lastActivity = SystemClock.uptimeMillis();</div><div class="line">    r.startRequested = true;</div><div class="line">    r.delayedStop = false;</div><div class="line">    r.pendingStarts.add(new ServiceRecord.StartItem(r, false, r.makeNextStartId(),</div><div class="line">            service, neededGrants));</div><div class="line">    //其它的一些逻辑，与第一次启动无关，就先不分析了。</div><div class="line">    return startServiceInnerLocked(smap, service, r, callerFg, addToStarting);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>简单地来说，就是根据<code>Intent</code>查找需要启动的<code>Service</code>，封装成<code>ServiceRecord</code>对象，初始化其中的关键变量，在这一过程中，加入了一些必要的逻辑判断，最终调用了<code>startServiceInnerLocked</code>方法。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">ComponentName startServiceInnerLocked(ServiceMap smap, Intent service, ServiceRecord r,</div><div class="line">        boolean callerFg, boolean addToStarting) throws TransactionTooLargeException &#123;</div><div class="line">    //...</div><div class="line">    String error = bringUpServiceLocked(r, service.getFlags(), callerFg, false, false);</div><div class="line">    //...</div><div class="line">    return r.name;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这里面的逻辑我们先忽略掉一部分，只需要知道在正常情况下它会去调用<code>bringUpServiceLocked</code>来启动<code>Service</code>：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div></pre></td><td class="code"><pre><div class="line">private final String bringUpServiceLocked(ServiceRecord r, int intentFlags, boolean execInFg,</div><div class="line">        boolean whileRestarting) throws TransactionTooLargeException &#123;</div><div class="line"> </div><div class="line">    //如果该Service已经启动。</div><div class="line">    if (r.app != null &amp;&amp; r.app.thread != null) &#123;</div><div class="line">        sendServiceArgsLocked(r, execInFg, false);</div><div class="line">        return null;</div><div class="line">    &#125;</div><div class="line">    //如果正在等待被重新启动，那么什么也不做。</div><div class="line">    if (!whileRestarting &amp;&amp; r.restartDelay &gt; 0) &#123;</div><div class="line">        return null;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    if (DEBUG_SERVICE) Slog.v(TAG_SERVICE, &quot;Bringing up &quot; + r + &quot; &quot; + r.intent);</div><div class="line"></div><div class="line">    //清除等待被重新启动的状态。</div><div class="line">    if (mRestartingServices.remove(r)) &#123;</div><div class="line">        r.resetRestartCounter();</div><div class="line">        clearRestartingIfNeededLocked(r);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    //因为我们马上就要启动该Service，因此去掉它的延时属性。</div><div class="line">    if (r.delayed) &#123;</div><div class="line">        if (DEBUG_DELAYED_STARTS) Slog.v(TAG_SERVICE, &quot;REM FR DELAY LIST (bring up): &quot; + r);</div><div class="line">        getServiceMap(r.userId).mDelayedStartList.remove(r);</div><div class="line">        r.delayed = false;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    //如果该Service所属的用户没有启动，那么调用 bringDownServiceLocked 方法。</div><div class="line">    if (mAm.mStartedUsers.get(r.userId) == null) &#123;</div><div class="line">        String msg = &quot;Unable to launch app &quot;</div><div class="line">                + r.appInfo.packageName + &quot;/&quot;</div><div class="line">                + r.appInfo.uid + &quot; for service &quot;</div><div class="line">                + r.intent.getIntent() + &quot;: user &quot; + r.userId + &quot; is stopped&quot;;</div><div class="line">        Slog.w(TAG, msg);</div><div class="line">        bringDownServiceLocked(r);</div><div class="line">        return msg;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    try &#123;</div><div class="line">        AppGlobals.getPackageManager().setPackageStoppedState(</div><div class="line">                r.packageName, false, r.userId);</div><div class="line">    &#125; catch (RemoteException e) &#123;</div><div class="line">    &#125; catch (IllegalArgumentException e) &#123;</div><div class="line">        Slog.w(TAG, &quot;Failed trying to unstop package &quot;</div><div class="line">                + r.packageName + &quot;: &quot; + e);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    final boolean isolated = (r.serviceInfo.flags&amp;ServiceInfo.FLAG_ISOLATED_PROCESS) != 0;</div><div class="line">    final String procName = r.processName;</div><div class="line">    ProcessRecord app;</div><div class="line">    //如果不是运行在独立的进程。</div><div class="line">    if (!isolated) &#123;</div><div class="line">        app = mAm.getProcessRecordLocked(procName, r.appInfo.uid, false);</div><div class="line">        if (DEBUG_MU) Slog.v(TAG_MU, &quot;bringUpServiceLocked: appInfo.uid=&quot; + r.appInfo.uid</div><div class="line">                    + &quot; app=&quot; + app);</div><div class="line">        //如果该进程已经启动，那么调用realStartServiceLocked方法。</div><div class="line">        if (app != null &amp;&amp; app.thread != null) &#123;</div><div class="line">            try &#123;</div><div class="line">                app.addPackage(r.appInfo.packageName, r.appInfo.versionCode, mAm.mProcessStats);</div><div class="line">                //在Service所属进程已经启动的情况下调用的方法。</div><div class="line">                realStartServiceLocked(r, app, execInFg);</div><div class="line">                return null;</div><div class="line">            &#125; catch (TransactionTooLargeException e) &#123;</div><div class="line">                throw e;</div><div class="line">            &#125; catch (RemoteException e) &#123;</div><div class="line">                Slog.w(TAG, &quot;Exception when starting service &quot; + r.shortName, e);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125; else &#123;</div><div class="line">        app = r.isolatedProc;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    //如果该Service所对应的进程没有启动，那么首先启动该进程。</div><div class="line">    if (app == null) &#123;</div><div class="line">        if ((app=mAm.startProcessLocked(procName, r.appInfo, true, intentFlags,</div><div class="line">                &quot;service&quot;, r.name, false, isolated, false)) == null) &#123;</div><div class="line">            String msg = &quot;Unable to launch app &quot;</div><div class="line">                    + r.appInfo.packageName + &quot;/&quot;</div><div class="line">                    + r.appInfo.uid + &quot; for service &quot;</div><div class="line">                    + r.intent.getIntent() + &quot;: process is bad&quot;;</div><div class="line">            Slog.w(TAG, msg);</div><div class="line">            bringDownServiceLocked(r);</div><div class="line">            return msg;</div><div class="line">        &#125;</div><div class="line">        if (isolated) &#123;</div><div class="line">            r.isolatedProc = app;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    //将该ServiceRecord加入到等待的集合当中，等到新的进程启动之后，再去启动它。</div><div class="line">    if (!mPendingServices.contains(r)) &#123;</div><div class="line">        mPendingServices.add(r);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    if (r.delayedStop) &#123;</div><div class="line">        r.delayedStop = false;</div><div class="line">        if (r.startRequested) &#123;</div><div class="line">            if (DEBUG_DELAYED_STARTS) Slog.v(TAG_SERVICE,</div><div class="line">                    &quot;Applying delayed stop (in bring up): &quot; + r);</div><div class="line">            stopServiceLocked(r);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    return null;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><code>bringUpServiceLocked</code>的逻辑就比较复杂了，它会根据目标<code>Service</code>及其所属进程的状态，走向不同的分支：</p>
+<ul>
+<li>进程已经存在，并且目标<code>Service</code>已经启动：<code>sendServiceArgsLocked</code></li>
+<li>进程已经存在，但是目标<code>Service</code>没有启动：<code>realStartServiceLocked</code></li>
+<li>进程不存在：<code>startProcessLocked</code>，并且将<code>ServiceRecord</code>加入到<code>mPendingServices</code>中，等待进程启动之后再去启动该<code>Service</code>。</li>
+</ul>
+<p>下面，我们就来一起分析一下这三种情况。</p>
+<h2 id="2-1-进程已经存在，并且目标-Service-已经启动"><a href="#2-1-进程已经存在，并且目标-Service-已经启动" class="headerlink" title="2.1 进程已经存在，并且目标 Service 已经启动"></a>2.1 进程已经存在，并且目标 Service 已经启动</h2><p>首先来当进程已经存在，且目标<code>Service</code>已经启动时所调用的<code>sendServiceArgsLocked</code>方法：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div></pre></td><td class="code"><pre><div class="line">private final void sendServiceArgsLocked(ServiceRecord r, boolean execInFg,</div><div class="line">        boolean oomAdjusted) throws TransactionTooLargeException &#123;</div><div class="line">    final int N = r.pendingStarts.size();</div><div class="line">    if (N == 0) &#123;</div><div class="line">        return;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    while (r.pendingStarts.size() &gt; 0) &#123;</div><div class="line">        Exception caughtException = null;</div><div class="line">        ServiceRecord.StartItem si;</div><div class="line">        try &#123;</div><div class="line">            si = r.pendingStarts.remove(0);</div><div class="line">            if (DEBUG_SERVICE) Slog.v(TAG_SERVICE, &quot;Sending arguments to: &quot;</div><div class="line">                    + r + &quot; &quot; + r.intent + &quot; args=&quot; + si.intent);</div><div class="line">            if (si.intent == null &amp;&amp; N &gt; 1) &#123;</div><div class="line">                // If somehow we got a dummy null intent in the middle,</div><div class="line">                // then skip it.  DO NOT skip a null intent when it is</div><div class="line">                // the only one in the list -- this is to support the</div><div class="line">                // onStartCommand(null) case.</div><div class="line">                continue;</div><div class="line">            &#125;</div><div class="line">            si.deliveredTime = SystemClock.uptimeMillis();</div><div class="line">            r.deliveredStarts.add(si);</div><div class="line">            si.deliveryCount++;</div><div class="line">            if (si.neededGrants != null) &#123;</div><div class="line">                mAm.grantUriPermissionUncheckedFromIntentLocked(si.neededGrants,</div><div class="line">                        si.getUriPermissionsLocked());</div><div class="line">            &#125;</div><div class="line">            bumpServiceExecutingLocked(r, execInFg, &quot;start&quot;);</div><div class="line">            if (!oomAdjusted) &#123;</div><div class="line">                oomAdjusted = true;</div><div class="line">                mAm.updateOomAdjLocked(r.app);</div><div class="line">            &#125;</div><div class="line">            int flags = 0;</div><div class="line">            if (si.deliveryCount &gt; 1) &#123;</div><div class="line">                flags |= Service.START_FLAG_RETRY;</div><div class="line">            &#125;</div><div class="line">            if (si.doneExecutingCount &gt; 0) &#123;</div><div class="line">                flags |= Service.START_FLAG_REDELIVERY;</div><div class="line">            &#125;</div><div class="line">            r.app.thread.scheduleServiceArgs(r, si.taskRemoved, si.id, flags, si.intent);</div><div class="line">        &#125; catch (TransactionTooLargeException e) &#123;</div><div class="line">            if (DEBUG_SERVICE) Slog.v(TAG_SERVICE, &quot;Transaction too large: intent=&quot;</div><div class="line">                    + si.intent);</div><div class="line">            caughtException = e;</div><div class="line">        &#125; catch (RemoteException e) &#123;</div><div class="line">            // Remote process gone...  we&apos;ll let the normal cleanup take care of this.</div><div class="line">            if (DEBUG_SERVICE) Slog.v(TAG_SERVICE, &quot;Crashed while sending args: &quot; + r);</div><div class="line">            caughtException = e;</div><div class="line">        &#125; catch (Exception e) &#123;</div><div class="line">            Slog.w(TAG, &quot;Unexpected exception&quot;, e);</div><div class="line">            caughtException = e;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        if (caughtException != null) &#123;</div><div class="line">            // Keep nesting count correct</div><div class="line">            final boolean inDestroying = mDestroyingServices.contains(r);</div><div class="line">            serviceDoneExecutingLocked(r, inDestroying, inDestroying);</div><div class="line">            if (caughtException instanceof TransactionTooLargeException) &#123;</div><div class="line">                throw (TransactionTooLargeException)caughtException;</div><div class="line">            &#125;</div><div class="line">            break;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这里面最关键的就是调用了<code>r.app.thread</code>的<code>scheduleServiceArgs</code>方法，它其实就是<code>Service</code>所属进程的<code>ApplicationThread</code>对象在<code>AMS</code>端的一个远程代理对象，也就是<code>ApplicationThreadProxy</code>，通过<code>binder</code>通信，它最终会回调到<code>Service</code>所属进程的<code>ApplicationThread</code>的<code>scheduleServiceArgs</code>中：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"> private class ApplicationThread extends ApplicationThreadNative &#123;</div><div class="line"></div><div class="line">     public final void scheduleServiceArgs(IBinder token, boolean taskRemoved, int startId,</div><div class="line">         int flags ,Intent args) &#123;</div><div class="line">         ServiceArgsData s = new ServiceArgsData();</div><div class="line">         s.token = token;</div><div class="line">         s.taskRemoved = taskRemoved;</div><div class="line">         s.startId = startId;</div><div class="line">         s.flags = flags;</div><div class="line">         s.args = args;</div><div class="line">         sendMessage(H.SERVICE_ARGS, s);</div><div class="line">     &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><code>sendMessage</code>函数会通过<code>ActivityThread</code>内部的<code>mH</code>对象发送消息到主线程当中，<code>mH</code>实际上是一个<code>Handler</code>的子类，在它的<code>handleMessage</code>回调中，处理<code>H.SERVICE_ARGS</code>这条消息：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-16ec590cd0223326.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>在<code>handleServiceArgs</code>方法，就会从<code>mServices</code>去查找对应的<code>Service</code>，调用我们熟悉的<code>onStartCommand</code>方法，至于<code>Service</code>对象是如何被加入到<code>mServices</code>中的，我们在<code>2.2</code>节中进行分析。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line">private void handleServiceArgs(ServiceArgsData data) &#123;</div><div class="line">    Service s = mServices.get(data.token);</div><div class="line">    if (s != null) &#123;</div><div class="line">        try &#123;</div><div class="line">            if (data.args != null) &#123;</div><div class="line">                data.args.setExtrasClassLoader(s.getClassLoader());</div><div class="line">                data.args.prepareToEnterProcess();</div><div class="line">            &#125;</div><div class="line">            int res;</div><div class="line">            if (!data.taskRemoved) &#123;</div><div class="line">                //调用 onStartCommand 方法。</div><div class="line">                res = s.onStartCommand(data.args, data.flags, data.startId);</div><div class="line">            &#125; else &#123;</div><div class="line">                s.onTaskRemoved(data.args);</div><div class="line">                res = Service.START_TASK_REMOVED_COMPLETE;</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            QueuedWork.waitToFinish();</div><div class="line"></div><div class="line">            try &#123;</div><div class="line">                //通知AMS启动完成。</div><div class="line">                ActivityManagerNative.getDefault().serviceDoneExecuting(</div><div class="line">                        data.token, SERVICE_DONE_EXECUTING_START, data.startId, res);</div><div class="line">            &#125; catch (RemoteException e) &#123;</div><div class="line">                // nothing to do.</div><div class="line">            &#125;</div><div class="line">            ensureJitEnabled();</div><div class="line">        &#125; catch (Exception e) &#123;</div><div class="line">            if (!mInstrumentation.onException(s, e)) &#123;</div><div class="line">                throw new RuntimeException(</div><div class="line">                        &quot;Unable to start service &quot; + s</div><div class="line">                        + &quot; with &quot; + data.args + &quot;: &quot; + e.toString(), e);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这里面，我们会取得<code>onStartCommand</code>的返回值，再通过<code>Binder</code>将该返回值传回到<code>AMS</code>端，在<code>AMS</code>的<code>mServices</code>的<code>serviceDoneExecutingLocked</code>中，会根据该返回值来修改<code>ServiceRecord</code>的属性，这也就是我们常说的<code>onStartCommand</code>方法的返回值，会影响到该<code>Services</code>之后的一些行为的原因，关于这些返回值之间的差别，可以查看<code>Service.java</code>的注释，也可以查看网上的一些教程：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-f980431008ca981f.png" alt=""></p>
+<h2 id="2-2-进程已经存在，但是-Service-没有启动"><a href="#2-2-进程已经存在，但是-Service-没有启动" class="headerlink" title="2.2 进程已经存在，但是 Service 没有启动"></a>2.2 进程已经存在，但是 Service 没有启动</h2><p>下面，我们来看<code>Service</code>没有启动的情况，这里会调用<code>realStartServiceLocked</code>方法：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div></pre></td><td class="code"><pre><div class="line">private final void realStartServiceLocked(ServiceRecord r,</div><div class="line">        ProcessRecord app, boolean execInFg) throws RemoteException &#123;</div><div class="line">    if (app.thread == null) &#123;</div><div class="line">        throw new RemoteException();</div><div class="line">    &#125;</div><div class="line">    if (DEBUG_MU)</div><div class="line">        Slog.v(TAG_MU, &quot;realStartServiceLocked, ServiceRecord.uid = &quot; + r.appInfo.uid</div><div class="line">                + &quot;, ProcessRecord.uid = &quot; + app.uid);</div><div class="line">    r.app = app;</div><div class="line">    r.restartTime = r.lastActivity = SystemClock.uptimeMillis();</div><div class="line"></div><div class="line">    final boolean newService = app.services.add(r);</div><div class="line">    bumpServiceExecutingLocked(r, execInFg, &quot;create&quot;);</div><div class="line">    //更新Service所在进程的oom_adj值。</div><div class="line">    mAm.updateLruProcessLocked(app, false, null);</div><div class="line">    mAm.updateOomAdjLocked();</div><div class="line"></div><div class="line">    boolean created = false;</div><div class="line">    try &#123;</div><div class="line">        if (LOG_SERVICE_START_STOP) &#123;</div><div class="line">            String nameTerm;</div><div class="line">            int lastPeriod = r.shortName.lastIndexOf(&apos;.&apos;);</div><div class="line">            nameTerm = lastPeriod &gt;= 0 ? r.shortName.substring(lastPeriod) : r.shortName;</div><div class="line">            EventLogTags.writeAmCreateService(</div><div class="line">                    r.userId, System.identityHashCode(r), nameTerm, r.app.uid, r.app.pid);</div><div class="line">        &#125;</div><div class="line">        synchronized (r.stats.getBatteryStats()) &#123;</div><div class="line">            r.stats.startLaunchedLocked();</div><div class="line">        &#125;</div><div class="line">        mAm.ensurePackageDexOpt(r.serviceInfo.packageName);</div><div class="line">        app.forceProcessStateUpTo(ActivityManager.PROCESS_STATE_SERVICE);</div><div class="line">        //通知应用端创建Service对象。</div><div class="line">        app.thread.scheduleCreateService(r, r.serviceInfo,</div><div class="line">                mAm.compatibilityInfoForPackageLocked(r.serviceInfo.applicationInfo),</div><div class="line">                app.repProcState);</div><div class="line">        r.postNotification();</div><div class="line">        created = true;</div><div class="line">    &#125; catch (DeadObjectException e) &#123;</div><div class="line">        Slog.w(TAG, &quot;Application dead when creating service &quot; + r);</div><div class="line">        mAm.appDiedLocked(app);</div><div class="line">        throw e;</div><div class="line">    &#125; finally &#123;</div><div class="line">        if (!created) &#123;</div><div class="line">            final boolean inDestroying = mDestroyingServices.contains(r);</div><div class="line">            serviceDoneExecutingLocked(r, inDestroying, inDestroying);</div><div class="line">            if (newService) &#123;</div><div class="line">                app.services.remove(r);</div><div class="line">                r.app = null;</div><div class="line">            &#125;</div><div class="line">            if (!inDestroying) &#123;</div><div class="line">                scheduleServiceRestartLocked(r, false);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    //这里面会遍历 ServiceRecord.bindings 列表，因为我们这里是用startService方式启动的，因此该列表为空，什么也不会调用。</div><div class="line">    requestServiceBindingsLocked(r, execInFg);</div><div class="line"></div><div class="line">    updateServiceClientActivitiesLocked(app, null, true);</div><div class="line"></div><div class="line">    if (r.startRequested &amp;&amp; r.callStart &amp;&amp; r.pendingStarts.size() == 0) &#123;</div><div class="line">        r.pendingStarts.add(new ServiceRecord.StartItem(r, false, r.makeNextStartId(),</div><div class="line">                null, null));</div><div class="line">    &#125;</div><div class="line">    //这个在第一种情况中分析过了，会调用 onStartCommand 方法。</div><div class="line">    sendServiceArgsLocked(r, execInFg, true);</div><div class="line"></div><div class="line">    if (r.delayed) &#123;</div><div class="line">        if (DEBUG_DELAYED_STARTS) Slog.v(TAG_SERVICE, &quot;REM FR DELAY LIST (new proc): &quot; + r);</div><div class="line">        getServiceMap(r.userId).mDelayedStartList.remove(r);</div><div class="line">        r.delayed = false;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    if (r.delayedStop) &#123;</div><div class="line">        // Oh and hey we&apos;ve already been asked to stop!</div><div class="line">        r.delayedStop = false;</div><div class="line">        if (r.startRequested) &#123;</div><div class="line">            if (DEBUG_DELAYED_STARTS) Slog.v(TAG_SERVICE,</div><div class="line">                    &quot;Applying delayed stop (from start): &quot; + r);</div><div class="line">            stopServiceLocked(r);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这段逻辑，有三个地方需要注意：</p>
+<ul>
+<li><code>app.thread.scheduleCreateService</code>：通过这里会在应用进程创建<code>Service</code>对象</li>
+<li><code>requestServiceBindingsLocked</code>：如果是通过<code>bindService</code>方式启动的，那么会去调用它的<code>onBind</code>方法。</li>
+<li><code>sendServiceArgsLocked</code>：正如<code>2.1</code>节中所分析，这里最终会触发应用进程的<code>Service</code>的<code>onStartCommand</code>方法被调用。</li>
+</ul>
+<p>第二点由于我们今天分析的是<code>startService</code>的方式，所以不用在意，而第三点我们之前已经分析过了。所以我们主要关注<code>app.thread.scheduleCreateService</code>这一句，和<code>2.1</code>中的过程类似，它会回调到<code>H</code>中的下面这个消息处理分支当中：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-388eab689362fc69.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>具体的<code>handleCreateService</code>的处理逻辑如下图所示：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div></pre></td><td class="code"><pre><div class="line">private void handleCreateService(CreateServiceData data) &#123;</div><div class="line">    // If we are getting ready to gc after going to the background, well</div><div class="line">    // we are back active so skip it.</div><div class="line">    unscheduleGcIdler();</div><div class="line"></div><div class="line">    LoadedApk packageInfo = getPackageInfoNoCheck(</div><div class="line">            data.info.applicationInfo, data.compatInfo);</div><div class="line">    Service service = null;</div><div class="line">    try &#123;</div><div class="line">        //根据Service的名字，动态的加载该Service类。</div><div class="line">        java.lang.ClassLoader cl = packageInfo.getClassLoader();</div><div class="line">        service = (Service) cl.loadClass(data.info.name).newInstance();</div><div class="line">    &#125; catch (Exception e) &#123;</div><div class="line">        if (!mInstrumentation.onException(service, e)) &#123;</div><div class="line">            throw new RuntimeException(</div><div class="line">                &quot;Unable to instantiate service &quot; + data.info.name</div><div class="line">                + &quot;: &quot; + e.toString(), e);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    try &#123;</div><div class="line">        if (localLOGV) Slog.v(TAG, &quot;Creating service &quot; + data.info.name);</div><div class="line">        //1.创建ContextImpl对象。</div><div class="line">        ContextImpl context = ContextImpl.createAppContext(this, packageInfo);</div><div class="line">        //2.将 Service 作为它的成员变量 mOuterContext 。</div><div class="line">        context.setOuterContext(service);</div><div class="line">        //3.创建Application对象，如果已经创建那么直接返回，否则先调用Application的onCreate方法。</div><div class="line">        Application app = packageInfo.makeApplication(false, mInstrumentation);</div><div class="line">        //4.调用attach方法，将ContextImpl作为它的成员变量mBase。</div><div class="line">        service.attach(context, this, data.info.name, data.token, app,</div><div class="line">                ActivityManagerNative.getDefault());</div><div class="line">        //5.调用Service的onCreate方法。</div><div class="line">        service.onCreate();</div><div class="line">        //6.将该Service对象缓存起来。</div><div class="line">        mServices.put(data.token, service);</div><div class="line">        try &#123;</div><div class="line">            ActivityManagerNative.getDefault().serviceDoneExecuting(</div><div class="line">                    data.token, SERVICE_DONE_EXECUTING_ANON, 0, 0);</div><div class="line">        &#125; catch (RemoteException e) &#123;</div><div class="line">            // nothing to do.</div><div class="line">        &#125;</div><div class="line">    &#125; catch (Exception e) &#123;</div><div class="line">        if (!mInstrumentation.onException(service, e)) &#123;</div><div class="line">            throw new RuntimeException(</div><div class="line">                &quot;Unable to create service &quot; + data.info.name</div><div class="line">                + &quot;: &quot; + e.toString(), e);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>以上的逻辑分为以下几个部分：</p>
+<ul>
+<li>根据<code>Service</code>的名字，通过<code>ClassLoader</code>加载该类，并生成一个<code>Service</code>实例。</li>
+<li>创建一个新的<code>ContextImpl</code>对象，并将第一步中创建的<code>Service</code>实例作为它的<code>mOuterContext</code>变量。</li>
+<li>创建<code>Application</code>对象，这里会先判断当前进程所对应的<code>Application</code>对象是否已经创建，如果已经创建，那么就直接返回，否则会先创建它，并依次调用它的<code>attachBaseContext(Context context)</code>和<code>onCreate()</code>方法。</li>
+<li>调用<code>Service</code>的<code>attach</code>方法，初始化成员变量。<br><img src="http://upload-images.jianshu.io/upload_images/1949836-563e7d8759949e9d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></li>
+<li>调用<code>Service</code>的<code>onCreate()</code>方法。</li>
+<li>将该<code>Service</code>通过<code>token</code>作为<code>key</code>，缓存在<code>mServices</code>列表当中，之后<code>Service</code>生命周期的回调，都依赖于该列表。</li>
+</ul>
+<h2 id="2-3-进程不存在的情况"><a href="#2-3-进程不存在的情况" class="headerlink" title="2.3 进程不存在的情况"></a>2.3 进程不存在的情况</h2><p>在这种情况下，<code>Service</code>自然也不会存在，我们会走到<code>mAm.startProcessLocked</code>的逻辑，这里会去启动<code>Service</code>所在的进程，它究竟是怎么启动的我们先不去细看，只需要知道它是这个目的就可以了，此外，还需要注意的是它将该<code>ServiceRecord</code>加入到了<code>mPendingServices</code>中。</p>
+<p>对于<code>Service</code>所在的进程，它的入口函数为<code>ActivityThread</code>的<code>main()</code>方法，在<code>main</code>方法中，会创建一个<code>ApplicationThread</code>对象，并调用它的<code>attach</code>方法：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-bde768cfc3c0996a.png" alt=""><br>而在<code>attach</code>方法中，会调用到<code>AMS</code>的<code>attachApplication</code>方法：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-07207273aeb686bc.png" alt=""><br>在<code>attachApplication</code>方法中，又会去调用内部的<code>attachApplicationLocked</code>：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-835648e9419a3d12.png" alt=""><br>这里面的逻辑比较长，我们只需要关注下面这句，我们又看到了熟悉的<code>mServices</code>对象：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-4fffdc1e72f26448.png" alt=""><br>在<code>ActiveServices</code>中的该方法中，就会去遍历前面谈到的<code>mPendingServices</code>列表，再依次调用<code>realStartServiceLocked</code>方法，至于这个方法做了什么，大家可以回到前面的<code>2.2</code>节去看，这里就不再重复分析了。<br><img src="http://upload-images.jianshu.io/upload_images/1949836-28bf510901e9eb23.png" alt=""></p>
+<h1 id="三、小结"><a href="#三、小结" class="headerlink" title="三、小结"></a>三、小结</h1><p>以上就是<code>startService</code>的整个流程，<code>bindService</code>也是类似一个调用过程，其过程并不复杂，本质上还是 <a href="http://www.jianshu.com/p/f26a76e19a2d" target="_blank" rel="external">Framework 源码解析知识梳理(1) - 应用进程与 AMS 的通信实现</a> 所谈到的通信过程，我们所需要学习的是<code>AMS</code>端和<code>Service</code>所在的应用进程对于<code>Service</code>是如何管理的。</p>
+<p>系统当中的所有<code>Service</code>都是通过<code>AMS</code>的<code>mServices</code>变量，也就是<code>ActiveServices</code>类来进行管理的，并且每一个应用进程中的<code>Service</code>都会在<code>AMS</code>端会对应一个<code>ServiceRecord</code>对象，<code>ServiceRecord</code>中维护了应用进程中的<code>Service</code>对象所需要的状态信息。</p>
+<p>并且，无论我们调用多少次<code>startService</code>方法，在应用进程侧都会只存在一个<code>Service</code>的实例，它被存储到<code>ActivityThread</code>的<code>ArrayMap</code>类型的<code>mServices</code>变量当中。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/06/12/插件化/插件化知识梳理(9)---资源的动态加载示例及源码分析/" rel="next" title="插件化知识梳理(9) - 资源的动态加载示例及源码分析">
+                <i class="fa fa-chevron-left"></i> 插件化知识梳理(9) - 资源的动态加载示例及源码分析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/06/26/Framework-源码解析/Framework-源码解析知识梳理(6)---ContentProvider-源码解析/" rel="prev" title="Framework 源码解析知识梳理(6) - ContentProvider 源码解析">
+                Framework 源码解析知识梳理(6) - ContentProvider 源码解析 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="John Doe" />
+          <p class="site-author-name" itemprop="name">John Doe</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">104</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">23</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、前言"><span class="nav-number">1.</span> <span class="nav-text">一、前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、源码分析"><span class="nav-number">2.</span> <span class="nav-text">二、源码分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-进程已经存在，并且目标-Service-已经启动"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 进程已经存在，并且目标 Service 已经启动</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-进程已经存在，但是-Service-没有启动"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 进程已经存在，但是 Service 没有启动</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-进程不存在的情况"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 进程不存在的情况</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、小结"><span class="nav-number">3.</span> <span class="nav-text">三、小结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

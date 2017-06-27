@@ -1,0 +1,761 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="插件化知识梳理(1) - Small 框架之如何引入应用插件插件化知识梳理(2) - Small 框架之如何引入公共库插件插件化知识梳理(3) - Small 框架之宿主分身插件化知识梳理(4) - Small 框架之如何实现插件更新插件化知识梳理(5) - Small 框架之如何不将插件打包到宿主中插件化知识梳理(6) - Small 源码分析之 Hook 原理插件化知识梳理(7) - 类的动">
+<meta property="og:type" content="article">
+<meta property="og:title" content="插件化知识梳理(9) - 资源的动态加载示例及源码分析">
+<meta property="og:url" content="http://yoursite.com/2017/06/12/插件化/插件化知识梳理(9)---资源的动态加载示例及源码分析/index.html">
+<meta property="og:site_name" content="泽毛">
+<meta property="og:description" content="插件化知识梳理(1) - Small 框架之如何引入应用插件插件化知识梳理(2) - Small 框架之如何引入公共库插件插件化知识梳理(3) - Small 框架之宿主分身插件化知识梳理(4) - Small 框架之如何实现插件更新插件化知识梳理(5) - Small 框架之如何不将插件打包到宿主中插件化知识梳理(6) - Small 源码分析之 Hook 原理插件化知识梳理(7) - 类的动">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-2ec57a4089f307e6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-893591b3854501d8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-884987fc309d18eb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-a75e9889e1a0ab8f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-4cc3980e0204b913.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-93ab1d16bc7935e7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-212e507d37424314.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-9ede57a0cf3976c4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-da3106e576d6cf12.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-cae0eacb33bfd09f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-0a581b93bba44ae0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-37e0f89af4a0d8bf.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-31d8390bf231263d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-963079a23789f001.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-24950b6f4b05f6e1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2017-06-27T13:57:09.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="插件化知识梳理(9) - 资源的动态加载示例及源码分析">
+<meta name="twitter:description" content="插件化知识梳理(1) - Small 框架之如何引入应用插件插件化知识梳理(2) - Small 框架之如何引入公共库插件插件化知识梳理(3) - Small 框架之宿主分身插件化知识梳理(4) - Small 框架之如何实现插件更新插件化知识梳理(5) - Small 框架之如何不将插件打包到宿主中插件化知识梳理(6) - Small 源码分析之 Hook 原理插件化知识梳理(7) - 类的动">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-2ec57a4089f307e6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/06/12/插件化/插件化知识梳理(9)---资源的动态加载示例及源码分析/"/>
+
+
+
+
+
+  <title>插件化知识梳理(9) - 资源的动态加载示例及源码分析 | 泽毛</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">泽毛</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/12/插件化/插件化知识梳理(9)---资源的动态加载示例及源码分析/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="泽毛">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">插件化知识梳理(9) - 资源的动态加载示例及源码分析</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-12T22:01:00+08:00">
+                2017-06-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/插件化知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">插件化知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p><a href="http://www.jianshu.com/p/07f88d4924db" target="_blank" rel="external">插件化知识梳理(1) - Small 框架之如何引入应用插件</a><br><a href="http://www.jianshu.com/p/f882c1f6b68b" target="_blank" rel="external">插件化知识梳理(2) - Small 框架之如何引入公共库插件</a><br><a href="http://www.jianshu.com/p/2162a4ce4560" target="_blank" rel="external">插件化知识梳理(3) - Small 框架之宿主分身</a><br><a href="http://www.jianshu.com/p/dee27b35f72f" target="_blank" rel="external">插件化知识梳理(4) - Small 框架之如何实现插件更新</a><br><a href="http://www.jianshu.com/p/e023e5d83992" target="_blank" rel="external">插件化知识梳理(5) - Small 框架之如何不将插件打包到宿主中</a><br><a href="http://www.jianshu.com/p/95b0f9894aa1" target="_blank" rel="external">插件化知识梳理(6) - Small 源码分析之 Hook 原理</a><br><a href="http://www.jianshu.com/p/ef4c8ffef374" target="_blank" rel="external">插件化知识梳理(7) - 类的动态加载入门</a><br><a href="http://www.jianshu.com/p/6b4a7a4fb39a" target="_blank" rel="external">插件化知识梳理(8) - 类的动态加载源码分析</a><br><a href="http://www.jianshu.com/p/86dbf0360348" target="_blank" rel="external">插件化知识梳理(9) - 资源的动态加载示例及源码分析</a></p>
+</blockquote>
+<h1 id="一、前言"><a href="#一、前言" class="headerlink" title="一、前言"></a>一、前言</h1><p>当需要设计一个插件化的框架，首先需要解决的是以下三个问题：</p>
+<ul>
+<li><code>Activity</code>的动态注册</li>
+<li>类的动态加载</li>
+<li>资源的动态加载</li>
+</ul>
+<p>如果大家有阅读过前面一系列的文章，那么对于如何解决前两个问题应该可以有一个大概的思路了。不清楚的可以重点看一下 <a href="http://www.jianshu.com/p/95b0f9894aa1" target="_blank" rel="external">插件化知识梳理(6) - Small 源码分析之 Hook 原理</a> 和 <a href="http://www.jianshu.com/p/6b4a7a4fb39a" target="_blank" rel="external">插件化知识梳理(8) - 类的动态加载源码分析</a>。今天这篇，我就来先了解一下在<code>Android</code>当中资源是如何加载的。</p>
+<h1 id="二、示例"><a href="#二、示例" class="headerlink" title="二、示例"></a>二、示例</h1><p>为了让大家有一个直观的认识，我们先不讲源码，而是来看一个简单的示例，该示例演示了如何以插件的形式加载外部资源。</p>
+<h2 id="2-1-编译插件"><a href="#2-1-编译插件" class="headerlink" title="2.1 编译插件"></a>2.1 编译插件</h2><p>这里，我们需要将所需要的插件资源放在一个<code>.apk</code>文件中，因此，我们创建一个新的<code>Phone &amp; Tablet Module</code>：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-2ec57a4089f307e6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>在其中放入三个资源文件：</p>
+<ul>
+<li><p><code>drawable</code><br><img src="http://upload-images.jianshu.io/upload_images/1949836-893591b3854501d8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+</li>
+<li><p><code>string</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;string name=&quot;resource_str&quot;&gt;Plug Resources String&lt;/string&gt;</div></pre></td></tr></table></figure>
+</li>
+<li><p><code>color</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;color name=&quot;resource_color&quot;&gt;#FF4081&lt;/color&gt;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>我们将该<code>Module</code>编译成为<code>resource-debug.apk</code>文件，通过<code>adb</code>命令将它<code>push</code>到根目录的<code>Plugin/</code>目录下，至此，一个包含资源的插件就准备好了。<br><img src="http://upload-images.jianshu.io/upload_images/1949836-884987fc309d18eb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h2 id="2-2-读取插件中资源"><a href="#2-2-读取插件中资源" class="headerlink" title="2.2 读取插件中资源"></a>2.2 读取插件中资源</h2><p>现在，我们进入到宿主模块当中，读取这三个资源并进行展示。代码很短，只有下面几行：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">private void loadResource() &#123;</div><div class="line">    try &#123;</div><div class="line">        //添加资源路径，并创建对应的Resources对象。</div><div class="line">        String resourcePath = Environment.getExternalStorageDirectory().toString() + &quot;/Plugin/resource-debug.apk&quot;;</div><div class="line">        AssetManager assetManager = AssetManager.class.newInstance();</div><div class="line">        Method addAssetPath = AssetManager.class.getDeclaredMethod(&quot;addAssetPath&quot;, String.class);</div><div class="line">        addAssetPath.invoke(assetManager, resourcePath);</div><div class="line">        Resources resources = new Resources(assetManager, super.getResources().getDisplayMetrics(), super.getResources().getConfiguration());</div><div class="line">        //获取包名信息。</div><div class="line">        PackageInfo mInfo = getPackageManager().getPackageArchiveInfo(resourcePath, PackageManager.GET_ACTIVITIES);</div><div class="line">        //获取到资源的ID。</div><div class="line">        int drawableId = resources.getIdentifier(&quot;icon_book&quot;, &quot;drawable&quot;, mInfo.packageName);</div><div class="line">        int strId = resources.getIdentifier(&quot;resource_str&quot;, &quot;string&quot;, mInfo.packageName);</div><div class="line">        int colorId = resources.getIdentifier(&quot;resource_color&quot;, &quot;color&quot;, mInfo.packageName);</div><div class="line">        //通过资源ID获取到对应的资源，并进行显示。</div><div class="line">        mImageView.setImageDrawable(resources.getDrawable(drawableId));</div><div class="line">        mTextView.setText(resources.getText(strId));</div><div class="line">        mTextView.setTextColor(resources.getColor(colorId));</div><div class="line">    &#125; catch (Exception e) &#123;</div><div class="line">        e.printStackTrace();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>上面的逻辑为以下几步：</p>
+<ul>
+<li>获取插件的路径，也就是在<code>2.1</code>中所<code>push</code>进去的<code>resource-debug.apk</code>所在的路径。</li>
+<li>通过反射创建一个<code>AssetManager</code>对象，调用它的<code>addAssetPath</code>方法，该方法的实参为第一步中的插件路径。</li>
+<li>利用该<code>AssetManager</code>对象作为构造函数，创建一个访问该插件资源的代理对象<code>resources</code>，用于插件资源的访问。</li>
+<li>通过插件的路径，获得插件的包名信息。</li>
+<li>通过<code>resources</code>的<code>getIdentifier</code>方法，根据插件资源的名字以及插件的包名获取对应的资源<code>Id</code>。</li>
+<li>通过<code>resources</code>的<code>getXXX</code>方法，传入前一步中获取到的资源<code>Id</code>，最终获取资源，并通过控件进行展示。</li>
+</ul>
+<p>最终的展示结果为：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-a75e9889e1a0ab8f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h1 id="三、源码解析"><a href="#三、源码解析" class="headerlink" title="三、源码解析"></a>三、源码解析</h1><p>在第二节中，我们用一个简单的例子，演示了如何以插件的形式加载外部的资源，其实，无论是加载外部资源，还是加载宿主本身的资源，它们的原理都是相同的，只要我们弄懂了宿主自身的资源是如何加载的，那么对于上面的过程自然也就理解了。</p>
+<p>在<code>Android</code>中，当我们需要加载一个资源时，一般都会先通过<code>getResources()</code>方法，得到一个<code>Resources</code>对象，再通过它提供的<code>getXXX</code>方法获取到对应的资源，这一过程可以用下面这张图来表示：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-4cc3980e0204b913.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h2 id="2-1-函数调用路径"><a href="#2-1-函数调用路径" class="headerlink" title="2.1 函数调用路径"></a>2.1 函数调用路径</h2><p>在上图中，我们看到一共经过了四条线路调用到<code>ResourcesManager</code>，下面，我们就对这一过程进行分析：</p>
+<h3 id="第一步"><a href="#第一步" class="headerlink" title="第一步"></a>第一步</h3><p>当我们调用在<code>Activity/Service/Application</code>中调用<code>getResources()</code>时，由于它们都继承于<code>ContextWrapper</code>，该方法就会调用到<code>ContextWrapper</code>的<code>getResources()</code>方法，而该方法又会调用它内部的<code>mBase</code>变量的对应方法：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-93ab1d16bc7935e7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h3 id="第二步"><a href="#第二步" class="headerlink" title="第二步"></a>第二步</h3><p><code>mBase</code>的类型为<code>ContextImpl</code>，它的<code>getResources()</code>方法，返回的是其内部的成员变量<code>mResources</code>：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-212e507d37424314.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br><code>mResources</code>变量是在<code>ContextImpl</code>的构造函数中通过下面赋值的：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-9ede57a0cf3976c4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>其中<code>packageInfo</code>的类型为<code>LoadedApk</code>，<code>LoadedApk</code>是对于<code>.apk</code>解析的结果，它内部包含了所关联的<code>ActivityThread</code>，安装后拷贝到的目录，我们在<code>ContextImpl</code>中赋值的其实就是它内部的<code>mResources</code>对象：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-da3106e576d6cf12.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h3 id="第三步"><a href="#第三步" class="headerlink" title="第三步"></a>第三步</h3><p><code>LoadedApk</code>中会通过调用<code>ActivityThread</code>的<code>getTopLevelResources</code>方法来为<code>mResources</code>变量赋值，在调用的时候会传入<code>LoadedApk</code>中的一些信息：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-cae0eacb33bfd09f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>这里最关键的是第一个变量<code>mRes</code>，它是应用安装时拷贝到<code>data/app/{package_name}</code>下的完整路径，其它的变量，大家可以参考断点中的截图，这里就不多分析是怎么获得的了。<br><img src="http://upload-images.jianshu.io/upload_images/1949836-0a581b93bba44ae0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h3 id="第四步"><a href="#第四步" class="headerlink" title="第四步"></a>第四步</h3><p>经过上面的步骤，最终会调用到<code>ActivityThread</code>中的<code>getTopResources</code>方法，在该方法中会通过<code>ResourcesManager</code>去寻找访问资源的对应代理对象<code>Resources</code><br><img src="http://upload-images.jianshu.io/upload_images/1949836-37e0f89af4a0d8bf.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>以上就是从<code>Activity</code>调用<code>getResources()</code>方法，到<code>ResourcesManager</code>根据应用的信息去查找访问资源的代理对象的调用过程，下面，我们就来看一下<code>ResourcesManager</code>是如何管理这些<code>Resources</code>对象的。</p>
+<h2 id="2-2-ResourceManager"><a href="#2-2-ResourceManager" class="headerlink" title="2.2 ResourceManager"></a>2.2 ResourceManager</h2><h3 id="2-2-1-ResourceManager-对于-Resources-对象的管理"><a href="#2-2-1-ResourceManager-对于-Resources-对象的管理" class="headerlink" title="2.2.1 ResourceManager 对于 Resources 对象的管理"></a>2.2.1 ResourceManager 对于 Resources 对象的管理</h3><p><code>ResourceManager</code>采用了单例的模式，因此一个进程当中只会有一个对象，它主要负责管理应用程序当中的<code>Resources</code>对象，在它的内部有以下两个关键的成员变量：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-31d8390bf231263d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>当我们调用<code>ResourcesManager</code>的<code>getResources</code>方法之后，他就会根据传入的参数创建一个<code>ResourcesKey</code>，并通过该对象中的属性作为索引值，首先查找在上面的缓存中是否已经有对应的<code>Resources</code>对象了，如果有，那么就直接返回，否则再创建一个<code>Resources</code>对象。</p>
+<h3 id="2-2-2-ResourcesKey-amp-amp-ResourcesImpl-amp-amp-Resources-amp-amp-AssetManager"><a href="#2-2-2-ResourcesKey-amp-amp-ResourcesImpl-amp-amp-Resources-amp-amp-AssetManager" class="headerlink" title="2.2.2 ResourcesKey &amp;&amp; ResourcesImpl &amp;&amp; Resources &amp;&amp; AssetManager"></a>2.2.2 ResourcesKey &amp;&amp; ResourcesImpl &amp;&amp; Resources &amp;&amp; AssetManager</h3><p><code>Resources</code>其实只是一个代理对象，它内部涉及到的类包括：</p>
+<ul>
+<li><code>ResourcesKey</code>：作为缓存的<code>Key</code>，也就是说对于一个应用程序，可以保存不同的<code>Resource</code>，是否返回之前的<code>Resources</code>对象，取决于<code>ResourcesKey</code>的<code>equals</code>方法是否相等：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-963079a23789f001.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></li>
+<li><code>ResourcesImpl</code>：资源访问的实现类，其内部包含了一个<code>AssetManager</code>，所有资源的访问都是通过它的<code>Native</code>方法来实现的。</li>
+<li><code>Resources</code>：<code>ResourcesImpl</code>的代理类，对于资源的使用者来说，看到的是<code>Resources</code>接口，其实在构建<code>Resources</code>对象时，同时也会创建一个<code>ResourcesImpl</code>对象作为它的成员变量，<code>Resources</code>会调用它来去获取资源。</li>
+<li><code>AssetManager</code>：作为资源获取的执行者，它是<code>ResourcesImpl</code>的内部成员变量。</li>
+</ul>
+<p>也就是说，资源的访问最终是由<code>AssetManager</code>来完成，在<code>AssetManager</code>的创建过程中我们首先告诉它资源所在的路径，之后它就会去以下的几个地方查看资源，这里面我们看到了第二节中通过反射调用的<code>addAssetPath</code>。动态加载资源的关键，就是如何把包含资源的插件路径添加到<code>AssetManager</code>当中。<br><img src="http://upload-images.jianshu.io/upload_images/1949836-24950b6f4b05f6e1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/06/10/插件化/插件化知识梳理(8)---类的动态加载源码分析/" rel="next" title="插件化知识梳理(8) - 类的动态加载源码分析">
+                <i class="fa fa-chevron-left"></i> 插件化知识梳理(8) - 类的动态加载源码分析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/06/16/Framework-源码解析/Framework-源码解析知识梳理(5)---startService-源码分析/" rel="prev" title="Framework 源码解析知识梳理(5) - startService 源码分析">
+                Framework 源码解析知识梳理(5) - startService 源码分析 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="John Doe" />
+          <p class="site-author-name" itemprop="name">John Doe</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">104</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">23</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、前言"><span class="nav-number">1.</span> <span class="nav-text">一、前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、示例"><span class="nav-number">2.</span> <span class="nav-text">二、示例</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-编译插件"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 编译插件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-读取插件中资源"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 读取插件中资源</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、源码解析"><span class="nav-number">3.</span> <span class="nav-text">三、源码解析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-函数调用路径"><span class="nav-number">3.1.</span> <span class="nav-text">2.1 函数调用路径</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#第一步"><span class="nav-number">3.1.1.</span> <span class="nav-text">第一步</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第二步"><span class="nav-number">3.1.2.</span> <span class="nav-text">第二步</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第三步"><span class="nav-number">3.1.3.</span> <span class="nav-text">第三步</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第四步"><span class="nav-number">3.1.4.</span> <span class="nav-text">第四步</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-ResourceManager"><span class="nav-number">3.2.</span> <span class="nav-text">2.2 ResourceManager</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-1-ResourceManager-对于-Resources-对象的管理"><span class="nav-number">3.2.1.</span> <span class="nav-text">2.2.1 ResourceManager 对于 Resources 对象的管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-2-ResourcesKey-amp-amp-ResourcesImpl-amp-amp-Resources-amp-amp-AssetManager"><span class="nav-number">3.2.2.</span> <span class="nav-text">2.2.2 ResourcesKey && ResourcesImpl && Resources && AssetManager</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

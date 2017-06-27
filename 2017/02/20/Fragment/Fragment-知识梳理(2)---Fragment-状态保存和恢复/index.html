@@ -1,0 +1,724 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="一、概述在前一篇文章中，我们对于Fragment的事务和生命周期有了直观的理解，这篇文章我们来分析一下Fragment状态的保存和恢复。 二、状态保存有了分析Activity的经验，我们看一下Activity中和Fragment状态保存相关的代码：123456protected void onSaveInstanceState(Bundle outState) &amp;#123;           P">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Fragment 知识梳理(2) - Fragment 状态保存和恢复">
+<meta property="og:url" content="http://yoursite.com/2017/02/20/Fragment/Fragment-知识梳理(2)---Fragment-状态保存和恢复/index.html">
+<meta property="og:site_name" content="泽毛">
+<meta property="og:description" content="一、概述在前一篇文章中，我们对于Fragment的事务和生命周期有了直观的理解，这篇文章我们来分析一下Fragment状态的保存和恢复。 二、状态保存有了分析Activity的经验，我们看一下Activity中和Fragment状态保存相关的代码：123456protected void onSaveInstanceState(Bundle outState) &amp;#123;           P">
+<meta property="og:updated_time" content="2017-06-27T14:45:18.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Fragment 知识梳理(2) - Fragment 状态保存和恢复">
+<meta name="twitter:description" content="一、概述在前一篇文章中，我们对于Fragment的事务和生命周期有了直观的理解，这篇文章我们来分析一下Fragment状态的保存和恢复。 二、状态保存有了分析Activity的经验，我们看一下Activity中和Fragment状态保存相关的代码：123456protected void onSaveInstanceState(Bundle outState) &amp;#123;           P">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/02/20/Fragment/Fragment-知识梳理(2)---Fragment-状态保存和恢复/"/>
+
+
+
+
+
+  <title>Fragment 知识梳理(2) - Fragment 状态保存和恢复 | 泽毛</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">泽毛</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/02/20/Fragment/Fragment-知识梳理(2)---Fragment-状态保存和恢复/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="泽毛">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Fragment 知识梳理(2) - Fragment 状态保存和恢复</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-02-20T23:54:00+08:00">
+                2017-02-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Fragment-知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">Fragment 知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="一、概述"><a href="#一、概述" class="headerlink" title="一、概述"></a>一、概述</h1><p>在前一篇文章中，我们对于<code>Fragment</code>的事务和生命周期有了直观的理解，这篇文章我们来分析一下<code>Fragment</code>状态的保存和恢复。</p>
+<h1 id="二、状态保存"><a href="#二、状态保存" class="headerlink" title="二、状态保存"></a>二、状态保存</h1><p>有了分析<code>Activity</code>的经验，我们看一下<code>Activity</code>中和<code>Fragment</code>状态保存相关的代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">protected void onSaveInstanceState(Bundle outState) &#123;       </div><div class="line">    Parcelable p = mFragments.saveAllState();    </div><div class="line">    if (p != null) &#123;        </div><div class="line">        outState.putParcelable(FRAGMENTS_TAG, p);</div><div class="line">    &#125;    </div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>前面已经分析过，<code>mFragments</code>只是一个代理，真正执行的代码还是在<code>FragmentManager</code>中，这个方法返回值是<code>FragmentManagerState</code>：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">Parcelable saveAllState() &#123;</div><div class="line">    //先执行完之前所有剩余的操作。    </div><div class="line">    execPendingActions();    </div><div class="line">    if (HONEYCOMB) &#123;</div><div class="line">        mStateSaved = true;    </div><div class="line">    &#125;</div><div class="line">    ...</div><div class="line">    FragmentManagerState fms = new FragmentManagerState();</div><div class="line">    fms.mActive = active;</div><div class="line">    fms.mAdded = added;</div><div class="line">    fms.mBackStack = backStack;</div><div class="line">    return fms;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>下面我们分三个部分来看一下保存的逻辑：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">//如果mActive为空，那么什么其它的也不保存了。</div><div class="line">if (mActive == null || mActive.size() &lt;= 0) &#123;       </div><div class="line">    return null;</div><div class="line">&#125;</div><div class="line">//开始遍历mActive列表。</div><div class="line">int N = mActive.size();</div><div class="line">FragmentState[] active = new FragmentState[N];</div><div class="line">for (int i = 0; i &lt; N; i++) &#123;</div><div class="line">    Fragment f = mActive.get(i);</div><div class="line">    if (f != null) &#123;</div><div class="line">         //f.mIndex不许为空。</div><div class="line">         //这里面保存了基本的属性：mClassName, mIndex, mFromLayout, mFragmentId, ContainerId, mTag, mRetainInstance, mDetach, mArguments.</div><div class="line">         FragmentState fs = new FragmentState(f);</div><div class="line">         active[i] = fs;</div><div class="line">         if (f.mState &gt; Fragment.INITALZING &amp;&amp; fs.mSavedFragmentState == null) </div><div class="line">             fs.mSavedFragmentState = saveFragmentBasicState(f);</div><div class="line">             if (f.mTarget != null) &#123;</div><div class="line">             //保存mTarget 到 mSavedFragmentState</div><div class="line">             //保存mTargetRequestCode 到 mSavedFragmentState</div><div class="line">         &#125; else &#123;</div><div class="line">             fs.mSavedFragmentState = f.mSavedFragmentState;</div><div class="line">         &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>其中，<code>saveFragmentBasicState</code>保存的是额外的属性，我们看一下这个方法：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">Bundle saveFragmentBasicState(Fragment f) &#123;</div><div class="line">    f.performSaveInstanceState(mStateBundle); //调用 Fragment 的 onSaveInstanceState 方法，让使用者保存额外的数据; 调用 childFragmentManager 的 saveAllState 方法。</div><div class="line">    if (f.mView != null) &#123;</div><div class="line">       //保存mInnverView 的状态，赋值给mSavedViewState。</div><div class="line">        saveFragmentViewState(f); </div><div class="line">    &#125;</div><div class="line">    if (!mUserVisibleHint) &#123;</div><div class="line">        //保存mUserVisibleHint</div><div class="line">    &#125;</div><div class="line">    return result;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<ul>
+<li><p>第一部分，对于<code>mActive</code>列表，它主要保存了一下这些属性：</p>
+<ul>
+<li><code>mClassName,mIndex,mFromLayout,mFragmentId,ContainerId,mTag,mRetainInstance,mDetach,mArguments</code></li>
+<li><code>mSavedFragmentState：childFragment.saveAllState、mSavedViewState、
+mUserVisibleHint、mTarget、mTargetRequestCode、Fragment.onSaveInstanceState</code></li>
+</ul>
+</li>
+<li><p>第二部分，处理<code>mAdded</code>列表：</p>
+<ul>
+<li>遍历<code>mAdded</code>列表，保存 <code>mAdded</code>的 <code>mIndex</code>，是一个int[]数组</li>
+</ul>
+</li>
+<li><p>最后处理<code>BackStackRecord</code>，保存成为 <code>BackStackState</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">遍历 BackStackRecord，保存成为 BackStackState[]</div><div class="line">final int[] mOps;//int[]数组，从head到tail的排列，保存&#123;op.cmd, op.fragment.mIndex, op.enterAnim, op.exitAnim, op.popEnterAnim, op.popExitAnim, removed.size, removeIndex1, removeIndex2,...&#125;</div><div class="line">final int mTransition;</div><div class="line">final int mTransitionStyle;</div><div class="line">final String mName; //最后一次的name.</div><div class="line">final int mIndex; //最后一次的index.</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1 id="三、状态恢复"><a href="#三、状态恢复" class="headerlink" title="三、状态恢复"></a>三、状态恢复</h1><p>我们看一下<code>Activity</code> 中状态恢复的代码是在<code>onCreate</code>方法中调用的：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">protected void onCreate(@Nullable Bundle savedInstanceState) &#123;</div><div class="line">    if (savedInstanceState != null) &#123;    </div><div class="line">        Parcelable p = savedInstanceState.getParcelable(FRAGMENTS_TAG);        </div><div class="line">        mFragments.restoreAllState(p, mLastNonConfigurationInstances != null ? mLastNonConfigurationInstances.fragments : null);</div><div class="line">    &#125;</div><div class="line">     mFragments.dispatchCreate();</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>很好理解，就是我们在第二步中保存的那三个部分，那么这个<code>mLastNonConfigurationInstances</code>又是什么呢，我们看一下它被赋值的地方：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">final void attach(...,NonConfigurationInstances lastNonConfigurationInstances.. ) &#123;</div><div class="line">    mLastNonConfigurationInstances = lastNonConfigurationInstances;</div><div class="line">&#125;</div><div class="line"></div><div class="line">final void performResume() &#123;</div><div class="line">     mLastNonConfigurationInstances  = null;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>原来是<code>attach</code>方法传进来的，并且在<code>performResume</code>的时候会被置为<code>null</code>，我们进<code>ActivityThread</code>看一下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">private Activity performLaunchActivity(ActivityClientRecord r, Intent customIntent) &#123;</div><div class="line">    activity.attach(...., r.lastNonConfigurationInstances,...);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>原来是被放在<code>ActivityClientRecord</code>当中了，那么它就跟<code>Activity</code>的生命周期无关了，在看一下它被赋值的地方：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">这个函数调用的地方有两个：</div><div class="line">1.通过`AMS`调过来时`getNonConfigInstance`为`false`</div><div class="line">2.通过`handleRelaunchAcitivity 调过来为`true`</div><div class="line"></div><div class="line">private ActivityClientRecord performDestroyActivity(IBinder token, boolean finishing, int configChanges, boolean getNonConfigInstance) &#123;</div><div class="line">    if (getNonConfigInstance) &#123;    </div><div class="line">        r.lastNonConfigurationInstances = r.activity.retainNonConfigurationInstances();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>再看一下<code>retainNonConfigurationInstances</code>都保存了哪些信息：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">NonConfigurationInstances retainNonConfigurationInstances() &#123;    </div><div class="line">    Object activity = onRetainNonConfigurationInstance();    </div><div class="line">    HashMap&lt;String, Object&gt; children = onRetainNonConfigurationChildInstances();   </div><div class="line">    List&lt;Fragment&gt; fragments = mFragments.retainNonConfig();    </div><div class="line">    ArrayMap&lt;String, LoaderManager&gt; loaders = mFragments.retainLoaderNonConfig();    </div><div class="line">    if (activity == null &amp;&amp; children == null &amp;&amp; fragments == null &amp;&amp; loaders == null &amp;&amp; mVoiceInteractor == null) &#123;        </div><div class="line">        return null;    </div><div class="line">    &#125;    </div><div class="line">    NonConfigurationInstances nci = new NonConfigurationInstances();    </div><div class="line">    nci.activity = activity;    </div><div class="line">    nci.children = children;    </div><div class="line">    nci.fragments = fragments;    </div><div class="line">    nci.loaders = loaders;    </div><div class="line">    if (mVoiceInteractor != null) &#123;        </div><div class="line">        mVoiceInteractor.retainInstance();        </div><div class="line">       nci.voiceInteractor = mVoiceInteractor;    </div><div class="line">    &#125;    </div><div class="line">    return nci;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>它保存了一个<code>Fragment</code>的列表，这个列表是通过<code>FragmentManager</code>的<code>retainNonConfig</code>返回的：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">ArrayList&lt;Fragment&gt; retainNonConfig() &#123;</div><div class="line">    //遍历mActive列表：</div><div class="line">   if (f != null &amp;&amp; f.mRetainInstance) &#123;</div><div class="line">        fragments.add(f);</div><div class="line">        f.mRetaining = true;</div><div class="line">        f.mTargetIndex = f.mTarget != null ? f.mTarget.mIndex : -1;</div><div class="line">   &#125;</div><div class="line">   return fragments;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>原来它是把<code>mActive</code>中<code>mRetainInstance</code>为<code>true</code>的<code>Fragment</code>保存了，而且设置了这个标识位的<code>Fragment</code>不会执行<code>onCreate、onDestory</code>，并且不会从<code>mActive</code>列表中移除，具体的源码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">if (!f.mRetaining) &#123;    </div><div class="line">    f.performCreate(f.mSavedFragmentState);</div><div class="line">&#125;</div><div class="line"></div><div class="line">if (!f.mRetaining) &#123;    </div><div class="line">    f.performDestroy();</div><div class="line">&#125;</div><div class="line"></div><div class="line">if (!f.mRetaining) &#123;    </div><div class="line">    makeInactive(f);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/02/20/RxJava/RxJava-知识梳理(2)---RxJava2-操作符实战/" rel="next" title="RxJava 知识梳理(2) - RxJava2 操作符实战">
+                <i class="fa fa-chevron-left"></i> RxJava 知识梳理(2) - RxJava2 操作符实战
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/02/20/多线程/多线程知识梳理(1)---并发编程的艺术笔记/" rel="prev" title="多线程知识梳理(1) - 并发编程的艺术笔记">
+                多线程知识梳理(1) - 并发编程的艺术笔记 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="John Doe" />
+          <p class="site-author-name" itemprop="name">John Doe</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">104</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">23</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、概述"><span class="nav-number">1.</span> <span class="nav-text">一、概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、状态保存"><span class="nav-number">2.</span> <span class="nav-text">二、状态保存</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、状态恢复"><span class="nav-number">3.</span> <span class="nav-text">三、状态恢复</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

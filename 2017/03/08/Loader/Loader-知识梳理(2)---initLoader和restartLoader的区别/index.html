@@ -1,0 +1,773 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="一、概述在前面的一篇文章中，我们分析了LoaderManager的实现，里面涉及到了很多的细节问题，我们并不需要刻意地记住每个流程，之所以需要分析，以后在使用的过程中，如果遇到问题了，再去查看相关的源代码就好了。对于Loader框架的理解，我认为掌握以下四个方面的东西就可以了：  对LoaderManager的实现原理有一个大概的印象。 LoaderManager的三个关键方法initLoader">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Loader 知识梳理(2) - initLoader和restartLoader的区别">
+<meta property="og:url" content="http://yoursite.com/2017/03/08/Loader/Loader-知识梳理(2)---initLoader和restartLoader的区别/index.html">
+<meta property="og:site_name" content="泽毛">
+<meta property="og:description" content="一、概述在前面的一篇文章中，我们分析了LoaderManager的实现，里面涉及到了很多的细节问题，我们并不需要刻意地记住每个流程，之所以需要分析，以后在使用的过程中，如果遇到问题了，再去查看相关的源代码就好了。对于Loader框架的理解，我认为掌握以下四个方面的东西就可以了：  对LoaderManager的实现原理有一个大概的印象。 LoaderManager的三个关键方法initLoader">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-6c8c076c9f935b6b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-d2fa0a4d212ea663.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-1acd4e6c7002e976.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-ee7f857d0e40fcee.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-c986f7d8d9da4418.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-03efbbb32b559acd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-b86b130529c7f4ad.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2017-06-27T14:57:52.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Loader 知识梳理(2) - initLoader和restartLoader的区别">
+<meta name="twitter:description" content="一、概述在前面的一篇文章中，我们分析了LoaderManager的实现，里面涉及到了很多的细节问题，我们并不需要刻意地记住每个流程，之所以需要分析，以后在使用的过程中，如果遇到问题了，再去查看相关的源代码就好了。对于Loader框架的理解，我认为掌握以下四个方面的东西就可以了：  对LoaderManager的实现原理有一个大概的印象。 LoaderManager的三个关键方法initLoader">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-6c8c076c9f935b6b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/03/08/Loader/Loader-知识梳理(2)---initLoader和restartLoader的区别/"/>
+
+
+
+
+
+  <title>Loader 知识梳理(2) - initLoader和restartLoader的区别 | 泽毛</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">泽毛</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/03/08/Loader/Loader-知识梳理(2)---initLoader和restartLoader的区别/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="泽毛">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Loader 知识梳理(2) - initLoader和restartLoader的区别</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-08T00:01:00+08:00">
+                2017-03-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Loader-知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">Loader 知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="一、概述"><a href="#一、概述" class="headerlink" title="一、概述"></a>一、概述</h1><p>在前面的一篇文章中，我们分析了<code>LoaderManager</code>的实现，里面涉及到了很多的细节问题，我们并不需要刻意地记住每个流程，之所以需要分析，以后在使用的过程中，如果遇到问题了，再去查看相关的源代码就好了。<br>对于<code>Loader</code>框架的理解，我认为掌握以下四个方面的东西就可以了：</p>
+<ul>
+<li>对<code>LoaderManager</code>的实现原理有一个大概的印象。</li>
+<li><code>LoaderManager</code>的三个关键方法<code>initLoader/restartLoader/destroyLoader</code>的使用场景。</li>
+<li>学会自定义<code>Loader</code>来实现数据的异步加载。</li>
+<li>总结一些<code>App</code>开发中常用的场景。</li>
+</ul>
+<p>第一点可以参考前面的这篇文章：</p>
+<blockquote>
+<p><a href="http://www.jianshu.com/p/cc03191ef40b" target="_blank" rel="external"><code>Loader框架 - LoaderManager初探</code></a></p>
+</blockquote>
+<p>今天这篇，我们将专注于分析第二点：<strong><code>initLoader/restartLoader</code>的区别</strong>。</p>
+<h1 id="二、基本概念的区别"><a href="#二、基本概念的区别" class="headerlink" title="二、基本概念的区别"></a>二、基本概念的区别</h1><p>首先，我们回顾一下，对于<code>init/restart</code>的定义：</p>
+<ul>
+<li><p><code>initLoader</code></p>
+<ul>
+<li>通过调用这个方法来初始化一个特定<code>ID</code>的<code>Loader</code>，如果当前已经有一个和这个<code>ID</code>关联的<code>Loader</code>，那么并不会去回调<code>onCreateLoader</code>来通知使用者传入一个新的 <code>Loader</code>实例替代那个旧的实例，仅仅是替代<code>Callback</code>，也就是说，上面的<code>Bundle</code>参数被丢弃了；而假如不存在一个关联的实例，那么会进行初始化，并启动它。</li>
+<li>这个方法通常是在<code>Activity/Fragment</code>的初始化阶段调用，因为它会判断之前是否存在相同的<code>Loader</code>，这样我们就可以复用之前已经加载过的数据，当屏幕装转导致<code>Activity</code>重建的时候，我们就不需要再去重新创建一个新的<code>Loader</code>，也免去了重新读取数据的过程。</li>
+</ul>
+</li>
+<li><p><code>restartLoader</code></p>
+<ul>
+<li>调用这个方法，将会重新创建一个指定<code>ID</code>的<code>Loader</code>，如果当前已经有一个和这个<code>ID</code>关联的<code>Loader</code>，那么会对它进行<code>canceled/stopped/destroyed</code>等操作，之后，使用新传入的<code>Bundle</code>参数来创建一个新的<code>Loader</code>，并在数据加载完毕后递交给调用者。</li>
+<li>并且，在调用完这个函数之后，所有之前和这个<code>ID</code>关联的<code>Loader</code>都会失效，我们将不会收到它们传递过来的任何数据。</li>
+</ul>
+</li>
+</ul>
+<p>总结下来就是：</p>
+<ul>
+<li>当调用上面这两个方法时，如果不存在一个和<code>ID</code>关联的<code>Loader</code>，那么这两个方法是完全相同的。</li>
+<li>如果已经存在相关联的<code>Loader</code>，那么<code>init</code>方法除了替代<code>Callback</code>，不会做任何其它的事情，包括取消/停止等。而<code>restart</code>方法将会创建一个新的<code>Loader</code>，并且重新开始查询。</li>
+</ul>
+<h1 id="三、代码的区别"><a href="#三、代码的区别" class="headerlink" title="三、代码的区别"></a>三、代码的区别</h1><p>为了方便大家更直观地理解，我们截取一部分的源码来看一下：</p>
+<ul>
+<li><p><code>initLoader</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">LoaderInfo info = mLoaders.get(id);</div><div class="line">if (info == null) &#123;</div><div class="line">    //如果不存在关联的Loader，那么创建一个新的Loader</div><div class="line">    info = createAndInstallLoader(id, args, LoaderManager.LoaderCallbacks&lt;Object&gt;)callback);</div><div class="line">&#125; else &#123;</div><div class="line">   //如果已经存在，那么仅仅替代Callback，传入的Bundle参数会被丢弃。</div><div class="line">   info.mCallbacks = (LoaderManager.LoaderCallbacks&lt;Object&gt;)callback;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p><code>restartLoader</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">LoaderInfo info = mLoaders.get(id);</div><div class="line">//如果已经存在一个相关联的Loader，那么执行操作。</div><div class="line">if (info != null) &#123;</div><div class="line">    //mInactiveLoaders列表就是用来跟踪那些已经被抛弃的Loader</div><div class="line">    LoaderInfo inactive = mInactiveLoaders.get(id);</div><div class="line">    if (inactive != null) &#123;</div><div class="line">        //对跟踪列表进行一系列的操作。</div><div class="line">    &#125; else &#123;</div><div class="line">        //取消被抛弃的Loader，并加入到跟踪列表当中，以便在新的Loader完成任务之后销毁它。</div><div class="line">        info.mLoader.abandon();</div><div class="line">        mInactiveLoaders.put(id, info);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line">//通知调用者，创建一个新的Loader，这个Loader将会和新的Bundle和Callback相关联。</div><div class="line">info = createAndInstallLoader(id, args,  (LoaderManager.LoaderCallbacks&lt;Object&gt;)callback);</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>通过上面的代码，就印证了前面第二节我们的说话，我们根据这些区别可以知道它们各自的职责：</p>
+<ul>
+<li><code>initLoader</code>是用来确保<code>Loader</code>能够被初始化，如果已经存在相同<code>ID</code>的<code>Loader</code>，那么它会复用之前的。</li>
+<li><code>restartLoader</code>的应用场景则是我们的查询条件发生了改变。因为<code>LoaderManager</code>是用<code>ID</code>关联的，当这个<code>Loader</code>已经获取到了数据，那么就不需要再启动它了。因此当我们的需求发生了改变，就需要重新创建一个<code>Loader</code>。</li>
+</ul>
+<p>也就是说：</p>
+<blockquote>
+<ul>
+<li>查询条件一直不变时，使用<code>initLoader</code></li>
+<li>查询条件有可能发生改变时，采用<code>restartLoader</code>。</li>
+</ul>
+</blockquote>
+<h1 id="五、对于屏幕旋转的情况"><a href="#五、对于屏幕旋转的情况" class="headerlink" title="五、对于屏幕旋转的情况"></a>五、对于屏幕旋转的情况</h1><h2 id="5-1-重建"><a href="#5-1-重建" class="headerlink" title="5.1 重建"></a>5.1 重建</h2><p>当我们在<code>Manifest.xml</code>没有给<code>Activity</code>配置<code>configChanged</code>的时候，旋转屏幕会导致的<code>Activity/Fragment</code>重建，这时候有两点需要注意的：</p>
+<ul>
+<li>由于此时我们的查询条件并不会发生改变，并且<code>LoaderManager</code>会帮我们恢复<code>Loader</code>的状态。因此，我们没有必要再去调用<code>restartLoader</code>来重新创建<code>Loader</code>来执行一次耗时的查询操作。</li>
+</ul>
+<ul>
+<li><code>LoaderManager</code>虽然会恢复<code>Loader</code>，但是它不会保存<code>Callback</code>实例，因此，如果我们希望在旋转完之后获得数据，那么至少要调用一次<code>initLoader</code>来传入一个新的<code>Callback</code>进行监听。</li>
+</ul>
+<p>在这种情况下，<strong>假如我们在旋转之前<code>Loader</code>已经加载数据完毕了，那么<code>onLoadFinished</code>会立即被会调</strong>。</p>
+<h2 id="5-2-没有重建"><a href="#5-2-没有重建" class="headerlink" title="5.2 没有重建"></a>5.2 没有重建</h2><p>当没有重建时，不会走<code>onCreate</code>方法，因此需要在别的地方来初始化<code>Loader</code>。</p>
+<h2 id="5-3-LoaderId"><a href="#5-3-LoaderId" class="headerlink" title="5.3 LoaderId"></a>5.3 <code>LoaderId</code></h2><p>针对上面的这两种情况，我们都需要自己去保存<code>LoaderId</code>，在组件恢复之后，通过这个保存的<code>id</code>去调用<code>init/restart</code>方法，一般情况下，是通过<code>savedInstanceState</code>来保存的。</p>
+<h1 id="六、示例"><a href="#六、示例" class="headerlink" title="六、示例"></a>六、示例</h1><p>现在，我们通过一个很简单的例子，来看一下，<code>initLoader/restartLoader</code>的区别，我们的<code>Demo</code>中有一个<code>EditText</code>和一个<code>TextView</code>，当<code>EditText</code>发生改变时，我们将当前<code>EditText</code>的内容作为查询的<code>Key</code>，查询任务就是调用<code>Loader</code>，延时<code>2s</code>，并将这个<code>key</code>作为查询的结果展示在<code>TextView</code>上。</p>
+<h2 id="6-1-采用initLoader来查询："><a href="#6-1-采用initLoader来查询：" class="headerlink" title="6.1 采用initLoader来查询："></a>6.1 采用<code>initLoader</code>来查询：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div></pre></td><td class="code"><pre><div class="line">public class MainActivity extends Activity &#123;</div><div class="line"></div><div class="line">    private static final String LOADER_TAG = &quot;loader_tag&quot;;</div><div class="line">    private static final String QUERY = &quot;query&quot;;</div><div class="line"></div><div class="line">    private MyLoaderCallback mMyLoaderCallback;</div><div class="line">    private TextView mResultView;</div><div class="line">    private EditText mEditText;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    protected void onCreate(Bundle savedInstanceState) &#123;</div><div class="line">        super.onCreate(savedInstanceState);</div><div class="line">        setContentView(R.layout.activity_main);</div><div class="line">        init();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private void init() &#123;</div><div class="line">        mEditText = (EditText) findViewById(R.id.loader_input);</div><div class="line">        mResultView = (TextView) findViewById(R.id.loader_result);</div><div class="line">        mEditText.addTextChangedListener(new MyEditTextWatcher());</div><div class="line">        mMyLoaderCallback = new MyLoaderCallback();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private void startQuery(String query) &#123;</div><div class="line">        if (query != null) &#123;</div><div class="line">            Bundle bundle = new Bundle();</div><div class="line">            bundle.putString(QUERY, query);</div><div class="line">            getLoaderManager().initLoader(0, bundle, mMyLoaderCallback);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private void showResult(String result) &#123;</div><div class="line">        if (mResultView != null) &#123;</div><div class="line">            mResultView.setText(result);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static class MyLoader extends BaseDataLoader&lt;String&gt; &#123;</div><div class="line"></div><div class="line">        public MyLoader(Context context, Bundle bundle) &#123;</div><div class="line">            super(context, bundle);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        @Override</div><div class="line">        protected String loadData(Bundle bundle) &#123;</div><div class="line">            Log.d(LOADER_TAG, &quot;loadData&quot;);</div><div class="line">            try &#123;</div><div class="line">                Thread.sleep(2000);</div><div class="line">            &#125; catch (Exception e) &#123;</div><div class="line">                e.printStackTrace();</div><div class="line">            &#125;</div><div class="line">            return bundle != null ? bundle.getString(QUERY) : &quot;empty&quot;;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private class MyLoaderCallback implements LoaderManager.LoaderCallbacks &#123;</div><div class="line"></div><div class="line">        @Override</div><div class="line">        public Loader onCreateLoader(int id, Bundle args) &#123;</div><div class="line">            Log.d(LOADER_TAG, &quot;onCreateLoader&quot;);</div><div class="line">            return new MyLoader(getApplicationContext(), args);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        @Override</div><div class="line">        public void onLoadFinished(Loader loader, Object data) &#123;</div><div class="line">            Log.d(LOADER_TAG, &quot;onLoadFinished&quot;);</div><div class="line">            showResult((String) data);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        @Override</div><div class="line">        public void onLoaderReset(Loader loader) &#123;</div><div class="line">            Log.d(LOADER_TAG, &quot;onLoaderReset&quot;);</div><div class="line">            showResult(&quot;&quot;);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private class MyEditTextWatcher implements TextWatcher &#123;</div><div class="line"></div><div class="line">        @Override</div><div class="line">        public void beforeTextChanged(CharSequence s, int start, int count, int after) &#123;&#125;</div><div class="line"></div><div class="line">        @Override</div><div class="line">        public void onTextChanged(CharSequence s, int start, int before, int count) &#123;</div><div class="line">            Log.d(LOADER_TAG, &quot;onTextChanged=&quot; + s);</div><div class="line">            startQuery(s != null ? s.toString() : &quot;&quot;);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        @Override</div><div class="line">        public void afterTextChanged(Editable s) &#123;&#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>当我们输入<code>a</code>时，成功地获取到了数据：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-6c8c076c9f935b6b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>之后，我们继续输入<code>b</code>，发现<code>onLoadFinished</code>立即被回调了，但是结果还是之前地<code>a</code><br><img src="http://upload-images.jianshu.io/upload_images/1949836-d2fa0a4d212ea663.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>我们通过<code>AS</code>的断电发现，整个调用过程如下：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-1acd4e6c7002e976.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>也就是在<code>initLoader</code>之后，立即执行了：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">public &lt;D&gt; Loader&lt;D&gt; initLoader(int id, Bundle args, LoaderManager.LoaderCallbacks&lt;D&gt; callback) &#123;</div><div class="line">    //按照前面的分析，此时的info不为null。</div><div class="line">    if (info.mHaveData &amp;&amp; mStarted) &#123;</div><div class="line">        info.callOnLoadFinished(info.mLoader, info.mData);</div><div class="line">    &#125;</div><div class="line">    return (Loader&lt;D&gt;)info.mLoader;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>而之后，<code>callOnLoadFinished</code>就会把之前的数据传回给调用者，因此没有执行<code>onCreateLoader</code>，也没有进行查询操作：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">void callOnLoadFinished(Loader&lt;Object&gt; loader, Object data) &#123;</div><div class="line">    //传递数据给调用者.</div><div class="line">    if (mCallbacks != null) &#123;</div><div class="line">        mCallbacks.onLoadFinished(loader, data);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>假如，我们在<code>a</code>触发的任务还没有执行时就输入<code>b</code>，我们看看会发生什么，可以看到，它并不会考虑后来的任务：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-ee7f857d0e40fcee.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h2 id="6-2-采用restartLoader查询"><a href="#6-2-采用restartLoader查询" class="headerlink" title="6.2 采用restartLoader查询"></a>6.2 采用<code>restartLoader</code>查询</h2><p>还是按照前面的方式，我们先输入<code>a</code>：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-c986f7d8d9da4418.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>这时候，和采用<code>initLoader</code>的结果完全相同，接下来再输入<code>b</code>：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-03efbbb32b559acd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>可以清楚地看到，在执行完<code>restartLoader</code>之后，<code>LoaderManager</code>回调了<code>onCreateLoader</code>方法让我们传入新的<code>Loader</code>，并且之后重新进行了查询，并成功地返回了结果。<br>接下来，我们看一下连续输入的情况：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-b86b130529c7f4ad.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>可以看到，虽然<code>a</code>触发的任务已经开始了，但是当我们输入<code>b</code>的时候，最终得到的时<code>ab</code>这个结果，并且<code>a</code>所触发的任务的结果并没有返回给调用者，这也是我们所希望的，因为我们的结果一定是要以用户最后输入的为准。</p>
+<h2 id="6-3-加上保证正确初始化的代码"><a href="#6-3-加上保证正确初始化的代码" class="headerlink" title="6.3 加上保证正确初始化的代码"></a>6.3 加上保证正确初始化的代码</h2><p>最后，我们再加上保证<code>Loader</code>能够正确初始化的代码，一个简单的联想输入 - 加载框架就搭建好了。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">@Override</div><div class="line">protected void onCreate(Bundle savedInstanceState) &#123;</div><div class="line">    super.onCreate(savedInstanceState);</div><div class="line">    setContentView(R.layout.activity_main);</div><div class="line">    init();</div><div class="line">    restore(savedInstanceState);</div><div class="line">&#125;</div><div class="line"></div><div class="line">private void save(Bundle outState) &#123;</div><div class="line">    if (mEditText != null) &#123;</div><div class="line">        outState.putString(QUERY, mEditText.getText().toString());</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">private void restore(Bundle savedInstanceState) &#123;</div><div class="line">    if (savedInstanceState != null) &#123;</div><div class="line">        Bundle bundle = new Bundle();</div><div class="line">        String query = bundle.getString(QUERY);</div><div class="line">        bundle.putString(QUERY, query);</div><div class="line">        getLoaderManager().initLoader(0, bundle, mMyLoaderCallback);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">@Override</div><div class="line">protected void onSaveInstanceState(Bundle outState) &#123;</div><div class="line">    save(outState);</div><div class="line">    super.onSaveInstanceState(outState);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/03/07/Loader/Loader-知识梳理(1)---LoaderManager初探/" rel="next" title="Loader 知识梳理(1) - LoaderManager初探">
+                <i class="fa fa-chevron-left"></i> Loader 知识梳理(1) - LoaderManager初探
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/03/08/Loader/Loader-知识梳理(3)---自定义Loader/" rel="prev" title="Loader 知识梳理(3) - 自定义Loader">
+                Loader 知识梳理(3) - 自定义Loader <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="John Doe" />
+          <p class="site-author-name" itemprop="name">John Doe</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">104</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">23</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、概述"><span class="nav-number">1.</span> <span class="nav-text">一、概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、基本概念的区别"><span class="nav-number">2.</span> <span class="nav-text">二、基本概念的区别</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、代码的区别"><span class="nav-number">3.</span> <span class="nav-text">三、代码的区别</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#五、对于屏幕旋转的情况"><span class="nav-number">4.</span> <span class="nav-text">五、对于屏幕旋转的情况</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#5-1-重建"><span class="nav-number">4.1.</span> <span class="nav-text">5.1 重建</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-2-没有重建"><span class="nav-number">4.2.</span> <span class="nav-text">5.2 没有重建</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-3-LoaderId"><span class="nav-number">4.3.</span> <span class="nav-text">5.3 LoaderId</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#六、示例"><span class="nav-number">5.</span> <span class="nav-text">六、示例</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#6-1-采用initLoader来查询："><span class="nav-number">5.1.</span> <span class="nav-text">6.1 采用initLoader来查询：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-2-采用restartLoader查询"><span class="nav-number">5.2.</span> <span class="nav-text">6.2 采用restartLoader查询</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-3-加上保证正确初始化的代码"><span class="nav-number">5.3.</span> <span class="nav-text">6.3 加上保证正确初始化的代码</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

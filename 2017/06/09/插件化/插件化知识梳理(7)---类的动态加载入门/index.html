@@ -1,0 +1,737 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="插件化知识梳理(1) - Small 框架之如何引入应用插件插件化知识梳理(2) - Small 框架之如何引入公共库插件插件化知识梳理(3) - Small 框架之宿主分身插件化知识梳理(4) - Small 框架之如何实现插件更新插件化知识梳理(5) - Small 框架之如何不将插件打包到宿主中插件化知识梳理(6) - Small 源码分析之 Hook 原理插件化知识梳理(7) - 类的动">
+<meta property="og:type" content="article">
+<meta property="og:title" content="插件化知识梳理(7) - 类的动态加载入门">
+<meta property="og:url" content="http://yoursite.com/2017/06/09/插件化/插件化知识梳理(7)---类的动态加载入门/index.html">
+<meta property="og:site_name" content="泽毛">
+<meta property="og:description" content="插件化知识梳理(1) - Small 框架之如何引入应用插件插件化知识梳理(2) - Small 框架之如何引入公共库插件插件化知识梳理(3) - Small 框架之宿主分身插件化知识梳理(4) - Small 框架之如何实现插件更新插件化知识梳理(5) - Small 框架之如何不将插件打包到宿主中插件化知识梳理(6) - Small 源码分析之 Hook 原理插件化知识梳理(7) - 类的动">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-92096e2263f1bf49.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-73541db8ba76682f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-74aeef541ac68770.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-5e20c13adea13a96.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-6ea2a4eba371076d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-d053617268fbb275.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-c44986ee5caaa7db.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2017-06-27T13:56:09.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="插件化知识梳理(7) - 类的动态加载入门">
+<meta name="twitter:description" content="插件化知识梳理(1) - Small 框架之如何引入应用插件插件化知识梳理(2) - Small 框架之如何引入公共库插件插件化知识梳理(3) - Small 框架之宿主分身插件化知识梳理(4) - Small 框架之如何实现插件更新插件化知识梳理(5) - Small 框架之如何不将插件打包到宿主中插件化知识梳理(6) - Small 源码分析之 Hook 原理插件化知识梳理(7) - 类的动">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-92096e2263f1bf49.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/06/09/插件化/插件化知识梳理(7)---类的动态加载入门/"/>
+
+
+
+
+
+  <title>插件化知识梳理(7) - 类的动态加载入门 | 泽毛</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">泽毛</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/09/插件化/插件化知识梳理(7)---类的动态加载入门/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="泽毛">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">插件化知识梳理(7) - 类的动态加载入门</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-09T23:18:00+08:00">
+                2017-06-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/插件化知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">插件化知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p><a href="http://www.jianshu.com/p/07f88d4924db" target="_blank" rel="external">插件化知识梳理(1) - Small 框架之如何引入应用插件</a><br><a href="http://www.jianshu.com/p/f882c1f6b68b" target="_blank" rel="external">插件化知识梳理(2) - Small 框架之如何引入公共库插件</a><br><a href="http://www.jianshu.com/p/2162a4ce4560" target="_blank" rel="external">插件化知识梳理(3) - Small 框架之宿主分身</a><br><a href="http://www.jianshu.com/p/dee27b35f72f" target="_blank" rel="external">插件化知识梳理(4) - Small 框架之如何实现插件更新</a><br><a href="http://www.jianshu.com/p/e023e5d83992" target="_blank" rel="external">插件化知识梳理(5) - Small 框架之如何不将插件打包到宿主中</a><br><a href="http://www.jianshu.com/p/95b0f9894aa1" target="_blank" rel="external">插件化知识梳理(6) - Small 源码分析之 Hook 原理</a><br><a href="http://www.jianshu.com/p/ef4c8ffef374" target="_blank" rel="external">插件化知识梳理(7) - 类的动态加载入门</a><br><a href="http://www.jianshu.com/p/6b4a7a4fb39a" target="_blank" rel="external">插件化知识梳理(8) - 类的动态加载源码分析</a></p>
+</blockquote>
+<h1 id="一、前言"><a href="#一、前言" class="headerlink" title="一、前言"></a>一、前言</h1><p>在 <a href="http://www.jianshu.com/p/95b0f9894aa1" target="_blank" rel="external">插件化知识梳理(6) - Small 源码分析之 Hook 原理</a> 这一章的学习完成之后，下一步我们将进入插件化加载的精髓，动态加载类的学习，在此之前，我们需要先准备一些关于类加载的知识。</p>
+<p><code>Android</code>当中，支持动态加载的两种方式为：<code>DexClassLoader</code>和<code>PathClassLoader</code>。这两者之间的区别为：</p>
+<ul>
+<li><code>DexClassLoader</code><ul>
+<li>可以加载<code>jar、apk、dex</code></li>
+<li>支持从<code>SD</code>卡目录加载。</li>
+</ul>
+</li>
+<li><code>PathClassLoader</code><ul>
+<li>在许多文章中都有提到，在<code>Dalvik</code>虚拟机上，只能加载已经安装到系统中的<code>Apk</code>文件，也就是<code>/data/app</code>目录下的<code>apk</code>文件。之所以有这个限制是因为<code>PathClassLoader</code>会去读取<code>data/dalvik-cache</code>目录下经过优化后的<code>dex</code>文件，如果文件不存在，那么就会报错。由于手边没有机器，所以没有版本验证。</li>
+<li>而在<code>ART</code>虚拟机上，通过源码当中的注释，可以发现是支持的。<br><img src="http://upload-images.jianshu.io/upload_images/1949836-92096e2263f1bf49.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></li>
+</ul>
+</li>
+</ul>
+<h1 id="二、具体实例"><a href="#二、具体实例" class="headerlink" title="二、具体实例"></a>二、具体实例</h1><p>实例的工程目录结构为：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-73541db8ba76682f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<ul>
+<li><code>app</code>：宿主模块</li>
+<li><code>library</code>：插件模块</li>
+<li><code>libraryinterface</code>：插件接口模块</li>
+</ul>
+<p>其中，<code>app</code>和<code>library</code>模块分别依赖于<code>libraryinterface</code>，<code>library</code>和<code>libraryinterface</code>为<code>Android Library</code>类型的<code>Module</code>，下面，我们开始讲解整个工程的构建过程。</p>
+<h2 id="2-1-接口模块-libraryinterface"><a href="#2-1-接口模块-libraryinterface" class="headerlink" title="2.1 接口模块 libraryinterface"></a>2.1 接口模块 libraryinterface</h2><p>接口模块相当于是宿主模块和插件模块所定义的一套标准，宿主模块遵循固定的业务逻辑，而具体的实现则根据插件模块的不同而不同。<br>在接口模块中，我们定义一个简单的接口<code>IPlugin.java</code>：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">public interface IPlugin &#123;</div><div class="line">    public int getVersion();</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="2-2-插件模块-library"><a href="#2-2-插件模块-library" class="headerlink" title="2.2 插件模块 library"></a>2.2 插件模块 library</h2><p>首先，我们在插件模块的<code>build.gradle</code>文件中，引入<code>libraryinterface</code>模块<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">dependencies &#123;</div><div class="line">    //引入接口模块</div><div class="line">    compile project (&apos;:libraryinterface&apos;)</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>接着，我们编写一个实现类：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">public class PluginImpl implements IPlugin &#123;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public int getVersion() &#123;</div><div class="line">        return 1;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>接下来需要做的就是将该插件模块打包成一个<code>jar</code>文件，同样是在<code>build.gradle</code>文件中，创建一个<code>Task</code>任务：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">task makeJar(type: Copy) &#123;</div><div class="line">    delete &apos;build/libs/plugin.jar&apos;</div><div class="line">    from (&apos;build/intermediates/bundles/release/&apos;)</div><div class="line">    into (&apos;../file/&apos;)</div><div class="line">    include (&apos;classes.jar&apos;)</div><div class="line">    rename (&apos;classes.jar&apos;,&apos;plugin.jar&apos;)</div><div class="line">&#125;</div><div class="line"></div><div class="line">makeJar.dependsOn(build)</div></pre></td></tr></table></figure></p>
+<p>首先点击<code>make module</code>：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-74aeef541ac68770.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>接下来，在项目的根目录下执行命令：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./gradlew makeJar</div></pre></td></tr></table></figure></p>
+<p>就会得到一个<code>plugin.jar</code>文件，但是这个<code>jar</code>文件是不能够被动态加载的，因为它内部其实是<code>.class</code>文件，我们通过解压可以看出：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-5e20c13adea13a96.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>那么我们就需要通过<code>Android SDK</code>自带的<code>dx</code>工具进行转换，把它转换为<code>.dex</code>，转换后的文件为<code>plugin_dex.jar</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">/Users/lizejun/Library/Android/sdk/build-tools/25.0.3/dx --dex --output=file/plugin_dex.jar file/plugin.jar</div></pre></td></tr></table></figure></p>
+<p>将<code>plugin_dex.jar</code>解压之后，可以看到它已经被转换成了<code>.dex</code>文件：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-6ea2a4eba371076d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>最后，将该<code>jar</code>包<code>push</code>到手机中的<code>/sdcard/Plugin</code>目录下：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-d053617268fbb275.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h2 id="2-3-宿主模块-app"><a href="#2-3-宿主模块-app" class="headerlink" title="2.3 宿主模块 app"></a>2.3 宿主模块 app</h2><p>首先，宿主模块同样需要依赖于接口模块<code>libraryinterface</code>：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">dependencies &#123;</div><div class="line">    //引入接口模块</div><div class="line">    compile project (&apos;:libraryinterface&apos;)</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>在代码当中，我们通过<code>DexClassLoader/PathClassLoader</code>动态外部的插件<code>plugin_dex.jar</code>，通过反射实例化<code>PluginImpl</code>类，并调用它的<code>getVersion()</code>方法进行验证：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div></pre></td><td class="code"><pre><div class="line">public class MainActivity extends AppCompatActivity &#123;</div><div class="line"></div><div class="line">    private TextView mTextView;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    protected void onCreate(Bundle savedInstanceState) &#123;</div><div class="line">        super.onCreate(savedInstanceState);</div><div class="line">        setContentView(R.layout.activity_main);</div><div class="line">        mTextView = (TextView) findViewById(R.id.tv_plug_result);</div><div class="line">        getPluginA();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private void getPluginA() &#123;</div><div class="line">        File dexOutputDir = getDir(&quot;dex1&quot;, 0);</div><div class="line">        String dexPath = Environment.getExternalStorageDirectory().toString() + &quot;/Plugin/plugin_dex.jar&quot;;</div><div class="line">        DexClassLoader loader = new DexClassLoader(dexPath, dexOutputDir.getAbsolutePath(), null, getClassLoader());</div><div class="line">        try &#123;</div><div class="line">            Class clz = loader.loadClass(&quot;com.demo.lizejun.library.PluginImpl&quot;);</div><div class="line">            IPlugin impl = (IPlugin) clz.newInstance();</div><div class="line">            int version = impl.getVersion();</div><div class="line">            mTextView.setText(&quot;Version=&quot; + version);</div><div class="line">        &#125; catch (Exception e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private void getPluginB() &#123;</div><div class="line">        String dexPath = Environment.getExternalStorageDirectory().toString() + &quot;/Plugin/plugin_dex.jar&quot;;</div><div class="line">        PathClassLoader loader = new PathClassLoader(dexPath, getClassLoader());</div><div class="line">        try &#123;</div><div class="line">            Class clz = loader.loadClass(&quot;com.demo.lizejun.library.PluginImpl&quot;);</div><div class="line">            IPlugin impl = (IPlugin) clz.newInstance();</div><div class="line">            int version = impl.getVersion();</div><div class="line">            mTextView.setText(&quot;Version=&quot; + version);</div><div class="line">        &#125; catch (Exception e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>最终的结果为：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-c44986ee5caaa7db.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/06/07/插件化/插件化知识梳理(6)---Small-源码分析之-Hook-原理/" rel="next" title="插件化知识梳理(6) - Small 源码分析之 Hook 原理">
+                <i class="fa fa-chevron-left"></i> 插件化知识梳理(6) - Small 源码分析之 Hook 原理
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/06/10/插件化/插件化知识梳理(8)---类的动态加载源码分析/" rel="prev" title="插件化知识梳理(8) - 类的动态加载源码分析">
+                插件化知识梳理(8) - 类的动态加载源码分析 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="John Doe" />
+          <p class="site-author-name" itemprop="name">John Doe</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">104</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">23</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、前言"><span class="nav-number">1.</span> <span class="nav-text">一、前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、具体实例"><span class="nav-number">2.</span> <span class="nav-text">二、具体实例</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-接口模块-libraryinterface"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 接口模块 libraryinterface</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-插件模块-library"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 插件模块 library</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-宿主模块-app"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 宿主模块 app</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

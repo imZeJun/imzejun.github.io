@@ -1,0 +1,742 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="一、概述SharedPreferences在开发当中常被用作保存一些类似于配置项这类轻量级的数据，它采用键值对的格式，将数据存储在xml文件当中，并保存在data/data/{应用包名}/shared_prefs下：今天我们就来一起研究一下SP的实现原理。 二、SP 源码解析2.1 获取 SharedPreferences 对象在通过SP进行读写操作时，首先需要获得一个SharedPreferen">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android 数据存储知识梳理(3) - SharedPreference 源码解析">
+<meta property="og:url" content="http://yoursite.com/2017/05/05/Android-数据存储/Android-数据存储知识梳理(3)---SharedPreference-源码解析/index.html">
+<meta property="og:site_name" content="泽毛">
+<meta property="og:description" content="一、概述SharedPreferences在开发当中常被用作保存一些类似于配置项这类轻量级的数据，它采用键值对的格式，将数据存储在xml文件当中，并保存在data/data/{应用包名}/shared_prefs下：今天我们就来一起研究一下SP的实现原理。 二、SP 源码解析2.1 获取 SharedPreferences 对象在通过SP进行读写操作时，首先需要获得一个SharedPreferen">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-b8c6dd3a700ce215.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-7b1a073104001c1c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2017-06-27T14:38:44.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android 数据存储知识梳理(3) - SharedPreference 源码解析">
+<meta name="twitter:description" content="一、概述SharedPreferences在开发当中常被用作保存一些类似于配置项这类轻量级的数据，它采用键值对的格式，将数据存储在xml文件当中，并保存在data/data/{应用包名}/shared_prefs下：今天我们就来一起研究一下SP的实现原理。 二、SP 源码解析2.1 获取 SharedPreferences 对象在通过SP进行读写操作时，首先需要获得一个SharedPreferen">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-b8c6dd3a700ce215.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/05/05/Android-数据存储/Android-数据存储知识梳理(3)---SharedPreference-源码解析/"/>
+
+
+
+
+
+  <title>Android 数据存储知识梳理(3) - SharedPreference 源码解析 | 泽毛</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">泽毛</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/05/05/Android-数据存储/Android-数据存储知识梳理(3)---SharedPreference-源码解析/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="泽毛">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Android 数据存储知识梳理(3) - SharedPreference 源码解析</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-05T10:14:00+08:00">
+                2017-05-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android-数据存储知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">Android 数据存储知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="一、概述"><a href="#一、概述" class="headerlink" title="一、概述"></a>一、概述</h1><p><code>SharedPreferences</code>在开发当中常被用作保存一些类似于配置项这类轻量级的数据，它采用键值对的格式，将数据存储在<code>xml</code>文件当中，并保存在<code>data/data/{应用包名}/shared_prefs</code>下：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-b8c6dd3a700ce215.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>今天我们就来一起研究一下<code>SP</code>的实现原理。</p>
+<h1 id="二、SP-源码解析"><a href="#二、SP-源码解析" class="headerlink" title="二、SP 源码解析"></a>二、SP 源码解析</h1><h2 id="2-1-获取-SharedPreferences-对象"><a href="#2-1-获取-SharedPreferences-对象" class="headerlink" title="2.1 获取 SharedPreferences 对象"></a>2.1 获取 SharedPreferences 对象</h2><p>在通过<code>SP</code>进行读写操作时，首先需要获得一个<code>SharedPreferences</code>对象，<code>SharedPreferences</code>是一个接口，它定义了系列读写的接口，其实现类为<code>SharedPreferencesImpl</code>、在实际过程中，我们一般通过<code>Application、Activity、Service</code>的下面这个方法来获取<code>SP</code>对象：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">public SharedPreferences getSharedPreferences(String name, int mode)</div></pre></td></tr></table></figure></p>
+<p>来获取<code>SharedPreferences</code>实例，而它们最终都是调用到<code>ContextImpl</code>的<code>getSharedPreferences</code>方法，下面是整个调用的结构：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-7b1a073104001c1c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>在<code>ContextImpl</code>当中，<code>SharedPreferences</code>是以一个静态双重<code>ArrayMap</code>的结构来保存的：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">private static ArrayMap&lt;String, ArrayMap&lt;String, SharedPreferencesImpl&gt;&gt; sSharedPrefs;</div></pre></td></tr></table></figure></p>
+<p>下面，我们看一下获取<code>SP</code>实例的过程：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">public SharedPreferences getSharedPreferences(String name, int mode) &#123;</div><div class="line">    SharedPreferencesImpl sp;</div><div class="line">    synchronized (ContextImpl.class) &#123;</div><div class="line">        if (sSharedPrefs == null) &#123;</div><div class="line">            sSharedPrefs = new ArrayMap&lt;String, ArrayMap&lt;String, SharedPreferencesImpl&gt;&gt;();</div><div class="line">        &#125;</div><div class="line">        //1.第一个维度是包名.</div><div class="line">        final String packageName = getPackageName();</div><div class="line">        ArrayMap&lt;String, SharedPreferencesImpl&gt; packagePrefs = sSharedPrefs.get(packageName);</div><div class="line">        if (packagePrefs == null) &#123;</div><div class="line">            packagePrefs = new ArrayMap&lt;String, SharedPreferencesImpl&gt;();</div><div class="line">            sSharedPrefs.put(packageName, packagePrefs);</div><div class="line">        &#125;</div><div class="line">        //2.第二个维度就是调用get方法时传入的name，并且如果已经存在了那么直接返回</div><div class="line">        sp = packagePrefs.get(name);</div><div class="line">        if (sp == null) &#123;</div><div class="line">            File prefsFile = getSharedPrefsFile(name);</div><div class="line">            sp = new SharedPreferencesImpl(prefsFile, mode);</div><div class="line">            packagePrefs.put(name, sp);</div><div class="line">            return sp;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    return sp;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>在上面，我们看到<code>SharedPreferencesImpl</code>的构造传入了一个和<code>name</code>相关联的<code>File</code>，它就是我们在第一节当中所说的<code>xml</code>文件，在构造函数中，会去预先读取这个<code>xml</code>文件当中的内容：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">SharedPreferencesImpl(File file, int mode) &#123;</div><div class="line">        //..</div><div class="line">        startLoadFromDisk(); //读取xml文件的内容</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这里启动了一个异步的线程，需要注意的是这里会将标志位<code>mLoad</code>置为<code>false</code>，后面我们会谈到这个标志的作用：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">private void startLoadFromDisk() &#123;</div><div class="line">    synchronized (this) &#123;</div><div class="line">        mLoaded = false;</div><div class="line">    &#125;</div><div class="line">    new Thread(&quot;SharedPreferencesImpl-load&quot;) &#123;</div><div class="line">        public void run() &#123;</div><div class="line">            synchronized (SharedPreferencesImpl.this) &#123;</div><div class="line">                loadFromDiskLocked();</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;.start();</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>在<code>loadFromDiskLocked</code>中，将<code>xml</code>文件中的内容保存到<code>Map</code>当中，在读取完毕之后，唤醒之前有可能阻塞的读写线程：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">private Map&lt;String, Object&gt; mMap;</div><div class="line"></div><div class="line">private void loadFromDiskLocked() &#123;</div><div class="line">    //1.如果已经在加载，那么返回.</div><div class="line">    if (mLoaded) &#123;</div><div class="line">        return;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    //...</div><div class="line">    //2.最终保存到map当中</div><div class="line">    map = XmlUtils.readMapXml(str);</div><div class="line">    mMap = map;</div><div class="line"></div><div class="line">    //...</div><div class="line">    //3.由于读写操作只有在mLoaded变量为true时才可进行，因此它们有可能阻塞在调用读写操作的方法上，因此这里需要唤醒它们。</div><div class="line">    notifyAll();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>从<code>SP</code>对象的获取过程来看，我们可以得出下面几个结论：</p>
+<ul>
+<li>与某个<code>name</code>所对应的<code>SP</code>对象需要等到调用<code>getSharedPreferences</code>才会被创建</li>
+<li>对于同一进程而言，在<code>Activity/Application/Service</code>获取<code>SP</code>对象时，如果<code>name</code>相同，它们实际上获取到的是同一个<code>SP</code>对象</li>
+<li>由于使用的是静态容器来保存，因此即使<code>Activity/Service</code>销毁了，它之前创建的<code>SP</code>对象也不会被释放，而<code>SP</code>中的数据又是用<code>Map</code>来保存的，也就是说，我们只要调用了某个<code>name</code>相关联的<code>getSharedPreferences</code>方法，那么和该<code>name</code>对应的<code>xml</code>文件中的数据都会被读到内存当中，并且一直到进程被结束。</li>
+</ul>
+<h2 id="2-2-通过-SharedPreferences-进行读取操作"><a href="#2-2-通过-SharedPreferences-进行读取操作" class="headerlink" title="2.2 通过 SharedPreferences 进行读取操作"></a>2.2 通过 SharedPreferences 进行读取操作</h2><p>读取的操作很简单，它其实就是从之间预先读取的<code>mMap</code>当中去取出对应的数据，以<code>getBoolean</code>为例：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">public boolean getBoolean(String key, boolean defValue) &#123;</div><div class="line">    synchronized (this) &#123;</div><div class="line">        awaitLoadedLocked();</div><div class="line">        Boolean v = (Boolean)mMap.get(key);</div><div class="line">        return v != null ? v : defValue;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这里唯一需要关心的是<code>awaitLoadedLocked</code>方法：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">private void awaitLoadedLocked() &#123;</div><div class="line">    //这里如果判断没有加载完毕，那么会进入无限等待状态</div><div class="line">    while (!mLoaded) &#123;</div><div class="line">        try &#123;</div><div class="line">            wait();</div><div class="line">        &#125; catch (InterruptedException unused) &#123;&#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>在这个方法中，会去检查<code>mLoaded</code>标志位是否为<code>true</code>，如果不为<code>true</code>，那么说明没有加载完毕，该线程会释放它所持有的锁，进入等待状态，直到<code>loadFromDiskLocked</code>加载完<code>xml</code>文件中的内容调用<code>notifyAll()</code>后，该线程才被唤醒。</p>
+<p>从读取操作来看，我们可以得出以下两个结论：</p>
+<ul>
+<li>任何时刻读取操作，读取的都是内存中的值，而并不是<code>xml</code>文件的值。</li>
+<li>在调用读取方法时，如果构造函数中的预读取线程没有执行完毕，那么将会导致读取的线程进入等待状态。</li>
+</ul>
+<h2 id="2-3-通过-SharedPreferences-进行写入操作"><a href="#2-3-通过-SharedPreferences-进行写入操作" class="headerlink" title="2.3 通过 SharedPreferences 进行写入操作"></a>2.3 通过 SharedPreferences 进行写入操作</h2><h3 id="2-3-1-获取-EditorImpl"><a href="#2-3-1-获取-EditorImpl" class="headerlink" title="2.3.1 获取 EditorImpl"></a>2.3.1 获取 EditorImpl</h3><p>当我们需要通过<code>SharedPreferences</code>写入信息时，那么首先需要通过<code>.edit()</code>获得一个<code>Editor</code>对象，这里和读取操作类似，都是需要等到预加载的线程执行完毕：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">public Editor edit() &#123;</div><div class="line">    synchronized (this) &#123;</div><div class="line">        awaitLoadedLocked();</div><div class="line">    &#125;</div><div class="line">    return new EditorImpl();</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><code>Editor</code>的实现类为<code>EditorImpl</code>，以<code>putString</code>为例：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"> public final class EditorImpl implements Editor &#123;</div><div class="line"></div><div class="line">     private final Map&lt;String, Object&gt; mModified = Maps.newHashMap();</div><div class="line">     private boolean mClear = false;</div><div class="line"></div><div class="line">     public Editor putString(String key, @Nullable String value) &#123;</div><div class="line">         synchronized (this) &#123;</div><div class="line">             mModified.put(key, value);</div><div class="line">             return this;</div><div class="line">         &#125;</div><div class="line">     &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>由上面的代码可以看出，当我们调用<code>Editor</code>的<code>putXXX</code>方法时，实际上并没有保存到<code>SP</code>的<code>mMap</code>当中，而仅仅是保存到通过<code>.edit()</code>返回的<code>EditorImpl</code>的临时变量当中。</p>
+<h3 id="2-3-2-apply-和-commit-方法"><a href="#2-3-2-apply-和-commit-方法" class="headerlink" title="2.3.2 apply 和 commit 方法"></a>2.3.2 apply 和 commit 方法</h3><p>我们通过<code>editor</code>写入的数据，最终需要等到调用<code>editor</code>的<code>apply</code>和<code>commit</code>方法，才会写入到内存和<code>xml</code>这两个地方。</p>
+<h4 id="a-apply"><a href="#a-apply" class="headerlink" title="(a) apply"></a>(a) apply</h4><p>下面，我们先看比较常用的<code>apply</code>方法：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">public void apply() &#123;</div><div class="line">    //1.将修改操作提交到内存当中.</div><div class="line">    final MemoryCommitResult mcr = commitToMemory();</div><div class="line">   </div><div class="line">    //2.写入文件当中</div><div class="line">    SharedPreferencesImpl.this.enqueueDiskWrite(mcr, postWriteRunnable); //postWriteRunnable在写入文件完成后进行一些收尾操作.</div><div class="line">    </div><div class="line">    //3.只要写入到内存当中，就通知监听者.</div><div class="line">    notifyListeners(mcr);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>整个<code>apply</code>分为三个步骤：</p>
+<ul>
+<li>通过<code>commitToMemory</code>写入到内存中</li>
+<li>通过<code>enqueueDiskWrite</code>写入到磁盘中</li>
+<li>通知监听者</li>
+</ul>
+<p>其中第一个步骤很好理解，就是根据<code>editor</code>中的内容，确定哪些是需要更新的数据，然后把<code>SP</code>当中的<code>mMap</code>变量进行更新，之后将变化的内容封装成<code>MemoryCommitResult</code>结构体。</p>
+<p>我们主要看一下第二步，是如何写入磁盘当中的：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">private void enqueueDiskWrite(final MemoryCommitResult mcr,</div><div class="line">                              final Runnable postWriteRunnable) &#123;</div><div class="line">    //1.写入磁盘任务的runnable.</div><div class="line">    final Runnable writeToDiskRunnable = new Runnable() &#123;</div><div class="line">            public void run() &#123;</div><div class="line">                //1.1 写入磁盘</div><div class="line">                synchronized (mWritingToDiskLock) &#123;</div><div class="line">                    writeToFile(mcr);</div><div class="line">                &#125;</div><div class="line">                //....执行收尾操作.</div><div class="line">                if (postWriteRunnable != null) &#123;</div><div class="line">                    postWriteRunnable.run();</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;;</div><div class="line">    </div><div class="line">    //2.这里如果是通过apply方法调用过来的，那么为false</div><div class="line">    final boolean isFromSyncCommit = (postWriteRunnable == null);</div><div class="line"></div><div class="line">    if (isFromSyncCommit) &#123; //apply 方法不走这里</div><div class="line">            //...</div><div class="line">            writeToDiskRunnable.run();</div><div class="line">            return;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    QueuedWork.singleThreadExecutor().execute(writeToDiskRunnable);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>可以看出，如果调用<code>apply</code>方法，那么对于<code>xml</code>文件的写入是在异步线程当中进行的。</p>
+<h4 id="b-commit"><a href="#b-commit" class="headerlink" title="(b) commit"></a>(b) commit</h4><p>如果调用的<code>commit</code>方法，那么执行的是如下操作：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">public boolean commit() &#123;</div><div class="line">     //1.写入内存</div><div class="line">     MemoryCommitResult mcr = commitToMemory();</div><div class="line">     //2.写入文件</div><div class="line">     SharedPreferencesImpl.this.enqueueDiskWrite(mcr, null); //由于是同步进行，所以把收尾操作放到Runnable当中.</div><div class="line">     //在这里执行收尾操作..</div><div class="line">     //3.通知监听</div><div class="line">     notifyListeners(mcr);</div><div class="line">     return mcr.writeToDiskResult;</div><div class="line"> &#125;</div></pre></td></tr></table></figure></p>
+<p>当使用<code>commit</code>方法时，和<code>apply</code>类似，都是三步操作，只不过第二步在写入文件的时候，传入的<code>Runnable</code>为<code>null</code>，因此，对于写入文件的操作是同步的，因此，如果我们在主线程当中调用了<code>commit</code>方法，那么实际上是在主线程进行<code>IO</code>操作。</p>
+<h4 id="c-回调时机"><a href="#c-回调时机" class="headerlink" title="(c) 回调时机"></a>(c) 回调时机</h4><ul>
+<li>对于<code>apply</code>方法，由于它对于文件的写入是异步的，但是<code>notifyListener</code>方法不会等到真正写入完成时才通知监听者，因此监听者在收到回调或者<code>apply</code>返回时，对于<code>SP</code>数据的改变只是写入到了内存当中，并没有写入到文件当中。</li>
+<li>对于<code>commit</code>方法，由于它对于文件的写入是同步的，因此可以保证监听者收到回调时或者<code>commit</code>方法返回后，改变已经被写入到了文件当中。</li>
+</ul>
+<h2 id="2-4-监听-SP-的变化"><a href="#2-4-监听-SP-的变化" class="headerlink" title="2.4 监听 SP 的变化"></a>2.4 监听 SP 的变化</h2><p>如果希望监听<code>SP</code>的变化，那么可以通过下面的这两个方法：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">public void registerOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener listener) &#123;</div><div class="line">    synchronized(this) &#123;</div><div class="line">        mListeners.put(listener, mContent);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">public void unregisterOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener listener) &#123;</div><div class="line">    synchronized(this) &#123;</div><div class="line">        mListeners.remove(listener);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>由于对应于<code>Name</code>的<code>SP</code>在进程中是实际上是一个单例模式，因此，我们可以做到在进程中的任何地方改变<code>SP</code>的数据，都能收到监听。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/05/03/多线程/多线程知识梳理(3)---synchronized-三部曲之锁优化/" rel="next" title="多线程知识梳理(3) - synchronized 三部曲之锁优化">
+                <i class="fa fa-chevron-left"></i> 多线程知识梳理(3) - synchronized 三部曲之锁优化
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/05/05/多线程/多线程知识梳理(4)---synchronized-三部曲之等待-通知模型/" rel="prev" title="多线程知识梳理(4) - synchronized 三部曲之等待/通知模型">
+                多线程知识梳理(4) - synchronized 三部曲之等待/通知模型 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="John Doe" />
+          <p class="site-author-name" itemprop="name">John Doe</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">104</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">23</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、概述"><span class="nav-number">1.</span> <span class="nav-text">一、概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、SP-源码解析"><span class="nav-number">2.</span> <span class="nav-text">二、SP 源码解析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-获取-SharedPreferences-对象"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 获取 SharedPreferences 对象</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-通过-SharedPreferences-进行读取操作"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 通过 SharedPreferences 进行读取操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-通过-SharedPreferences-进行写入操作"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 通过 SharedPreferences 进行写入操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-1-获取-EditorImpl"><span class="nav-number">2.3.1.</span> <span class="nav-text">2.3.1 获取 EditorImpl</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-2-apply-和-commit-方法"><span class="nav-number">2.3.2.</span> <span class="nav-text">2.3.2 apply 和 commit 方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#a-apply"><span class="nav-number">2.3.2.1.</span> <span class="nav-text">(a) apply</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#b-commit"><span class="nav-number">2.3.2.2.</span> <span class="nav-text">(b) commit</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#c-回调时机"><span class="nav-number">2.3.2.3.</span> <span class="nav-text">(c) 回调时机</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-4-监听-SP-的变化"><span class="nav-number">2.4.</span> <span class="nav-text">2.4 监听 SP 的变化</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

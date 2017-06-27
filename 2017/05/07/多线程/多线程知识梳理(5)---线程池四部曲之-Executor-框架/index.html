@@ -1,0 +1,748 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="一、Executor 框架的调度模型1.1 目的在平时的开发中，我们经常需要将一些耗时的任务放到异步线程当中进行处理，而线程的创建和销毁都是需要耗费资源的，设计Executor框架的目的就是为了在上层能够对这些异步任务进行有效地管理和调度。 1.2 调度模型我们可以把Executor框架想象成一个公司，开发者所需要完成的任务则是一个订单，那么任务的执行可以分解为下面这个过程：  开发者将订单提交给">
+<meta property="og:type" content="article">
+<meta property="og:title" content="多线程知识梳理(5) - 线程池四部曲之 Executor 框架">
+<meta property="og:url" content="http://yoursite.com/2017/05/07/多线程/多线程知识梳理(5)---线程池四部曲之-Executor-框架/index.html">
+<meta property="og:site_name" content="泽毛">
+<meta property="og:description" content="一、Executor 框架的调度模型1.1 目的在平时的开发中，我们经常需要将一些耗时的任务放到异步线程当中进行处理，而线程的创建和销毁都是需要耗费资源的，设计Executor框架的目的就是为了在上层能够对这些异步任务进行有效地管理和调度。 1.2 调度模型我们可以把Executor框架想象成一个公司，开发者所需要完成的任务则是一个订单，那么任务的执行可以分解为下面这个过程：  开发者将订单提交给">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-ec7a0386ae3d7e4a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-0403d0ff079a2b6f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-71c5ca83e454065f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-3b90781390463d8e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2017-06-27T14:13:21.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="多线程知识梳理(5) - 线程池四部曲之 Executor 框架">
+<meta name="twitter:description" content="一、Executor 框架的调度模型1.1 目的在平时的开发中，我们经常需要将一些耗时的任务放到异步线程当中进行处理，而线程的创建和销毁都是需要耗费资源的，设计Executor框架的目的就是为了在上层能够对这些异步任务进行有效地管理和调度。 1.2 调度模型我们可以把Executor框架想象成一个公司，开发者所需要完成的任务则是一个订单，那么任务的执行可以分解为下面这个过程：  开发者将订单提交给">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-ec7a0386ae3d7e4a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/05/07/多线程/多线程知识梳理(5)---线程池四部曲之-Executor-框架/"/>
+
+
+
+
+
+  <title>多线程知识梳理(5) - 线程池四部曲之 Executor 框架 | 泽毛</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">泽毛</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/05/07/多线程/多线程知识梳理(5)---线程池四部曲之-Executor-框架/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="泽毛">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">多线程知识梳理(5) - 线程池四部曲之 Executor 框架</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-07T00:12:00+08:00">
+                2017-05-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/多线程知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">多线程知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="一、Executor-框架的调度模型"><a href="#一、Executor-框架的调度模型" class="headerlink" title="一、Executor 框架的调度模型"></a>一、Executor 框架的调度模型</h1><h2 id="1-1-目的"><a href="#1-1-目的" class="headerlink" title="1.1 目的"></a>1.1 目的</h2><p>在平时的开发中，我们经常需要将一些耗时的任务放到异步线程当中进行处理，而线程的创建和销毁都是需要耗费资源的，设计<code>Executor</code>框架的目的就是为了在上层能够对这些异步任务进行有效地管理和调度。</p>
+<h2 id="1-2-调度模型"><a href="#1-2-调度模型" class="headerlink" title="1.2 调度模型"></a>1.2 调度模型</h2><p>我们可以把<code>Executor</code>框架想象成一个公司，开发者所需要完成的任务则是一个订单，那么任务的执行可以分解为下面这个过程：</p>
+<ul>
+<li>开发者将订单提交给公司</li>
+<li>公司把订单指派给对应的员工</li>
+<li>公司员工将订单交给工厂</li>
+<li>工厂员工执行订单</li>
+</ul>
+<p>订单、公司、公司员工、工厂和工厂员工这几个概念的映射如下图所示：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-ec7a0386ae3d7e4a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<p><code>Executor</code>框架对于内部线程的调度过程，就可以理解为公司对于员工的管理机制，而这一过程对于开发者是不可见的。</p>
+<h1 id="二、Executor-框架"><a href="#二、Executor-框架" class="headerlink" title="二、Executor 框架"></a>二、Executor 框架</h1><p>整个<code>Executor</code>的框架主要由三个部分组成：</p>
+<ul>
+<li><code>FutureTask</code>：任务</li>
+<li><code>ThreadPoolExecutor</code>：常规任务管理者</li>
+<li><code>ScheduledThreadPoolExecutor</code>：周期任务管理者</li>
+</ul>
+<p>下面，我们就分这三个部分来简要介绍一下涉及到的相关类。</p>
+<h2 id="2-1-任务"><a href="#2-1-任务" class="headerlink" title="2.1 任务"></a>2.1 任务</h2><p>与任务相关的类的继承关系如下图所示：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-0403d0ff079a2b6f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<p>当我们向<code>ThreadPoolExecutor</code>或者<code>ScheduledThreadPoolExecutor</code>提交任务时，有以下四种方式：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">public void execute(Runnable command)</div><div class="line"></div><div class="line">public Future&lt;?&gt; submit(Runnable task)</div><div class="line">public &lt;T&gt; Future&lt;T&gt; submit(Runnable task, T result)</div><div class="line">public &lt;T&gt; Future&lt;T&gt; submit(Callable&lt;T&gt; task)</div></pre></td></tr></table></figure></p>
+<ul>
+<li>当通过<code>execute</code>方法提交一个<code>Runnable</code>的实现类时，不会得到返回的结果</li>
+<li>当通过<code>submit</code>方法提交一个<code>Runnable</code>或者<code>Callable</code>的实现类时，会返回一个<code>Future</code>的实现类，在目前<code>JDK</code>的实现当中：<ul>
+<li>提交到<code>ThreadPoolExecutor</code>，返回<code>FutureTask</code></li>
+<li>提交到<code>ScheduledThreadPoolExecutor</code>，返回<code>ScheduledFutureTask</code></li>
+</ul>
+</li>
+</ul>
+<p><code>Future</code>接口所提供的方法提供了下面几个功能：</p>
+<ul>
+<li>通过<code>isCancelled()</code>和<code>isDone()</code>方法来获取任务当前的状态</li>
+<li>通过<code>cancel()</code>来取消任务的执行</li>
+<li>通过<code>get()</code>方法来阻塞地获取任务的执行结果</li>
+</ul>
+<h2 id="2-2-常规任务管理者"><a href="#2-2-常规任务管理者" class="headerlink" title="2.2 常规任务管理者"></a>2.2 常规任务管理者</h2><p>与常规任务执行者相关的类的继承关系如下：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-71c5ca83e454065f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br><code>ThreadPoolExecutor</code>通常作为常规任务的管理者，根据线程池的大小、工作队列的区别，可以实现不同的任务管理策略。</p>
+<p>一般情况下，通常使用工厂类<code>Executors</code>来创建不同类型<code>ThreadPoolExecutor</code>：</p>
+<ul>
+<li><code>FixedThreadPool</code>：为了满足限制当前线程数量的场景，适用于负载比较重的服务器。</li>
+<li><code>SingleThreadPoolExecutor</code>：适用于需要保证顺序地执行各个任务，在任意时间点，不会有多个活动的应用场景。</li>
+<li><code>CacheThreadPool</code>：大小无界的线程池，适用于执行很多的短期异步任务的小程序或者是负载较轻的服务器。</li>
+</ul>
+<h2 id="2-3-周期任务管理者"><a href="#2-3-周期任务管理者" class="headerlink" title="2.3 周期任务管理者"></a>2.3 周期任务管理者</h2><p>与周期任务有关的类的继承关系如下：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-3b90781390463d8e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<p><code>ScheduledThreadPoolExecutor</code>相比于<code>ThreadPoolExecutor</code>，它主要用来在给定的延迟之后运行任务，或者定期执行任务。和<code>ThreadPoolExecutor</code>类似，我们也可以通过<code>Executors</code>类来获得它不同的实现：</p>
+<ul>
+<li><code>ScheduledThreadPoolExecutor</code>：适用于需要多个后台线程执行周期任务，同时为了满足资源管理的需求而需要限制后台线程的数量的应用场景。</li>
+<li><code>SingleThreadScheduledExecutor</code>：适用于需要单个后台线程执行周期任务，同时需要保证顺序地执行各个任务的应用场景。</li>
+</ul>
+<h1 id="三、小结"><a href="#三、小结" class="headerlink" title="三、小结"></a>三、小结</h1><p>通过<code>Executor</code>框架，就可以把工作单元与执行机制进行分离，开发者只需要把需要执行的任务通过<code>Runnable</code>或者<code>Callable</code>封装成为执行单元，具体的执行机制则由<code>Executor</code>的实现类去处理，免去了开发者对于任务的管理成本。</p>
+<p>这篇文章，主要是对<code>Executor</code>框架进行了一个简要的介绍，之后我们会深入到第二节讨论的三个部分当中，分析<code>Executor</code>内部对于线程管理的实现机制。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/05/05/多线程/多线程知识梳理(4)---synchronized-三部曲之等待-通知模型/" rel="next" title="多线程知识梳理(4) - synchronized 三部曲之等待/通知模型">
+                <i class="fa fa-chevron-left"></i> 多线程知识梳理(4) - synchronized 三部曲之等待/通知模型
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/05/09/多线程/多线程知识梳理(6)---线程池四部曲之-ThreadPoolExecutor/" rel="prev" title="多线程知识梳理(6) - 线程池四部曲之 ThreadPoolExecutor">
+                多线程知识梳理(6) - 线程池四部曲之 ThreadPoolExecutor <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="John Doe" />
+          <p class="site-author-name" itemprop="name">John Doe</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">104</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">23</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、Executor-框架的调度模型"><span class="nav-number">1.</span> <span class="nav-text">一、Executor 框架的调度模型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-1-目的"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 目的</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-2-调度模型"><span class="nav-number">1.2.</span> <span class="nav-text">1.2 调度模型</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、Executor-框架"><span class="nav-number">2.</span> <span class="nav-text">二、Executor 框架</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-任务"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 任务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-常规任务管理者"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 常规任务管理者</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-周期任务管理者"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 周期任务管理者</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、小结"><span class="nav-number">3.</span> <span class="nav-text">三、小结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

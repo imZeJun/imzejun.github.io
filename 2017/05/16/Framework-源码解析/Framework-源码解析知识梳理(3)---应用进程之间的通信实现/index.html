@@ -1,0 +1,766 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="一、前言在 Framework 源码解析知识梳理(1) - 应用进程与 AMS 的通信实现 和 Framework 源码解析知识梳理(2) - 应用进程与 WMS 的通信实现 这两篇文章中，我们介绍了应用进程与AMS以及WMS之间的通信实现，但是逻辑还是比较绕的，为了方便大家更好地理解，我们介绍一下大家见得比较多的应用进程间通信的实现。 二、例子说起应用进程之间的通信，相信大家都不陌生，应用进程之">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Framework 源码解析知识梳理(3) - 应用进程之间的通信实现">
+<meta property="og:url" content="http://yoursite.com/2017/05/16/Framework-源码解析/Framework-源码解析知识梳理(3)---应用进程之间的通信实现/index.html">
+<meta property="og:site_name" content="泽毛">
+<meta property="og:description" content="一、前言在 Framework 源码解析知识梳理(1) - 应用进程与 AMS 的通信实现 和 Framework 源码解析知识梳理(2) - 应用进程与 WMS 的通信实现 这两篇文章中，我们介绍了应用进程与AMS以及WMS之间的通信实现，但是逻辑还是比较绕的，为了方便大家更好地理解，我们介绍一下大家见得比较多的应用进程间通信的实现。 二、例子说起应用进程之间的通信，相信大家都不陌生，应用进程之">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-0560bf55a03ec35c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-ba7f5e859dc1712b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-ceb3c27ef9002926.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-5eb19c93ac9952cf.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-61590cfbe9a2b590.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-5c0253a3ba2bf9c0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-f5fd5a8f97f37bed.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-806450199d906587.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-64d53a0cfc5c4ea0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-73279f7130b3cb9c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-ea825fdb0d972006.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-d8b382d739c2337c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2017-06-27T14:49:30.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Framework 源码解析知识梳理(3) - 应用进程之间的通信实现">
+<meta name="twitter:description" content="一、前言在 Framework 源码解析知识梳理(1) - 应用进程与 AMS 的通信实现 和 Framework 源码解析知识梳理(2) - 应用进程与 WMS 的通信实现 这两篇文章中，我们介绍了应用进程与AMS以及WMS之间的通信实现，但是逻辑还是比较绕的，为了方便大家更好地理解，我们介绍一下大家见得比较多的应用进程间通信的实现。 二、例子说起应用进程之间的通信，相信大家都不陌生，应用进程之">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-0560bf55a03ec35c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/05/16/Framework-源码解析/Framework-源码解析知识梳理(3)---应用进程之间的通信实现/"/>
+
+
+
+
+
+  <title>Framework 源码解析知识梳理(3) - 应用进程之间的通信实现 | 泽毛</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">泽毛</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/05/16/Framework-源码解析/Framework-源码解析知识梳理(3)---应用进程之间的通信实现/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="泽毛">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Framework 源码解析知识梳理(3) - 应用进程之间的通信实现</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-16T23:49:00+08:00">
+                2017-05-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Framework-源码解析知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">Framework 源码解析知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="一、前言"><a href="#一、前言" class="headerlink" title="一、前言"></a>一、前言</h1><p>在 <a href="http://www.jianshu.com/p/f26a76e19a2d" target="_blank" rel="external">Framework 源码解析知识梳理(1) - 应用进程与 AMS 的通信实现</a> 和 <a href="http://www.jianshu.com/p/0fd68bf4aa5b" target="_blank" rel="external">Framework 源码解析知识梳理(2) - 应用进程与 WMS 的通信实现</a> 这两篇文章中，我们介绍了应用进程与<code>AMS</code>以及<code>WMS</code>之间的通信实现，但是逻辑还是比较绕的，为了方便大家更好地理解，我们介绍一下大家见得比较多的应用进程间通信的实现。</p>
+<h1 id="二、例子"><a href="#二、例子" class="headerlink" title="二、例子"></a>二、例子</h1><p>说起应用进程之间的通信，相信大家都不陌生，应用进程之间通信最常用的方式就是<code>AIDL</code>，下面，我们先演示一个<code>AIDL</code>的简单例子，接下来，我们再分析它的内部实现。</p>
+<h2 id="2-1-服务端"><a href="#2-1-服务端" class="headerlink" title="2.1 服务端"></a>2.1 服务端</h2><h3 id="2-1-1-编写-AIDL-文件"><a href="#2-1-1-编写-AIDL-文件" class="headerlink" title="2.1.1 编写 AIDL 文件"></a>2.1.1 编写 AIDL 文件</h3><p>第一件事，就是服务端需要声明自己可以为客户端提供什么功能，而这一声明则需要通过一个<code>.aidl</code>文件来实现，我们先简要介绍介绍一下<code>AIDL</code>文件：</p>
+<ul>
+<li><code>AIDL</code>文件的后缀为<code>*.aidl</code></li>
+<li>对于<code>AIDL</code>默认支持的数据类型，是不需要导入包的，这些默认的数据类型包括：<ul>
+<li>基本数据类型：<code>byte/short/int/long/float/double/boolean/char</code></li>
+<li><code>String/CharSequence</code></li>
+<li><code>List&lt;T&gt;</code>：其中<code>T</code>必须是<code>AIDL</code>支持的类型，或者是其它<code>AIDL</code>生成的接口，或者是实现了<code>Parcelable</code>接口的对象，<code>List</code>支持泛型</li>
+<li><code>Map</code>：它的要求和<code>List</code>类似，但是不支持泛型</li>
+</ul>
+</li>
+<li><code>Tag</code>标签：对于接口方法中的形参，我们需要用<code>in/out/inout</code>三种关键词去修饰：<ul>
+<li><code>in</code>：表示服务端会收到客户端的完整对象，但是在服务端对这个对象的修改不会同步给客户端</li>
+<li><code>out</code>：表示服务端会收到客户端的空对象，它对这个对象的修改会同步到客户端</li>
+<li><code>inout</code>：表示服务端会收到客户端的完整对象，它对这个对象的修改会同步到客户端</li>
+</ul>
+</li>
+</ul>
+<p>说了这么多，我们最常见的需求无非就是两个：让复杂对象实现<code>Parcelable</code>接口实现传输以及定义接口方法。</p>
+<p><strong>(1) Parcelable 的实现</strong></p>
+<p>我们可以很方便地通过<code>AS</code>插件来让某个对象实现<code>Parcelable</code>接口，并自动补全要实现的方法：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-0560bf55a03ec35c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>安装完之后重启，我们原本的对象为：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">public class InObject &#123;</div><div class="line"></div><div class="line">    private int inData;</div><div class="line"></div><div class="line">    public int getInData() &#123;</div><div class="line">        return inData;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void setInData(int inData) &#123;</div><div class="line">        this.inData = inData;</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>在文件的空白处，点击右键<code>Generate -&gt; Parcelable</code>：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-ba7f5e859dc1712b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>它就会帮我们实现<code>Parcelable</code>中的接口：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div></pre></td><td class="code"><pre><div class="line">public class InObject implements Parcelable &#123;</div><div class="line"></div><div class="line">    private int inData;</div><div class="line"></div><div class="line">    public int getInData() &#123;</div><div class="line">        return inData;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void setInData(int inData) &#123;</div><div class="line">        this.inData = inData;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public InObject() &#123;&#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public int describeContents() &#123;</div><div class="line">        return 0;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void writeToParcel(Parcel dest, int flags) &#123;</div><div class="line">        dest.writeInt(this.inData);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    protected InObject(Parcel in) &#123;</div><div class="line">        this.inData = in.readInt();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static final Parcelable.Creator&lt;InObject&gt; CREATOR = new Parcelable.Creator&lt;InObject&gt;() &#123;</div><div class="line">        @Override</div><div class="line">        public InObject createFromParcel(Parcel source) &#123;</div><div class="line">            return new InObject(source);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        @Override</div><div class="line">        public InObject[] newArray(int size) &#123;</div><div class="line">            return new InObject[size];</div><div class="line">        &#125;</div><div class="line">    &#125;;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><strong>(2) 编写 AIDL 文件</strong></p>
+<p>点击<code>File -&gt; New -&gt; AIDL -&gt; AIDL File</code>之后，会多出一个名叫<code>aidl</code>的文件夹，之后我们所有需要用到的<code>aidl</code>文件都被存放在这里：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-ceb3c27ef9002926.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>初始时候，<code>AS</code>为我们生成的<code>AIDL</code>文件为：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">// AIDLInterface.aidl</div><div class="line">package com.demo.lizejun.binderdemoclient;</div><div class="line"></div><div class="line">// Declare any non-default types here with import statements</div><div class="line"></div><div class="line">interface AIDLInterface &#123;</div><div class="line">    /**</div><div class="line">     * Demonstrates some basic types that you can use as parameters</div><div class="line">     * and return values in AIDL.</div><div class="line">     */</div><div class="line">    void basicTypes(int anInt, long aLong, boolean aBoolean, float aFloat,</div><div class="line">            double aDouble, String aString);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>当我们编译之后，就会在下面这个路径中生成一个<code>Java</code>文件：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div></pre></td><td class="code"><pre><div class="line">/*</div><div class="line"> * This file is auto-generated.  DO NOT MODIFY.</div><div class="line"> * Original file: /home/lizejun/Repository/RepoGithub/BinderDemo/app/src/main/aidl/com/demo/lizejun/binderdemoclient/AIDLInterface.aidl</div><div class="line"> */</div><div class="line">package com.demo.lizejun.binderdemoclient;</div><div class="line">// Declare any non-default types here with import statements</div><div class="line"></div><div class="line">public interface AIDLInterface extends android.os.IInterface &#123;</div><div class="line">    /**</div><div class="line">     * Local-side IPC implementation stub class.</div><div class="line">     */</div><div class="line">    public static abstract class Stub extends android.os.Binder implements com.demo.lizejun.binderdemoclient.AIDLInterface &#123;</div><div class="line">        private static final java.lang.String DESCRIPTOR = &quot;com.demo.lizejun.binderdemoclient.AIDLInterface&quot;;</div><div class="line"></div><div class="line">        /**</div><div class="line">         * Construct the stub at attach it to the interface.</div><div class="line">         */</div><div class="line">        public Stub() &#123;</div><div class="line">            this.attachInterface(this, DESCRIPTOR);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        /**</div><div class="line">         * Cast an IBinder object into an com.demo.lizejun.binderdemoclient.AIDLInterface interface,</div><div class="line">         * generating a proxy if needed.</div><div class="line">         */</div><div class="line">        public static com.demo.lizejun.binderdemoclient.AIDLInterface asInterface(android.os.IBinder obj) &#123;</div><div class="line">            if ((obj == null)) &#123;</div><div class="line">                return null;</div><div class="line">            &#125;</div><div class="line">            android.os.IInterface iin = obj.queryLocalInterface(DESCRIPTOR);</div><div class="line">            if (((iin != null) &amp;&amp; (iin instanceof com.demo.lizejun.binderdemoclient.AIDLInterface))) &#123;</div><div class="line">                return ((com.demo.lizejun.binderdemoclient.AIDLInterface) iin);</div><div class="line">            &#125;</div><div class="line">            return new com.demo.lizejun.binderdemoclient.AIDLInterface.Stub.Proxy(obj);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        @Override</div><div class="line">        public android.os.IBinder asBinder() &#123;</div><div class="line">            return this;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        @Override</div><div class="line">        public boolean onTransact(int code, android.os.Parcel data, android.os.Parcel reply, int flags) throws android.os.RemoteException &#123;</div><div class="line">            switch (code) &#123;</div><div class="line">                case INTERFACE_TRANSACTION: &#123;</div><div class="line">                    reply.writeString(DESCRIPTOR);</div><div class="line">                    return true;</div><div class="line">                &#125;</div><div class="line">                case TRANSACTION_basicTypes: &#123;</div><div class="line">                    data.enforceInterface(DESCRIPTOR);</div><div class="line">                    int _arg0;</div><div class="line">                    _arg0 = data.readInt();</div><div class="line">                    long _arg1;</div><div class="line">                    _arg1 = data.readLong();</div><div class="line">                    boolean _arg2;</div><div class="line">                    _arg2 = (0 != data.readInt());</div><div class="line">                    float _arg3;</div><div class="line">                    _arg3 = data.readFloat();</div><div class="line">                    double _arg4;</div><div class="line">                    _arg4 = data.readDouble();</div><div class="line">                    java.lang.String _arg5;</div><div class="line">                    _arg5 = data.readString();</div><div class="line">                    this.basicTypes(_arg0, _arg1, _arg2, _arg3, _arg4, _arg5);</div><div class="line">                    reply.writeNoException();</div><div class="line">                    return true;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">            return super.onTransact(code, data, reply, flags);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        private static class Proxy implements com.demo.lizejun.binderdemoclient.AIDLInterface &#123;</div><div class="line">            private android.os.IBinder mRemote;</div><div class="line"></div><div class="line">            Proxy(android.os.IBinder remote) &#123;</div><div class="line">                mRemote = remote;</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            @Override</div><div class="line">            public android.os.IBinder asBinder() &#123;</div><div class="line">                return mRemote;</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            public java.lang.String getInterfaceDescriptor() &#123;</div><div class="line">                return DESCRIPTOR;</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            /**</div><div class="line">             * Demonstrates some basic types that you can use as parameters</div><div class="line">             * and return values in AIDL.</div><div class="line">             */</div><div class="line">            @Override</div><div class="line">            public void basicTypes(int anInt, long aLong, boolean aBoolean, float aFloat, double aDouble, java.lang.String aString) throws android.os.RemoteException &#123;</div><div class="line">                android.os.Parcel _data = android.os.Parcel.obtain();</div><div class="line">                android.os.Parcel _reply = android.os.Parcel.obtain();</div><div class="line">                try &#123;</div><div class="line">                    _data.writeInterfaceToken(DESCRIPTOR);</div><div class="line">                    _data.writeInt(anInt);</div><div class="line">                    _data.writeLong(aLong);</div><div class="line">                    _data.writeInt(((aBoolean) ? (1) : (0)));</div><div class="line">                    _data.writeFloat(aFloat);</div><div class="line">                    _data.writeDouble(aDouble);</div><div class="line">                    _data.writeString(aString);</div><div class="line">                    mRemote.transact(Stub.TRANSACTION_basicTypes, _data, _reply, 0);</div><div class="line">                    _reply.readException();</div><div class="line">                &#125; finally &#123;</div><div class="line">                    _reply.recycle();</div><div class="line">                    _data.recycle();</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        static final int TRANSACTION_basicTypes = (android.os.IBinder.FIRST_CALL_TRANSACTION + 0);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /**</div><div class="line">     * Demonstrates some basic types that you can use as parameters</div><div class="line">     * and return values in AIDL.</div><div class="line">     */</div><div class="line">    public void basicTypes(int anInt, long aLong, boolean aBoolean, float aFloat, double aDouble, java.lang.String aString) throws android.os.RemoteException;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>整个结构图为：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-5eb19c93ac9952cf.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>有没有感觉在 <a href="http://www.jianshu.com/p/f26a76e19a2d" target="_blank" rel="external">Framework 源码解析知识梳理(1) - 应用进程与 AMS 的通信实现</a> 和 <a href="http://www.jianshu.com/p/0fd68bf4aa5b" target="_blank" rel="external">Framework 源码解析知识梳理(2) - 应用进程与 WMS 的通信实现</a> 中也见到过类似的东西 <code>asInterface/asBinder/transact/onTransact/Stub/Proxy...</code>，这个我们之后再来解释，下面我们介绍服务端的第二步操作。</p>
+<h3 id="2-1-2-编写-Service"><a href="#2-1-2-编写-Service" class="headerlink" title="2.1.2 编写 Service　"></a>2.1.2 编写 Service　</h3><p>既然服务端已经定义好了接口，那么接下来就服务端就需要实现这些接口：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">public class AIDLService extends Service &#123;</div><div class="line"></div><div class="line">    private final AIDLInterface.Stub mBinder = new AIDLInterface.Stub() &#123;</div><div class="line">        @Override</div><div class="line">        public void basicTypes(int anInt, long aLong, boolean aBoolean, float aFloat, double aDouble, String aString) throws RemoteException &#123;</div><div class="line">            Log.d(&quot;basicTypes&quot;, &quot;basicTypes&quot;);</div><div class="line">        &#125;</div><div class="line">    &#125;;</div><div class="line"></div><div class="line">    @Nullable</div><div class="line">    @Override</div><div class="line">    public IBinder onBind(Intent intent) &#123;</div><div class="line">        return mBinder;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>在这个<code>Service</code>中，我们只需要实现<code>AIDLInterface.Stub</code>接口中的<code>basicTypes</code>接口就可以了，它就是我们在<code>AIDL</code>文件中定义的接口，再把这个对象通过<code>onBinde</code>方法返回。</p>
+<h3 id="2-1-3-声明-Service"><a href="#2-1-3-声明-Service" class="headerlink" title="2.1.3 声明 Service"></a>2.1.3 声明 Service</h3><p>最后一步，在<code>AndroidManifest.xml</code>文件中声明这个<code>Service</code>：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">&lt;service</div><div class="line">    android:name=&quot;.server.AIDLService&quot;</div><div class="line">    android:enabled=&quot;true&quot;</div><div class="line">    android:exported=&quot;true&quot;&gt;</div><div class="line">&lt;/service&gt;</div></pre></td></tr></table></figure></p>
+<h2 id="2-2-客户端"><a href="#2-2-客户端" class="headerlink" title="2.2 客户端"></a>2.2 客户端</h2><h3 id="2-2-1-编写-AIDL-文件"><a href="#2-2-1-编写-AIDL-文件" class="headerlink" title="2.2.1 编写 AIDL 文件"></a>2.2.1 编写 AIDL 文件</h3><p>和服务端类似，客户端也需要和服务端一样，生成一个相同的<code>AIDL</code>文件，这里就不多说了：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">// AIDLInterface.aidl</div><div class="line">package com.demo.lizejun.binderdemoclient;</div><div class="line"></div><div class="line">// Declare any non-default types here with import statements</div><div class="line"></div><div class="line">interface AIDLInterface &#123;</div><div class="line">    /**</div><div class="line">     * Demonstrates some basic types that you can use as parameters</div><div class="line">     * and return values in AIDL.</div><div class="line">     */</div><div class="line">    void basicTypes(int anInt, long aLong, boolean aBoolean, float aFloat,</div><div class="line">            double aDouble, String aString);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>和服务端类似，我们也会得到一个由<code>aidl</code>生成的<code>Java</code>接口文件。</p>
+<h2 id="2-2-2-绑定服务，并调用"><a href="#2-2-2-绑定服务，并调用" class="headerlink" title="2.2.2 绑定服务，并调用"></a>2.2.2 绑定服务，并调用</h2><p><strong>(1) 绑定服务</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">private void bind() &#123;</div><div class="line">    Intent intent = new Intent();</div><div class="line">    intent.setComponent(new ComponentName(&quot;com.demo.lizejun.binderdemo&quot;, &quot;com.demo.lizejun.binderdemo.server.AIDLService&quot;));</div><div class="line">    boolean result = bindService(intent, mServiceConnection, BIND_AUTO_CREATE);</div><div class="line">    Log.d(&quot;bind&quot;, &quot;result=&quot; + result);</div><div class="line">&#125;</div><div class="line"></div><div class="line">private ServiceConnection mServiceConnection = new ServiceConnection() &#123;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void onServiceConnected(ComponentName name, IBinder service) &#123;</div><div class="line">        mBinder = AIDLInterface.Stub.asInterface(service);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void onServiceDisconnected(ComponentName name) &#123;</div><div class="line">        mBinder = null;</div><div class="line">    &#125;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p><strong>(2) 调用接口</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">public void sayHello(View view) &#123;</div><div class="line">    try &#123;</div><div class="line">        if (mBinder != null) &#123;</div><div class="line">            mBinder.basicTypes(0, 0, false, 0, 0, &quot;aaa&quot;);</div><div class="line">        &#125;</div><div class="line">    &#125; catch (RemoteException e) &#123;</div><div class="line">        e.printStackTrace();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>之后我们打印出响应的<code>log</code>：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-61590cfbe9a2b590.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h1 id="三、实现原理"><a href="#三、实现原理" class="headerlink" title="三、实现原理"></a>三、实现原理</h1><p>下面，我们就一起来分析一下通过<code>AIDL</code>实现的进程间通信的原理。</p>
+<p><strong>(1) 客户端获得服务端的远程代理对象 IBinder </strong></p>
+<p>我们从客户端说起，当我们在客户端调用了<code>bindService</code>方法之后，就会启动服务端实现的<code>AIDLService</code>，而在该<code>AIDLService</code>的<code>onBind()</code>方法中返回了<code>AIDLInterface.Stub</code>的实现类，绑定成功之后，客户端就通过<code>onServiceConnected</code>的回调，得到了它在客户端进程的远程代理对象<code>IBinder</code>。</p>
+<p><strong>(2) AIDLInterface.Stub.asInterface(IBinder)</strong></p>
+<p>在拿到这个<code>IBinder</code>对象之后，我们通过<code>AIDLInterface.Stub.asInterface(IBinder)</code>方法，对这个<code>IBinder</code>进行了一层包装，转换成为<code>AIDLInterface</code>接口类，那么这个<code>AIDLInterface</code>是怎么来的呢，它就是通过我们在客户端定义的<code>aidl</code>文件在编译时生成的，可以看到，最终<code>asInterface</code>方法会返回给我们一个<code>AIDLInterface</code>的实现类<code>Proxy</code>，<code>IBinder</code>则被保存为它内部的一个成员变量<code>mRemote</code>。<br><img src="http://upload-images.jianshu.io/upload_images/1949836-5c0253a3ba2bf9c0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>也就是说，我们在客户端中保存的<code>mBinder</code>实际上是一个由<code>AIDL</code>文件所生成的<code>Proxy</code>对象。</p>
+<p><strong>(3) 调用 AIDLInterface 的接口方法</strong></p>
+<p><code>Proxy</code>实现了<code>AIDLInterface</code>中定义的接口方法，当我们调用它的接口方法时：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-f5fd5a8f97f37bed.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>实际上是通过它内部的<code>mRemote</code>对象的<code>transact</code>方法发送消息：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-806450199d906587.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<p><strong>(4) 服务端接收消息</strong></p>
+<p>那么客户端发送的这一消息去哪里了呢，回想一下在服务端中通过<code>onBind()</code>放回的<code>IBinder</code>，它其实是由<code>AIDL</code>文件生成的<code>AIDLInterface.java</code>中的内部类<code>Stub</code>的实现，而在<code>Stub</code>中有一个回调函数<code>onTransact</code>，当我们通过客户端发送消息之后，那么服务端的<code>Stub</code>对象就会通过<code>onTransact</code>收到这一发送的消息：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-64d53a0cfc5c4ea0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<p><strong>(5) 调用子类的处理逻辑</strong></p>
+<p>在<code>onTransact</code>方法中，又会去调用<code>AIDLInterface</code>定义的接口：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-73279f7130b3cb9c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<p>而我们在服务端<code>AIDLService</code>中实现了该接口，因此，最终就打印出了我们在上面所看到的文字：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-ea825fdb0d972006.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h1 id="四、进一步讨论"><a href="#四、进一步讨论" class="headerlink" title="四、进一步讨论"></a>四、进一步讨论</h1><p>现在，我们通过这一进程间的通信过程来复习一下前面两篇文章中讨论的应用进程与<code>AMS</code>和<code>WMS</code>之间的通信实现。</p>
+<p>在 <a href="http://www.jianshu.com/p/f26a76e19a2d" target="_blank" rel="external">Framework 源码解析知识梳理(1) - 应用进程与 AMS 的通信实现</a> 中，<code>AMS</code>所在进程在收到消息之后，进行了下面的处理逻辑：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-d8b382d739c2337c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>这里面的处理逻辑就相当于我们在客户端中<code>onServiceConnected</code>中做的工作一样，<code>IApplicationThread</code>实际上是一个<code>ApplicaionThreadProxy</code>对象，和我们上面<code>AIDLInterface</code>实际上是一个<code>AIDLInterface.Stub.Proxy</code>的原理是一样的。当我们调用了它的接口方法时，就是通过内部的<code>mRemote</code>发送了消息。</p>
+<p>在<code>AMS</code>通信中，接收消息的是应用进程中的<code>ApplicationThread</code>，而我们上面例子中接收消息的是服务端进程的<code>AIDLInterface.Stub</code>的实现类<code>mBinder</code>，同样是在<code>onTransact()</code>方法中接收消息，再由子类去实现处理的逻辑。</p>
+<p><a href="http://www.jianshu.com/p/0fd68bf4aa5b" target="_blank" rel="external">Framework 源码解析知识梳理(2) - 应用进程与 WMS 的通信实现</a> 中的原理就更好解释了，因为它就是通过<code>AIDL</code>来实现的，我们从客户端向<code>WMS</code>所在进程建立会话时，是通过<code>IWindowSession</code>来实现的，会话过程中<code>IWindowSession</code>就对应于<code>AIDLInterface</code>，而<code>WMS</code>中的<code>IWindowSession.Stub</code>的实现类<code>Session</code>，就对应于上面我们在<code>AIDLService</code>中定义的<code>AIDLInterface.Stub</code>的实现类<code>mBinder</code>。</p>
+<h1 id="五、小结"><a href="#五、小结" class="headerlink" title="五、小结"></a>五、小结</h1><p>其实<code>AIDL</code>并没有什么神秘的东西，它的本质就是<code>Binder</code>通信，我们定义<code>aidl</code>文件的目的，主要有两个：</p>
+<ul>
+<li>为了让应用进程间通信的实现者不用再去编写<code>transact/onTransact</code>里面的代码，因为这些东西和业务逻辑是无关的，只不过是简单的发送消息、接收消息。</li>
+<li>让服务端、客户端只关心接口的定义。</li>
+</ul>
+<p>如果我们明白了<code>AIDL</code>的原理，那么我们完全可以不用定义<code>AIDL</code>文件，自己去参考由<code>AIDL</code>文件所生成的<code>Java</code>文件的逻辑，进行消息的发送和处理。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/05/14/Framework-源码解析/Framework-源码解析知识梳理(2)---应用进程与-WMS-的通信实现/" rel="next" title="Framework 源码解析知识梳理(2) - 应用进程与 WMS 的通信实现">
+                <i class="fa fa-chevron-left"></i> Framework 源码解析知识梳理(2) - 应用进程与 WMS 的通信实现
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/05/18/Framework-源码解析/Framework-源码解析知识梳理(4)---从源码角度谈谈-Handler-的应用/" rel="prev" title="Framework 源码解析知识梳理(4) - 从源码角度谈谈 Handler 的应用">
+                Framework 源码解析知识梳理(4) - 从源码角度谈谈 Handler 的应用 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="John Doe" />
+          <p class="site-author-name" itemprop="name">John Doe</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">104</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">23</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、前言"><span class="nav-number">1.</span> <span class="nav-text">一、前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、例子"><span class="nav-number">2.</span> <span class="nav-text">二、例子</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-服务端"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 服务端</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-1-编写-AIDL-文件"><span class="nav-number">2.1.1.</span> <span class="nav-text">2.1.1 编写 AIDL 文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-2-编写-Service"><span class="nav-number">2.1.2.</span> <span class="nav-text">2.1.2 编写 Service　</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-3-声明-Service"><span class="nav-number">2.1.3.</span> <span class="nav-text">2.1.3 声明 Service</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-客户端"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 客户端</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-1-编写-AIDL-文件"><span class="nav-number">2.2.1.</span> <span class="nav-text">2.2.1 编写 AIDL 文件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-2-绑定服务，并调用"><span class="nav-number">2.3.</span> <span class="nav-text">2.2.2 绑定服务，并调用</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、实现原理"><span class="nav-number">3.</span> <span class="nav-text">三、实现原理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四、进一步讨论"><span class="nav-number">4.</span> <span class="nav-text">四、进一步讨论</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#五、小结"><span class="nav-number">5.</span> <span class="nav-text">五、小结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

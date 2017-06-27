@@ -1,0 +1,782 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="一、概述Dagger2依赖注入框架的好处：  依赖的注入和配置独立于组件之外 依赖对象是在一个独立、不耦合的地方初始化，当初始化方式改变的时候修改的代码少。 依赖注入使得单元测试更加简单。  Dagger2相对于其它框架的优点：  编译期生成代码，有错误会在编译期报出。 错误可追踪。 易于调试。  Dagger2的缺点：  缺少灵活性。 没有动态机制。  二、Dagger2的注解Dagger2的注">
+<meta property="og:type" content="article">
+<meta property="og:title" content="架构设计知识梳理(1) - Dagger2">
+<meta property="og:url" content="http://yoursite.com/2017/02/20/架构设计/架构设计知识梳理(1)---Dagger2/index.html">
+<meta property="og:site_name" content="泽毛">
+<meta property="og:description" content="一、概述Dagger2依赖注入框架的好处：  依赖的注入和配置独立于组件之外 依赖对象是在一个独立、不耦合的地方初始化，当初始化方式改变的时候修改的代码少。 依赖注入使得单元测试更加简单。  Dagger2相对于其它框架的优点：  编译期生成代码，有错误会在编译期报出。 错误可追踪。 易于调试。  Dagger2的缺点：  缺少灵活性。 没有动态机制。  二、Dagger2的注解Dagger2的注">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-312ef6841c974953.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2017-06-27T14:17:24.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="架构设计知识梳理(1) - Dagger2">
+<meta name="twitter:description" content="一、概述Dagger2依赖注入框架的好处：  依赖的注入和配置独立于组件之外 依赖对象是在一个独立、不耦合的地方初始化，当初始化方式改变的时候修改的代码少。 依赖注入使得单元测试更加简单。  Dagger2相对于其它框架的优点：  编译期生成代码，有错误会在编译期报出。 错误可追踪。 易于调试。  Dagger2的缺点：  缺少灵活性。 没有动态机制。  二、Dagger2的注解Dagger2的注">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-312ef6841c974953.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/02/20/架构设计/架构设计知识梳理(1)---Dagger2/"/>
+
+
+
+
+
+  <title>架构设计知识梳理(1) - Dagger2 | 泽毛</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">泽毛</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/02/20/架构设计/架构设计知识梳理(1)---Dagger2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="泽毛">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">架构设计知识梳理(1) - Dagger2</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-02-20T23:59:00+08:00">
+                2017-02-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/架构设计知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">架构设计知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="一、概述"><a href="#一、概述" class="headerlink" title="一、概述"></a>一、概述</h1><p><code>Dagger2</code>依赖注入框架的好处：</p>
+<ul>
+<li>依赖的注入和配置独立于组件之外</li>
+<li>依赖对象是在一个独立、不耦合的地方初始化，当初始化方式改变的时候修改的代码少。</li>
+<li>依赖注入使得单元测试更加简单。</li>
+</ul>
+<p><code>Dagger2</code>相对于其它框架的优点：</p>
+<ul>
+<li>编译期生成代码，有错误会在编译期报出。</li>
+<li>错误可追踪。</li>
+<li>易于调试。</li>
+</ul>
+<p><code>Dagger2</code>的缺点：</p>
+<ul>
+<li>缺少灵活性。</li>
+<li>没有动态机制。</li>
+</ul>
+<h1 id="二、Dagger2的注解"><a href="#二、Dagger2的注解" class="headerlink" title="二、Dagger2的注解"></a>二、<code>Dagger2</code>的注解</h1><p><code>Dagger2</code>的注解主要有以下七类：</p>
+<ul>
+<li><code>@Inject</code>：这个注解有两个作用：在目标类中标记成员变量告诉<code>Dagger</code>这个类型的变量需要一个实例对象；标记依赖类中的构造方法，告诉<code>Dagger</code>我可以提供这种类型的依赖实例。</li>
+<li><code>@Component</code>：用来标记接口或者抽象类，也被称为注入器，是<code>@Inject</code>和<code>@Module</code>的桥梁，所有的<code>Component</code>都可以通过它的<code>modules</code>知道它所提供的依赖范围，一个<code>Componet</code>可以依赖一个或多个<code>Component</code>，并拿到被依赖<code>Component</code>暴露出来的实例，<code>Componenet</code>的<code>dependencies</code>属性就是确定依赖关系的实现。</li>
+<li><code>@Module</code>：用来标记类，一般类名以<code>Module</code>结尾，<code>Module</code>的主要作用是用来集中管理<code>@Provides</code>标记的方法，我们定义一个被<code>@Module</code>注解的类，<code>Dagger</code>就会知道在哪里找到依赖来满足创建类的实例，<code>Module</code>的一个重要特征是被设计成区块并可以组合在一起。</li>
+<li><code>@Provides</code>：对方法进行注解，并且这些方法都是有返回类型的，告诉<code>Dagger</code>我们向如何创建并提供该类型的依赖实例（一般会在方法中<code>new</code>出实例），用<code>@Provides</code>标记的方法，推荐用<code>provide</code>作为前缀。</li>
+<li><code>@Qualifier</code>：限定符，当一个类的类型不足以标示一个依赖的时候，我们就可以用这个注解，它会调用<code>DataModule</code>中方法来返回合适的依赖类实例。</li>
+<li><code>@Scope</code>：通过自定义注解来限定作用域，所有的对象都不再需要知道怎么管理它的实例，<code>Dagger2</code>中有一个默认的作用域注解<code>@Singleton</code>，通常用来标记在<code>App</code>整个生命周期内存活的实例，也可以定义一个<code>@PerActivity</code>注解，用来表明生命周期要与<code>Activity</code>一致。</li>
+<li><code>@SubComponent</code>：如果我们需要父组件全部的提供对象，我们就可以用包含方式，而不是用依赖方式，包含方式不需要父组件显示显露对象，就可以拿到父组件全部对象，且<code>SubComponent</code>只需要在父<code>Component</code>接扣中声明就可以了。</li>
+</ul>
+<h1 id="三、Dagger2的简单应用-Inject和-Component"><a href="#三、Dagger2的简单应用-Inject和-Component" class="headerlink" title="三、Dagger2的简单应用 - @Inject和@Component"></a>三、<code>Dagger2</code>的简单应用 - <code>@Inject</code>和<code>@Component</code></h1><p>第一步：基础配置，在<code>build.gradle</code>中添加相应的依赖：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line">//添加(1)</div><div class="line">apply plugin: &apos;com.neenbedankt.android-apt&apos;</div><div class="line"></div><div class="line">buildscript &#123;</div><div class="line">    repositories &#123;</div><div class="line">        jcenter()</div><div class="line">    &#125;</div><div class="line">    dependencies &#123;</div><div class="line">        //添加(2)</div><div class="line">        classpath &apos;com.neenbedankt.gradle.plugins:android-apt:1.8&apos;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">android &#123;</div><div class="line">    compileSdkVersion 23</div><div class="line">    buildToolsVersion &quot;23.0.0&quot;</div><div class="line"></div><div class="line">    defaultConfig &#123;</div><div class="line">        applicationId &quot;com.demo.zejun.repodragger2&quot;</div><div class="line">        minSdkVersion 15</div><div class="line">        targetSdkVersion 23</div><div class="line">        versionCode 1</div><div class="line">        versionName &quot;1.0&quot;</div><div class="line">    &#125;</div><div class="line">    buildTypes &#123;</div><div class="line">        release &#123;</div><div class="line">            minifyEnabled false</div><div class="line">            proguardFiles getDefaultProguardFile(&apos;proguard-android.txt&apos;), &apos;proguard-rules.pro&apos;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">dependencies &#123;</div><div class="line">    compile fileTree(dir: &apos;libs&apos;, include: [&apos;*.jar&apos;])</div><div class="line">    testCompile &apos;junit:junit:4.12&apos;</div><div class="line">    compile &apos;com.android.support:appcompat-v7:23.0.0&apos;</div><div class="line">    //添加(3)</div><div class="line">    apt &apos;com.google.dagger:dagger-compiler:2.0&apos;</div><div class="line">    //添加(4)</div><div class="line">    compile &apos;com.google.dagger:dagger:2.0&apos;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>第二步：<code>User</code>作为目标类中需要实例化的成员对象，给其构造函数添加<code>@Inject</code>标签：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">public class User &#123;</div><div class="line"></div><div class="line">    public String name;</div><div class="line"></div><div class="line">    @Inject</div><div class="line">    public User() &#123;</div><div class="line">        name = &quot;lizejun&quot;;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public String getName() &#123;</div><div class="line">        return name;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>第三步：声明<code>Component</code>：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">@Component()</div><div class="line">public interface OnlyInjectComponent &#123;</div><div class="line">    void inject(AnnotationActivity annotationActivity);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>第四步：在目标类中添加注解<code>@Inject</code>，并根据我们第3步中声明的<code>Component</code>，调用<code>DaggerXXX</code>方法来进行注入：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">public class AnnotationActivity extends AppCompatActivity &#123;</div><div class="line"></div><div class="line">    @Inject</div><div class="line">    public User mUser;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    protected void onCreate(Bundle savedInstanceState) &#123;</div><div class="line">        super.onCreate(savedInstanceState);</div><div class="line">        setContentView(R.layout.activity_dragger2);</div><div class="line">        //在第3步声明的Component接口或者抽象类的基础上，添加Dagger前缀。</div><div class="line">        DaggerOnlyInjectComponent.builder().build().inject(this);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>上面这个例子有两个缺点：</p>
+<ul>
+<li>只能标记一个构造方法，因为如果标记两个以上，不知道要用哪一个构造提供实例。</li>
+<li>不能标记其它我们不能修改的类，例如第三方库。</li>
+<li>如果用<code>@Inject</code>标记的构造函数如果有参数，那么这个参数也需要其它地方提供依赖，而类似于<code>String</code>这些我们不能修改的类，只能用<code>@Module</code>中的<code>@Provides</code>来提供实例了。</li>
+</ul>
+<h1 id="四、采用-Module来提供依赖"><a href="#四、采用-Module来提供依赖" class="headerlink" title="四、采用@Module来提供依赖"></a>四、采用<code>@Module</code>来提供依赖</h1><p>采用<code>@Module</code>标记的类提供依赖是常规套路，<code>@Module</code>标记的类起管理作用，真正提供依赖实例靠的是<code>@Provides</code>标记的带返回类型的方法。<br>第一步：和上面类似，我们定义一个依赖类，但是它的构造方法并不需要用<code>@Inject</code>标记：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">public class Person &#123;</div><div class="line"></div><div class="line">    private String name;</div><div class="line"></div><div class="line">    public Person() &#123;</div><div class="line">        this.name = &quot;lizejun&quot;;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public String getName() &#123;</div><div class="line">        return name;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>第二步：我们需要定义一个<code>@Module</code>来管理这些依赖类的实例：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">@Module</div><div class="line">public class PersonDataModule &#123;</div><div class="line"></div><div class="line">    @Provides</div><div class="line">    public Person providePerson() &#123;</div><div class="line">        return new Person();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>第三步：定义一个<code>@Component</code>，它指向上面定义的<code>@Module</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">@Component(modules = &#123;PersonDataModule.class&#125;)</div><div class="line">public interface PersonInjectComponent &#123;</div><div class="line">    void inject(PersonInjectActivity injectActivity);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>第四步：在目标类中进行依赖注入<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">public class PersonInjectActivity extends Activity &#123;</div><div class="line"></div><div class="line">    @Inject</div><div class="line">    Person mPerson;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    protected void onCreate(Bundle savedInstanceState) &#123;</div><div class="line">        super.onCreate(savedInstanceState);</div><div class="line">        DaggerPersonInjectComponent.create().inject(this);</div><div class="line">        System.out.println(&quot;Person name=&quot; + mPerson.getName());</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这里注入的方式有两种，一种是像上面这样的，它适合于<code>PersonDataModule</code>中只有一个无参的构造方法，否则我们需要这样调用：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">DaggerPersonInjectComponent.builder().personDataModule(new PersonDataModule()).build().inject(this);</div></pre></td></tr></table></figure></p>
+<h1 id="五、初始化依赖实例的步骤"><a href="#五、初始化依赖实例的步骤" class="headerlink" title="五、初始化依赖实例的步骤"></a>五、初始化依赖实例的步骤</h1><ul>
+<li><p>查找<code>Module</code>中是否存在创建该类型的方法（即<code>@Component</code>标记的接口中包含了<code>@Module</code>标记的<code>Module</code>类，如果没有则直接查找<code>@Inject</code>对应的构造方法）。</p>
+</li>
+<li><p>如果存在创建类方法，则查看该方法是否有参数</p>
+<ul>
+<li>如果不存在参数，直接初始化该类的实例，一次依赖注入到此结束。</li>
+<li>如果存在参数，则从步骤1开始初始化每个参数。</li>
+</ul>
+</li>
+<li><p>如果不存在创建类方法，则查找该类型的类中有<code>@Inject</code>标记的构造方法，查看构造方法是否有参数：</p>
+<ul>
+<li>如果不存在参数，则直接初始化该类实例，一次依赖注入到此结束。</li>
+<li>如果存在参数，则从步骤1开始初始化每个参数。</li>
+</ul>
+</li>
+</ul>
+<h1 id="六、-Qualifier限定符"><a href="#六、-Qualifier限定符" class="headerlink" title="六、@Qualifier限定符"></a>六、<code>@Qualifier</code>限定符</h1><p>在<code>Dagger</code>中，有一个已经定义好的限定符，<code>@Name</code>，下面我们也自己定义一个限定符：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">@Qualifier</div><div class="line">@Retention(RetentionPolicy.RUNTIME)</div><div class="line">public @interface PeopleThreeQualifier &#123;&#125;</div></pre></td></tr></table></figure></p>
+<p>第一步：和前面类似，我们先定义一个需要实例化的依赖类：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">public class People &#123;</div><div class="line"></div><div class="line">    private int count;</div><div class="line"></div><div class="line">    public People() &#123;</div><div class="line">        count = 0;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public People(int count) &#123;</div><div class="line">        this.count = count;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public int getCount() &#123;</div><div class="line">        return count;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>第二步：我定义一个<code>DataModule</code>，和前面不同的是，在它的<code>provideXXX</code>方法的注解中，我们添加了<code>@Name(xxx)</code>和自定义的注解<code>PeopleThreePeople</code>：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">@Module</div><div class="line">public class PeopleDataModule &#123;</div><div class="line"></div><div class="line">    @Provides</div><div class="line">    @Named(&quot;Five People&quot;)</div><div class="line">    People provideFivePeople() &#123;</div><div class="line">        return new People(5);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Provides</div><div class="line">    @Named(&quot;Ten People&quot;)</div><div class="line">    People provideTenPeople() &#123;</div><div class="line">        return new People(10);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Provides</div><div class="line">    @PeopleThreeQualifier</div><div class="line">    People provideThreePeople() &#123;</div><div class="line">        return new People(3);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>第三步：定义<code>Component</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">@Component(modules = PeopleDataModule.class)</div><div class="line">public interface PeopleInjectComponent &#123;</div><div class="line">    void inject(PeopleInjectActivity peopleInjectActivity);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>第四步：在目标类中进行依赖注入，在提供<code>@Inject</code>注解时，我们还需要声明和<code>PeopleDataModule</code>中对应的限定符，这样<code>Dagger</code>就知道该用那个函数来生成目标类中的依赖类实例：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">public class PeopleInjectActivity extends Activity &#123;</div><div class="line"></div><div class="line">    @Inject</div><div class="line">    @Named(&quot;Five People&quot;)</div><div class="line">    People mFivePeople;</div><div class="line"></div><div class="line">    @Inject</div><div class="line">    @Named(&quot;Ten People&quot;)</div><div class="line">    People mTenPeople;</div><div class="line"></div><div class="line">    @Inject</div><div class="line">    @PeopleThreeQualifier</div><div class="line">    People mThreePeople;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    protected void onCreate(Bundle savedInstanceState) &#123;</div><div class="line">        super.onCreate(savedInstanceState);</div><div class="line">        DaggerPeopleInjectComponent.builder().peopleDataModule(new PeopleDataModule()).build().inject(this);</div><div class="line">        System.out.println(&quot;Five People=&quot; + mFivePeople.getCount() + &quot;,Ten People=&quot; + mTenPeople.getCount() + &quot;, Three People=&quot; + mThreePeople.getCount());</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h1 id="七、-Scope"><a href="#七、-Scope" class="headerlink" title="七、@Scope"></a>七、<code>@Scope</code></h1><p><code>@Scope</code>的作用主要是在组织<code>Component</code>和<code>Module</code>的时候起到一个提醒和管理的作用，在<code>Dagger</code>中，有一个默认的作用域<code>@Singleton</code>。<br><code>@Scope</code>的作用是：<code>Dagger2</code>可以通过自定义<code>Scope</code>注解，来限定通过<code>Module</code>和<code>Inject</code>方式创建的类的实例的生命周期能够与目标类的生命周期相同。<code>Scope</code>的真正作用在与<code>Component</code>的组织：</p>
+<ul>
+<li>更好的管理<code>Component</code>之间的组织方式，不管是依赖方式还是包含方式，都有必要用自定的<code>Scope</code>注解标注这些<code>Component</code>，而且编译器会检查有依赖关系或包含关系的<code>Component</code>，若发现有<code>Component</code>没有用自定义<code>Scope</code>注解，则会报错。</li>
+<li>更好地管理<code>Component</code>与<code>Module</code>之间地关系，编译器会检查<code>Component</code>管理的<code>Module</code>，若发现<code>Component</code>的自定义<code>Scope</code>注解与<code>Module</code>中的标注创建类实例方法的注解不一样，就会报错。</li>
+<li>提高程序的可读性。</li>
+</ul>
+<p>下面是一个使用<code>@Singleton</code>的例子：<br>第一步：定义需要实例化的类：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">public class AnSingleObject &#123;</div><div class="line"></div><div class="line">    private String objectId;</div><div class="line"></div><div class="line">    public AnSingleObject() &#123;</div><div class="line">        objectId = toString();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public String getObjectId() &#123;</div><div class="line">        return objectId;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>第二步：定义<code>DataModule</code>，在它的<code>provideXXX</code>方法，提供了<code>@Singletion</code>注解：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">@Module</div><div class="line">public class AnSingleObjectDataModule &#123;</div><div class="line"></div><div class="line">    @Provides</div><div class="line">    @Singleton</div><div class="line">    AnSingleObject provideAnSingleObject() &#123;</div><div class="line">        return new AnSingleObject();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>第三步：定义<code>Component</code>，和前面不同的是，需要给这个<code>Component</code>添加<code>@Singleton</code>注解：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">@Component(modules = &#123;AnSingleObjectDataModule.class&#125;)</div><div class="line">@Singleton</div><div class="line">public abstract class AnSingleObjectInjectComponent &#123;</div><div class="line"></div><div class="line">    private static AnSingleObjectInjectComponent sInstance;</div><div class="line"></div><div class="line">    public abstract void inject(AnSingleObjectInjectActivity anSingleObjectInjectActivity);</div><div class="line"></div><div class="line">    public static AnSingleObjectInjectComponent getInstance() &#123;</div><div class="line">        if (sInstance == null) &#123;</div><div class="line">            sInstance = DaggerAnSingleObjectInjectComponent.create();</div><div class="line">        &#125;</div><div class="line">        return sInstance;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>第四步：在目标类中进行依赖注入，每次启动<code>Activity</code>的时候，我们可以发现打印出来的<code>hash</code>值都是相同的：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">public class AnSingleObjectInjectActivity extends Activity &#123;</div><div class="line"></div><div class="line">    @Inject</div><div class="line">    AnSingleObject object;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    protected void onCreate(Bundle savedInstanceState) &#123;</div><div class="line">        super.onCreate(savedInstanceState);</div><div class="line">        AnSingleObjectInjectComponent.getInstance().inject(this);</div><div class="line">        System.out.println(&quot;AnSingleObject id=&quot; + object.getObjectId());</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h1 id="八、组织Component"><a href="#八、组织Component" class="headerlink" title="八、组织Component"></a>八、组织<code>Component</code></h1><p><code>Component</code>有三种组织方式：</p>
+<ul>
+<li>依赖：一个<code>Component</code>依赖一个或多个<code>Component</code>，采用的是<code>@Component</code>的<code>dependencies</code>属性。</li>
+<li>包含：这里就用到了<code>@SubComponent</code>注解，用它来标记接口或者抽象类，表示它可以被包干。一个<code>Component</code>可以包含一个或多个<code>Component</code>，而且被包含的<code>Component</code>还可以继续包含其它的<code>Component</code>。</li>
+<li>继承：用一个<code>Component</code>继承另外一个<code>Component</code>。</li>
+</ul>
+<h1 id="九、Google官方框架分析"><a href="#九、Google官方框架分析" class="headerlink" title="九、Google官方框架分析"></a>九、<code>Google</code>官方框架分析</h1><p>下面是<code>Google</code>官方框架的目录结构：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1949836-312ef6841c974953.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"><br>可以看出，它把每个界面都作为一个独立的包（<code>addedittask、statistics、taskdetail、tasks</code>），而数据、依赖类是其它的两个包（<code>data、util</code>），我们先从<code>ToDoApplication</code>开始分析：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">public class ToDoApplication extends Application &#123;</div><div class="line"></div><div class="line">    private TasksRepositoryComponent mRepositoryComponent;</div><div class="line">    </div><div class="line">    @Override</div><div class="line">    public void onCreate() &#123;</div><div class="line">        super.onCreate();</div><div class="line">        mRepositoryComponent = DaggerTasksRepositoryComponent.builder()</div><div class="line">                .applicationModule(new ApplicationModule((getApplicationContext())))</div><div class="line">                .build();</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    public TasksRepositoryComponent getTasksRepositoryComponent() &#123;</div><div class="line">        return mRepositoryComponent;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>在<code>ToDoApplication</code>中，我们实例化了一个变量<code>TasksRepositoryComponent</code>，它相当于是项目中所有其它<code>Component</code>的管理者，它被声明为<code>@Singleton</code>的，即在<code>App</code>的生命周期中只存在一个，同时用<code>@Component</code>表明它和<code>TaskRepositoyModule</code>、<code>ApplicationModule</code>这两个<code>Module</code>关联。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">@Singleton</div><div class="line">@Component(modules = &#123;TasksRepositoryModule.class, ApplicationModule.class&#125;)</div><div class="line">public interface TasksRepositoryComponent &#123;</div><div class="line">    TasksRepository getTasksRepository();</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><code>TaskRpositotyModule</code>提供了两种类型的数据源对象，它们是用<code>@Local</code>、<code>@Remote</code>来区分的：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">@Module</div><div class="line">public class TasksRepositoryModule &#123;</div><div class="line"></div><div class="line">    @Singleton</div><div class="line">    @Provides</div><div class="line">    @Local</div><div class="line">    TasksDataSource provideTasksLocalDataSource(Context context) &#123;</div><div class="line">        return new TasksLocalDataSource(context);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Singleton</div><div class="line">    @Provides</div><div class="line">    @Remote</div><div class="line">    TasksDataSource provideTasksRemoteDataSource() &#123;</div><div class="line">        return new FakeTasksRemoteDataSource();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>接下来再看一下<code>ApplicationModule</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">@Module</div><div class="line">public final class ApplicationModule &#123;</div><div class="line"></div><div class="line">    private final Context mContext;</div><div class="line"></div><div class="line">    ApplicationModule(Context context) &#123;</div><div class="line">        mContext = context;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Provides</div><div class="line">    Context provideContext() &#123;</div><div class="line">        return mContext;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>下面我们用一个比较简单的界面来看一下<code>TasksRepositoryComponent</code>是怎么和其它的<code>Component</code>关联起来的，首先看<code>StatisticsActivity</code>：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">public class StatisticsActivity extends AppCompatActivity &#123;</div><div class="line"></div><div class="line">    private DrawerLayout mDrawerLayout;</div><div class="line"></div><div class="line">    @Inject </div><div class="line">    StatisticsPresenter mStatiticsPresenter; //依靠Dagger实例化的对象。</div><div class="line"></div><div class="line">    @Override</div><div class="line">    protected void onCreate(Bundle savedInstanceState) &#123;</div><div class="line">        super.onCreate(savedInstanceState);</div><div class="line">        setContentView(R.layout.statistics_act);</div><div class="line">        //初始化Fragment界面。</div><div class="line">        StatisticsFragment statisticsFragment = (StatisticsFragment) getSupportFragmentManager().findFragmentById(R.id.contentFrame);</div><div class="line">        if (statisticsFragment == null) &#123;</div><div class="line">            statisticsFragment = StatisticsFragment.newInstance();</div><div class="line">            ActivityUtils.addFragmentToActivity(getSupportFragmentManager(),</div><div class="line">                    statisticsFragment, R.id.contentFrame);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        DaggerStatisticsComponent.builder()</div><div class="line">            .statisticsPresenterModule(new StatisticsPresenterModule(statisticsFragment))</div><div class="line">            .tasksRepositoryComponent(((ToDoApplication) getApplication())</div><div class="line">            .getTasksRepositoryComponent())</div><div class="line">            .build().inject(this);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/02/20/多线程/多线程知识梳理(1)---并发编程的艺术笔记/" rel="next" title="多线程知识梳理(1) - 并发编程的艺术笔记">
+                <i class="fa fa-chevron-left"></i> 多线程知识梳理(1) - 并发编程的艺术笔记
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/02/21/架构设计/架构设计知识梳理(2)---Flux/" rel="prev" title="架构设计知识梳理(2) - Flux">
+                架构设计知识梳理(2) - Flux <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="John Doe" />
+          <p class="site-author-name" itemprop="name">John Doe</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">104</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">23</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、概述"><span class="nav-number">1.</span> <span class="nav-text">一、概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、Dagger2的注解"><span class="nav-number">2.</span> <span class="nav-text">二、Dagger2的注解</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、Dagger2的简单应用-Inject和-Component"><span class="nav-number">3.</span> <span class="nav-text">三、Dagger2的简单应用 - @Inject和@Component</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四、采用-Module来提供依赖"><span class="nav-number">4.</span> <span class="nav-text">四、采用@Module来提供依赖</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#五、初始化依赖实例的步骤"><span class="nav-number">5.</span> <span class="nav-text">五、初始化依赖实例的步骤</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#六、-Qualifier限定符"><span class="nav-number">6.</span> <span class="nav-text">六、@Qualifier限定符</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#七、-Scope"><span class="nav-number">7.</span> <span class="nav-text">七、@Scope</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#八、组织Component"><span class="nav-number">8.</span> <span class="nav-text">八、组织Component</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#九、Google官方框架分析"><span class="nav-number">9.</span> <span class="nav-text">九、Google官方框架分析</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,847 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="一、概述对于RecyclerView的学习，主要是需要掌握以下几点：  数据：Adapter 使用：RecyclerView - Adapter 进阶：BaseRecyclerViewAdapterHelper   布局：LayoutManager 使用：RecyclerView - LayoutManager 进阶：自定义   动画：ItemAnimator  使用 进阶：RecyclerVie">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RecyclerView 知识梳理(1) - 综述">
+<meta property="og:url" content="http://yoursite.com/2017/04/03/RecyclerView/RecyclerView-知识梳理(1)---综述/index.html">
+<meta property="og:site_name" content="泽毛">
+<meta property="og:description" content="一、概述对于RecyclerView的学习，主要是需要掌握以下几点：  数据：Adapter 使用：RecyclerView - Adapter 进阶：BaseRecyclerViewAdapterHelper   布局：LayoutManager 使用：RecyclerView - LayoutManager 进阶：自定义   动画：ItemAnimator  使用 进阶：RecyclerVie">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-be9474752abbf496.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-a37f09d9e89688c8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-15dbd6842926d475.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-7d2ccb23089cfc21.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-66c5387b73233253.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-81e6ffb86f8175d2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-5ba58d576f731088.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-2c4c6488ac029e5d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-3d2601f5460e680b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-ba8d94a410a41429.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-1d313d48796ac165.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-bc3383f0a38a7323.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-3f7a9c8d10b64043.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2017-06-27T15:06:20.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="RecyclerView 知识梳理(1) - 综述">
+<meta name="twitter:description" content="一、概述对于RecyclerView的学习，主要是需要掌握以下几点：  数据：Adapter 使用：RecyclerView - Adapter 进阶：BaseRecyclerViewAdapterHelper   布局：LayoutManager 使用：RecyclerView - LayoutManager 进阶：自定义   动画：ItemAnimator  使用 进阶：RecyclerVie">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-be9474752abbf496.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/04/03/RecyclerView/RecyclerView-知识梳理(1)---综述/"/>
+
+
+
+
+
+  <title>RecyclerView 知识梳理(1) - 综述 | 泽毛</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">泽毛</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/04/03/RecyclerView/RecyclerView-知识梳理(1)---综述/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="泽毛">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">RecyclerView 知识梳理(1) - 综述</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-03T15:11:00+08:00">
+                2017-04-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/RecyclerView-知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">RecyclerView 知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="一、概述"><a href="#一、概述" class="headerlink" title="一、概述"></a>一、概述</h1><p>对于<code>RecyclerView</code>的学习，主要是需要掌握以下几点：</p>
+<ul>
+<li>数据：<code>Adapter</code><ul>
+<li>使用：<a href="http://www.jianshu.com/p/ec6585e5220d" target="_blank" rel="external">RecyclerView - Adapter</a></li>
+<li>进阶：<a href="https://github.com/CymChad/BaseRecyclerViewAdapterHelper" target="_blank" rel="external">BaseRecyclerViewAdapterHelper</a></li>
+</ul>
+</li>
+<li>布局：<code>LayoutManager</code><ul>
+<li>使用：<a href="http://www.jianshu.com/p/1cfca4d34402" target="_blank" rel="external">RecyclerView - LayoutManager</a></li>
+<li>进阶：自定义</li>
+</ul>
+</li>
+<li>动画：<code>ItemAnimator</code> <ul>
+<li>使用</li>
+<li>进阶：<a href="https://github.com/gabrielemariotti/RecyclerViewItemAnimators" target="_blank" rel="external">RecyclerViewItemAnimators</a></li>
+</ul>
+</li>
+<li>装饰：<code>ItemDecorator</code><ul>
+<li>使用：<a href="http://www.jianshu.com/p/b2ef4f8e859f" target="_blank" rel="external">RecyclerView - ItemDecoration</a></li>
+</ul>
+</li>
+<li>手势：<code>ItemTouchHelper</code><ul>
+<li>使用：<a href="http://www.jianshu.com/p/0bbc44cc1582" target="_blank" rel="external">RecyclerView - ItemTouchHelper</a></li>
+</ul>
+</li>
+</ul>
+<p>要理解整个<code>RecyclerView</code>的思想，有一个视频是一定要看的：<a href="http://v.youku.com/v_show/id_XMTU4MTQ1ODg2NA==.html?firsttime=1211&amp;spm=a2hww.20023042.uerCenter.5!2~5~5!2~5~DL~DD~A" target="_blank" rel="external">RecyclerView ins and outs - Google I/O 2016</a>。今天，我们就通过这个视频，把上面所学到的东西串联起来。</p>
+<h1 id="二、为什么要使用RecyclerView"><a href="#二、为什么要使用RecyclerView" class="headerlink" title="二、为什么要使用RecyclerView"></a>二、为什么要使用<code>RecyclerView</code></h1><p><code>RecyclerView</code>诞生的目的就是为了替代<code>ListView</code>，我们先总结一下在使用<code>ListView</code>过程当中所遇到的问题：</p>
+<ul>
+<li><p>复用<code>Item</code>需要编写很多的代码<br>在使用<code>ListView</code>的时候，有经验的程序员一定会告诉你在<code>getView</code>中要这么写，如果忘了，那么会产生很严重的性能问题。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">if (convertView == null) &#123;</div><div class="line">     //通过LayoutInflator生成convertView，并产生一个ViewHolder，通过setTag关联起来.       </div><div class="line">&#125; else &#123;</div><div class="line">    //通过getTag获取ViewHolder，进行更新操作.</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>焦点冲突问题<br>当<code>Item</code>有焦点时，<code>Item</code>的子控件就无法获取到焦点；而如果子控件抢夺了焦点，那么<code>Item</code>的点击事件又不能响应，这个相信大家都遇到过。</p>
+</li>
+<li>重复的<code>API</code><br><code>ListView</code>中提供了很多的<code>API</code>，但是这些<code>API</code>又和<code>View</code>的一些<code>API</code>重复了，例如我们可以给<code>ListView</code>设置<code>setOnItemClickListener</code>，也可以在<code>getView</code>中给某个<code>View</code>设置<code>setOnClickListener</code>，这就让人很疑惑，到底应当选用哪个。</li>
+<li>动画<br>当我们需要在<code>ListView</code>中进行添加、删除、移动等操作的时候，如果希望加上动画，那么是很困难的，根本原因是我们是通过<code>Adapter</code>通知<code>ListView</code>进行更新，然而<code>ListView</code>根本就没法确定到底是哪些<code>View</code>发生了变化。</li>
+<li>更加复杂的布局需求<br><code>ListView</code>在布局是规整的列表的时候能满足大多数人的使用，然而如果想要实现像瀑布流这种复杂的布局，并且保证<code>View</code>能够复用，那么需要编写很多的代码。</li>
+</ul>
+<p>如果之前有了解过<code>RecyclerView</code>的基本用法，那么你会发现，对于上述这些问题，它都给出了自己的解决方案：</p>
+<ul>
+<li>强制使用开发者使用<code>ViewHolder</code>，提供了<code>onCreateViewHolder</code>和<code>onBindViewHolder</code>这两个方法，把创建<code>View</code>和绑定<code>View</code>的操作分离开。</li>
+<li>把焦点交给系统处理。</li>
+<li>去掉了<code>onItemClickListener</code>，以及一些重复的<code>API</code>。</li>
+<li>在<code>Adapter</code>中增加了<code>notifyItemChanged()</code>等方法，让我们可以指定变化的类型和范围，并且提供了<code>setItemAnimator()</code>方法，让开发者能够方便地定义添加、删除、移动的动画。</li>
+<li>把布局的工作抽象出来，放到了<code>LayoutManager</code>当中，并预制了瀑布流布局。</li>
+</ul>
+<p>了解了这些，我们就能知道<code>RecyclerView</code>能帮我们解决什么问题，也就能更好地理解它为什么要这么设计，下面就开始进入真正的<code>RecyclerView</code>的学习。</p>
+<h1 id="三、RecyclerView架构"><a href="#三、RecyclerView架构" class="headerlink" title="三、RecyclerView架构"></a>三、<code>RecyclerView</code>架构</h1><p><img src="http://upload-images.jianshu.io/upload_images/1949836-be9474752abbf496.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>整个<code>RecyclerView</code>体系包含三大组件：</p>
+<ul>
+<li><code>LayoutManager</code>：<code>position the view</code></li>
+<li><code>ItemAnimator</code>：<code>animate the view</code></li>
+<li><code>Adapter</code>：<code>provide the view</code></li>
+</ul>
+<p>这三大组件各司其职，而<code>RecyclerView</code>负责管理，就组成了整个<code>RecyclerView</code>的架构。</p>
+<h2 id="3-1-LayoutManager"><a href="#3-1-LayoutManager" class="headerlink" title="3.1 LayoutManager"></a>3.1 <code>LayoutManager</code></h2><p><code>LayoutManager</code>需要负责以下几部分的工作：</p>
+<ul>
+<li><code>Position</code><br>它负责<code>View</code>的摆放，可以是线性、宫格、瀑布流式或者任意类型，而<code>RecyclerView</code>不知道也不关心这些，这是<code>LayoutManager</code>的职责。</li>
+<li><code>Scroll</code><br>对于滚动事件的处理，<code>RecyclerView</code>负责接收事件，但是最终还是由<code>LayoutManager</code>进行处理滚动后的逻辑，因为只有它在知道<code>View</code>具体摆放的位置。</li>
+<li><code>Focus traversal</code><br>当焦点转移导致需要一个新的<code>Item</code>出现在可视区域中时，也是由<code>LayoutManager</code>处理的。</li>
+</ul>
+<h2 id="3-2-Adapter"><a href="#3-2-Adapter" class="headerlink" title="3.2 Adapter"></a>3.2 <code>Adapter</code></h2><p><code>Adapter</code>需要负责以下几部分的工作：</p>
+<ul>
+<li>创建<code>View</code>和<code>ViewHolder</code>，后者作为整个复用机制的跟踪单元。</li>
+<li>把具体位置的<code>Item</code>和<code>ViewHolder</code>进行绑定，并存储相关的信息。</li>
+<li>通知<code>RecyclerView</code>数据变化，支持局部的更新，在提高效率的同时也有效地支持了动画。</li>
+<li><code>Item</code>点击事件的处理。</li>
+<li>多类型布局的支持。</li>
+</ul>
+<h1 id="四、ViewHolder的生命周期"><a href="#四、ViewHolder的生命周期" class="headerlink" title="四、ViewHolder的生命周期"></a>四、<code>ViewHolder</code>的生命周期</h1><h2 id="4-1-LayoutManager请求RecyclerView提供指定position的View"><a href="#4-1-LayoutManager请求RecyclerView提供指定position的View" class="headerlink" title="4.1 LayoutManager请求RecyclerView提供指定position的View"></a>4.1 <code>LayoutManager</code>请求<code>RecyclerView</code>提供指定<code>position</code>的<code>View</code></h2><p><code>ViewHolder</code>是和<code>View</code>相绑定的，同时它也是整个复用框架的跟踪单元。在<code>RecyclerView</code>体系中，对<code>ViewHolder</code>采用了二级缓存，分为<code>Cache</code>和<code>Recycled Pool</code>，当<code>LayoutManager</code>向<code>RecyclerView</code>请求位于某个<code>Position</code>的<code>View</code>时，<code>Recycled View</code>会先去<code>Cache</code>中寻找，如果找到，那么直接返回；如果找不到，那么再去<code>Recycled Pool</code>中寻找，下面就是整个寻找过程的几种情况：</p>
+<ul>
+<li>命中<code>Cache</code><br>这种情况下，不会调用<code>Adapter</code>的<code>onCreateViewHolder</code>或者<code>onBindViewHolder</code>方法：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-a37f09d9e89688c8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></li>
+<li><code>Cache</code>不存在，<code>Recycled Pool</code>也不存在<br>这种情况下，会调用<code>Adapter</code>的<code>onCreateViewHolder</code>方法，让它提供一个对应<code>viewType</code>的<code>ViewHolder</code>，我们在其中建立<code>ViewHolder</code>和<code>View</code>之间的关联。<br><img src="http://upload-images.jianshu.io/upload_images/1949836-15dbd6842926d475.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></li>
+<li><code>Cache</code>不存在，<code>Recycled Pool</code>存在<br>这种情况下，会回调<code>Adapter</code>的<code>onBindViewHolder</code>方法，我们在其中使用当前的数据集合来更新<code>ViewHolder</code>所绑定的<code>itemView</code>的状态。<br><img src="http://upload-images.jianshu.io/upload_images/1949836-7d2ccb23089cfc21.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></li>
+</ul>
+<h2 id="4-2-LayoutManager找到对应位置的View"><a href="#4-2-LayoutManager找到对应位置的View" class="headerlink" title="4.2 LayoutManager找到对应位置的View"></a>4.2 <code>LayoutManager</code>找到对应位置的<code>View</code></h2><p><code>LayoutManager</code>通过<code>addView</code>方法把之前找到的<code>View</code>添加进<code>RecyclerView</code>，<code>RecyclerView</code>通过<code>onViewAttachToWindow(VH viewHolder)</code>方法，通知<code>Adapter</code>这个<code>viewHolder</code>所关联的<code>itemView</code>已经被添加到了布局当中，<br><img src="http://upload-images.jianshu.io/upload_images/1949836-66c5387b73233253.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h2 id="4-3-LayoutManager请求RecyclerView移除某一个位置的View"><a href="#4-3-LayoutManager请求RecyclerView移除某一个位置的View" class="headerlink" title="4.3 LayoutManager请求RecyclerView移除某一个位置的View"></a>4.3 <code>LayoutManager</code>请求<code>RecyclerView</code>移除某一个位置的<code>View</code></h2><h3 id="4-3-1-普通情况"><a href="#4-3-1-普通情况" class="headerlink" title="4.3.1 普通情况"></a>4.3.1 普通情况</h3><p>当<code>LayoutManager</code>发现不再需要某一个<code>position</code>的<code>View</code>时，它会通知<code>RecyclerView</code>，<code>RecyclerView</code>通过<code>onViewDetachFromWindow(VH viewHolder)</code>通知<code>Adapter</code>和它绑定的<code>itemView</code>被移出了。同时，<code>RecyclerView</code>判断它是否能够被缓存，假设能够被缓存，那么它会先被放到<code>Cache</code>当中，在<code>Cache</code>中又会判断它内部是否有需要转移到<code>Recycled Pool</code>中的<code>ViewHolder</code>，在放入之后回收池后，通过<code>onViewRecycled(VH viewHolder)</code>方法通知<code>Adapter</code>它被回收了。<br><img src="http://upload-images.jianshu.io/upload_images/1949836-81e6ffb86f8175d2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h3 id="4-3-2-特殊情况"><a href="#4-3-2-特殊情况" class="headerlink" title="4.3.2  特殊情况"></a>4.3.2  特殊情况</h3><p>在上面的普通的情况中，<code>onViewDetachFromWindow(VH viewHolder)</code>是立即被回调的。然而在实际当中，由于我们需要对<code>View</code>的添加、删除做一些过度动画，这时候，我们需要等待<code>ItemAnimator</code>进行完动画操作之后，才做<code>detach</code>和<code>recycle</code>的逻辑，这一过程对于<code>LayoutManager</code>是不可见的。<br><img src="http://upload-images.jianshu.io/upload_images/1949836-5ba58d576f731088.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h2 id="4-4-ViewHolder的销毁"><a href="#4-4-ViewHolder的销毁" class="headerlink" title="4.4 ViewHolder的销毁"></a>4.4 <code>ViewHolder</code>的销毁</h2><p>在一般情况下，我们不会去销毁<code>ViewHolder</code>，而是把它放入到缓存当中，除非出现以下两种情况。</p>
+<h3 id="4-4-1-ViewHolder所绑定的itemView当前状态异常"><a href="#4-4-1-ViewHolder所绑定的itemView当前状态异常" class="headerlink" title="4.4.1 ViewHolder所绑定的itemView当前状态异常"></a>4.4.1 <code>ViewHolder</code>所绑定的<code>itemView</code>当前状态异常</h3><p>在放入<code>Recycled Pool</code>时，会去检查<code>itemView</code>的状态是否正常。这一操作的目的主要是为了避免出现诸如此类的情况：当前<code>itemView</code>正在执行动画，此时它可能呈现半透明的状态，如果此时把它放入到回收池中，那么当另一个位置的<code>position</code>需要复用它时就可能会出现问题。<br>当出现上面的情况后，<code>Recycled Pool</code>会先通过<code>Adapter</code>的<code>onFailedToRecycled(VH viewHolder)</code>告诉它我们现在出现了异常的情况，由<code>Adapter</code>的实现者通过返回值来决定是否仍然要把它放入到<code>Recycled Pool</code>，默认是返回<code>false</code>，也就是不放入，那么这个<code>ViewHolder</code>就会被销毁了。<br><img src="http://upload-images.jianshu.io/upload_images/1949836-2c4c6488ac029e5d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h3 id="4-4-2-Recycled-Pool中已经没有足够的空间"><a href="#4-4-2-Recycled-Pool中已经没有足够的空间" class="headerlink" title="4.4.2 Recycled Pool中已经没有足够的空间"></a>4.4.2 <code>Recycled Pool</code>中已经没有足够的空间</h3><p><code>Recycled Pool</code>的空间并不是无限大的，因此，如果没有足够的空间存放要被回收的<code>ViewHolder</code>，那么它也会被销毁。<br><img src="http://upload-images.jianshu.io/upload_images/1949836-3d2601f5460e680b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>造成这种情况的一般是动画引起的，例如，我们调用了<code>notifyItemRangeChanged(0, getItemCount())</code>方法，这时候为了进行渐出渐进的动画，那么我们就需要创建两倍的<code>ViewHolder</code>，出现这种情况时一般有两种解决方法：</p>
+<ul>
+<li>只通知具体发生变化的<code>Item</code></li>
+<li>通过<code>pool.setMaxRecycledViews(type, count)</code>改变回收池的大小。</li>
+</ul>
+<h1 id="五、ItemAnimator"><a href="#五、ItemAnimator" class="headerlink" title="五、ItemAnimator"></a>五、<code>ItemAnimator</code></h1><p>对于<code>Item</code>的动画，主要有以下几种情况：</p>
+<ul>
+<li>添加：<code>Fade In</code></li>
+<li>删除：<code>Fade Out</code></li>
+<li>移动：<code>Translate</code></li>
+<li>更新：<code>Cross Fade</code></li>
+</ul>
+<p><code>RecyclerView</code>对于动画的处理采用了<code>Predictive</code>的方式，除了当前已经在<code>RecyclerView</code>布局中的<code>View</code>（实线框部分），它还需要知道在屏幕意外的信息（虚线框部分），这样在<code>H</code>被删除的时候，它才能够对<code>J-K</code>进行上移动画，并把原来不在屏幕内的<code>L</code>上移到可视范围之内。<br><img src="http://upload-images.jianshu.io/upload_images/1949836-ba8d94a410a41429.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h1 id="六、ChildHelper和AdapterHelper"><a href="#六、ChildHelper和AdapterHelper" class="headerlink" title="六、ChildHelper和AdapterHelper"></a>六、<code>ChildHelper</code>和<code>AdapterHelper</code></h1><h2 id="6-1-ChildHelper"><a href="#6-1-ChildHelper" class="headerlink" title="6.1 ChildHelper"></a>6.1 <code>ChildHelper</code></h2><p>对于<code>ChildHelper</code>的作用是：<code>Provide a virtual children list to layoutmanager</code>，下面我们就首先看一下为什么需要它。</p>
+<h3 id="6-1-1-解决什么问题"><a href="#6-1-1-解决什么问题" class="headerlink" title="6.1.1 解决什么问题"></a>6.1.1 解决什么问题</h3><p>我们看下面这种情况，假如<code>LayoutManager</code>想要移除一个<code>View</code>，而<code>ItemAnimator</code>又希望给这一移除的操作增加一个动画，那么这时候就会产生冲突，到底应该怎么办，为此，<code>RecyclerView</code>通过<code>ChildHelper</code>来把它们隔离开。<br><img src="http://upload-images.jianshu.io/upload_images/1949836-1d313d48796ac165.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h3 id="6-1-2-解决问题的方法"><a href="#6-1-2-解决问题的方法" class="headerlink" title="6.1.2 解决问题的方法"></a>6.1.2 解决问题的方法</h3><p>当<code>RecyclerView</code>收到<code>LayoutManager</code>要求改变布局的请求时，它并不是直接去更改<code>ViewGroup</code>，而是让<code>ChildHelper</code>和<code>ItemAnimator</code>去协调，并由它来操作<code>ViewGroup</code>。<br><img src="http://upload-images.jianshu.io/upload_images/1949836-bc3383f0a38a7323.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>最明显的例子是，假如我们当前列表中状态为<code>0,1,2,3</code>，此时我们移除了<code>position=0</code>的<code>Item</code>，这时候假如删除的动画还没有完成，那么<code>LayoutManager</code>和<code>RecyclerView</code>的<code>getChildAt(0)</code>返回值将会不同，因为在<code>LayoutManager</code>并不清楚<code>ChildHelper</code>的存在，在它看来，<code>position=0</code>的<code>Item</code>已经被移除了。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">layoutManager.getChildAt(0); //return 1;</div><div class="line">recyclerView.getChildAt(0); //return 0;</div></pre></td></tr></table></figure></p>
+<h2 id="6-2-AdapterHelper"><a href="#6-2-AdapterHelper" class="headerlink" title="6.2 AdapterHelper"></a>6.2 <code>AdapterHelper</code></h2><p>而<code>AdapterHelper</code>所解决的问题和<code>ChildHelper</code>类似，<code>ChildHelper</code>是处理<code>View</code>的，而<code>AdapterHelper</code>用来跟踪<code>ViewHolder</code>的，其作用为：</p>
+<ul>
+<li><code>Tracks ViewHolder positions</code></li>
+<li><code>Virtual Adapter for LayoutManager</code></li>
+</ul>
+<p>说起来可能比较抽象，我们用下面这种图理解一下，当我们移动某个<code>Item</code>并且它的<code>onLayout</code>方法还没有完成，那么<code>Adapter</code>和<code>Layout</code>的<code>postion</code>是不相同的：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-3f7a9c8d10b64043.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h1 id="七、ItemDecoration"><a href="#七、ItemDecoration" class="headerlink" title="七、ItemDecoration"></a>七、<code>ItemDecoration</code></h1><p><code>ItemDecoration</code>用来在<code>RecyclerView</code>的<code>Canvas</code>上进行额外的绘制操作，我们不仅可以在单个<code>Item</code>（例如给每个<code>Item</code>添加分割线）的<code>Canvas</code>上进行绘制，也可以在整个<code>RecyclerView</code>的<code>Canvas</code>上进行绘制，此外，我们还可以指定<code>Item</code>之间的间隔：</p>
+<ul>
+<li><code>Custom Drawing on RecyclerViews Canvas</code></li>
+<li><code>Add offset to View bounds</code></li>
+<li><code>Have multiple ItemDecoration</code></li>
+</ul>
+<p>需要注意的点：</p>
+<ul>
+<li><code>Do not try to access to adapter</code></li>
+<li><code>Keep necessary information in viewHolder</code></li>
+<li><code>General onDraw rules apply</code></li>
+<li><code>recyclerView.getChildViewHolder(View view)</code></li>
+</ul>
+<p>参考文章：<a href="http://blog.csdn.net/lmj623565791/article/details/45059587" target="_blank" rel="external">Android RecyclerView 使用完全解析 体验艺术般的控件</a>。</p>
+<h1 id="八、RecycledViewPool"><a href="#八、RecycledViewPool" class="headerlink" title="八、RecycledViewPool"></a>八、<code>RecycledViewPool</code></h1><p><code>RecyclerViewPool</code>用来缓存那些回收的<code>View</code>，这些缓存不仅可以提供给单个<code>RecyclerView</code>使用，还可以提供和别的自定义控件共享。</p>
+<ul>
+<li><code>Sanctuary for reserve ViewHolders</code></li>
+<li><code>Can be shared between RecyclerViews or Custom ViewGroups</code></li>
+<li><code>PerActivity Context</code></li>
+</ul>
+<h1 id="九、ItemTouchHelper"><a href="#九、ItemTouchHelper" class="headerlink" title="九、ItemTouchHelper"></a>九、<code>ItemTouchHelper</code></h1><p>之前使用<code>ListView</code>的时候，如果需要支持侧滑删除、拖动排序这种操作，那么我们一般用引入一些开源库，现在<code>RecyclerView</code>已经帮我们提供了实现的接口，通过重写<code>ItemTouchHelper</code>的方法，就可以实现上面提到的那些操作。</p>
+<ul>
+<li><code>Drag &amp; Drop</code></li>
+<li><code>Swipe to dismiss</code></li>
+</ul>
+<p>参考文章：<a href="http://www.jianshu.com/p/0c1984bc9383" target="_blank" rel="external">RecyclerView 进阶：使用 ItemTouchHelper 实现拖拽和侧滑删除</a></p>
+<h1 id="十、Tips"><a href="#十、Tips" class="headerlink" title="十、Tips"></a>十、<code>Tips</code></h1><ul>
+<li><code>onBind Position != final</code>，<code>use holder.getAdapterPostion()</code><br>如果我们像下面这样，在<code>onBindViewHolder</code>中绑定了监听：<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">public void onBindViewHolder(final ViewHolder, final int position) &#123;</div><div class="line">    holder.itemView.setOnClickListener(new View.onClickListener) &#123;</div><div class="line">        @Override</div><div class="line">        public void onClick(View view) &#123;</div><div class="line">            removeAtPostion(position);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>由于<code>Item</code>会被添加、删除、移动，因此，我们在<code>onBindViewHolder</code>中获得位置，并不一定是当前的位置，例如像下面这样：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">onBindViewHolder(holder, 5);</div><div class="line">notifyItemMoved(5, 15);</div><div class="line">holder.itemView.callOnClick();</div></pre></td></tr></table></figure></p>
+<p>那么就会得到错误的位置，这时候应当使用<code>holder.getAdapterPostion()</code>来保证能够得到预期的结果。</p>
+<ul>
+<li><code>Payloads</code><br>通过<code>onBindViewHolder</code>中的<code>List payloads</code>，我们可以指定在<code>bind</code>的时候只更新某一部分的信息，而不是全部更新。</li>
+<li><code>onCreate means create</code><br>在<code>onCreateViewHolder</code>中，始终应当返回一个新的<code>ViewHolder</code>，而不是返回一个缓存的<code>ViewHolder</code>。</li>
+<li><code>Adapter position and Layout position</code><br>就像我们前面在<code>AdapterHelper</code>中讨论的那样，在某些时刻，<code>Adapter Position</code>和<code>Layout Position</code>并不相等，我们应当根据情况选择需要使用哪个，<code>Adapter Position</code><strong>数据所处的位置</strong>，而<code>Layout Position</code>则对应当前<strong><code>View</code>的所处的位置</strong>。</li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/04/02/RecyclerView/RecyclerView-知识梳理(3)---LayoutManager/" rel="next" title="RecyclerView 知识梳理(3) - LayoutManager">
+                <i class="fa fa-chevron-left"></i> RecyclerView 知识梳理(3) - LayoutManager
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/04/04/RecyclerView/RecyclerView-知识梳理(4)---ItemDecoration/" rel="prev" title="RecyclerView 知识梳理(4) - ItemDecoration">
+                RecyclerView 知识梳理(4) - ItemDecoration <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="John Doe" />
+          <p class="site-author-name" itemprop="name">John Doe</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">104</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">23</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、概述"><span class="nav-number">1.</span> <span class="nav-text">一、概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、为什么要使用RecyclerView"><span class="nav-number">2.</span> <span class="nav-text">二、为什么要使用RecyclerView</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、RecyclerView架构"><span class="nav-number">3.</span> <span class="nav-text">三、RecyclerView架构</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-LayoutManager"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 LayoutManager</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-Adapter"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 Adapter</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四、ViewHolder的生命周期"><span class="nav-number">4.</span> <span class="nav-text">四、ViewHolder的生命周期</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#4-1-LayoutManager请求RecyclerView提供指定position的View"><span class="nav-number">4.1.</span> <span class="nav-text">4.1 LayoutManager请求RecyclerView提供指定position的View</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-2-LayoutManager找到对应位置的View"><span class="nav-number">4.2.</span> <span class="nav-text">4.2 LayoutManager找到对应位置的View</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-3-LayoutManager请求RecyclerView移除某一个位置的View"><span class="nav-number">4.3.</span> <span class="nav-text">4.3 LayoutManager请求RecyclerView移除某一个位置的View</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-1-普通情况"><span class="nav-number">4.3.1.</span> <span class="nav-text">4.3.1 普通情况</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-2-特殊情况"><span class="nav-number">4.3.2.</span> <span class="nav-text">4.3.2  特殊情况</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-4-ViewHolder的销毁"><span class="nav-number">4.4.</span> <span class="nav-text">4.4 ViewHolder的销毁</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-4-1-ViewHolder所绑定的itemView当前状态异常"><span class="nav-number">4.4.1.</span> <span class="nav-text">4.4.1 ViewHolder所绑定的itemView当前状态异常</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-4-2-Recycled-Pool中已经没有足够的空间"><span class="nav-number">4.4.2.</span> <span class="nav-text">4.4.2 Recycled Pool中已经没有足够的空间</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#五、ItemAnimator"><span class="nav-number">5.</span> <span class="nav-text">五、ItemAnimator</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#六、ChildHelper和AdapterHelper"><span class="nav-number">6.</span> <span class="nav-text">六、ChildHelper和AdapterHelper</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#6-1-ChildHelper"><span class="nav-number">6.1.</span> <span class="nav-text">6.1 ChildHelper</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#6-1-1-解决什么问题"><span class="nav-number">6.1.1.</span> <span class="nav-text">6.1.1 解决什么问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-1-2-解决问题的方法"><span class="nav-number">6.1.2.</span> <span class="nav-text">6.1.2 解决问题的方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-2-AdapterHelper"><span class="nav-number">6.2.</span> <span class="nav-text">6.2 AdapterHelper</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#七、ItemDecoration"><span class="nav-number">7.</span> <span class="nav-text">七、ItemDecoration</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#八、RecycledViewPool"><span class="nav-number">8.</span> <span class="nav-text">八、RecycledViewPool</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#九、ItemTouchHelper"><span class="nav-number">9.</span> <span class="nav-text">九、ItemTouchHelper</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#十、Tips"><span class="nav-number">10.</span> <span class="nav-text">十、Tips</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
