@@ -93,12 +93,12 @@
 
 
 
-<meta name="description" content="插件化知识梳理(1) - Small 框架之如何引入应用插件插件化知识梳理(2) - Small 框架之如何引入公共库插件插件化知识梳理(3) - Small 框架之宿主分身插件化知识梳理(4) - Small 框架之如何实现插件更新插件化知识梳理(5) - Small 框架之如何不将插件打包到宿主中插件化知识梳理(6) - Small 源码分析之 Hook 原理插件化知识梳理(7) - 类的动">
+<meta name="description" content="一、前言当需要设计一个插件化的框架，首先需要解决的是以下三个问题：  Activity的动态注册 类的动态加载 资源的动态加载  如果大家有阅读过前面一系列的文章，那么对于如何解决前两个问题应该可以有一个大概的思路了。不清楚的可以重点看一下 插件化知识梳理(6) - Small 源码分析之 Hook 原理 和 插件化知识梳理(8) - 类的动态加载源码分析。今天这篇，我就来先了解一下在Androi">
 <meta property="og:type" content="article">
 <meta property="og:title" content="插件化知识梳理(9) - 资源的动态加载示例及源码分析">
 <meta property="og:url" content="http://yoursite.com/2017/06/12/插件化/插件化知识梳理(9)---资源的动态加载示例及源码分析/index.html">
 <meta property="og:site_name" content="泽毛">
-<meta property="og:description" content="插件化知识梳理(1) - Small 框架之如何引入应用插件插件化知识梳理(2) - Small 框架之如何引入公共库插件插件化知识梳理(3) - Small 框架之宿主分身插件化知识梳理(4) - Small 框架之如何实现插件更新插件化知识梳理(5) - Small 框架之如何不将插件打包到宿主中插件化知识梳理(6) - Small 源码分析之 Hook 原理插件化知识梳理(7) - 类的动">
+<meta property="og:description" content="一、前言当需要设计一个插件化的框架，首先需要解决的是以下三个问题：  Activity的动态注册 类的动态加载 资源的动态加载  如果大家有阅读过前面一系列的文章，那么对于如何解决前两个问题应该可以有一个大概的思路了。不清楚的可以重点看一下 插件化知识梳理(6) - Small 源码分析之 Hook 原理 和 插件化知识梳理(8) - 类的动态加载源码分析。今天这篇，我就来先了解一下在Androi">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-2ec57a4089f307e6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-893591b3854501d8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-884987fc309d18eb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
@@ -114,10 +114,10 @@
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-31d8390bf231263d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-963079a23789f001.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-24950b6f4b05f6e1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:updated_time" content="2017-06-27T13:57:09.000Z">
+<meta property="og:updated_time" content="2017-06-27T15:42:51.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="插件化知识梳理(9) - 资源的动态加载示例及源码分析">
-<meta name="twitter:description" content="插件化知识梳理(1) - Small 框架之如何引入应用插件插件化知识梳理(2) - Small 框架之如何引入公共库插件插件化知识梳理(3) - Small 框架之宿主分身插件化知识梳理(4) - Small 框架之如何实现插件更新插件化知识梳理(5) - Small 框架之如何不将插件打包到宿主中插件化知识梳理(6) - Small 源码分析之 Hook 原理插件化知识梳理(7) - 类的动">
+<meta name="twitter:description" content="一、前言当需要设计一个插件化的框架，首先需要解决的是以下三个问题：  Activity的动态注册 类的动态加载 资源的动态加载  如果大家有阅读过前面一系列的文章，那么对于如何解决前两个问题应该可以有一个大概的思路了。不清楚的可以重点看一下 插件化知识梳理(6) - Small 源码分析之 Hook 原理 和 插件化知识梳理(8) - 类的动态加载源码分析。今天这篇，我就来先了解一下在Androi">
 <meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-2ec57a4089f307e6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 
 
@@ -357,10 +357,7 @@
       
 
       
-        <blockquote>
-<p><a href="http://www.jianshu.com/p/07f88d4924db" target="_blank" rel="external">插件化知识梳理(1) - Small 框架之如何引入应用插件</a><br><a href="http://www.jianshu.com/p/f882c1f6b68b" target="_blank" rel="external">插件化知识梳理(2) - Small 框架之如何引入公共库插件</a><br><a href="http://www.jianshu.com/p/2162a4ce4560" target="_blank" rel="external">插件化知识梳理(3) - Small 框架之宿主分身</a><br><a href="http://www.jianshu.com/p/dee27b35f72f" target="_blank" rel="external">插件化知识梳理(4) - Small 框架之如何实现插件更新</a><br><a href="http://www.jianshu.com/p/e023e5d83992" target="_blank" rel="external">插件化知识梳理(5) - Small 框架之如何不将插件打包到宿主中</a><br><a href="http://www.jianshu.com/p/95b0f9894aa1" target="_blank" rel="external">插件化知识梳理(6) - Small 源码分析之 Hook 原理</a><br><a href="http://www.jianshu.com/p/ef4c8ffef374" target="_blank" rel="external">插件化知识梳理(7) - 类的动态加载入门</a><br><a href="http://www.jianshu.com/p/6b4a7a4fb39a" target="_blank" rel="external">插件化知识梳理(8) - 类的动态加载源码分析</a><br><a href="http://www.jianshu.com/p/86dbf0360348" target="_blank" rel="external">插件化知识梳理(9) - 资源的动态加载示例及源码分析</a></p>
-</blockquote>
-<h1 id="一、前言"><a href="#一、前言" class="headerlink" title="一、前言"></a>一、前言</h1><p>当需要设计一个插件化的框架，首先需要解决的是以下三个问题：</p>
+        <h1 id="一、前言"><a href="#一、前言" class="headerlink" title="一、前言"></a>一、前言</h1><p>当需要设计一个插件化的框架，首先需要解决的是以下三个问题：</p>
 <ul>
 <li><code>Activity</code>的动态注册</li>
 <li>类的动态加载</li>
@@ -538,7 +535,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">23</span>
+                <span class="site-state-item-count">24</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>

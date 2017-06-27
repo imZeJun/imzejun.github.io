@@ -93,12 +93,12 @@
 
 
 
-<meta name="description" content="插件化知识梳理(1) - Small 框架之如何引入应用插件插件化知识梳理(2) - Small 框架之如何引入公共库插件插件化知识梳理(3) - Small 框架之宿主分身插件化知识梳理(4) - Small 框架之如何实现插件更新插件化知识梳理(5) - Small 框架之如何不将插件打包到宿主中插件化知识梳理(6) - Small 源码分析之 Hook 原理插件化知识梳理(7) - 类的动">
+<meta name="description" content="一、前言在 插件化知识梳理(6) - Small 源码分析之 Hook 原理 这一章的学习完成之后，下一步我们将进入插件化加载的精髓，动态加载类的学习，在此之前，我们需要先准备一些关于类加载的知识。 Android当中，支持动态加载的两种方式为：DexClassLoader和PathClassLoader。这两者之间的区别为：  DexClassLoader 可以加载jar、apk、dex 支持从">
 <meta property="og:type" content="article">
 <meta property="og:title" content="插件化知识梳理(7) - 类的动态加载入门">
 <meta property="og:url" content="http://yoursite.com/2017/06/09/插件化/插件化知识梳理(7)---类的动态加载入门/index.html">
 <meta property="og:site_name" content="泽毛">
-<meta property="og:description" content="插件化知识梳理(1) - Small 框架之如何引入应用插件插件化知识梳理(2) - Small 框架之如何引入公共库插件插件化知识梳理(3) - Small 框架之宿主分身插件化知识梳理(4) - Small 框架之如何实现插件更新插件化知识梳理(5) - Small 框架之如何不将插件打包到宿主中插件化知识梳理(6) - Small 源码分析之 Hook 原理插件化知识梳理(7) - 类的动">
+<meta property="og:description" content="一、前言在 插件化知识梳理(6) - Small 源码分析之 Hook 原理 这一章的学习完成之后，下一步我们将进入插件化加载的精髓，动态加载类的学习，在此之前，我们需要先准备一些关于类加载的知识。 Android当中，支持动态加载的两种方式为：DexClassLoader和PathClassLoader。这两者之间的区别为：  DexClassLoader 可以加载jar、apk、dex 支持从">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-92096e2263f1bf49.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-73541db8ba76682f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-74aeef541ac68770.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
@@ -106,10 +106,10 @@
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-6ea2a4eba371076d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-d053617268fbb275.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-c44986ee5caaa7db.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:updated_time" content="2017-06-27T13:56:09.000Z">
+<meta property="og:updated_time" content="2017-06-27T15:42:36.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="插件化知识梳理(7) - 类的动态加载入门">
-<meta name="twitter:description" content="插件化知识梳理(1) - Small 框架之如何引入应用插件插件化知识梳理(2) - Small 框架之如何引入公共库插件插件化知识梳理(3) - Small 框架之宿主分身插件化知识梳理(4) - Small 框架之如何实现插件更新插件化知识梳理(5) - Small 框架之如何不将插件打包到宿主中插件化知识梳理(6) - Small 源码分析之 Hook 原理插件化知识梳理(7) - 类的动">
+<meta name="twitter:description" content="一、前言在 插件化知识梳理(6) - Small 源码分析之 Hook 原理 这一章的学习完成之后，下一步我们将进入插件化加载的精髓，动态加载类的学习，在此之前，我们需要先准备一些关于类加载的知识。 Android当中，支持动态加载的两种方式为：DexClassLoader和PathClassLoader。这两者之间的区别为：  DexClassLoader 可以加载jar、apk、dex 支持从">
 <meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-92096e2263f1bf49.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 
 
@@ -349,10 +349,7 @@
       
 
       
-        <blockquote>
-<p><a href="http://www.jianshu.com/p/07f88d4924db" target="_blank" rel="external">插件化知识梳理(1) - Small 框架之如何引入应用插件</a><br><a href="http://www.jianshu.com/p/f882c1f6b68b" target="_blank" rel="external">插件化知识梳理(2) - Small 框架之如何引入公共库插件</a><br><a href="http://www.jianshu.com/p/2162a4ce4560" target="_blank" rel="external">插件化知识梳理(3) - Small 框架之宿主分身</a><br><a href="http://www.jianshu.com/p/dee27b35f72f" target="_blank" rel="external">插件化知识梳理(4) - Small 框架之如何实现插件更新</a><br><a href="http://www.jianshu.com/p/e023e5d83992" target="_blank" rel="external">插件化知识梳理(5) - Small 框架之如何不将插件打包到宿主中</a><br><a href="http://www.jianshu.com/p/95b0f9894aa1" target="_blank" rel="external">插件化知识梳理(6) - Small 源码分析之 Hook 原理</a><br><a href="http://www.jianshu.com/p/ef4c8ffef374" target="_blank" rel="external">插件化知识梳理(7) - 类的动态加载入门</a><br><a href="http://www.jianshu.com/p/6b4a7a4fb39a" target="_blank" rel="external">插件化知识梳理(8) - 类的动态加载源码分析</a></p>
-</blockquote>
-<h1 id="一、前言"><a href="#一、前言" class="headerlink" title="一、前言"></a>一、前言</h1><p>在 <a href="http://www.jianshu.com/p/95b0f9894aa1" target="_blank" rel="external">插件化知识梳理(6) - Small 源码分析之 Hook 原理</a> 这一章的学习完成之后，下一步我们将进入插件化加载的精髓，动态加载类的学习，在此之前，我们需要先准备一些关于类加载的知识。</p>
+        <h1 id="一、前言"><a href="#一、前言" class="headerlink" title="一、前言"></a>一、前言</h1><p>在 <a href="http://www.jianshu.com/p/95b0f9894aa1" target="_blank" rel="external">插件化知识梳理(6) - Small 源码分析之 Hook 原理</a> 这一章的学习完成之后，下一步我们将进入插件化加载的精髓，动态加载类的学习，在此之前，我们需要先准备一些关于类加载的知识。</p>
 <p><code>Android</code>当中，支持动态加载的两种方式为：<code>DexClassLoader</code>和<code>PathClassLoader</code>。这两者之间的区别为：</p>
 <ul>
 <li><code>DexClassLoader</code><ul>
@@ -514,7 +511,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">23</span>
+                <span class="site-state-item-count">24</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>

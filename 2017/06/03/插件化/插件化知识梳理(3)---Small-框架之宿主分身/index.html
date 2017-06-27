@@ -93,21 +93,21 @@
 
 
 
-<meta name="description" content="插件化知识梳理(1) - Small 框架之如何引入应用插件插件化知识梳理(2) - Small 框架之如何引入公共库插件插件化知识梳理(3) - Small 框架之宿主分身插件化知识梳理(4) - Small 框架之如何实现插件更新插件化知识梳理(5) - Small 框架之如何不将插件打包到宿主中插件化知识梳理(6) - Small 源码分析之 Hook 原理插件化知识梳理(7) - 类的动">
+<meta name="description" content="一、前言在 插件化知识梳理(1) - Small 框架之如何引入应用插件，插件化知识梳理(2) - Small 框架之如何引入公共库插件 前两篇文章中，我们介绍了如何通过Small框架来实现应用插件及公共库插件，今天，我再来介绍一个新的知识点 - 宿主分身。 与应用插件和公共库插件不同，宿主分身会作为宿主的一部分，被编译到宿主当中，因此它不能被独立更新，但是它提供了一些插件所不具备的功能：  插件">
 <meta property="og:type" content="article">
 <meta property="og:title" content="插件化知识梳理(3) - Small 框架之宿主分身">
 <meta property="og:url" content="http://yoursite.com/2017/06/03/插件化/插件化知识梳理(3)---Small-框架之宿主分身/index.html">
 <meta property="og:site_name" content="泽毛">
-<meta property="og:description" content="插件化知识梳理(1) - Small 框架之如何引入应用插件插件化知识梳理(2) - Small 框架之如何引入公共库插件插件化知识梳理(3) - Small 框架之宿主分身插件化知识梳理(4) - Small 框架之如何实现插件更新插件化知识梳理(5) - Small 框架之如何不将插件打包到宿主中插件化知识梳理(6) - Small 源码分析之 Hook 原理插件化知识梳理(7) - 类的动">
+<meta property="og:description" content="一、前言在 插件化知识梳理(1) - Small 框架之如何引入应用插件，插件化知识梳理(2) - Small 框架之如何引入公共库插件 前两篇文章中，我们介绍了如何通过Small框架来实现应用插件及公共库插件，今天，我再来介绍一个新的知识点 - 宿主分身。 与应用插件和公共库插件不同，宿主分身会作为宿主的一部分，被编译到宿主当中，因此它不能被独立更新，但是它提供了一些插件所不具备的功能：  插件">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-14096966b5b70081.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-cad62c3e7241e53e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-180594212c3b5260.gif?imageMogr2/auto-orient/strip">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-4f3d8d7267e335f8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-e05404f3f149d699.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:updated_time" content="2017-06-27T13:53:44.000Z">
+<meta property="og:updated_time" content="2017-06-27T15:42:06.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="插件化知识梳理(3) - Small 框架之宿主分身">
-<meta name="twitter:description" content="插件化知识梳理(1) - Small 框架之如何引入应用插件插件化知识梳理(2) - Small 框架之如何引入公共库插件插件化知识梳理(3) - Small 框架之宿主分身插件化知识梳理(4) - Small 框架之如何实现插件更新插件化知识梳理(5) - Small 框架之如何不将插件打包到宿主中插件化知识梳理(6) - Small 源码分析之 Hook 原理插件化知识梳理(7) - 类的动">
+<meta name="twitter:description" content="一、前言在 插件化知识梳理(1) - Small 框架之如何引入应用插件，插件化知识梳理(2) - Small 框架之如何引入公共库插件 前两篇文章中，我们介绍了如何通过Small框架来实现应用插件及公共库插件，今天，我再来介绍一个新的知识点 - 宿主分身。 与应用插件和公共库插件不同，宿主分身会作为宿主的一部分，被编译到宿主当中，因此它不能被独立更新，但是它提供了一些插件所不具备的功能：  插件">
 <meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-14096966b5b70081.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 
 
@@ -347,10 +347,7 @@
       
 
       
-        <blockquote>
-<p><a href="http://www.jianshu.com/p/07f88d4924db" target="_blank" rel="external">插件化知识梳理(1) - Small 框架之如何引入应用插件</a><br><a href="http://www.jianshu.com/p/f882c1f6b68b" target="_blank" rel="external">插件化知识梳理(2) - Small 框架之如何引入公共库插件</a><br><a href="http://www.jianshu.com/p/2162a4ce4560" target="_blank" rel="external">插件化知识梳理(3) - Small 框架之宿主分身</a><br><a href="http://www.jianshu.com/p/dee27b35f72f" target="_blank" rel="external">插件化知识梳理(4) - Small 框架之如何实现插件更新</a><br><a href="http://www.jianshu.com/p/e023e5d83992" target="_blank" rel="external">插件化知识梳理(5) - Small 框架之如何不将插件打包到宿主中</a><br><a href="http://www.jianshu.com/p/95b0f9894aa1" target="_blank" rel="external">插件化知识梳理(6) - Small 源码分析之 Hook 原理</a><br><a href="http://www.jianshu.com/p/ef4c8ffef374" target="_blank" rel="external">插件化知识梳理(7) - 类的动态加载入门</a><br><a href="http://www.jianshu.com/p/6b4a7a4fb39a" target="_blank" rel="external">插件化知识梳理(8) - 类的动态加载源码分析</a></p>
-</blockquote>
-<h1 id="一、前言"><a href="#一、前言" class="headerlink" title="一、前言"></a>一、前言</h1><p>在 <a href="http://www.jianshu.com/p/07f88d4924db" target="_blank" rel="external">插件化知识梳理(1) - Small 框架之如何引入应用插件</a>，<a href="http://www.jianshu.com/p/f882c1f6b68b" target="_blank" rel="external">插件化知识梳理(2) - Small 框架之如何引入公共库插件</a> 前两篇文章中，我们介绍了如何通过<code>Small</code>框架来实现应用插件及公共库插件，今天，我再来介绍一个新的知识点 - 宿主分身。</p>
+        <h1 id="一、前言"><a href="#一、前言" class="headerlink" title="一、前言"></a>一、前言</h1><p>在 <a href="http://www.jianshu.com/p/07f88d4924db" target="_blank" rel="external">插件化知识梳理(1) - Small 框架之如何引入应用插件</a>，<a href="http://www.jianshu.com/p/f882c1f6b68b" target="_blank" rel="external">插件化知识梳理(2) - Small 框架之如何引入公共库插件</a> 前两篇文章中，我们介绍了如何通过<code>Small</code>框架来实现应用插件及公共库插件，今天，我再来介绍一个新的知识点 - 宿主分身。</p>
 <p>与应用插件和公共库插件不同，宿主分身会作为宿主的一部分，被编译到宿主当中，因此它不能被独立更新，但是它提供了一些插件所不具备的功能：</p>
 <ul>
 <li>插件模块可以自由访问其中的代码和资源</li>
@@ -512,7 +509,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">23</span>
+                <span class="site-state-item-count">24</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>

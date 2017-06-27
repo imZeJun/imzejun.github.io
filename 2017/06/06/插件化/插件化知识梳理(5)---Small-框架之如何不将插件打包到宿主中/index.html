@@ -93,18 +93,18 @@
 
 
 
-<meta name="description" content="插件化知识梳理(1) - Small 框架之如何引入应用插件插件化知识梳理(2) - Small 框架之如何引入公共库插件插件化知识梳理(3) - Small 框架之宿主分身插件化知识梳理(4) - Small 框架之如何实现插件更新插件化知识梳理(5) - Small 框架之如何不将插件打包到宿主中插件化知识梳理(6) - Small 源码分析之 Hook 原理插件化知识梳理(7) - 类的动">
+<meta name="description" content="一、前言在前面的例子当中，我们都是把插件预置在Apk当中一起安装的，如 插件化知识梳理(4) - Small 框架之如何实现插件更新 所示，我们初始时候会将代表插件的so文件放置在jniLibs/armeabi目录下。那么如果我们将不是很重要的插件放在服务器上，当应用启动之后判断需要该插件，然后再从服务器上下载，将能够有效减小初始时候安装包的体积。 下面，我们就来演示一下如何从外部加载插件。 二、">
 <meta property="og:type" content="article">
 <meta property="og:title" content="插件化知识梳理(5) - Small 框架之如何不将插件打包到宿主中">
 <meta property="og:url" content="http://yoursite.com/2017/06/06/插件化/插件化知识梳理(5)---Small-框架之如何不将插件打包到宿主中/index.html">
 <meta property="og:site_name" content="泽毛">
-<meta property="og:description" content="插件化知识梳理(1) - Small 框架之如何引入应用插件插件化知识梳理(2) - Small 框架之如何引入公共库插件插件化知识梳理(3) - Small 框架之宿主分身插件化知识梳理(4) - Small 框架之如何实现插件更新插件化知识梳理(5) - Small 框架之如何不将插件打包到宿主中插件化知识梳理(6) - Small 源码分析之 Hook 原理插件化知识梳理(7) - 类的动">
+<meta property="og:description" content="一、前言在前面的例子当中，我们都是把插件预置在Apk当中一起安装的，如 插件化知识梳理(4) - Small 框架之如何实现插件更新 所示，我们初始时候会将代表插件的so文件放置在jniLibs/armeabi目录下。那么如果我们将不是很重要的插件放在服务器上，当应用启动之后判断需要该插件，然后再从服务器上下载，将能够有效减小初始时候安装包的体积。 下面，我们就来演示一下如何从外部加载插件。 二、">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-3622a4c555908d52.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-dc9f704c2df8292c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:updated_time" content="2017-06-27T13:55:01.000Z">
+<meta property="og:updated_time" content="2017-06-27T15:42:21.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="插件化知识梳理(5) - Small 框架之如何不将插件打包到宿主中">
-<meta name="twitter:description" content="插件化知识梳理(1) - Small 框架之如何引入应用插件插件化知识梳理(2) - Small 框架之如何引入公共库插件插件化知识梳理(3) - Small 框架之宿主分身插件化知识梳理(4) - Small 框架之如何实现插件更新插件化知识梳理(5) - Small 框架之如何不将插件打包到宿主中插件化知识梳理(6) - Small 源码分析之 Hook 原理插件化知识梳理(7) - 类的动">
+<meta name="twitter:description" content="一、前言在前面的例子当中，我们都是把插件预置在Apk当中一起安装的，如 插件化知识梳理(4) - Small 框架之如何实现插件更新 所示，我们初始时候会将代表插件的so文件放置在jniLibs/armeabi目录下。那么如果我们将不是很重要的插件放在服务器上，当应用启动之后判断需要该插件，然后再从服务器上下载，将能够有效减小初始时候安装包的体积。 下面，我们就来演示一下如何从外部加载插件。 二、">
 <meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-3622a4c555908d52.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 
 
@@ -344,10 +344,7 @@
       
 
       
-        <blockquote>
-<p><a href="http://www.jianshu.com/p/07f88d4924db" target="_blank" rel="external">插件化知识梳理(1) - Small 框架之如何引入应用插件</a><br><a href="http://www.jianshu.com/p/f882c1f6b68b" target="_blank" rel="external">插件化知识梳理(2) - Small 框架之如何引入公共库插件</a><br><a href="http://www.jianshu.com/p/2162a4ce4560" target="_blank" rel="external">插件化知识梳理(3) - Small 框架之宿主分身</a><br><a href="http://www.jianshu.com/p/dee27b35f72f" target="_blank" rel="external">插件化知识梳理(4) - Small 框架之如何实现插件更新</a><br><a href="http://www.jianshu.com/p/e023e5d83992" target="_blank" rel="external">插件化知识梳理(5) - Small 框架之如何不将插件打包到宿主中</a><br><a href="http://www.jianshu.com/p/95b0f9894aa1" target="_blank" rel="external">插件化知识梳理(6) - Small 源码分析之 Hook 原理</a><br><a href="http://www.jianshu.com/p/ef4c8ffef374" target="_blank" rel="external">插件化知识梳理(7) - 类的动态加载入门</a><br><a href="http://www.jianshu.com/p/6b4a7a4fb39a" target="_blank" rel="external">插件化知识梳理(8) - 类的动态加载源码分析</a></p>
-</blockquote>
-<h1 id="一、前言"><a href="#一、前言" class="headerlink" title="一、前言"></a>一、前言</h1><p>在前面的例子当中，我们都是把插件预置在<code>Apk</code>当中一起安装的，如 <a href="http://www.jianshu.com/p/dee27b35f72f" target="_blank" rel="external">插件化知识梳理(4) - Small 框架之如何实现插件更新</a> 所示，我们初始时候会将代表插件的<code>so</code>文件放置在<code>jniLibs/armeabi</code>目录下。<br><img src="http://upload-images.jianshu.io/upload_images/1949836-3622a4c555908d52.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>那么如果我们将不是很重要的插件放在服务器上，当应用启动之后判断需要该插件，然后再从服务器上下载，将能够有效减小初始时候安装包的体积。</p>
+        <h1 id="一、前言"><a href="#一、前言" class="headerlink" title="一、前言"></a>一、前言</h1><p>在前面的例子当中，我们都是把插件预置在<code>Apk</code>当中一起安装的，如 <a href="http://www.jianshu.com/p/dee27b35f72f" target="_blank" rel="external">插件化知识梳理(4) - Small 框架之如何实现插件更新</a> 所示，我们初始时候会将代表插件的<code>so</code>文件放置在<code>jniLibs/armeabi</code>目录下。<br><img src="http://upload-images.jianshu.io/upload_images/1949836-3622a4c555908d52.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>那么如果我们将不是很重要的插件放在服务器上，当应用启动之后判断需要该插件，然后再从服务器上下载，将能够有效减小初始时候安装包的体积。</p>
 <p>下面，我们就来演示一下如何从外部加载插件。</p>
 <h1 id="二、示例"><a href="#二、示例" class="headerlink" title="二、示例"></a>二、示例</h1><p>加载插件部分的源码位于<code>Bundle.java</code>中：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-dc9f704c2df8292c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>可以看到，加载插件有两种方式，它们是根据<code>Small.isLoadFromAssets</code>来区分：</p>
 <ul>
@@ -492,7 +489,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">23</span>
+                <span class="site-state-item-count">24</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>

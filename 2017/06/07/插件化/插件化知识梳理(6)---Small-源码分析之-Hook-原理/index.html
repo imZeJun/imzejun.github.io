@@ -93,12 +93,12 @@
 
 
 
-<meta name="description" content="插件化知识梳理(1) - Small 框架之如何引入应用插件插件化知识梳理(2) - Small 框架之如何引入公共库插件插件化知识梳理(3) - Small 框架之宿主分身插件化知识梳理(4) - Small 框架之如何实现插件更新插件化知识梳理(5) - Small 框架之如何不将插件打包到宿主中插件化知识梳理(6) - Small 源码分析之 Hook 原理插件化知识梳理(7) - 类的动">
+<meta name="description" content="一、前言至此，花了四天时间、五篇文章，学习了如何使用Small框架来实现插件化。但是，对于我来说，一开始的目标就不是满足于仅仅知道如何用，而是希望通过这一框架作为平台，学习插件化中所用到的知识。 对于许多插件化的开源框架而言，一个比较核心的部分就是Hook的实现，所谓Hook，简单地来说就是在应用侧启动A.Activity，但是在AMS看来却是启动的B.Activity，之后AMS通知应用侧后，我">
 <meta property="og:type" content="article">
 <meta property="og:title" content="插件化知识梳理(6) - Small 源码分析之 Hook 原理">
 <meta property="og:url" content="http://yoursite.com/2017/06/07/插件化/插件化知识梳理(6)---Small-源码分析之-Hook-原理/index.html">
 <meta property="og:site_name" content="泽毛">
-<meta property="og:description" content="插件化知识梳理(1) - Small 框架之如何引入应用插件插件化知识梳理(2) - Small 框架之如何引入公共库插件插件化知识梳理(3) - Small 框架之宿主分身插件化知识梳理(4) - Small 框架之如何实现插件更新插件化知识梳理(5) - Small 框架之如何不将插件打包到宿主中插件化知识梳理(6) - Small 源码分析之 Hook 原理插件化知识梳理(7) - 类的动">
+<meta property="og:description" content="一、前言至此，花了四天时间、五篇文章，学习了如何使用Small框架来实现插件化。但是，对于我来说，一开始的目标就不是满足于仅仅知道如何用，而是希望通过这一框架作为平台，学习插件化中所用到的知识。 对于许多插件化的开源框架而言，一个比较核心的部分就是Hook的实现，所谓Hook，简单地来说就是在应用侧启动A.Activity，但是在AMS看来却是启动的B.Activity，之后AMS通知应用侧后，我">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-b4e009b90f35b851.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-2395ff82e5ca9d07.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-43b6a1008bb6f42a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
@@ -109,10 +109,10 @@
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-620ccd508091189e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-eb7dab3e00699460.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-d558b256a2d832bd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:updated_time" content="2017-06-27T13:55:42.000Z">
+<meta property="og:updated_time" content="2017-06-27T15:42:29.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="插件化知识梳理(6) - Small 源码分析之 Hook 原理">
-<meta name="twitter:description" content="插件化知识梳理(1) - Small 框架之如何引入应用插件插件化知识梳理(2) - Small 框架之如何引入公共库插件插件化知识梳理(3) - Small 框架之宿主分身插件化知识梳理(4) - Small 框架之如何实现插件更新插件化知识梳理(5) - Small 框架之如何不将插件打包到宿主中插件化知识梳理(6) - Small 源码分析之 Hook 原理插件化知识梳理(7) - 类的动">
+<meta name="twitter:description" content="一、前言至此，花了四天时间、五篇文章，学习了如何使用Small框架来实现插件化。但是，对于我来说，一开始的目标就不是满足于仅仅知道如何用，而是希望通过这一框架作为平台，学习插件化中所用到的知识。 对于许多插件化的开源框架而言，一个比较核心的部分就是Hook的实现，所谓Hook，简单地来说就是在应用侧启动A.Activity，但是在AMS看来却是启动的B.Activity，之后AMS通知应用侧后，我">
 <meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-b4e009b90f35b851.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 
 
@@ -352,10 +352,7 @@
       
 
       
-        <blockquote>
-<p><a href="http://www.jianshu.com/p/07f88d4924db" target="_blank" rel="external">插件化知识梳理(1) - Small 框架之如何引入应用插件</a><br><a href="http://www.jianshu.com/p/f882c1f6b68b" target="_blank" rel="external">插件化知识梳理(2) - Small 框架之如何引入公共库插件</a><br><a href="http://www.jianshu.com/p/2162a4ce4560" target="_blank" rel="external">插件化知识梳理(3) - Small 框架之宿主分身</a><br><a href="http://www.jianshu.com/p/dee27b35f72f" target="_blank" rel="external">插件化知识梳理(4) - Small 框架之如何实现插件更新</a><br><a href="http://www.jianshu.com/p/e023e5d83992" target="_blank" rel="external">插件化知识梳理(5) - Small 框架之如何不将插件打包到宿主中</a><br><a href="http://www.jianshu.com/p/95b0f9894aa1" target="_blank" rel="external">插件化知识梳理(6) - Small 源码分析之 Hook 原理</a><br><a href="http://www.jianshu.com/p/ef4c8ffef374" target="_blank" rel="external">插件化知识梳理(7) - 类的动态加载入门</a><br><a href="http://www.jianshu.com/p/6b4a7a4fb39a" target="_blank" rel="external">插件化知识梳理(8) - 类的动态加载源码分析</a></p>
-</blockquote>
-<h1 id="一、前言"><a href="#一、前言" class="headerlink" title="一、前言"></a>一、前言</h1><p>至此，花了四天时间、五篇文章，学习了如何使用<code>Small</code>框架来实现插件化。但是，对于我来说，一开始的目标就不是满足于仅仅知道如何用，而是希望通过这一框架作为平台，学习插件化中所用到的知识。</p>
+        <h1 id="一、前言"><a href="#一、前言" class="headerlink" title="一、前言"></a>一、前言</h1><p>至此，花了四天时间、五篇文章，学习了如何使用<code>Small</code>框架来实现插件化。但是，对于我来说，一开始的目标就不是满足于仅仅知道如何用，而是希望通过这一框架作为平台，学习插件化中所用到的知识。</p>
 <p>对于许多插件化的开源框架而言，一个比较核心的部分就是<code>Hook</code>的实现，所谓<code>Hook</code>，简单地来说就是在应用侧启动<code>A.Activity</code>，但是在<code>AMS</code>看来却是启动的<code>B.Activity</code>，之后<code>AMS</code>通知应用侧后，我们再重新替换成<code>A.Activity</code>。</p>
 <p>在阅读这篇文章之前，大家可以先看一下之前的这篇文章 <a href="http://www.jianshu.com/p/f26a76e19a2d" target="_blank" rel="external">Framework 源码解析知识梳理(1) - 应用进程与 AMS 的通信实现</a> ，<code>Small</code>其实就是通过替换这一双向通信过程中的关键类，对调用方法中传递的参数进行替换，来实现<code>Hook</code>机制。</p>
 <h1 id="二、源码分析"><a href="#二、源码分析" class="headerlink" title="二、源码分析"></a>二、源码分析</h1><p><code>Hook</code>的过程是<code>Small</code>预初始化的第一步，就是我们前面在自定义的<code>Application</code>构造方法中所进行的操作：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">public class SmallApp extends Application &#123;</div><div class="line"></div><div class="line">    public SmallApp() &#123;</div><div class="line">        Small.preSetUp(this);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
@@ -537,7 +534,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">23</span>
+                <span class="site-state-item-count">24</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>

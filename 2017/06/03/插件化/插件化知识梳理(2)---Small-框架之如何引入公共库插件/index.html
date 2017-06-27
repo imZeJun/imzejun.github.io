@@ -93,22 +93,22 @@
 
 
 
-<meta name="description" content="插件化知识梳理(1) - Small 框架之如何引入应用插件插件化知识梳理(2) - Small 框架之如何引入公共库插件插件化知识梳理(3) - Small 框架之宿主分身插件化知识梳理(4) - Small 框架之如何实现插件更新插件化知识梳理(5) - Small 框架之如何不将插件打包到宿主中插件化知识梳理(6) - Small 源码分析之 Hook 原理插件化知识梳理(7) - 类的动">
+<meta name="description" content="一、前言在 插件化知识梳理(1) - Small 框架之如何引入应用插件 中，我们简要地介绍了如何使用Small框架来通过插件实现一个Activity的跳转，也就是app.main，这里的app.main我们称为应用插件，除了应用插件外，还有一种称为公共库插件。 对于这两种插件的职责，Small官方建议的基本原则为   公共库插件 把各个 第三方库拆出来做成lib插件模块，包括统计、地图、网络、图">
 <meta property="og:type" content="article">
 <meta property="og:title" content="插件化知识梳理(2) - Small 框架之如何引入公共库插件">
 <meta property="og:url" content="http://yoursite.com/2017/06/03/插件化/插件化知识梳理(2)---Small-框架之如何引入公共库插件/index.html">
 <meta property="og:site_name" content="泽毛">
-<meta property="og:description" content="插件化知识梳理(1) - Small 框架之如何引入应用插件插件化知识梳理(2) - Small 框架之如何引入公共库插件插件化知识梳理(3) - Small 框架之宿主分身插件化知识梳理(4) - Small 框架之如何实现插件更新插件化知识梳理(5) - Small 框架之如何不将插件打包到宿主中插件化知识梳理(6) - Small 源码分析之 Hook 原理插件化知识梳理(7) - 类的动">
+<meta property="og:description" content="一、前言在 插件化知识梳理(1) - Small 框架之如何引入应用插件 中，我们简要地介绍了如何使用Small框架来通过插件实现一个Activity的跳转，也就是app.main，这里的app.main我们称为应用插件，除了应用插件外，还有一种称为公共库插件。 对于这两种插件的职责，Small官方建议的基本原则为   公共库插件 把各个 第三方库拆出来做成lib插件模块，包括统计、地图、网络、图">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-30b33139ba738cc9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-27130e21efcbe0a2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-6137aadd2f35e96c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-2bd231ce74f2c3b8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-ffa28c8ac6357304.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-25c56d6e5e0777f2.gif?imageMogr2/auto-orient/strip">
-<meta property="og:updated_time" content="2017-06-27T13:52:20.000Z">
+<meta property="og:updated_time" content="2017-06-27T15:41:59.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="插件化知识梳理(2) - Small 框架之如何引入公共库插件">
-<meta name="twitter:description" content="插件化知识梳理(1) - Small 框架之如何引入应用插件插件化知识梳理(2) - Small 框架之如何引入公共库插件插件化知识梳理(3) - Small 框架之宿主分身插件化知识梳理(4) - Small 框架之如何实现插件更新插件化知识梳理(5) - Small 框架之如何不将插件打包到宿主中插件化知识梳理(6) - Small 源码分析之 Hook 原理插件化知识梳理(7) - 类的动">
+<meta name="twitter:description" content="一、前言在 插件化知识梳理(1) - Small 框架之如何引入应用插件 中，我们简要地介绍了如何使用Small框架来通过插件实现一个Activity的跳转，也就是app.main，这里的app.main我们称为应用插件，除了应用插件外，还有一种称为公共库插件。 对于这两种插件的职责，Small官方建议的基本原则为   公共库插件 把各个 第三方库拆出来做成lib插件模块，包括统计、地图、网络、图">
 <meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-30b33139ba738cc9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 
 
@@ -348,10 +348,7 @@
       
 
       
-        <blockquote>
-<p><a href="http://www.jianshu.com/p/07f88d4924db" target="_blank" rel="external">插件化知识梳理(1) - Small 框架之如何引入应用插件</a><br><a href="http://www.jianshu.com/p/f882c1f6b68b" target="_blank" rel="external">插件化知识梳理(2) - Small 框架之如何引入公共库插件</a><br><a href="http://www.jianshu.com/p/2162a4ce4560" target="_blank" rel="external">插件化知识梳理(3) - Small 框架之宿主分身</a><br><a href="http://www.jianshu.com/p/dee27b35f72f" target="_blank" rel="external">插件化知识梳理(4) - Small 框架之如何实现插件更新</a><br><a href="http://www.jianshu.com/p/e023e5d83992" target="_blank" rel="external">插件化知识梳理(5) - Small 框架之如何不将插件打包到宿主中</a><br><a href="http://www.jianshu.com/p/95b0f9894aa1" target="_blank" rel="external">插件化知识梳理(6) - Small 源码分析之 Hook 原理</a><br><a href="http://www.jianshu.com/p/ef4c8ffef374" target="_blank" rel="external">插件化知识梳理(7) - 类的动态加载入门</a><br><a href="http://www.jianshu.com/p/6b4a7a4fb39a" target="_blank" rel="external">插件化知识梳理(8) - 类的动态加载源码分析</a></p>
-</blockquote>
-<h1 id="一、前言"><a href="#一、前言" class="headerlink" title="一、前言"></a>一、前言</h1><p>在 <a href="http://www.jianshu.com/p/07f88d4924db" target="_blank" rel="external">插件化知识梳理(1) - Small 框架之如何引入应用插件</a> 中，我们简要地介绍了如何使用<code>Small</code>框架来通过插件实现一个<code>Activity</code>的跳转，也就是<code>app.main</code>，这里的<code>app.main</code>我们称为<strong>应用插件</strong>，除了应用插件外，还有一种称为<strong>公共库插件</strong>。</p>
+        <h1 id="一、前言"><a href="#一、前言" class="headerlink" title="一、前言"></a>一、前言</h1><p>在 <a href="http://www.jianshu.com/p/07f88d4924db" target="_blank" rel="external">插件化知识梳理(1) - Small 框架之如何引入应用插件</a> 中，我们简要地介绍了如何使用<code>Small</code>框架来通过插件实现一个<code>Activity</code>的跳转，也就是<code>app.main</code>，这里的<code>app.main</code>我们称为<strong>应用插件</strong>，除了应用插件外，还有一种称为<strong>公共库插件</strong>。</p>
 <p>对于这两种插件的职责，<code>Small</code>官方建议的基本原则为</p>
 <blockquote>
 <ul>
@@ -530,7 +527,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">23</span>
+                <span class="site-state-item-count">24</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>

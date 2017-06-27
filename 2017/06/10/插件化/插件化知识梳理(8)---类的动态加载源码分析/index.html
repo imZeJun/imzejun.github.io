@@ -93,12 +93,12 @@
 
 
 
-<meta name="description" content="插件化知识梳理(1) - Small 框架之如何引入应用插件插件化知识梳理(2) - Small 框架之如何引入公共库插件插件化知识梳理(3) - Small 框架之宿主分身插件化知识梳理(4) - Small 框架之如何实现插件更新插件化知识梳理(5) - Small 框架之如何不将插件打包到宿主中插件化知识梳理(6) - Small 源码分析之 Hook 原理插件化知识梳理(7) - 类的动态">
+<meta name="description" content="一、前言在 插件化知识梳理(7) - 类的动态加载入门 中，我们通过一个例子来演示了如何通过PathClassLoader和DexClassLoader实现类的动态加载。今天这篇文章，我们一起来对这个类加载内部的实现源码进行一次简单的走读。源码的地址为 地址 ，友情提示，需要翻墙。 二、源码解析整个加载过程设计到的类，如下图所示： 2.1 BaseDexClassLoader从上面的图中，我们可以">
 <meta property="og:type" content="article">
 <meta property="og:title" content="插件化知识梳理(8) - 类的动态加载源码分析">
 <meta property="og:url" content="http://yoursite.com/2017/06/10/插件化/插件化知识梳理(8)---类的动态加载源码分析/index.html">
 <meta property="og:site_name" content="泽毛">
-<meta property="og:description" content="插件化知识梳理(1) - Small 框架之如何引入应用插件插件化知识梳理(2) - Small 框架之如何引入公共库插件插件化知识梳理(3) - Small 框架之宿主分身插件化知识梳理(4) - Small 框架之如何实现插件更新插件化知识梳理(5) - Small 框架之如何不将插件打包到宿主中插件化知识梳理(6) - Small 源码分析之 Hook 原理插件化知识梳理(7) - 类的动态">
+<meta property="og:description" content="一、前言在 插件化知识梳理(7) - 类的动态加载入门 中，我们通过一个例子来演示了如何通过PathClassLoader和DexClassLoader实现类的动态加载。今天这篇文章，我们一起来对这个类加载内部的实现源码进行一次简单的走读。源码的地址为 地址 ，友情提示，需要翻墙。 二、源码解析整个加载过程设计到的类，如下图所示： 2.1 BaseDexClassLoader从上面的图中，我们可以">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-901fbd1268920b6d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-159b4ab93de0acc8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-7c92f5558fd66e58.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
@@ -106,10 +106,10 @@
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-83bfc52d4747df3b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-c935d50db20fa55a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-c0c434143ac33a4f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:updated_time" content="2017-06-27T13:56:42.000Z">
+<meta property="og:updated_time" content="2017-06-27T15:42:43.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="插件化知识梳理(8) - 类的动态加载源码分析">
-<meta name="twitter:description" content="插件化知识梳理(1) - Small 框架之如何引入应用插件插件化知识梳理(2) - Small 框架之如何引入公共库插件插件化知识梳理(3) - Small 框架之宿主分身插件化知识梳理(4) - Small 框架之如何实现插件更新插件化知识梳理(5) - Small 框架之如何不将插件打包到宿主中插件化知识梳理(6) - Small 源码分析之 Hook 原理插件化知识梳理(7) - 类的动态">
+<meta name="twitter:description" content="一、前言在 插件化知识梳理(7) - 类的动态加载入门 中，我们通过一个例子来演示了如何通过PathClassLoader和DexClassLoader实现类的动态加载。今天这篇文章，我们一起来对这个类加载内部的实现源码进行一次简单的走读。源码的地址为 地址 ，友情提示，需要翻墙。 二、源码解析整个加载过程设计到的类，如下图所示： 2.1 BaseDexClassLoader从上面的图中，我们可以">
 <meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-901fbd1268920b6d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 
 
@@ -349,8 +349,7 @@
       
 
       
-        <p><a href="http://www.jianshu.com/p/07f88d4924db" target="_blank" rel="external">插件化知识梳理(1) - Small 框架之如何引入应用插件</a><br><a href="http://www.jianshu.com/p/f882c1f6b68b" target="_blank" rel="external">插件化知识梳理(2) - Small 框架之如何引入公共库插件</a><br><a href="http://www.jianshu.com/p/2162a4ce4560" target="_blank" rel="external">插件化知识梳理(3) - Small 框架之宿主分身</a><br><a href="http://www.jianshu.com/p/dee27b35f72f" target="_blank" rel="external">插件化知识梳理(4) - Small 框架之如何实现插件更新</a><br><a href="http://www.jianshu.com/p/e023e5d83992" target="_blank" rel="external">插件化知识梳理(5) - Small 框架之如何不将插件打包到宿主中</a><br><a href="http://www.jianshu.com/p/95b0f9894aa1" target="_blank" rel="external">插件化知识梳理(6) - Small 源码分析之 Hook 原理</a><br><a href="http://www.jianshu.com/p/ef4c8ffef374" target="_blank" rel="external">插件化知识梳理(7) - 类的动态加载入门</a><br><a href="http://www.jianshu.com/p/6b4a7a4fb39a" target="_blank" rel="external">插件化知识梳理(8) - 类的动态加载源码分析</a></p>
-<h1 id="一、前言"><a href="#一、前言" class="headerlink" title="一、前言"></a>一、前言</h1><p>在 <a href="http://www.jianshu.com/p/ef4c8ffef374" target="_blank" rel="external">插件化知识梳理(7) - 类的动态加载入门</a> 中，我们通过一个例子来演示了如何通过<code>PathClassLoader</code>和<code>DexClassLoader</code>实现类的动态加载。今天这篇文章，我们一起来对这个类加载内部的实现源码进行一次简单的走读。源码的地址为 <a href="https://android.googlesource.com/platform/libcore/+/master/dalvik/src/main/java/dalvik/system" target="_blank" rel="external">地址</a> ，友情提示，需要翻墙。</p>
+        <h1 id="一、前言"><a href="#一、前言" class="headerlink" title="一、前言"></a>一、前言</h1><p>在 <a href="http://www.jianshu.com/p/ef4c8ffef374" target="_blank" rel="external">插件化知识梳理(7) - 类的动态加载入门</a> 中，我们通过一个例子来演示了如何通过<code>PathClassLoader</code>和<code>DexClassLoader</code>实现类的动态加载。今天这篇文章，我们一起来对这个类加载内部的实现源码进行一次简单的走读。源码的地址为 <a href="https://android.googlesource.com/platform/libcore/+/master/dalvik/src/main/java/dalvik/system" target="_blank" rel="external">地址</a> ，友情提示，需要翻墙。</p>
 <h1 id="二、源码解析"><a href="#二、源码解析" class="headerlink" title="二、源码解析"></a>二、源码解析</h1><p>整个加载过程设计到的类，如下图所示：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-901fbd1268920b6d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
 <h2 id="2-1-BaseDexClassLoader"><a href="#2-1-BaseDexClassLoader" class="headerlink" title="2.1 BaseDexClassLoader"></a>2.1 BaseDexClassLoader</h2><p>从上面的图中，我们可以看到<code>DexClassLoader</code>和<code>PathClassLoader</code>，都是<code>BaseDexClassLoader</code>的子类，而当我们调用以上两个类的构造方法时，其实都是调用了<code>super()</code>方法，也就是<code>BaseDexClassLoader</code>的构造方法，它支持传入一下四个参数：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">public BaseDexClassLoader(String dexPath, File optimizedDirectory,</div><div class="line">        String librarySearchPath, ClassLoader parent) &#123;</div><div class="line">    super(parent);</div><div class="line">    this.pathList = new DexPathList(this, dexPath, librarySearchPath, null);</div><div class="line">    if (reporter != null) &#123;</div><div class="line">        reporter.report(this.pathList.getDexPaths());</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
 <ul>
@@ -503,7 +502,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">23</span>
+                <span class="site-state-item-count">24</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
