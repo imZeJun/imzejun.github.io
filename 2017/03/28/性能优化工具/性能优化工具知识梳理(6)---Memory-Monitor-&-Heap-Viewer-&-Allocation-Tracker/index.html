@@ -1,0 +1,768 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="性能优化工具知识梳理(1) - TraceView性能优化工具知识梳理(2) - Systrace性能优化工具知识梳理(3) - 调试GPU过度绘制 &amp;amp; GPU呈现模式分析性能优化工具知识梳理(4) - Hierarchy Viewer性能优化工具知识梳理(5) - MAT性能优化工具知识梳理(6) - Memory Monitor &amp;amp; Heap Viewer &amp;amp; All">
+<meta property="og:type" content="article">
+<meta property="og:title" content="性能优化工具知识梳理(6) - Memory Monitor &amp; Heap Viewer &amp; Allocation Tracker">
+<meta property="og:url" content="http://yoursite.com/2017/03/28/性能优化工具/性能优化工具知识梳理(6)---Memory-Monitor-&-Heap-Viewer-&-Allocation-Tracker/index.html">
+<meta property="og:site_name" content="zeMao&#39;s Blog">
+<meta property="og:description" content="性能优化工具知识梳理(1) - TraceView性能优化工具知识梳理(2) - Systrace性能优化工具知识梳理(3) - 调试GPU过度绘制 &amp;amp; GPU呈现模式分析性能优化工具知识梳理(4) - Hierarchy Viewer性能优化工具知识梳理(5) - MAT性能优化工具知识梳理(6) - Memory Monitor &amp;amp; Heap Viewer &amp;amp; All">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-1d1b01ffd9608ab1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-437f343a684ddb1b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-c6ebc86b08465dab.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-909f1c4c39f1da6a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2017-06-28T07:08:26.166Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="性能优化工具知识梳理(6) - Memory Monitor &amp; Heap Viewer &amp; Allocation Tracker">
+<meta name="twitter:description" content="性能优化工具知识梳理(1) - TraceView性能优化工具知识梳理(2) - Systrace性能优化工具知识梳理(3) - 调试GPU过度绘制 &amp;amp; GPU呈现模式分析性能优化工具知识梳理(4) - Hierarchy Viewer性能优化工具知识梳理(5) - MAT性能优化工具知识梳理(6) - Memory Monitor &amp;amp; Heap Viewer &amp;amp; All">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-1d1b01ffd9608ab1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/03/28/性能优化工具/性能优化工具知识梳理(6)---Memory-Monitor-&-Heap-Viewer-&-Allocation-Tracker/"/>
+
+
+
+
+
+  <title>性能优化工具知识梳理(6) - Memory Monitor & Heap Viewer & Allocation Tracker | zeMao's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">zeMao's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/03/28/性能优化工具/性能优化工具知识梳理(6)---Memory-Monitor-&-Heap-Viewer-&-Allocation-Tracker/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zeMao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="zeMao's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">性能优化工具知识梳理(6) - Memory Monitor & Heap Viewer & Allocation Tracker</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-28T16:38:00+08:00">
+                2017-03-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/性能优化工具知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">性能优化工具知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p><a href="http://www.jianshu.com/p/37c263f9886b" target="_blank" rel="external">性能优化工具知识梳理(1) - TraceView</a><br><a href="http://www.jianshu.com/p/41bb27235921" target="_blank" rel="external">性能优化工具知识梳理(2) - Systrace</a><br><a href="http://www.jianshu.com/p/ac2d58666106" target="_blank" rel="external">性能优化工具知识梳理(3) - 调试GPU过度绘制 &amp; GPU呈现模式分析</a><br><a href="http://www.jianshu.com/p/7ac6a2b8d740" target="_blank" rel="external">性能优化工具知识梳理(4) - Hierarchy Viewer</a><br><a href="http://www.jianshu.com/p/fa016c32360f" target="_blank" rel="external">性能优化工具知识梳理(5) - MAT</a><br><a href="http://www.jianshu.com/p/29a539bca730" target="_blank" rel="external">性能优化工具知识梳理(6) - Memory Monitor &amp; Heap Viewer &amp; Allocation Tracker</a><br><a href="http://www.jianshu.com/p/3c055862f353" target="_blank" rel="external">性能优化工具知识梳理(7) - LeakCanary</a><br><a href="http://www.jianshu.com/p/4ebe5d502842" target="_blank" rel="external">性能优化工具知识梳理(8) - Lint</a></p>
+</blockquote>
+<h1 id="一、概述"><a href="#一、概述" class="headerlink" title="一、概述"></a>一、概述</h1><p><code>Memory Profilers</code>是分析内存工具的集合，它包括以下三部分：</p>
+<ul>
+<li><code>Memory Monitor Tool</code></li>
+<li><code>Heap Viewer</code></li>
+<li><code>Allocation Tracker</code></li>
+</ul>
+<h1 id="二、Memory-Monitor"><a href="#二、Memory-Monitor" class="headerlink" title="二、Memory Monitor"></a>二、<code>Memory Monitor</code></h1><p><code>Memory Monitor</code>是<code>Android Studio</code>中自带的内存检测工具，它的作用有：</p>
+<ul>
+<li>实时检测应用的内存占用情况。</li>
+<li>检测卡顿是否是由于正在<code>Gc</code>引起。</li>
+<li>定位崩溃问题是否由内存问题引起。</li>
+</ul>
+<p>这个工具位于<code>Android Studio/Monitor</code>一栏当中，前面我们在介绍<code>MAT</code>的时候曾经使用过它，首先编写一个简单的<code>demo</code>，通过它可以分配和回收内存：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line">public class TrackerObject &#123;</div><div class="line"></div><div class="line">    List&lt;Bitmap&gt; mBitmaps = new ArrayList&lt;&gt;();</div><div class="line"></div><div class="line">    public void allocBitmaps() &#123;</div><div class="line">        for (int i = 0; i &lt; 100; i++) &#123;</div><div class="line">            Bitmap bitmap = Bitmap.createBitmap(200, 200, Bitmap.Config.ARGB_8888);</div><div class="line">            mBitmaps.add(bitmap);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void releaseBitmaps() &#123;</div><div class="line">        for (Bitmap bitmap : mBitmaps) &#123;</div><div class="line">            bitmap.recycle();</div><div class="line">        &#125;</div><div class="line">        mBitmaps.clear();</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">public class TrackerActivity extends Activity &#123;</div><div class="line"></div><div class="line">    private TrackerObject mTrackerObject;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    protected void onCreate(Bundle savedInstanceState) &#123;</div><div class="line">        super.onCreate(savedInstanceState);</div><div class="line">        setContentView(R.layout.activity_tracker);</div><div class="line">        mTrackerObject = new TrackerObject();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void alloc(View view) &#123;</div><div class="line">        mTrackerObject.allocBitmaps();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void release(View view) &#123;</div><div class="line">        mTrackerObject.releaseBitmaps();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1949836-1d1b01ffd9608ab1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<ul>
+<li>当我们点击<code>alloc</code>之后，内存不断上涨。</li>
+<li>而当我们点击<code>release</code>之后，内存并不会立刻下降，而是需要点击左边的“垃圾车”按钮来主动触发垃圾回收，这时候可以看到曲线立刻下降，说明此时触发了垃圾回收过程。</li>
+<li>视图中分为两个部分：<ul>
+<li>深蓝色：<code>App</code>当前使用的内存。</li>
+<li>淡蓝色：已经分配给<code>App</code>，但是当前没有使用的内存。</li>
+</ul>
+</li>
+<li>当我们不断点击<code>alloc</code>，最后就会抛出<code>OOM</code>异常错误：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-437f343a684ddb1b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></li>
+</ul>
+<h1 id="三、Heap-Viewer"><a href="#三、Heap-Viewer" class="headerlink" title="三、Heap Viewer"></a>三、<code>Heap Viewer</code></h1><p><code>Heap Viewer</code>有点像是<code>MAT</code>的简化版，它是<code>Android Device Monitor</code>中的一个工具：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-c6ebc86b08465dab.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>它的使用方式很简单，按照上图的步骤进行操作就可以了，需要特别注意的是，如果我们希望获得最新的内存占用情况时，那么需要做两件事：</p>
+<ul>
+<li>保证<code>2</code>中的开关是打开的</li>
+<li>点击<code>5</code>来触发一次<code>Gc</code>，这样才能得到最新的内存使用情况。</li>
+</ul>
+<h1 id="四、Allocation-Tracker"><a href="#四、Allocation-Tracker" class="headerlink" title="四、Allocation Tracker"></a>四、<code>Allocation Tracker</code></h1><p><code>Allocation Tracker</code>是用来记录一段时间内的内存分配情况，并且它可以列出分配对象的大小，以及是由哪个函数分配的。<br>下面，我们先看一下如何使用：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-909f1c4c39f1da6a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>其所处位置和上面的<code>Heap Viewer</code>类似，其展现结果在<code>Heap</code>的右边，当我们需要获得一段时间的内存分配，那么需要以下几步：</p>
+<ul>
+<li>点击<code>start Tracking</code></li>
+<li>操作<code>App</code>，这里我们点击<code>alloc</code>按钮分配一些<code>Bitmap</code></li>
+<li>点击<code>Get Locations</code>，获得从开始到结束的内存分配情况</li>
+</ul>
+<p>各列值的含义：</p>
+<ul>
+<li><code>Alloc Order</code>：分配的顺序</li>
+<li><code>Allocation Size</code>：分配的大小</li>
+<li><code>Allocated Class</code>：分配对象的类名</li>
+<li><code>Thread id</code>：分配的线程<code>id</code></li>
+<li><code>Allocated in</code>：分配到哪个对象当中。</li>
+</ul>
+<p>在整个区域的最下方，则是分配该对象的函数调用堆栈信息，这也是这个工具最有用的地方，通过它我们就可以分析出是代码中哪一段逻辑导致了某个对象的分配。</p>
+<h1 id="五、小结"><a href="#五、小结" class="headerlink" title="五、小结"></a>五、小结</h1><p>下面，我们来总结一下这三个工具各自的特点：</p>
+<h2 id="Memory-Monitor"><a href="#Memory-Monitor" class="headerlink" title="Memory Monitor"></a><code>Memory Monitor</code></h2><ul>
+<li>显示内存占用、分配和回收情况。</li>
+<li>判断<code>GC</code>是否是造成应用卡顿的原因。</li>
+<li>判断是否是由于内存问题导致了<code>App</code>的崩溃。</li>
+<li>呈现的结果是实时的。</li>
+<li>能够有效地帮助分析内存泄露。</li>
+<li>定位<code>Gc</code>发生的时间，并分析这是否是合适的时间。</li>
+<li>没有列出具体的分配对象。</li>
+</ul>
+<h2 id="Heap-Viewer"><a href="#Heap-Viewer" class="headerlink" title="Heap Viewer"></a><code>Heap Viewer</code></h2><ul>
+<li>在垃圾回收发生时，呈现出某一时刻的内存快照。</li>
+<li>帮助我们分析有可能是哪个对象引起了内存泄露。</li>
+</ul>
+<h2 id="Allocation-Tracker"><a href="#Allocation-Tracker" class="headerlink" title="Allocation Tracker"></a><code>Allocation Tracker</code></h2><ul>
+<li>分析出一段时间内对象的分配情况，并列出是由什么逻辑导致了这个对象的分配。</li>
+<li>和<code>Heap Viwer</code>一起使用，来分析大对象产生的原因。</li>
+</ul>
+<h1 id="六、参考文献"><a href="#六、参考文献" class="headerlink" title="六、参考文献"></a>六、参考文献</h1><blockquote>
+<p><a href="http://android.xsoftlab.net/tools/performance/comparison.html" target="_blank" rel="external"><code>http://android.xsoftlab.net/tools/performance/comparison.html</code></a></p>
+</blockquote>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/03/27/性能优化工具/性能优化工具知识梳理(5)---MAT/" rel="next" title="性能优化工具知识梳理(5) - MAT">
+                <i class="fa fa-chevron-left"></i> 性能优化工具知识梳理(5) - MAT
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/03/28/性能优化工具/性能优化工具知识梳理(7)---LeakCanary/" rel="prev" title="性能优化工具知识梳理(7) - LeakCanary">
+                性能优化工具知识梳理(7) - LeakCanary <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="zeMao" />
+          <p class="site-author-name" itemprop="name">zeMao</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">104</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">24</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、概述"><span class="nav-number">1.</span> <span class="nav-text">一、概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、Memory-Monitor"><span class="nav-number">2.</span> <span class="nav-text">二、Memory Monitor</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、Heap-Viewer"><span class="nav-number">3.</span> <span class="nav-text">三、Heap Viewer</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四、Allocation-Tracker"><span class="nav-number">4.</span> <span class="nav-text">四、Allocation Tracker</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#五、小结"><span class="nav-number">5.</span> <span class="nav-text">五、小结</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Memory-Monitor"><span class="nav-number">5.1.</span> <span class="nav-text">Memory Monitor</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Heap-Viewer"><span class="nav-number">5.2.</span> <span class="nav-text">Heap Viewer</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Allocation-Tracker"><span class="nav-number">5.3.</span> <span class="nav-text">Allocation Tracker</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#六、参考文献"><span class="nav-number">6.</span> <span class="nav-text">六、参考文献</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zeMao</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

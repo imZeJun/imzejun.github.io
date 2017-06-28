@@ -1,0 +1,732 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="一、前言在 插件化知识梳理(1) - Small 框架之如何引入应用插件，插件化知识梳理(2) - Small 框架之如何引入公共库插件 前两篇文章中，我们介绍了如何通过Small框架来实现应用插件及公共库插件，今天，我再来介绍一个新的知识点 - 宿主分身。 与应用插件和公共库插件不同，宿主分身会作为宿主的一部分，被编译到宿主当中，因此它不能被独立更新，但是它提供了一些插件所不具备的功能：  插件">
+<meta property="og:type" content="article">
+<meta property="og:title" content="插件化知识梳理(3) - Small 框架之宿主分身">
+<meta property="og:url" content="http://yoursite.com/2017/06/03/插件化/插件化知识梳理(3)---Small-框架之宿主分身/index.html">
+<meta property="og:site_name" content="zeMao&#39;s Blog">
+<meta property="og:description" content="一、前言在 插件化知识梳理(1) - Small 框架之如何引入应用插件，插件化知识梳理(2) - Small 框架之如何引入公共库插件 前两篇文章中，我们介绍了如何通过Small框架来实现应用插件及公共库插件，今天，我再来介绍一个新的知识点 - 宿主分身。 与应用插件和公共库插件不同，宿主分身会作为宿主的一部分，被编译到宿主当中，因此它不能被独立更新，但是它提供了一些插件所不具备的功能：  插件">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-14096966b5b70081.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-cad62c3e7241e53e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-180594212c3b5260.gif?imageMogr2/auto-orient/strip">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-4f3d8d7267e335f8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-e05404f3f149d699.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2017-06-28T06:47:04.230Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="插件化知识梳理(3) - Small 框架之宿主分身">
+<meta name="twitter:description" content="一、前言在 插件化知识梳理(1) - Small 框架之如何引入应用插件，插件化知识梳理(2) - Small 框架之如何引入公共库插件 前两篇文章中，我们介绍了如何通过Small框架来实现应用插件及公共库插件，今天，我再来介绍一个新的知识点 - 宿主分身。 与应用插件和公共库插件不同，宿主分身会作为宿主的一部分，被编译到宿主当中，因此它不能被独立更新，但是它提供了一些插件所不具备的功能：  插件">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-14096966b5b70081.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/06/03/插件化/插件化知识梳理(3)---Small-框架之宿主分身/"/>
+
+
+
+
+
+  <title>插件化知识梳理(3) - Small 框架之宿主分身 | zeMao's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">zeMao's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/03/插件化/插件化知识梳理(3)---Small-框架之宿主分身/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zeMao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="zeMao's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">插件化知识梳理(3) - Small 框架之宿主分身</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-03T22:44:00+08:00">
+                2017-06-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/插件化知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">插件化知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="一、前言"><a href="#一、前言" class="headerlink" title="一、前言"></a>一、前言</h1><p>在 <a href="http://www.jianshu.com/p/07f88d4924db" target="_blank" rel="external">插件化知识梳理(1) - Small 框架之如何引入应用插件</a>，<a href="http://www.jianshu.com/p/f882c1f6b68b" target="_blank" rel="external">插件化知识梳理(2) - Small 框架之如何引入公共库插件</a> 前两篇文章中，我们介绍了如何通过<code>Small</code>框架来实现应用插件及公共库插件，今天，我再来介绍一个新的知识点 - 宿主分身。</p>
+<p>与应用插件和公共库插件不同，宿主分身会作为宿主的一部分，被编译到宿主当中，因此它不能被独立更新，但是它提供了一些插件所不具备的功能：</p>
+<ul>
+<li>插件模块可以自由访问其中的代码和资源</li>
+<li>预留特定的资源、代码和<code>AndroidManifest.xml</code>声明，让系统可以正常识别</li>
+<li>预留稳定的资源、代码、第三方库，减少插件体积</li>
+</ul>
+<p>正如前面介绍的，应用插件通过<code>app.xxx</code>，公共库插件通过<code>lib.xxx</code>的命名方式，让<code>Small</code>进行识别。而宿主分身则需要以<code>app+xxxx</code>的方式来命名。</p>
+<p>除了以上介绍的可选情况，有一些代码是必须要放入到宿主分身中的：</p>
+<ul>
+<li><code>AndroidManifest.xml</code>的声明<ul>
+<li>所有权限，例如引入网络权限、读取存储等</li>
+<li>包含了某些特殊权限的<code>Activity</code>，如<code>process</code>，<code>configChanges</code>等</li>
+<li>任何的<code>provider/receiver/service</code>声明</li>
+</ul>
+</li>
+<li>资源<ul>
+<li>转场动画</li>
+<li>通知栏图标、自定义视图</li>
+<li>桌面快捷方式图标</li>
+</ul>
+</li>
+</ul>
+<h1 id="二、具体示例"><a href="#二、具体示例" class="headerlink" title="二、具体示例"></a>二、具体示例</h1><h2 id="2-1-创建应用插件模块"><a href="#2-1-创建应用插件模块" class="headerlink" title="2.1 创建应用插件模块"></a>2.1 创建应用插件模块</h2><p>首先，我们创建一个新的插件模块，创建的方式和 <a href="http://www.jianshu.com/p/07f88d4924db" target="_blank" rel="external">插件化知识梳理(1) - Small 框架之如何引入应用插件</a> 中介绍的相同：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-14096966b5b70081.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>其中，<code>DetailActivity</code>是插件的入口，而以<code>Stub</code>开头的四个类分别为<code>Activity/Service/ContentProvider/BroadcastReceiver</code>，我们需要在宿主分身模块中对其进行声明。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">public class StubActivity extends AppCompatActivity &#123;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    protected void onCreate(Bundle savedInstanceState) &#123;</div><div class="line">        super.onCreate(savedInstanceState);</div><div class="line">        setContentView(R.layout.activity_stub);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">public class StubBroadcastReceiver extends BroadcastReceiver &#123;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void onReceive(Context context, Intent intent) &#123;</div><div class="line">        Toast.makeText(context, &quot;StubBroadcastReceiver, onReceive&quot;, Toast.LENGTH_SHORT).show();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line">public class StubContentProvider extends ContentProvider &#123;</div><div class="line"></div><div class="line">    public static final Uri CONTENT_URI = Uri.parse(&quot;content://com.demo.small.app.detail.stub.provider&quot;);</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public boolean onCreate() &#123;</div><div class="line">        return false;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Nullable</div><div class="line">    @Override</div><div class="line">    public Cursor query(@NonNull Uri uri, @Nullable String[] strings, @Nullable String s, @Nullable String[] strings1, @Nullable String s1) &#123;</div><div class="line">        return null;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Nullable</div><div class="line">    @Override</div><div class="line">    public String getType(@NonNull Uri uri) &#123;</div><div class="line">        return null;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Nullable</div><div class="line">    @Override</div><div class="line">    public Uri insert(@NonNull Uri uri, @Nullable ContentValues contentValues) &#123;</div><div class="line">        Toast.makeText(getContext(), &quot;StubContentProvider, insert&quot;, Toast.LENGTH_SHORT).show();</div><div class="line">        return null;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public int delete(@NonNull Uri uri, @Nullable String s, @Nullable String[] strings) &#123;</div><div class="line">        return 0;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public int update(@NonNull Uri uri, @Nullable ContentValues contentValues, @Nullable String s, @Nullable String[] strings) &#123;</div><div class="line">        return 0;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">public class StubService extends Service &#123;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void onCreate() &#123;</div><div class="line">        super.onCreate();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public int onStartCommand(Intent intent, int flags, int startId) &#123;</div><div class="line">        Toast.makeText(getApplicationContext(), &quot;StubService, onStartCommand&quot;, Toast.LENGTH_SHORT).show();</div><div class="line">        return super.onStartCommand(intent, flags, startId);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Nullable</div><div class="line">    @Override</div><div class="line">    public IBinder onBind(Intent intent) &#123;</div><div class="line">        return null;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>为了方便验证，我们在回调函数中弹出<code>Toast</code>。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">public class DetailActivity extends AppCompatActivity &#123;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    protected void onCreate(Bundle savedInstanceState) &#123;</div><div class="line">        super.onCreate(savedInstanceState);</div><div class="line">        setContentView(R.layout.activity_detail);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void activity(View view) &#123;</div><div class="line">        Intent intent = new Intent(this, StubActivity.class);</div><div class="line">        startActivity(intent);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void service(View view) &#123;</div><div class="line">        Intent intent = new Intent(this, StubService.class);</div><div class="line">        startService(intent);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void contentProvider(View view) &#123;</div><div class="line">        ContentValues values = new ContentValues();</div><div class="line">        getContentResolver().insert(StubContentProvider.CONTENT_URI, values);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void broadcastReceiver(View view) &#123;</div><div class="line">        Intent intent = new Intent();</div><div class="line">        intent.setAction(&quot;com.demo.small.action.stub.broadcast&quot;);</div><div class="line">        sendBroadcast(intent);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="2-2-创建宿主分身模块"><a href="#2-2-创建宿主分身模块" class="headerlink" title="2.2 创建宿主分身模块"></a>2.2 创建宿主分身模块</h2><p>创建宿主分身模块时，需要选择<code>Android Library</code>，并且它的模块名需要为<code>app+xxx</code>的结构，这里，我们命名为<code>app+detail</code><br><img src="http://upload-images.jianshu.io/upload_images/1949836-cad62c3e7241e53e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>对于宿主分身模块，这里我们需要在<code>AndroidManifest.xml</code>文件中，添加必须要的声明：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">&lt;manifest xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;</div><div class="line">    package=&quot;com.demo.small.appdetail&quot;&gt;</div><div class="line"></div><div class="line">    &lt;application</div><div class="line">        android:allowBackup=&quot;true&quot;</div><div class="line">        android:label=&quot;@string/app_name&quot;&gt;</div><div class="line"></div><div class="line">        &lt;!-- Stub Activity --&gt;</div><div class="line">        &lt;activity android:name=&quot;com.demo.small.app.detail.StubActivity&quot; android:theme=&quot;@style/Theme.AppCompat&quot;/&gt;</div><div class="line"></div><div class="line">        &lt;!-- Stub Service --&gt;</div><div class="line">        &lt;service android:name=&quot;com.demo.small.app.detail.StubService&quot;/&gt;</div><div class="line"></div><div class="line">        &lt;!-- Stub ContentProvider --&gt;</div><div class="line">        &lt;provider</div><div class="line">            android:authorities=&quot;com.demo.small.app.detail.stub.provider&quot;</div><div class="line">            android:name=&quot;com.demo.small.app.detail.StubContentProvider&quot;/&gt;</div><div class="line"></div><div class="line">        &lt;!-- Stub BroadcastReceiver --&gt;</div><div class="line">        &lt;receiver android:name=&quot;com.demo.small.app.detail.StubBroadcastReceiver&quot;&gt;</div><div class="line">            &lt;intent-filter&gt;</div><div class="line">                &lt;action android:name=&quot;com.demo.small.action.stub.broadcast&quot;/&gt;</div><div class="line">            &lt;/intent-filter&gt;</div><div class="line">        &lt;/receiver&gt;</div><div class="line"></div><div class="line">    &lt;/application&gt;</div><div class="line"></div><div class="line">&lt;/manifest&gt;</div></pre></td></tr></table></figure></p>
+<h2 id="2-3-修改宿主模块的-bundle-json-文件"><a href="#2-3-修改宿主模块的-bundle-json-文件" class="headerlink" title="2.3 修改宿主模块的 bundle.json 文件"></a>2.3 修改宿主模块的 bundle.json 文件</h2><p>对于宿主分身模块，不需要添加声明，我们所需要的只是对新增的应用插件模块<code>app.detail</code>添加声明：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  &quot;version&quot;: &quot;1.0.0&quot;,</div><div class="line">  &quot;bundles&quot;: [</div><div class="line">    &#123;</div><div class="line">      &quot;uri&quot;: &quot;lib.utils&quot;,</div><div class="line">      &quot;pkg&quot;: &quot;com.demo.small.lib.utils&quot;</div><div class="line">    &#125;,</div><div class="line">    &#123;</div><div class="line">      &quot;uri&quot;: &quot;lib.style&quot;,</div><div class="line">      &quot;pkg&quot;: &quot;com.demo.small.lib.style&quot;</div><div class="line">    &#125;,</div><div class="line">    &#123;</div><div class="line">      &quot;uri&quot;: &quot;main&quot;,</div><div class="line">      &quot;pkg&quot;: &quot;com.demo.small.app.main&quot;</div><div class="line">    &#125;,</div><div class="line">    &#123;</div><div class="line">      &quot;uri&quot;: &quot;detail&quot;,</div><div class="line">      &quot;pkg&quot;: &quot;com.demo.small.app.detail&quot;</div><div class="line">    &#125;</div><div class="line">  ]</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="2-4-结果"><a href="#2-4-结果" class="headerlink" title="2.4 结果"></a>2.4 结果</h2><p><img src="http://upload-images.jianshu.io/upload_images/1949836-180594212c3b5260.gif?imageMogr2/auto-orient/strip" alt=""><br>通过分析最后生成的<code>APK</code>文件，可以发现，只有应用插件和公共库插件模块作为<code>so</code>被打包进入了<code>APK</code>中，而宿主分身模块并没有生成<code>so</code>。<br><img src="http://upload-images.jianshu.io/upload_images/1949836-4f3d8d7267e335f8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>而我们在宿主分身中的声明则被加入到了最后的<code>AndroidManifest.xml</code>文件中：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-e05404f3f149d699.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/06/03/插件化/插件化知识梳理(2)---Small-框架之如何引入公共库插件/" rel="next" title="插件化知识梳理(2) - Small 框架之如何引入公共库插件">
+                <i class="fa fa-chevron-left"></i> 插件化知识梳理(2) - Small 框架之如何引入公共库插件
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/06/05/插件化/插件化知识梳理(4)---Small-框架之如何实现插件更新/" rel="prev" title="插件化知识梳理(4) - Small 框架之如何实现插件更新">
+                插件化知识梳理(4) - Small 框架之如何实现插件更新 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="zeMao" />
+          <p class="site-author-name" itemprop="name">zeMao</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">104</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">24</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、前言"><span class="nav-number">1.</span> <span class="nav-text">一、前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、具体示例"><span class="nav-number">2.</span> <span class="nav-text">二、具体示例</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-创建应用插件模块"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 创建应用插件模块</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-创建宿主分身模块"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 创建宿主分身模块</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-修改宿主模块的-bundle-json-文件"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 修改宿主模块的 bundle.json 文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-4-结果"><span class="nav-number">2.4.</span> <span class="nav-text">2.4 结果</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zeMao</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

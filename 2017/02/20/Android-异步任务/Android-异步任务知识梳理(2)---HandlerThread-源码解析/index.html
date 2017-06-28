@@ -1,0 +1,705 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="#一、概述刚开始接触HandlerThread是在看AsyncQueryHandler源码的时候，第一次眼看到HandlerThread这个名字，就在想这到底是个Handler还是个Thread，后来看了源码才发现它其实就是一个Thread，只不过可以通过它的getLooper返回的Looper作为Handler构造函数的参数，那么这个新建Handler所有message的执行都是在这个对应的Th">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android 异步任务知识梳理(2) - HandlerThread 源码解析">
+<meta property="og:url" content="http://yoursite.com/2017/02/20/Android-异步任务/Android-异步任务知识梳理(2)---HandlerThread-源码解析/index.html">
+<meta property="og:site_name" content="zeMao&#39;s Blog">
+<meta property="og:description" content="#一、概述刚开始接触HandlerThread是在看AsyncQueryHandler源码的时候，第一次眼看到HandlerThread这个名字，就在想这到底是个Handler还是个Thread，后来看了源码才发现它其实就是一个Thread，只不过可以通过它的getLooper返回的Looper作为Handler构造函数的参数，那么这个新建Handler所有message的执行都是在这个对应的Th">
+<meta property="og:updated_time" content="2017-06-28T06:47:04.226Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android 异步任务知识梳理(2) - HandlerThread 源码解析">
+<meta name="twitter:description" content="#一、概述刚开始接触HandlerThread是在看AsyncQueryHandler源码的时候，第一次眼看到HandlerThread这个名字，就在想这到底是个Handler还是个Thread，后来看了源码才发现它其实就是一个Thread，只不过可以通过它的getLooper返回的Looper作为Handler构造函数的参数，那么这个新建Handler所有message的执行都是在这个对应的Th">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/02/20/Android-异步任务/Android-异步任务知识梳理(2)---HandlerThread-源码解析/"/>
+
+
+
+
+
+  <title>Android 异步任务知识梳理(2) - HandlerThread 源码解析 | zeMao's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">zeMao's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/02/20/Android-异步任务/Android-异步任务知识梳理(2)---HandlerThread-源码解析/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zeMao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="zeMao's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Android 异步任务知识梳理(2) - HandlerThread 源码解析</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-02-20T21:59:00+08:00">
+                2017-02-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android-异步任务知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">Android 异步任务知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>#一、概述<br>刚开始接触<code>HandlerThread</code>是在看<code>AsyncQueryHandler</code>源码的时候，第一次眼看到<code>HandlerThread</code>这个名字，就在想这到底是个<code>Handler</code>还是个<code>Thread</code>，后来看了源码才发现它其实就是一个<code>Thread</code>，只不过可以通过它的<code>getLooper</code>返回的<code>Looper</code>作为<code>Handler</code>构造函数的参数，那么这个新建<code>Handler</code>所有<code>message</code>的执行都是在这个对应的<code>Thread</code>当中的，关于在项目当中如何用好<code>HandlerThread</code>，<code>AsyncQueryHandler</code>无疑是一个最好的例子。</p>
+<h1 id="二、源码"><a href="#二、源码" class="headerlink" title="二、源码"></a>二、源码</h1><p><code>HandlerThread</code>的代码很少，我们一点点看：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">int mPriority; //线程的优先级</div><div class="line">int mTid = -1; //线程对应的pid，结束时为-1。</div><div class="line">Looper mLooper; //对应的looper</div></pre></td></tr></table></figure></p>
+<p>再看一下<code>run</code>方法：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">&lt;!-- HandlerThread.java --&gt;</div><div class="line">@Override</div><div class="line">public  void run() &#123;    </div><div class="line">    mTid = Process.myTid();    </div><div class="line">    Looper.prepare();    </div><div class="line">    synchronized (this) &#123;        </div><div class="line">        mLooper = Looper.myLooper();         </div><div class="line">        notifyAll();    </div><div class="line">    &#125;     </div><div class="line">    Process.setThreadPriority(mPriority);     </div><div class="line">    onLooperPrepared();    </div><div class="line">    Looper.loop();    </div><div class="line">    mTid = -1;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>第一步先调用了<code>Looper.prepare()</code>方法来初始该线程的<code>Looper</code>，它其实是新建了一个<code>Looper</code>（这个 <code>Looper</code>是可以退出循环的），保存到<code>sThreadLocal</code>变量当中，这个变量是<code>static final ThreadLocal&lt;Looper&gt;</code>类型的，也就是每个<code>Thread</code>有一份不同的实例，并且在每个线程中也只允许初始化一次：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">&lt;!-- Looper.java --&gt;</div><div class="line"></div><div class="line">private Looper(boolean quitAllowed) &#123;    </div><div class="line">    mQueue = new MessageQueue(quitAllowed);    </div><div class="line">    mThread = Thread.currentThread();</div><div class="line">&#125;</div><div class="line"></div><div class="line">public static void prepare() &#123;    </div><div class="line">     prepare(true);</div><div class="line">&#125;</div><div class="line"></div><div class="line">private static void prepare(boolean quitAllowed) &#123;    </div><div class="line">    if (sThreadLocal.get() != null) &#123;        </div><div class="line">        throw new RuntimeException(&quot;Only one Looper may be created per thread&quot;);    </div><div class="line">    &#125;    </div><div class="line">    sThreadLocal.set(new Looper(quitAllowed));</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>之后拿出这个新建的<code>Looper</code>保存起来，同时设置线程的优先级，接着调用<code>Looper.loop()</code>方法，在这之前会回调给<code>onLooperPrepared</code>，因为如果<code>Looper.loop()</code>开始执行后，那么就是一个无限循环，用户没法进行初始化操作了：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line">&lt;!-- Looper.java --&gt;</div><div class="line">public static void loop() &#123;</div><div class="line">     final Looper me = myLooper();</div><div class="line">     if (me == null) &#123;</div><div class="line">         //exception;</div><div class="line">     &#125;</div><div class="line">     final MessageQueue queue = me.mQueue;</div><div class="line">     Binder.clearCallingIdentity();</div><div class="line">     final long ident = Binder.clearCallingIdentity();</div><div class="line">     for (;;) &#123;</div><div class="line">        //这里面会调用 nativePollOnce(ptr, nextPollTimeoutMillis) 等待有新的消息出现，否则就一直阻塞在这里;</div><div class="line">        Message msg = queue.next();</div><div class="line">        //如果新的消息为null，那么就退出这个循环。</div><div class="line">        if (message == null) &#123;</div><div class="line">            return;</div><div class="line">        &#125;</div><div class="line">        //分发有效的消息。</div><div class="line">        msg.target.dispatchMessage(msg);</div><div class="line">        msg.recycleUnchecked();</div><div class="line">     &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">&lt;!-- MessageQueue.java --&gt;</div><div class="line">Message next() &#123;</div><div class="line">   final long ptr = mPtr;</div><div class="line">   if (ptr == null) &#123;</div><div class="line">      return null;</div><div class="line">   &#125;</div><div class="line">   for (;;) &#123;</div><div class="line">       //会休眠在这里，直到通过mPtr被唤醒。 </div><div class="line">       nativePollOnce(ptr, nextPollTimeoutMillis);</div><div class="line">       //被唤醒后，从队列中去除消息进行处理。</div><div class="line">   &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>接下来看一下<code>getLooper()</code>方法，如果此时<code>mLooper</code>还没有被初始化，那么它会一直休眠在这里：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">&lt;!-- HandlerThread.java --&gt;</div><div class="line">public Looper getLooper() &#123;</div><div class="line">    //如果线程没有存活，那么退出。    </div><div class="line">    if (!isAlive()) &#123;        </div><div class="line">        return null;    </div><div class="line">    &#125;          </div><div class="line">    synchronized (this) &#123;</div><div class="line">        //如果线程存活，但是没有开始运行，那么等待。        </div><div class="line">        while (isAlive() &amp;&amp; mLooper == null) &#123;             </div><div class="line">            try &#123;                </div><div class="line">                wait();            </div><div class="line">            &#125; catch (InterruptedException e) &#123;&#125;         </div><div class="line">        &#125;    </div><div class="line">     &#125;    </div><div class="line">     return mLooper;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这下来看一下退出的两个方法，它们的区别就是<code>safe</code>方法会保证当前队列当中的<code>Message</code>都被执行完毕，但那些<code>delay</code>的消息不会被递送。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">&lt;!-- HandlerThread.java --&gt;</div><div class="line">public boolean quit() &#123;    </div><div class="line">    Looper looper = getLooper();    </div><div class="line">    if (looper != null) &#123;        </div><div class="line">        looper.quit();        </div><div class="line">        return true;    </div><div class="line">    &#125;    </div><div class="line">    return false;</div><div class="line">&#125;</div><div class="line"></div><div class="line">public boolean quitSafely() &#123;    </div><div class="line">    Looper looper = getLooper();    </div><div class="line">    if (looper != null) &#123;        </div><div class="line">        looper.quitSafely();        </div><div class="line">        return true;    </div><div class="line">    &#125;    </div><div class="line">    return false;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><code>quit</code>其实是调用了和<code>Looper</code>关联的<code>MessageQueue</code>对应的<code>quit(boolean safe)</code>方法：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">&lt;!-- Looper.java --&gt;</div><div class="line">public void quit() &#123;    </div><div class="line">    mQueue.quit(false);</div><div class="line">&#125;</div><div class="line"></div><div class="line">public void quitSafely() &#123;      </div><div class="line">    mQueue.quit(true);</div><div class="line">&#125;</div><div class="line"></div><div class="line">&lt;!-- MessageQueue.java --&gt;</div><div class="line">void quit(boolean safe) &#123;</div><div class="line">    if (!mQuitAllowed) &#123;    </div><div class="line">        throw new IllegalStateException(&quot;Main thread not allowed to quit.&quot;);</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    synchronized (this) &#123;    </div><div class="line">        if (mQuitting) &#123;        </div><div class="line">            return;    </div><div class="line">        &#125;    </div><div class="line">        mQuitting = true;    </div><div class="line">        if (safe) &#123;        </div><div class="line">            removeAllFutureMessagesLocked();     </div><div class="line">        &#125; else &#123;        </div><div class="line">            removeAllMessagesLocked();    </div><div class="line">        &#125;</div><div class="line">        //唤醒循环，使得 loop 知道，mQuitting 的变化    </div><div class="line">        nativeWake(mPtr);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>可以看到这里把<code>mQuitting</code>置为了<code>true</code>，之后通过<code>nativeWake</code>使<code>Message.next()</code>中 原先阻塞的 <code>nativePollOnce</code>继续往下执行并且会返回<code>null</code>，当<code>Looper.loop()</code>中的<code>queue.next()</code>返回<code>null</code> ，那么 <code>Looper.loop()</code>也跟着退出了。<br>由此可见当我们实例化一个<code>HandlerThread</code>对象，之后又调用了<code>quitXXX</code>方法，那么它就停止了这个循环，相当于这个<code>Looper</code>对象在这个线程中虽然存在，但是无法通过它做任何操作了，即使我们第二次执行它的<code>run</code>方法，调用<code>Looper.prepare()</code>的时候，也会因为<code>sThreadLocal.get() != null</code>而抛出异常。</p>
+<h1 id="三、结论"><a href="#三、结论" class="headerlink" title="三、结论"></a>三、结论</h1><p>可以看到，<code>HandlerThread</code>就是创建了一个线程，当我们调用它的<code>start()</code>方法时，也就是执行它的<code>run</code>方法，其实就是创建一个与他相关联的<code>Looper</code>，并让这个<code>Looper</code>跑起来，这个<code>Looper</code>中所有消息的处理都是在这个新建的线程当中的，调用者可以通过这个<code>Looper</code>进行后续的操作。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/02/20/Android-异步任务/Android-异步任务知识梳理(1)---AsyncTask-源码解析/" rel="next" title="Android 异步任务知识梳理(1) - AsyncTask 解析">
+                <i class="fa fa-chevron-left"></i> Android 异步任务知识梳理(1) - AsyncTask 解析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/02/20/Android-异步任务/Android-异步任务知识梳理(3)---AsyncQueryHandler-源码解析/" rel="prev" title="Android 异步任务知识梳理(3) - AsyncQueryHandler 源码解析">
+                Android 异步任务知识梳理(3) - AsyncQueryHandler 源码解析 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="zeMao" />
+          <p class="site-author-name" itemprop="name">zeMao</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">104</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">24</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#二、源码"><span class="nav-number">1.</span> <span class="nav-text">二、源码</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、结论"><span class="nav-number">2.</span> <span class="nav-text">三、结论</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zeMao</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

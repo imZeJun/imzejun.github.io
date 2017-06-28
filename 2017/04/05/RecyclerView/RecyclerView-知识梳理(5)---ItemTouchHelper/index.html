@@ -1,0 +1,760 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="一、概述ItemTouchHelper在RecyclerView的整个体系中，负责监听Item的手势操作，我们通过给它设置一个继承于ItemTouchHelper.Callback的子类，在其中处理Item的UI变化，就可以完成侧滑删除、拖动排序等操作，下面，我们分以下几部介绍：  API解析 实战 采用默认动画 自定义侧滑删除动画    二、API分析对于Item的手势操作分为两种：侧滑和拖动，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RecyclerView 知识梳理(5) - ItemTouchHelper">
+<meta property="og:url" content="http://yoursite.com/2017/04/05/RecyclerView/RecyclerView-知识梳理(5)---ItemTouchHelper/index.html">
+<meta property="og:site_name" content="zeMao&#39;s Blog">
+<meta property="og:description" content="一、概述ItemTouchHelper在RecyclerView的整个体系中，负责监听Item的手势操作，我们通过给它设置一个继承于ItemTouchHelper.Callback的子类，在其中处理Item的UI变化，就可以完成侧滑删除、拖动排序等操作，下面，我们分以下几部介绍：  API解析 实战 采用默认动画 自定义侧滑删除动画    二、API分析对于Item的手势操作分为两种：侧滑和拖动，">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-5d944d797be166e7.gif?imageMogr2/auto-orient/strip">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-eb961e06528964af.gif?imageMogr2/auto-orient/strip">
+<meta property="og:updated_time" content="2017-06-28T06:47:04.230Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="RecyclerView 知识梳理(5) - ItemTouchHelper">
+<meta name="twitter:description" content="一、概述ItemTouchHelper在RecyclerView的整个体系中，负责监听Item的手势操作，我们通过给它设置一个继承于ItemTouchHelper.Callback的子类，在其中处理Item的UI变化，就可以完成侧滑删除、拖动排序等操作，下面，我们分以下几部介绍：  API解析 实战 采用默认动画 自定义侧滑删除动画    二、API分析对于Item的手势操作分为两种：侧滑和拖动，">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-5d944d797be166e7.gif?imageMogr2/auto-orient/strip">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/04/05/RecyclerView/RecyclerView-知识梳理(5)---ItemTouchHelper/"/>
+
+
+
+
+
+  <title>RecyclerView 知识梳理(5) - ItemTouchHelper | zeMao's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">zeMao's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/04/05/RecyclerView/RecyclerView-知识梳理(5)---ItemTouchHelper/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zeMao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="zeMao's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">RecyclerView 知识梳理(5) - ItemTouchHelper</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-05T23:17:00+08:00">
+                2017-04-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/RecyclerView-知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">RecyclerView 知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="一、概述"><a href="#一、概述" class="headerlink" title="一、概述"></a>一、概述</h1><p><code>ItemTouchHelper</code>在<code>RecyclerView</code>的整个体系中，负责监听<code>Item</code>的手势操作，我们通过给它设置一个继承于<code>ItemTouchHelper.Callback</code>的子类，在其中处理<code>Item</code>的<code>UI</code>变化，就可以完成侧滑删除、拖动排序等操作，下面，我们分以下几部介绍：</p>
+<ul>
+<li><code>API</code>解析</li>
+<li>实战<ul>
+<li>采用默认动画</li>
+<li>自定义侧滑删除动画</li>
+</ul>
+</li>
+</ul>
+<h1 id="二、API分析"><a href="#二、API分析" class="headerlink" title="二、API分析"></a>二、<code>API</code>分析</h1><p>对于<code>Item</code>的手势操作分为两种：侧滑和拖动，如果需要支持这两种，那么需要给<code>ItemTouchHelper</code>传入一个<code>ItemTouchHelper.Callback</code>的子类，并把<code>ItemTouchHelper</code>和<code>RecyclerView</code>关联起来，下面，我们先来介绍一下<code>ItemTouchHelper.Callback</code>个回调方法的含义：</p>
+<h2 id="控制相关"><a href="#控制相关" class="headerlink" title="控制相关"></a>控制相关</h2><ul>
+<li><code>public boolean isLongPressDragEnabled()</code><br>是否可以通过长按来触发拖动操作，默认返回<code>true</code>，如果返回<code>false</code>，那么可以通过<code>startDrag(ViewHolder)</code>方法来触发某个特定<code>Item</code>的拖动的机制。</li>
+<li><code>public boolean isItemViewSwipeEnabled()</code><br>是否可以对每个<code>Item</code>进行侧滑。</li>
+<li><code>public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder)</code><br>返回对于某个<code>ViewHolder</code>可以移动的方向，可选的值有<code>UP/DOWN/LEFT/RIGHT/START/END</code>。对于纵向排列的线性布局而言，如果要支持上下拖动排序，那么就要标志位中就要包含<code>UP&amp;DOWN</code>，而如果需要支持左滑删除，那么标志位中就要包含<code>LEFT</code>。</li>
+</ul>
+<h2 id="结果相关"><a href="#结果相关" class="headerlink" title="结果相关"></a>结果相关</h2><ul>
+<li><code>public abstract boolean onMove(RecyclerView recyclerView, ViewHolder viewHolder, ViewHolder target)</code><br>当某个被拖动的<code>Item</code>被从旧位置拖动到了新位置后回调，如果返回<code>true</code>，那么<code>ItemTouchHelper</code>就认为<code>viewHolder</code>已经被移动到了<code>target</code>在<code>Adapter</code>中的位置。</li>
+<li><code>public abstract void onSwiped(ViewHolder viewHolder, int direction)</code><br>当某个<code>Item</code>被滑动到消失时回调，<code>direction</code>表示滑动的方向。</li>
+</ul>
+<h2 id="状态相关"><a href="#状态相关" class="headerlink" title="状态相关"></a>状态相关</h2><ul>
+<li><code>public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState)</code><br>当<code>Item</code>的状态发生改变时，回调该方法，<code>actionState</code>的取值有<code>ACTION_STATE_IDLE/ACTION_STATE_SWIPE/ACTION_STATE_DRAG</code>。</li>
+<li><code>public void clearView(RecyclerView recyclerView, ViewHolder viewHolder)</code><br>标志着用户对于某个<code>Item</code>的操作并且<code>Item</code>的动画结束，此时我们应该恢复它的状态，以保证它被重新使用的时候能正确地展现。</li>
+<li><p><code>public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive)</code></p>
+<ul>
+<li><code>Canvas</code>：绘制<code>RecyclerView</code>的<code>Canvas</code></li>
+<li><code>dx, dy</code>：偏移。</li>
+<li><code>actionState</code>：拖拽还是侧滑，对应<code>ACTION_STATE_DRAG</code>和<code>ACTION_STATE_SWIPE</code>。</li>
+<li><code>isCurrentlyActive</code>为<code>true</code>表示这个<code>Item</code>正在被用户所控制，<code>false</code>则表示它仅仅是在回到原本状态的动画过程当中。</li>
+</ul>
+</li>
+<li><p><code>public void onChildDrawOver(Canvas c, RecyclerView recyclerView, ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive)</code><br>和上面类似，只不过它是绘制在<code>Item</code>之上。</p>
+</li>
+</ul>
+<h1 id="三、实战"><a href="#三、实战" class="headerlink" title="三、实战"></a>三、实战</h1><h2 id="3-1-使用系统默认效果"><a href="#3-1-使用系统默认效果" class="headerlink" title="3.1 使用系统默认效果"></a>3.1 使用系统默认效果</h2><p>如果我们希望使用系统默认的效果，那么只需要做以下几步：</p>
+<ul>
+<li><p>继承于<code>ItemTouchHelper.Callback</code>编写自己的回调类，并在拖动和侧滑操作完成之后更新数据：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">public class SimpleItemTouchHelper extends ItemTouchHelper.Callback &#123;</div><div class="line"></div><div class="line">    private ItemTouchAdapter mAdapter;</div><div class="line"></div><div class="line">    public SimpleItemTouchHelper(ItemTouchAdapter adapter) &#123;</div><div class="line">        mAdapter = adapter;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) &#123;</div><div class="line">        Log.d(&quot;SimpleItemTouchHelper&quot;, &quot;onSwiped, onMove, source=&quot; + viewHolder.getAdapterPosition() + &quot;,target=&quot; + target.getAdapterPosition());</div><div class="line">        mAdapter.onItemDragged(viewHolder.getAdapterPosition(), target.getAdapterPosition());</div><div class="line">        return true;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) &#123;</div><div class="line">        Log.d(&quot;SimpleItemTouchHelper&quot;, &quot;onSwiped, direction=&quot; + direction);</div><div class="line">        mAdapter.onItemSwiped(viewHolder.getAdapterPosition());</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) &#123;</div><div class="line">        return makeMovementFlags(ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>编写数据操作的代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">public class NormalAdapter extends RecyclerView.Adapter&lt;NormalAdapter.NormalViewHolder&gt; implements ItemTouchAdapter &#123;</div><div class="line"></div><div class="line">    //......</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void onItemDragged(int from, int to) &#123;</div><div class="line">        Collections.swap(mTitles, from, to);</div><div class="line">        notifyItemMoved(from, to);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void onItemSwiped(int position) &#123;</div><div class="line">        mTitles.remove(position);</div><div class="line">        notifyItemRemoved(position);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>把<code>ItemTouchHelper.Callback</code>和<code>RecyclerView</code>关联起来，看注释中的<code>1,2,3</code>步：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">    private void init() &#123;</div><div class="line">        List&lt;String&gt; titles = new ArrayList&lt;&gt;();</div><div class="line">        for (int i = 0; i &lt; 20; i++) &#123;</div><div class="line">            titles.add(String.valueOf(i));</div><div class="line">        &#125;</div><div class="line">        LinearLayoutManager layoutManager = new LinearLayoutManager(this);</div><div class="line">        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rv_content);</div><div class="line">        recyclerView.setLayoutManager(layoutManager);</div><div class="line">        NormalAdapter adapter = new NormalAdapter(titles);</div><div class="line">        //1.自定义的ItemTouchHeloer.Callback</div><div class="line">        SimpleItemTouchHelper simpleItemTouchHelper = new </div><div class="line">SimpleItemTouchHelper(adapter);</div><div class="line">        //2.利用这个Callback构造ItemTouchHelper</div><div class="line">        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchHelper);</div><div class="line">        //3.把ItemTouchHelper和RecyclerView关联起来.</div><div class="line">        itemTouchHelper.attachToRecyclerView(recyclerView);</div><div class="line">        recyclerView.setAdapter(adapter);</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>下面就是最终的效果：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-5d944d797be166e7.gif?imageMogr2/auto-orient/strip" alt=""></p>
+<h2 id="3-2-自定义侧滑删除动画"><a href="#3-2-自定义侧滑删除动画" class="headerlink" title="3.2 自定义侧滑删除动画"></a>3.2 自定义侧滑删除动画</h2><p>当我们需要自定侧滑删除动画时，那么需要重写<code>onChildDraw</code>或者<code>onChildDrawOver</code>方法，在其中监听滑动距离的变化，并根据它来实时改变<code>viewHolder</code>中的<code>UI</code>，首先看效果：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-eb961e06528964af.gif?imageMogr2/auto-orient/strip" alt=""></p>
+<ul>
+<li>首先，我们需要重写<code>Item</code>的布局，它包含两层，顶层是普通状态的标题文案，而底层则是蓝色底的删除提示：<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line">&lt;FrameLayout</div><div class="line">    xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;</div><div class="line">    android:layout_width=&quot;match_parent&quot;</div><div class="line">    android:layout_height=&quot;66dp&quot;&gt;</div><div class="line">    &lt;!-- 删除提示 --&gt;</div><div class="line">    &lt;LinearLayout</div><div class="line">        android:id=&quot;@+id/ll_delete&quot;</div><div class="line">        android:orientation=&quot;vertical&quot;</div><div class="line">        android:gravity=&quot;center&quot;</div><div class="line">        android:layout_gravity=&quot;end&quot;</div><div class="line">        android:background=&quot;@android:color/holo_blue_dark&quot;</div><div class="line">        android:paddingLeft=&quot;10dp&quot;</div><div class="line">        android:paddingRight=&quot;10dp&quot;</div><div class="line">        android:layout_width=&quot;wrap_content&quot;</div><div class="line">        android:layout_height=&quot;match_parent&quot;&gt;</div><div class="line">        &lt;ImageView</div><div class="line">            android:src=&quot;@android:drawable/ic_input_delete&quot;</div><div class="line">            android:layout_width=&quot;wrap_content&quot;</div><div class="line">            android:layout_height=&quot;wrap_content&quot;/&gt;</div><div class="line">        &lt;TextView</div><div class="line">            android:text=&quot;delete&quot;</div><div class="line">            android:textColor=&quot;@android:color/white&quot;</div><div class="line">            android:layout_width=&quot;wrap_content&quot;</div><div class="line">            android:layout_height=&quot;wrap_content&quot;/&gt;</div><div class="line">    &lt;/LinearLayout&gt;</div><div class="line">    &lt;!-- 普通文案 --&gt;</div><div class="line">    &lt;TextView</div><div class="line">        android:id=&quot;@+id/tv_title&quot;</div><div class="line">        android:gravity=&quot;center&quot;</div><div class="line">        android:background=&quot;@android:color/white&quot;</div><div class="line">        android:layout_width=&quot;match_parent&quot;</div><div class="line">        android:layout_height=&quot;match_parent&quot;/&gt;</div><div class="line">&lt;/FrameLayout&gt;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>接着，我们需要重写<code>ItemTouchHelper.Callback</code>：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div></pre></td><td class="code"><pre><div class="line">public class AdvancedItemTouchHelper extends ItemTouchHelper.Callback &#123;</div><div class="line"></div><div class="line">    private ItemTouchAdapter mAdapter;</div><div class="line"></div><div class="line">    public AdvancedItemTouchHelper(ItemTouchAdapter itemTouchAdapter) &#123;</div><div class="line">        mAdapter = itemTouchAdapter;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public boolean isLongPressDragEnabled() &#123;</div><div class="line">        return false;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) &#123;</div><div class="line">        return makeMovementFlags(0, ItemTouchHelper.LEFT);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) &#123;</div><div class="line">        mAdapter.onItemSwiped(viewHolder.getAdapterPosition());</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) &#123;</div><div class="line">        return false;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) &#123;</div><div class="line">        super.clearView(recyclerView, viewHolder);</div><div class="line">        ((NormalAdapter.NormalViewHolder) viewHolder).mTv.setTranslationX(0);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) &#123;</div><div class="line">        NormalAdapter.NormalViewHolder mViewHolder = (NormalAdapter.NormalViewHolder) viewHolder;</div><div class="line">        int deleteWidth = mViewHolder.mDeleteLayout.getWidth();</div><div class="line">        float fraction = deleteWidth / (float) mViewHolder.itemView.getWidth();</div><div class="line">        mViewHolder.mTv.setTranslationX(dX * fraction);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这里面有几点需要注意：</p>
+<ul>
+<li>为了让<code>Item</code>支持左滑删除，我们需要在<code>getMovementFlags</code>中返回<code>ItemTouchHelper.LEFT</code>标志位。</li>
+<li>在<code>onChildDraw</code>当中，通过传入的<code>dX</code>动态改变了普通文案的<code>translationX</code>，使得底层的删除提示能够漏出。</li>
+<li>在侧滑操作完成之后，通过<code>Adapter</code>来删除数据。</li>
+<li>在<code>clearView</code>中，需要把<code>mTv</code>重置为初始的状态。</li>
+</ul>
+<p>最后，我们按照前面的方法，把它和<code>RecyclerView</code>关联起来：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">private void init() &#123;</div><div class="line">    List&lt;String&gt; titles = new ArrayList&lt;&gt;();</div><div class="line">    for (int i = 0; i &lt; 20; i++) &#123;</div><div class="line">        titles.add(&quot;Item &quot; + String.valueOf(i));</div><div class="line">    &#125;</div><div class="line">    LinearLayoutManager layoutManager = new LinearLayoutManager(this);</div><div class="line">    RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rv_content);</div><div class="line">    recyclerView.setLayoutManager(layoutManager);</div><div class="line">    NormalAdapter adapter = new NormalAdapter(titles);</div><div class="line">    AdvancedItemTouchHelper advancedItemTouchHelper = new AdvancedItemTouchHelper(adapter);</div><div class="line">    ItemTouchHelper itemTouchHelper = new ItemTouchHelper(advancedItemTouchHelper);</div><div class="line">    itemTouchHelper.attachToRecyclerView(recyclerView);</div><div class="line">    recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));</div><div class="line">    recyclerView.setAdapter(adapter);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h1 id="四、小结"><a href="#四、小结" class="headerlink" title="四、小结"></a>四、小结</h1><p>自定义<code>RecyclerView</code>的手势动画，关键是要理解<code>ItemTouchHelper.Callback</code>中各回调函数的含义，再通过回调函数中传入的数值来动态改变<code>viewHolder</code>中保存的<code>itemView</code>以及其子<code>View</code>的展现形式，就可以做出各种绚丽的效果。</p>
+<h1 id="五、参考文献"><a href="#五、参考文献" class="headerlink" title="五、参考文献"></a>五、参考文献</h1><p><a href="http://www.jianshu.com/p/0c1984bc9383" target="_blank" rel="external">RecyclerView 进阶：使用 ItemTouchHelper 实现拖拽和侧滑删除</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/04/04/RecyclerView/RecyclerView-知识梳理(4)---ItemDecoration/" rel="next" title="RecyclerView 知识梳理(4) - ItemDecoration">
+                <i class="fa fa-chevron-left"></i> RecyclerView 知识梳理(4) - ItemDecoration
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/04/07/动画体系/动画体系知识梳理(1)---转场动画-ContentTransition-理论篇/" rel="prev" title="动画体系知识梳理(1) - 转场动画 ContentTransition 理论篇">
+                动画体系知识梳理(1) - 转场动画 ContentTransition 理论篇 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="zeMao" />
+          <p class="site-author-name" itemprop="name">zeMao</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">104</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">24</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、概述"><span class="nav-number">1.</span> <span class="nav-text">一、概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、API分析"><span class="nav-number">2.</span> <span class="nav-text">二、API分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#控制相关"><span class="nav-number">2.1.</span> <span class="nav-text">控制相关</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#结果相关"><span class="nav-number">2.2.</span> <span class="nav-text">结果相关</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#状态相关"><span class="nav-number">2.3.</span> <span class="nav-text">状态相关</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、实战"><span class="nav-number">3.</span> <span class="nav-text">三、实战</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-使用系统默认效果"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 使用系统默认效果</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-自定义侧滑删除动画"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 自定义侧滑删除动画</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四、小结"><span class="nav-number">4.</span> <span class="nav-text">四、小结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#五、参考文献"><span class="nav-number">5.</span> <span class="nav-text">五、参考文献</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zeMao</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

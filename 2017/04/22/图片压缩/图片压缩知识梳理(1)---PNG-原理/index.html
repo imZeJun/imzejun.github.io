@@ -1,0 +1,755 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="一、概述对于PNG这种图像存储格式，它有两个特点：无损压缩和支持透明效果。  由于PNG文件采用LZ77算法的派生算法进行压缩，其结果是获得高的压缩比，不损失数据。它利用特殊的编码方法标记重复出现的数据，因而对图像的颜色没有影响，也不可能产生颜色的损失，这样就可以重复保存而不降低图像质量。 PNG可以为原图像定义256个透明层次，使得彩色图像的边缘能与任何背景平滑地融合，从而彻底地消除锯齿边缘。这">
+<meta property="og:type" content="article">
+<meta property="og:title" content="图片压缩知识梳理(1) - PNG 原理">
+<meta property="og:url" content="http://yoursite.com/2017/04/22/图片压缩/图片压缩知识梳理(1)---PNG-原理/index.html">
+<meta property="og:site_name" content="zeMao&#39;s Blog">
+<meta property="og:description" content="一、概述对于PNG这种图像存储格式，它有两个特点：无损压缩和支持透明效果。  由于PNG文件采用LZ77算法的派生算法进行压缩，其结果是获得高的压缩比，不损失数据。它利用特殊的编码方法标记重复出现的数据，因而对图像的颜色没有影响，也不可能产生颜色的损失，这样就可以重复保存而不降低图像质量。 PNG可以为原图像定义256个透明层次，使得彩色图像的边缘能与任何背景平滑地融合，从而彻底地消除锯齿边缘。这">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-1783b638e8b65653.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-43dcc4e88d94d816.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-efac9f718a3375c8.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-083c8e7559d2c77a.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2017-06-28T06:47:04.230Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="图片压缩知识梳理(1) - PNG 原理">
+<meta name="twitter:description" content="一、概述对于PNG这种图像存储格式，它有两个特点：无损压缩和支持透明效果。  由于PNG文件采用LZ77算法的派生算法进行压缩，其结果是获得高的压缩比，不损失数据。它利用特殊的编码方法标记重复出现的数据，因而对图像的颜色没有影响，也不可能产生颜色的损失，这样就可以重复保存而不降低图像质量。 PNG可以为原图像定义256个透明层次，使得彩色图像的边缘能与任何背景平滑地融合，从而彻底地消除锯齿边缘。这">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-1783b638e8b65653.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/04/22/图片压缩/图片压缩知识梳理(1)---PNG-原理/"/>
+
+
+
+
+
+  <title>图片压缩知识梳理(1) - PNG 原理 | zeMao's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">zeMao's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/04/22/图片压缩/图片压缩知识梳理(1)---PNG-原理/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zeMao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="zeMao's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">图片压缩知识梳理(1) - PNG 原理</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-22T14:30:00+08:00">
+                2017-04-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/图片压缩知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">图片压缩知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="一、概述"><a href="#一、概述" class="headerlink" title="一、概述"></a>一、概述</h1><p>对于<code>PNG</code>这种图像存储格式，它有两个特点：<strong>无损压缩</strong>和<strong>支持透明效果</strong>。</p>
+<ul>
+<li>由于<code>PNG</code>文件采用<code>LZ77</code>算法的派生算法进行压缩，其结果是获得高的压缩比，不损失数据。它利用特殊的编码方法标记重复出现的数据，因而对图像的颜色没有影响，也不可能产生颜色的损失，这样就可以重复保存而不降低图像质量。</li>
+<li><code>PNG</code>可以为原图像定义<code>256</code>个透明层次，使得彩色图像的边缘能与任何背景平滑地融合，从而彻底地消除锯齿边缘。这种功能是<code>GIF</code>和<code>JPEG</code>没有的。</li>
+</ul>
+<p>今天，我们就来介绍一下<code>PNG</code>的相关知识。</p>
+<h1 id="二、PNG-原理"><a href="#二、PNG-原理" class="headerlink" title="二、PNG 原理"></a>二、PNG 原理</h1><h2 id="2-1-PNG-文件结构"><a href="#2-1-PNG-文件结构" class="headerlink" title="2.1 PNG 文件结构"></a>2.1 PNG 文件结构</h2><p><code>PNG</code>由一个<code>8</code>字节的<code>PNG</code>文件署名域和按照特定结构组织的<code>3</code>个以上的数据块组成，其中数据块分成两种，关键数据块和可选数据块，关键数块为如下四种：</p>
+<ul>
+<li>文件头数据块</li>
+<li>调色板数据块</li>
+<li><strong>图像数据块</strong></li>
+<li>图像结束数据块</li>
+</ul>
+<p>而每个数据块由以下四个数据域组成：</p>
+<ul>
+<li>长度</li>
+<li>数据块类型码</li>
+<li><strong>数据块数据</strong></li>
+<li>循环冗余校验</li>
+</ul>
+<p>从上面的构成中，我们可以看到，对于用户可见的部分，真正和展现有关就是图像数据块中的数据块区域，因此，我们就需要注意<strong>有没有在别的数据块中引入了不必要的数据</strong>，例如下面的右图，在从<code>Photoshop</code>中导出的时候，选择了<code>export to web</code>，因此它的大小就比左图要小很多。<br><img src="http://upload-images.jianshu.io/upload_images/1949836-1783b638e8b65653.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h2 id="2-2-PNG-格式"><a href="#2-2-PNG-格式" class="headerlink" title="2.2 PNG 格式"></a>2.2 PNG 格式</h2><p><code>PNG</code>的格式有<code>8/24/32</code>三种，称为<code>PNG 8/ PNG 24 / PNG 32</code>，其中后面的数字表示最多可以索引和存储的颜色值。</p>
+<ul>
+<li><code>PNG 8</code>支持两种不同的透明形式，索引透明和<code>Alpha</code>透明</li>
+<li><code>PNG 24</code>不支持透明</li>
+<li><code>PNG 32</code>在<code>24</code>位基础上增加了<code>8</code>位透明通道，因此可展现<code>256</code>级透明程度</li>
+</ul>
+<p>我们应当根据图片来选择正确的格式，<strong>在能表示图片中颜色的前提下，尽量选择位数较少的<code>PNG</code>格式</strong>。</p>
+<h2 id="2-3-PNG压缩原理"><a href="#2-3-PNG压缩原理" class="headerlink" title="2.3 PNG压缩原理"></a>2.3 <code>PNG</code>压缩原理</h2><p><code>PNG</code>压缩过程分为两个阶段：<strong>Prediction</strong> 和 <strong>Compression</strong>。<br><img src="http://upload-images.jianshu.io/upload_images/1949836-43dcc4e88d94d816.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h3 id="2-3-1-Prediction"><a href="#2-3-1-Prediction" class="headerlink" title="2.3.1 Prediction"></a>2.3.1 <strong>Prediction</strong></h3><p>在这一阶段，我们每次会处理图片中一行的数据，首先通过<code>Filter</code>阶段处理这一行当中<strong>每一个的像素点中每条通道的值</strong>，也就是我们常说的<code>ARBG</code>。它交由差分处理器来重新计算该通道的值。差分处理会根据这个像素点上通道和之前或者之上像素点对应通道值之间的差异，进行差分编码，也就是说，如果原本相邻像素点之间通道的值之间很接近，那么我们就会获得很多的<code>1,0,-1</code>这种很小的值。这里有两点需要注意：</p>
+<ul>
+<li>整个<code>Prediction</code>阶段的目的，也就是<strong>选择合适的差分处理器，让最终的编码结果出现尽可能多的零值和重复值</strong>，这一结果将会影响到<code>Compression</code>阶段的压缩率。</li>
+<li>差分编码器比较的是像素点之间对应通道的值，而并不是整个像素点。</li>
+</ul>
+<h3 id="2-3-2-Compression"><a href="#2-3-2-Compression" class="headerlink" title="2.3.2 Compression"></a>2.3.2 <strong>Compression</strong></h3><p>在<code>Prediction</code>处理完毕之后，再将这一转换的结果输出给<code>Deflate</code>，<code>Deflate</code>执行真正的压缩操作，它会通过<code>LZ77</code>和<code>Huffman</code>对图像进行编码，最后将处理之后的结果保存。在<code>Compression</code>阶段，它最终的压缩率会受到两方面的影响：</p>
+<ul>
+<li><strong>Prediction 的处理结果</strong>：对于颜色相近的区域，也就是有很多零值的区域，那么压缩率将会更高，而如果颜色之间差异很大，那么压缩效果将不尽人意。</li>
+<li><strong>Deflate 每一行的匹配情况</strong>：前面我们分析过，整个处理过程是按行来处理的。而在处理每一行的数据时，<code>Deflate</code>把处理的符号数限制为<code>3 ~ 258</code>，也就是说，最大的压缩率为<code>1032:1</code>，当出现符号数小于<code>3</code>个时，那么就有可能出现无法匹配的情况，因此，对于图片宽度的改变将有可能影响最终压缩的效果。</li>
+</ul>
+<p>下面，我们对于上面描述的第二点举一个例子，对于下面两幅图，右图虽然之比左图宽了两个像素，但是它的大小整整大了一倍：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-efac9f718a3375c8.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>我们通过下面这个工具可以观察每个像素点的压缩率：</p>
+<ul>
+<li><a href="http://encode.ru/threads/1725-pngthermal-pseudo-thermal-view-of-PNG-compression-efficiency" target="_blank" rel="external">Pngthermal</a></li>
+</ul>
+<p>在分析的结果中，深蓝色表示该像素点具有较高的压缩率，而黄色/红色则表示压缩率较低，可以发现正是由于改变了图片的大小，导致某些像素点没有匹配到，从而产生了一个较大的文件。<br><img src="http://upload-images.jianshu.io/upload_images/1949836-083c8e7559d2c77a.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h3 id="2-3-3-代码表示"><a href="#2-3-3-代码表示" class="headerlink" title="2.3.3 代码表示"></a>2.3.3 代码表示</h3><p>对于 <strong>Prediction</strong> 和 <strong>Compression</strong> 这两个过程，可以通过下面这个代码来理解：</p>
+<ul>
+<li><a href="https://gist.github.com/anonymous/906740" target="_blank" rel="external">https://gist.github.com/anonymous/906740</a></li>
+</ul>
+<h1 id="三、总结"><a href="#三、总结" class="headerlink" title="三、总结"></a>三、总结</h1><p><code>PNG</code>有很多优点，并且应用广泛，但是还是需要根据具体的场景来选用：</p>
+<ul>
+<li>如果原始的图片为高清的，但是不要求进行无损的压缩，那么可以选择类似于<code>JPG</code>这样的有损压缩</li>
+<li>但是从反方面来说，如果原始图片较为简单，并且需要支持透明形式，那么<code>PNG</code>要由于<code>JPG</code>。</li>
+</ul>
+<p>这一篇文章，介绍了<code>PNG</code>相关的一些知识，目的还是让大家对这种图片格式有一个大概的理解，这也是我们后面分析优化的基础。</p>
+<h1 id="四、参考文献"><a href="#四、参考文献" class="headerlink" title="四、参考文献"></a>四、参考文献</h1><p><a href="https://medium.com/@duhroach/how-png-works-f1174e3cc7b7" target="_blank" rel="external">1.How PNG Works</a><br><a href="http://baike.baidu.com/link?url=Lv96vtucZLFc2189nwJNP0_BBtJgWegZ53LwxwAgRfvHkIN7Xx65ApJFcSscGnR-L-NWu7XUXih-9YHEmPfHoK#4" target="_blank" rel="external">2.PNG - 百度百科</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/04/22/图片压缩/图片压缩知识梳理(0)---图片压缩学习计划/" rel="next" title="图片压缩知识梳理(0) - 图片压缩学习计划">
+                <i class="fa fa-chevron-left"></i> 图片压缩知识梳理(0) - 图片压缩学习计划
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/04/25/图片压缩/图片压缩知识梳理(2)---减小-PNG-大小/" rel="prev" title="图片压缩知识梳理(2) - 减小 PNG 大小">
+                图片压缩知识梳理(2) - 减小 PNG 大小 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="zeMao" />
+          <p class="site-author-name" itemprop="name">zeMao</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">104</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">24</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、概述"><span class="nav-number">1.</span> <span class="nav-text">一、概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、PNG-原理"><span class="nav-number">2.</span> <span class="nav-text">二、PNG 原理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-PNG-文件结构"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 PNG 文件结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-PNG-格式"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 PNG 格式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-PNG压缩原理"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 PNG压缩原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-1-Prediction"><span class="nav-number">2.3.1.</span> <span class="nav-text">2.3.1 Prediction</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-2-Compression"><span class="nav-number">2.3.2.</span> <span class="nav-text">2.3.2 Compression</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-3-代码表示"><span class="nav-number">2.3.3.</span> <span class="nav-text">2.3.3 代码表示</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、总结"><span class="nav-number">3.</span> <span class="nav-text">三、总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四、参考文献"><span class="nav-number">4.</span> <span class="nav-text">四、参考文献</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zeMao</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

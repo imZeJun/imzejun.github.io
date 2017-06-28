@@ -1,0 +1,806 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="一、概述去年时候看过&amp;lt;&amp;lt;Head First 设计模式&amp;gt;&amp;gt;这本书，也记了一些用例和笔记，下面是当时各模式对应的笔记，现在看起来也都忘的差不多了，就把以前的笔记当作是一个目录，打算花半个到一个月的时间，好好地总结一下每个设计模式。 二、各设计模式详解2.1 策略模式定义了算族，分别封装起来，让它们之间可以互相替换，此模式让算法的变化独立于使用算法的客户。 2.2 观察者模式2">
+<meta property="og:type" content="article">
+<meta property="og:title" content="设计模式知识梳理(1) - 设计模式概述">
+<meta property="og:url" content="http://yoursite.com/2017/06/03/设计模式/设计模式知识梳理(1)---设计模式概述/index.html">
+<meta property="og:site_name" content="zeMao&#39;s Blog">
+<meta property="og:description" content="一、概述去年时候看过&amp;lt;&amp;lt;Head First 设计模式&amp;gt;&amp;gt;这本书，也记了一些用例和笔记，下面是当时各模式对应的笔记，现在看起来也都忘的差不多了，就把以前的笔记当作是一个目录，打算花半个到一个月的时间，好好地总结一下每个设计模式。 二、各设计模式详解2.1 策略模式定义了算族，分别封装起来，让它们之间可以互相替换，此模式让算法的变化独立于使用算法的客户。 2.2 观察者模式2">
+<meta property="og:updated_time" content="2017-06-28T06:47:04.230Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="设计模式知识梳理(1) - 设计模式概述">
+<meta name="twitter:description" content="一、概述去年时候看过&amp;lt;&amp;lt;Head First 设计模式&amp;gt;&amp;gt;这本书，也记了一些用例和笔记，下面是当时各模式对应的笔记，现在看起来也都忘的差不多了，就把以前的笔记当作是一个目录，打算花半个到一个月的时间，好好地总结一下每个设计模式。 二、各设计模式详解2.1 策略模式定义了算族，分别封装起来，让它们之间可以互相替换，此模式让算法的变化独立于使用算法的客户。 2.2 观察者模式2">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/06/03/设计模式/设计模式知识梳理(1)---设计模式概述/"/>
+
+
+
+
+
+  <title>设计模式知识梳理(1) - 设计模式概述 | zeMao's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">zeMao's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/03/设计模式/设计模式知识梳理(1)---设计模式概述/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zeMao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="zeMao's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">设计模式知识梳理(1) - 设计模式概述</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-03T18:28:00+08:00">
+                2017-06-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/设计模式知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">设计模式知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="一、概述"><a href="#一、概述" class="headerlink" title="一、概述"></a>一、概述</h1><p>去年时候看过<code>&lt;&lt;Head First 设计模式&gt;&gt;</code>这本书，也记了一些用例和笔记，下面是当时各模式对应的笔记，现在看起来也都忘的差不多了，就把以前的笔记当作是一个目录，打算花半个到一个月的时间，好好地总结一下每个设计模式。</p>
+<h1 id="二、各设计模式详解"><a href="#二、各设计模式详解" class="headerlink" title="二、各设计模式详解"></a>二、各设计模式详解</h1><h2 id="2-1-策略模式"><a href="#2-1-策略模式" class="headerlink" title="2.1 策略模式"></a>2.1 策略模式</h2><p>定义了算族，分别封装起来，让它们之间可以互相替换，此模式让算法的变化独立于使用算法的客户。</p>
+<h2 id="2-2-观察者模式"><a href="#2-2-观察者模式" class="headerlink" title="2.2 观察者模式"></a>2.2 观察者模式</h2><h2 id="2-3-装饰者模式"><a href="#2-3-装饰者模式" class="headerlink" title="2.3 装饰者模式"></a>2.3 装饰者模式</h2><ul>
+<li>装饰者对象和被装饰者对象具有同样的超类型。</li>
+<li>你可以用一个或多个装饰者包装一个对象。</li>
+<li>既然装饰者和被装饰对象具有同样的超类型，所以在任何需要原始对象（被包装的场合），可以用装饰过的对象代替它。</li>
+<li>装饰者可以在所委托被装饰者的行为之前与/或之后，加上自己的行为，以达到特定的目的。</li>
+<li>对象可以在任何时候被装饰，所以可以在运行时动态地、不限量地用你喜欢的装饰者来装饰对象。</li>
+</ul>
+<h2 id="2-4-简单工厂"><a href="#2-4-简单工厂" class="headerlink" title="2.4 简单工厂"></a>2.4 简单工厂</h2><p>简单工厂其实并不是一个设计模式，反而比较像是一种编程习惯。</p>
+<h2 id="2-5-工厂方法模式"><a href="#2-5-工厂方法模式" class="headerlink" title="2.5 工厂方法模式"></a>2.5 工厂方法模式</h2><p>定义了一个创建对象的接口，但由子类决定要实例化的类是哪一个，工厂方法让类把实例化推迟到子类。</p>
+<h2 id="2-6-抽象工厂模式"><a href="#2-6-抽象工厂模式" class="headerlink" title="2.6 抽象工厂模式"></a>2.6 抽象工厂模式</h2><p>提供一个接口，用于创建相关或依赖对象的家族，而不需要明确指定具体类。</p>
+<h1 id="2-7-单件模式"><a href="#2-7-单件模式" class="headerlink" title="2.7 单件模式"></a>2.7 单件模式</h1><p>确保一个类只有一个实例。</p>
+<h1 id="2-8-适配器模式"><a href="#2-8-适配器模式" class="headerlink" title="2.8 适配器模式"></a>2.8 适配器模式</h1><ul>
+<li>客户和被适配者是解耦的。</li>
+<li>包装某些对象，让它们的接口看起来不像自己而像是别的东西，因为这样就可以在设计中，将类的接口转换成想要的接口，以便实现不同的接口。</li>
+<li>将一个接口转换成另一个接口，以符合客户的期望。</li>
+<li>客户使用适配器的过程：客户通过目标接口调用适配器的方法对适配器发出请求，适配器使用被适配者接口把请求转换成被适配者的一个或多个调用接口，客户接收到调用的结果，但并未发觉这是适配器在起作用。</li>
+<li>适配器模式将一个类的接口，转换成客户期望的另一个接口，适配器让原本接口不兼容的类可以合作无间。</li>
+<li>如果在一段时间之后，我们想要改变接口，适配器可以将改变的部分封装起来，客户就不必为了应对不同的接口而每次跟着修改。</li>
+<li>这个适配器模式充满着良好的OO设计原则：使用对象组合，以修改的接口包装被适配者，这种做法还有额外的优点，那就是，被适配者的任何子类，都可以搭配着适配器使用。</li>
+</ul>
+<h1 id="2-9-外观模式"><a href="#2-9-外观模式" class="headerlink" title="2.9 外观模式"></a>2.9 外观模式</h1><p>将一个或数个类的复杂的一切都隐藏在背后，只显出一个干净美好的外表。<br>提供了一个统一的接口，用来访问子系统中的一群接口，外观定义了一个高层接口，让子系统更容易使用。<br>不要赢得太多的朋友和影响太多的对象：<br>就任何对象而言，在该对象的方法内，我们只应该调用属于以下范围的方法：</p>
+<ul>
+<li>该对象本身。</li>
+<li>被当做方法的参数而传进来的对象。</li>
+<li>此方法创建或实例化的任何对象。</li>
+<li>对象的任何组件。</li>
+<li>如果某对象是调用其它的方法的返回结果，不要调用该对象的方法。</li>
+</ul>
+<p>适配器将一个对象包装起来以改变其接口；<br>装饰者将一个对象包装起来以增加新的行为和责任；<br>外观将一群对象“包装”起来以简化其接口；</p>
+<h2 id="2-10-模板方法模式"><a href="#2-10-模板方法模式" class="headerlink" title="2.10 模板方法模式"></a>2.10 模板方法模式</h2><p>在一个方法中定义一个算法的骨架，而将一些步骤延迟到子类中。模板方法使得子类可以在不改变算法结构的情况下，重新定义算法中的某个步骤。 </p>
+<p><code>Comparator&lt;T&gt;</code>正是使用这种模式达到排序的效果。</p>
+<p>好莱坞准则：我们允许低层组件将自己挂钩到系统上，但是高层组件会决定什么时候和怎样使用这些低层组件，高层组件对待低层组件的方式是”别调用我们，我们会调用你”</p>
+<p>策略模式和模板方法模式都封装算法，一个用组合，一个用继承。<br>工厂方法是模板方法的一种特殊版本。</p>
+<h1 id="2-11-迭代器模式"><a href="#2-11-迭代器模式" class="headerlink" title="2.11 迭代器模式"></a>2.11 迭代器模式</h1><p>提供一种方法顺序访问一个聚合对象中的各个元素，而又不暴露其内部的表示。</p>
+<ul>
+<li>如果你有一个统一的方法来访问聚合中的每一个对象，你就可以编写多态的代码和这些聚合搭配，使用。</li>
+<li>迭代器模式把在元素之间游走的责任交给迭代器（<code>createIterator</code>），而不是聚合对象（<code>xxMenu</code>），这不仅让聚合的接口和实现变得更简洁，也可以让聚合更专注在它所专注的事情上面，而不必去理会遍历的事情。</li>
+</ul>
+<h2 id="2-12-组合模式"><a href="#2-12-组合模式" class="headerlink" title="2.12 组合模式"></a>2.12 组合模式</h2><p>允许你将兑现组合成树形结构来表现”整体/部分”层次结构，组合能让客户以一致的方式（<code>MenuComponent</code>）处理个别对象以及对象组合。</p>
+<ul>
+<li>组合模式让我们能用树形方式创建对象的结构，树里面包含了组合以及个别对象。</li>
+<li>使用组合结构，我们能把相同的操作应用在组合和个别对象上，换句话说，在大多数情况下，我们可以忽略对象组合和个别对象之间的差别。</li>
+<li>组合以单一责任设计原则换取透明性，通过让组件的接口同时包含一些管理子节点和叶节点的操作，客户就可以将组合和叶节点一视同仁，也就是说，一个元素究竟是组合还是叶节点，对客户是透明的。</li>
+</ul>
+<p>我们应该努力让一个类只分配一个责任。</p>
+<h2 id="2-13-状态模式"><a href="#2-13-状态模式" class="headerlink" title="2.13 状态模式"></a>2.13 状态模式</h2><p>（状态 -&gt; 类，行为 -&gt; 方法）</p>
+<p>将每个状态的行为都放在各自的类中，那么每个状态只要实现它自己的动作就可以了，糖果机只需要委托给代表当前状态的状态对象。</p>
+<ul>
+<li>首先，定义一个<code>State</code>接口，在这个接口内，糖果机的每个动作都有一个对应的方法。</li>
+<li>然后为机器中的每个状态实现状态类，这些类将负责在对应的状态下进行机器的行为。</li>
+<li>最后，我们要摆脱旧的条件代码，取而代之的是，将动作委托到状态类。</li>
+</ul>
+<p><code>Context</code>也可以决定状态转换的流向，状态转换是固定的时候，就适合放在<code>Context</code>中，然后，当转换是更动态的时候，通常就会放在状态类中。<br>将状态转换放在状态类的缺点是，状态类之间产生了依赖。</p>
+<p>状态模式允许对象在内部状态改变时改变它的行为，对象看起来好像修改了它的类。（通过在<code>Context</code>内简单地改变状态对象来改变<code>context</code>的行为）</p>
+<h2 id="2-14-代理模式"><a href="#2-14-代理模式" class="headerlink" title="2.14 代理模式"></a>2.14 代理模式</h2><p>为另一个对象提供一个替身或占位符以控制对这个对象的访问。</p>
+<ul>
+<li>在某些情况下，一个客户不想或者不能直接引用另一个对象，而代理对象可以在客户端和目标对象之间起到中介的作用。</li>
+<li>抽象角色：声明真实对象和代理对象的共同接口。</li>
+<li>代理角色：代理对象角色内部含有对真实对象的引用，从而可以操作真实对象，同时代理对象提供与真实对象相同的接口以便在任何时刻能够代替真实对象。</li>
+<li>真实角色：代理角色所代表的真实对象，是我们最终要引用的对象。</li>
+</ul>
+<h2 id="2-15-桥接模式"><a href="#2-15-桥接模式" class="headerlink" title="2.15 桥接模式"></a>2.15 桥接模式</h2><p>通过将实现和抽象放在两个不同的类层次中而使它们可以独立地改变。<br>优点：</p>
+<ul>
+<li>将实现予以解耦，让它和界面之间不再永久绑定。</li>
+<li>抽象和实现可以独立扩展，不会影响到对方。</li>
+<li>对于”具体的抽象类”所做的改变，不会影响到客户。<br>用途和缺点：</li>
+<li>适合使用在需要跨越多个平台的图形和窗口系统上。</li>
+<li>当需要用不同的方式改变接口和实现时，你会发现桥接模式很好用。</li>
+<li>增加了复杂度。</li>
+</ul>
+<h2 id="2-16-生成器模式"><a href="#2-16-生成器模式" class="headerlink" title="2.16 生成器模式"></a>2.16 生成器模式</h2><p>使用生成器模式封装一个产品的构造过程，并允许按步骤构造。</p>
+<h2 id="2-17-责任链模式"><a href="#2-17-责任链模式" class="headerlink" title="2.17 责任链模式"></a>2.17 责任链模式</h2><p>当你想要让一个以上的对象有机会能够处理某个请求的时候，就使用责任链模式。</p>
+<h2 id="2-18-享元模式"><a href="#2-18-享元模式" class="headerlink" title="2.18 享元模式"></a>2.18 享元模式</h2><p>通过使用共享的方式，达到高效地支持大量的细粒度对象。</p>
+<h2 id="2-19-解释器模式"><a href="#2-19-解释器模式" class="headerlink" title="2.19 解释器模式"></a>2.19 解释器模式</h2><p>解释器模式是类的行为模式，给定一个语言以后，解释器模式可以定义出其文法的一种表示，并同时提供一个解释器，客户端可以通过这个解释器来解释这个语言中的句子。<br>模式涉及的角色：</p>
+<ul>
+<li>抽象表达式：声明一个所有的具体表达式角色都需要实现的抽象接口。这个接口主要是一个<code>interpret()</code>方法，称做解释操作。</li>
+<li>终结符表达式：实现了抽象表达式角色所要求的接口，主要是一个<code>interpret()</code>方法；文法中的每一个终结符都有一个具体终结表达式与之相对应。比如有一个简单的公式<code>R=R1+R2</code>，在里面<code>R1</code>和<code>R2</code>就是终结符，对应的解析<code>R1</code>和<code>R2</code>的解释器就是终结符表达式。</li>
+<li>非终结符表达式：文法中的每一条规则都需要一个具体的非终结符表达式，非终结符表达式一般是文法中的运算符或者其他关键字，比如公式<code>R=R1+R2</code>中，“<code>+</code>“就是非终结符，解析“<code>+</code>”的解释器就是一个非终结符表达式。<br>（4）环境角色：这个角色的任务一般是用来存放文法中各个终结符所对应的具体值，比如<code>R=R1+R2</code>，我们给<code>R1</code>赋值<code>100</code>，给<code>R2</code>赋值<code>200</code>。这些信息需要存放到环境角色中，很多情况下我们使用<code>Map</code>来充当环境角色就足够了。</li>
+</ul>
+<h2 id="2-20-中介者模式"><a href="#2-20-中介者模式" class="headerlink" title="2.20 中介者模式"></a>2.20 中介者模式</h2><p>用一个中介者对象封装一系列的对象交互，中介者使各对象之间不需要显示地相互作用，从而使偶尔松散，而且可以独立地改变它们之间的交互。</p>
+<ul>
+<li>中介者接口类：定义好同事类对象到中介者对象的接口，用于各同事类的通信，一般包括一个或几个抽象对象的方法，由子类去实现。</li>
+<li>中介者实现类：从一个同事类中接收消息，同时影响其它同事。</li>
+<li>同事类：如果一个对象会影响其它对象，同时也会被其它对象影响，那么称它为同事类。在中介者模式中，同事类必须通过中介者通信。</li>
+</ul>
+<h2 id="2-21-备忘录模式"><a href="#2-21-备忘录模式" class="headerlink" title="2.21 备忘录模式"></a>2.21 备忘录模式</h2><p>备忘录对象是一个用来存储另一个对象内部状态的快照的对象，在不破坏封装的前提下，把对象的状态保存起来，等待之后恢复。</p>
+<ul>
+<li>备忘录角色<br>将发起人的内部状态存储起来；<br>备忘录可以保护其内容不被发起人对象之外的任何对象看到；</li>
+<li>发起人角色<br>创建一个含有当前内部状态的备忘录对象；<br>使用备忘录对象保存其状态；</li>
+<li>负责人角色<br>负责保存备忘录对象；<br>不检查备忘录对象的内容；</li>
+</ul>
+<h2 id="2-22-原型模式"><a href="#2-22-原型模式" class="headerlink" title="2.22 原型模式"></a>2.22 原型模式</h2><p>用原型实例指定创建对象的种类，并且通过拷贝这些原型创建新的对象。<br>适用性：</p>
+<ul>
+<li>当一个系统独立于它的产品创建、构成和表示时。</li>
+<li>当要实例化的类是在运行时指定。</li>
+<li>为了避免创建一个与产品类层次平行的工厂类层次时。<br>原型模式优点：</li>
+<li>使用原型模式创建对象比直接<code>new</code>一个对象要好，因为<code>Object</code>的<code>clone</code>方法是一个<code>native</code>方法，它直接操作内存中的二进制流。</li>
+<li>简化对象的创建。<br>原型模式的注意事项：</li>
+<li>不会调用对象的构造方法。</li>
+<li>只会拷贝对象中的基本数据类型，对于数组、容器对象、引用对象等都不会拷贝，也就是浅拷贝，如果需要复制这些对象中的内容，那么要进行深拷贝。</li>
+</ul>
+<h2 id="2-23-访问者模式"><a href="#2-23-访问者模式" class="headerlink" title="2.23 访问者模式"></a>2.23 访问者模式</h2><p>访问者模式的目的是封装一些施加于某种数据元素结构之上的操作，当这些操作需要更改的话，接受这个操作的数据结构可以不变，即把数据结构和作用其上的操作分开。</p>
+<ul>
+<li>抽象访问者角色：声明一个或多个方法的接口，所有的具体访问者必须实现这些方法。</li>
+<li>具体访问者角色：实现抽象访问者所声明的接口。</li>
+<li>抽象节点角色：声明一个接受操作，接受一个访问者作为参数。</li>
+<li>具体节点角色：实现了抽象节点所规定的接受操作。</li>
+<li>结构对象角色：可以遍历结构中所有元素，如果需要，提供一个高层次的接口让访问者对象可以访问每一个元素。</li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/06/03/插件化/插件化知识梳理(1)---Small-框架之如何引入应用插件/" rel="next" title="插件化知识梳理(1) - Small 框架之如何引入应用插件">
+                <i class="fa fa-chevron-left"></i> 插件化知识梳理(1) - Small 框架之如何引入应用插件
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/06/03/插件化/插件化知识梳理(2)---Small-框架之如何引入公共库插件/" rel="prev" title="插件化知识梳理(2) - Small 框架之如何引入公共库插件">
+                插件化知识梳理(2) - Small 框架之如何引入公共库插件 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="zeMao" />
+          <p class="site-author-name" itemprop="name">zeMao</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">104</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">24</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、概述"><span class="nav-number">1.</span> <span class="nav-text">一、概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、各设计模式详解"><span class="nav-number">2.</span> <span class="nav-text">二、各设计模式详解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-策略模式"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 策略模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-观察者模式"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 观察者模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-装饰者模式"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 装饰者模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-4-简单工厂"><span class="nav-number">2.4.</span> <span class="nav-text">2.4 简单工厂</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-5-工厂方法模式"><span class="nav-number">2.5.</span> <span class="nav-text">2.5 工厂方法模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-6-抽象工厂模式"><span class="nav-number">2.6.</span> <span class="nav-text">2.6 抽象工厂模式</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-7-单件模式"><span class="nav-number">3.</span> <span class="nav-text">2.7 单件模式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-8-适配器模式"><span class="nav-number">4.</span> <span class="nav-text">2.8 适配器模式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-9-外观模式"><span class="nav-number">5.</span> <span class="nav-text">2.9 外观模式</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-10-模板方法模式"><span class="nav-number">5.1.</span> <span class="nav-text">2.10 模板方法模式</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-11-迭代器模式"><span class="nav-number">6.</span> <span class="nav-text">2.11 迭代器模式</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-12-组合模式"><span class="nav-number">6.1.</span> <span class="nav-text">2.12 组合模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-13-状态模式"><span class="nav-number">6.2.</span> <span class="nav-text">2.13 状态模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-14-代理模式"><span class="nav-number">6.3.</span> <span class="nav-text">2.14 代理模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-15-桥接模式"><span class="nav-number">6.4.</span> <span class="nav-text">2.15 桥接模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-16-生成器模式"><span class="nav-number">6.5.</span> <span class="nav-text">2.16 生成器模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-17-责任链模式"><span class="nav-number">6.6.</span> <span class="nav-text">2.17 责任链模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-18-享元模式"><span class="nav-number">6.7.</span> <span class="nav-text">2.18 享元模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-19-解释器模式"><span class="nav-number">6.8.</span> <span class="nav-text">2.19 解释器模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-20-中介者模式"><span class="nav-number">6.9.</span> <span class="nav-text">2.20 中介者模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-21-备忘录模式"><span class="nav-number">6.10.</span> <span class="nav-text">2.21 备忘录模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-22-原型模式"><span class="nav-number">6.11.</span> <span class="nav-text">2.22 原型模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-23-访问者模式"><span class="nav-number">6.12.</span> <span class="nav-text">2.23 访问者模式</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zeMao</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

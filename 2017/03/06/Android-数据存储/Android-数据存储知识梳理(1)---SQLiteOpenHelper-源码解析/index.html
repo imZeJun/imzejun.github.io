@@ -1,0 +1,777 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="一、概述这篇文章主要涉及到项目当中，使用数据库相关的操作：  使用SQLiteOpenHelper来封装数据库。 多线程的情况下使用SQLiteOpenHelper。  二、使用SQLiteOpenHelper封装数据库2.1 使用SQLiteOpenHelper的原因之所以需要使用SQLiteOpenHelper，而不是调用Context的方法来直接得到SQLiteDatabase，主要是因为它">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android 数据存储知识梳理(1) - SQLiteOpenHelper 源码解析">
+<meta property="og:url" content="http://yoursite.com/2017/03/06/Android-数据存储/Android-数据存储知识梳理(1)---SQLiteOpenHelper-源码解析/index.html">
+<meta property="og:site_name" content="zeMao&#39;s Blog">
+<meta property="og:description" content="一、概述这篇文章主要涉及到项目当中，使用数据库相关的操作：  使用SQLiteOpenHelper来封装数据库。 多线程的情况下使用SQLiteOpenHelper。  二、使用SQLiteOpenHelper封装数据库2.1 使用SQLiteOpenHelper的原因之所以需要使用SQLiteOpenHelper，而不是调用Context的方法来直接得到SQLiteDatabase，主要是因为它">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-fbc257df47d8e665.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-dbdda774931521d3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-d785c06b6d1251d8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-96841e89679da5c2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2017-06-28T06:47:04.226Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android 数据存储知识梳理(1) - SQLiteOpenHelper 源码解析">
+<meta name="twitter:description" content="一、概述这篇文章主要涉及到项目当中，使用数据库相关的操作：  使用SQLiteOpenHelper来封装数据库。 多线程的情况下使用SQLiteOpenHelper。  二、使用SQLiteOpenHelper封装数据库2.1 使用SQLiteOpenHelper的原因之所以需要使用SQLiteOpenHelper，而不是调用Context的方法来直接得到SQLiteDatabase，主要是因为它">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-fbc257df47d8e665.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/03/06/Android-数据存储/Android-数据存储知识梳理(1)---SQLiteOpenHelper-源码解析/"/>
+
+
+
+
+
+  <title>Android 数据存储知识梳理(1) - SQLiteOpenHelper 源码解析 | zeMao's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">zeMao's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/03/06/Android-数据存储/Android-数据存储知识梳理(1)---SQLiteOpenHelper-源码解析/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zeMao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="zeMao's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Android 数据存储知识梳理(1) - SQLiteOpenHelper 源码解析</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-06T17:15:00+08:00">
+                2017-03-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android-数据存储知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">Android 数据存储知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="一、概述"><a href="#一、概述" class="headerlink" title="一、概述"></a>一、概述</h1><p>这篇文章主要涉及到项目当中，使用数据库相关的操作：</p>
+<ul>
+<li>使用<code>SQLiteOpenHelper</code>来封装数据库。</li>
+<li>多线程的情况下使用<code>SQLiteOpenHelper</code>。</li>
+</ul>
+<h1 id="二、使用SQLiteOpenHelper封装数据库"><a href="#二、使用SQLiteOpenHelper封装数据库" class="headerlink" title="二、使用SQLiteOpenHelper封装数据库"></a>二、使用<code>SQLiteOpenHelper</code>封装数据库</h1><h2 id="2-1-使用SQLiteOpenHelper的原因"><a href="#2-1-使用SQLiteOpenHelper的原因" class="headerlink" title="2.1 使用SQLiteOpenHelper的原因"></a>2.1 使用<code>SQLiteOpenHelper</code>的原因</h2><p>之所以需要使用<code>SQLiteOpenHelper</code>，而不是调用<code>Context</code>的方法来直接得到<code>SQLiteDatabase</code>，主要是因为它有两个好处：</p>
+<ul>
+<li><strong>自动管理创建</strong>：当需要对数据库进行操作的时候，不用关心<code>SQLiteOpenHelper</code>所关联的<code>SQLiteDatabase</code>是否创建，<code>SQLiteOpenHelper</code>会帮我们去判断，如果没有创建，那么就先创建该数据库后，再返回给使用者。</li>
+<li><strong>自动管理版本</strong>：当需要对数据库进行操作之前，如果发现当前声明的数据库的版本和手机内的数据库版本不同的时候，那么会分别调用<code>onUpgrade</code>和<code>onDowngrade</code>，这样使用者就可以在里面来处理新旧版本的兼容问题。</li>
+</ul>
+<h2 id="2-2-SQLiteOpenHelper的API"><a href="#2-2-SQLiteOpenHelper的API" class="headerlink" title="2.2 SQLiteOpenHelper的API"></a>2.2 <code>SQLiteOpenHelper</code>的<code>API</code></h2><p><code>SQLiteOpenHelper</code>的<code>API</code>很少，我们来看一下：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-fbc257df47d8e665.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h3 id="2-2-1-构造函数"><a href="#2-2-1-构造函数" class="headerlink" title="2.2.1 构造函数"></a>2.2.1 构造函数</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">/**</div><div class="line"> * Create a helper object to create, open, and/or manage a database.</div><div class="line"> * The database is not actually created or opened until one of</div><div class="line"> * &#123;@link #getWritableDatabase&#125; or &#123;@link #getReadableDatabase&#125; is called.</div><div class="line"> *</div><div class="line"> * &lt;p&gt;Accepts input param: a concrete instance of &#123;@link DatabaseErrorHandler&#125; to be</div><div class="line"> * used to handle corruption when sqlite reports database corruption.&lt;/p&gt;</div><div class="line"> *</div><div class="line"> * @param context to use to open or create the database</div><div class="line"> * @param name of the database file, or null for an in-memory database</div><div class="line"> * @param factory to use for creating cursor objects, or null for the default</div><div class="line"> * @param version number of the database (starting at 1); if the database is older,</div><div class="line"> *     &#123;@link #onUpgrade&#125; will be used to upgrade the database; if the database is</div><div class="line"> *     newer, &#123;@link #onDowngrade&#125; will be used to downgrade the database</div><div class="line"> * @param errorHandler the &#123;@link DatabaseErrorHandler&#125; to be used when sqlite reports database</div><div class="line"> * corruption, or null to use the default error handler.</div><div class="line"> */</div><div class="line">public SQLiteOpenHelper(Context context, String name, CursorFactory factory, int version,</div><div class="line">        DatabaseErrorHandler errorHandler) &#123;</div><div class="line">    if (version &lt; 1) throw new IllegalArgumentException(&quot;Version must be &gt;= 1, was &quot; + version);</div><div class="line"></div><div class="line">    mContext = context;</div><div class="line">    mName = name;</div><div class="line">    mFactory = factory;</div><div class="line">    mNewVersion = version;</div><div class="line">    mErrorHandler = errorHandler;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这里有一点很重要：<strong>当我们实例化一个<code>SQLiteOpenHelper</code>的子类时，并不会立刻创建或者打开它对应的数据库，这个操作是等到调用了<code>getWritableDatabase</code>或者<code>getReadableDatabase</code>才进行的</strong>。</p>
+<ul>
+<li><code>context</code>：用来打开或者关闭数据的上下文，需要注意内存泄露问题。</li>
+<li><code>name</code>：数据库的名字，一般为<code>xxx.db</code>，如果为空，那么使用的是内存数据库。</li>
+<li><code>factory</code>：创建<code>cursor</code>的工厂类，如果为空，那么使用默认的。</li>
+<li><code>version</code>：数据库的当前版本号，必须大于等于<code>1</code>。</li>
+<li><code>erroeHandler</code>：数据库发生错误时的处理者，如果为空，那么使用默认处理方式。</li>
+</ul>
+<h2 id="2-2-2-获得SQLiteDatabase"><a href="#2-2-2-获得SQLiteDatabase" class="headerlink" title="2.2.2 获得SQLiteDatabase"></a>2.2.2 获得<code>SQLiteDatabase</code></h2><p>一般情况下，当我们实例完一个<code>SQLiteOpenHelper</code>对象之后，就可以通过它所关联的<code>SQLiteDatabase</code>，来对数据库进行操作了，获得数据库的方式有下面两种：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div></pre></td><td class="code"><pre><div class="line">/**</div><div class="line"> * Create and/or open a database that will be used for reading and writing.</div><div class="line"> * The first time this is called, the database will be opened and</div><div class="line"> * &#123;@link #onCreate&#125;, &#123;@link #onUpgrade&#125; and/or &#123;@link #onOpen&#125; will be</div><div class="line"> * called.</div><div class="line"> *</div><div class="line"> * &lt;p&gt;Once opened successfully, the database is cached, so you can</div><div class="line"> * call this method every time you need to write to the database.</div><div class="line"> * (Make sure to call &#123;@link #close&#125; when you no longer need the database.)</div><div class="line"> * Errors such as bad permissions or a full disk may cause this method</div><div class="line"> * to fail, but future attempts may succeed if the problem is fixed.&lt;/p&gt;</div><div class="line"> *</div><div class="line"> * &lt;p class=&quot;caution&quot;&gt;Database upgrade may take a long time, you</div><div class="line"> * should not call this method from the application main thread, including</div><div class="line"> * from &#123;@link android.content.ContentProvider#onCreate ContentProvider.onCreate()&#125;.</div><div class="line"> *</div><div class="line"> * @throws SQLiteException if the database cannot be opened for writing</div><div class="line"> * @return a read/write database object valid until &#123;@link #close&#125; is called</div><div class="line"> */</div><div class="line">public SQLiteDatabase getWritableDatabase() &#123;</div><div class="line">    synchronized (this) &#123;</div><div class="line">        return getDatabaseLocked(true);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">/**</div><div class="line"> * Create and/or open a database.  This will be the same object returned by</div><div class="line"> * &#123;@link #getWritableDatabase&#125; unless some problem, such as a full disk,</div><div class="line"> * requires the database to be opened read-only.  In that case, a read-only</div><div class="line"> * database object will be returned.  If the problem is fixed, a future call</div><div class="line"> * to &#123;@link #getWritableDatabase&#125; may succeed, in which case the read-only</div><div class="line"> * database object will be closed and the read/write object will be returned</div><div class="line"> * in the future.</div><div class="line"> *</div><div class="line"> * &lt;p class=&quot;caution&quot;&gt;Like &#123;@link #getWritableDatabase&#125;, this method may</div><div class="line"> * take a long time to return, so you should not call it from the</div><div class="line"> * application main thread, including from</div><div class="line"> * &#123;@link android.content.ContentProvider#onCreate ContentProvider.onCreate()&#125;.</div><div class="line"> *</div><div class="line"> * @throws SQLiteException if the database cannot be opened</div><div class="line"> * @return a database object valid until &#123;@link #getWritableDatabase&#125;</div><div class="line"> *     or &#123;@link #close&#125; is called.</div><div class="line"> */</div><div class="line">public SQLiteDatabase c() &#123;</div><div class="line">    synchronized (this) &#123;</div><div class="line">        return getDatabaseLocked(false);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>注意到，它们最终都是调用了同一个方法，并且在该方法上加上了同步代码块。</p>
+<p>关于<code>getWritableDatabase</code>，源码当中提到了以下几点：</p>
+<ul>
+<li>该方法是用来创建或者打开一个<strong>可读写的数据库</strong>，当这个方法第一次被调用时，数据库会被打开，并且<code>onCreate</code>，<code>onUpgrade</code>或者<code>onOpen</code>方法可能会被调用。</li>
+<li>一旦打开成功之后，这个<strong>数据库会被缓存</strong>，也就是其中的<code>mDatabase</code>成员变量，但是如果权限检查失败或者磁盘慢了，那么有可能会打开失败。</li>
+<li><code>Upgrade</code>方法有时候可能会执行耗时的操作，因此<strong>不要在主线程当中调用这个方法，包括<code>ContentProvider</code>的<code>onCreate()</code>方法</strong>。</li>
+</ul>
+<p>关于<code>getWritableDatabase</code>，有几点说明：</p>
+<ul>
+<li>在除了某些特殊情况，它和<code>getWritableDatabase</code>返回的一样，都是一个可读写的数据库，如果磁盘满了，那么才有可能返回一个只读的数据库。</li>
+<li>如果当前<code>mDatabase</code>是只读的，但是之后又调用了一个<code>getWritableDatabase</code>方法并且成功地获取到了可写的数据库，那么原来的<code>mDatabase</code>会被关闭，重新打开一个可读写的数据库，调用<code>db.reopenReadWrite()</code>方法。</li>
+</ul>
+<p>下面，我们来看一下<code>getDatabaseLocked</code>的具体实现，来了解其中的细节问题：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div></pre></td><td class="code"><pre><div class="line">private SQLiteDatabase getDatabaseLocked(boolean writable) &#123;</div><div class="line">    if (mDatabase != null) &#123;</div><div class="line">        if (!mDatabase.isOpen()) &#123;</div><div class="line">            //如果使用者获取了db对象，但不是通过SQLiteOpenHelper关闭它，那么下次调用的时候会返回null。</div><div class="line">            mDatabase = null;</div><div class="line">        &#125; else if (!writable || !mDatabase.isReadOnly()) &#123;</div><div class="line">            //如果不要求可写或者当前缓存的数据库已经是可写的了，那么直接返回.</div><div class="line">            return mDatabase;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    if (mIsInitializing) &#123;</div><div class="line">        throw new IllegalStateException(&quot;getDatabase called recursively&quot;);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    SQLiteDatabase db = mDatabase;</div><div class="line">    try &#123;</div><div class="line">        mIsInitializing = true;</div><div class="line">        //如果要求可写，但是当前缓存的是只读的，那么尝试关闭后再重新打开来获取一个可写的。</div><div class="line">        if (db != null) &#123;</div><div class="line">            if (writable &amp;&amp; db.isReadOnly()) &#123;</div><div class="line">                db.reopenReadWrite();</div><div class="line">            &#125;</div><div class="line">        //下面就是没有缓存的情况.</div><div class="line">        &#125; else if (mName == null) &#123;</div><div class="line">            db = SQLiteDatabase.create(null);</div><div class="line">        //这里就是我们第一次调用时候的情况.</div><div class="line">        &#125; else &#123;</div><div class="line">            try &#123;</div><div class="line">                if (DEBUG_STRICT_READONLY &amp;&amp; !writable) &#123;</div><div class="line">                    final String path = mContext.getDatabasePath(mName).getPath();</div><div class="line">                    db = SQLiteDatabase.openDatabase(path, mFactory,</div><div class="line">                            SQLiteDatabase.OPEN_READONLY, mErrorHandler);</div><div class="line">                &#125; else &#123;</div><div class="line">                    //以可写的方式打开或者创建一个数据库，注意这里有一个标志位mEnableWriteAheadLogging，我们后面来解释.</div><div class="line">                    db = mContext.openOrCreateDatabase(mName, mEnableWriteAheadLogging ?</div><div class="line">                            Context.MODE_ENABLE_WRITE_AHEAD_LOGGING : 0,</div><div class="line">                            mFactory, mErrorHandler);</div><div class="line">                &#125;</div><div class="line">            &#125; catch (SQLiteException ex) &#123;</div><div class="line">                //如果发生异常，并且要求可写的，那么直接抛出异常.</div><div class="line">                if (writable) &#123;</div><div class="line">                    throw ex;</div><div class="line">                &#125;</div><div class="line">                Log.e(TAG, &quot;Couldn&apos;t open &quot; + mName</div><div class="line">                        + &quot; for writing (will try read-only):&quot;, ex);</div><div class="line">                //如果不要求可写，那么尝试调用只读的方式来打开。</div><div class="line">                final String path = mContext.getDatabasePath(mName).getPath();</div><div class="line">                db = SQLiteDatabase.openDatabase(path, mFactory,</div><div class="line">                        SQLiteDatabase.OPEN_READONLY, mErrorHandler);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        //抽象方法，子类实现。</div><div class="line">        onConfigure(db);</div><div class="line">       </div><div class="line">        final int version = db.getVersion();</div><div class="line">        //如果新旧版本不想等，那么才会进入下面的判断.</div><div class="line">        if (version != mNewVersion) &#123;</div><div class="line">            //当前数据库是只读的，那么会抛出异常。</div><div class="line">            if (db.isReadOnly()) &#123;</div><div class="line">                throw new SQLiteException(&quot;Can&apos;t upgrade read-only database from version &quot; +</div><div class="line">                        db.getVersion() + &quot; to &quot; + mNewVersion + &quot;: &quot; + mName);</div><div class="line">            &#125;</div><div class="line">            //开启事务，onCreate/onDowngrade/OnUpgrade只会调用其中一个。</div><div class="line">            db.beginTransaction();</div><div class="line">            try &#123;</div><div class="line">                if (version == 0) &#123;</div><div class="line">                    onCreate(db);</div><div class="line">                &#125; else &#123;</div><div class="line">                    if (version &gt; mNewVersion) &#123;</div><div class="line">                        onDowngrade(db, version, mNewVersion);</div><div class="line">                    &#125; else &#123;</div><div class="line">                        onUpgrade(db, version, mNewVersion);</div><div class="line">                    &#125;</div><div class="line">                &#125;</div><div class="line">                db.setVersion(mNewVersion);</div><div class="line">                db.setTransactionSuccessful();</div><div class="line">            &#125; finally &#123;</div><div class="line">                db.endTransaction();</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        //数据库打开完毕.</div><div class="line">        onOpen(db);</div><div class="line"></div><div class="line">        if (db.isReadOnly()) &#123;</div><div class="line">            Log.w(TAG, &quot;Opened &quot; + mName + &quot; in read-only mode&quot;);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        mDatabase = db;</div><div class="line">        return db;</div><div class="line">    &#125; finally &#123;</div><div class="line">        mIsInitializing = false;</div><div class="line">        if (db != null &amp;&amp; db != mDatabase) &#123;</div><div class="line">            db.close();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h3 id="2-2-3-onConfig-onOpen"><a href="#2-2-3-onConfig-onOpen" class="headerlink" title="2.2.3 onConfig/onOpen"></a>2.2.3 <code>onConfig/onOpen</code></h3><p>在上面获取数据库的过程中，有两个方法：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line">/**</div><div class="line"> * Called when the database connection is being configured, to enable features</div><div class="line"> * such as write-ahead logging or foreign key support.</div><div class="line"> * &lt;p&gt;</div><div class="line"> * This method is called before &#123;@link #onCreate&#125;, &#123;@link #onUpgrade&#125;,</div><div class="line"> * &#123;@link #onDowngrade&#125;, or &#123;@link #onOpen&#125; are called.  It should not modify</div><div class="line"> * the database except to configure the database connection as required.</div><div class="line"> * &lt;/p&gt;&lt;p&gt;</div><div class="line"> * This method should only call methods that configure the parameters of the</div><div class="line"> * database connection, such as &#123;@link SQLiteDatabase#enableWriteAheadLogging&#125;</div><div class="line"> * &#123;@link SQLiteDatabase#setForeignKeyConstraintsEnabled&#125;,</div><div class="line"> * &#123;@link SQLiteDatabase#setLocale&#125;, &#123;@link SQLiteDatabase#setMaximumSize&#125;,</div><div class="line"> * or executing PRAGMA statements.</div><div class="line"> * &lt;/p&gt;</div><div class="line"> *</div><div class="line"> * @param db The database.</div><div class="line"> */</div><div class="line">public void onConfigure(SQLiteDatabase db) &#123;&#125;</div><div class="line">/**</div><div class="line"> * Called when the database has been opened.  The implementation</div><div class="line"> * should check &#123;@link SQLiteDatabase#isReadOnly&#125; before updating the</div><div class="line"> * database.</div><div class="line"> * &lt;p&gt;</div><div class="line"> * This method is called after the database connection has been configured</div><div class="line"> * and after the database schema has been created, upgraded or downgraded as necessary.</div><div class="line"> * If the database connection must be configured in some way before the schema</div><div class="line"> * is created, upgraded, or downgraded, do it in &#123;@link #onConfigure&#125; instead.</div><div class="line"> * &lt;/p&gt;</div><div class="line"> *</div><div class="line"> * @param db The database.</div><div class="line"> */</div><div class="line">public void onOpen(SQLiteDatabase db) &#123;&#125;</div></pre></td></tr></table></figure></p>
+<ul>
+<li><code>onConfigure</code>：在<code>onCreate/onUpgrade/onDowngrade</code>调用之前，可以在它其中来配置数据库连接的参数，这时候数据库已经创建完成，但是表有可能还没创建，或者不是最新的。</li>
+<li><code>onOpen</code>：在数据库连接配置完成，并且数据库表已经更新到最新的，当我们在这里对数据库进行操作时，需要判断它是否是只读的。</li>
+</ul>
+<h3 id="2-2-4-onCreate-onUpgrade-onDowngrade"><a href="#2-2-4-onCreate-onUpgrade-onDowngrade" class="headerlink" title="2.2.4 onCreate/onUpgrade/onDowngrade"></a>2.2.4 <code>onCreate/onUpgrade/onDowngrade</code></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div></pre></td><td class="code"><pre><div class="line">/**</div><div class="line"> * Called when the database is created for the first time. This is where the</div><div class="line"> * creation of tables and the initial population of the tables should happen.</div><div class="line"> *</div><div class="line"> * @param db The database.</div><div class="line"> */</div><div class="line">public abstract void onCreate(SQLiteDatabase db);</div><div class="line"></div><div class="line">/**</div><div class="line"> * Called when the database needs to be upgraded. The implementation</div><div class="line"> * should use this method to drop tables, add tables, or do anything else it</div><div class="line"> * needs to upgrade to the new schema version.</div><div class="line"> *</div><div class="line"> * &lt;p&gt;</div><div class="line"> * The SQLite ALTER TABLE documentation can be found</div><div class="line"> * &lt;a href=&quot;http://sqlite.org/lang_altertable.html&quot;&gt;here&lt;/a&gt;. If you add new columns</div><div class="line"> * you can use ALTER TABLE to insert them into a live table. If you rename or remove columns</div><div class="line"> * you can use ALTER TABLE to rename the old table, then create the new table and then</div><div class="line"> * populate the new table with the contents of the old table.</div><div class="line"> * &lt;/p&gt;&lt;p&gt;</div><div class="line"> * This method executes within a transaction.  If an exception is thrown, all changes</div><div class="line"> * will automatically be rolled back.</div><div class="line"> * &lt;/p&gt;</div><div class="line"> *</div><div class="line"> * @param db The database.</div><div class="line"> * @param oldVersion The old database version.</div><div class="line"> * @param newVersion The new database version.</div><div class="line"> */</div><div class="line">public abstract void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion);</div><div class="line"></div><div class="line">/**</div><div class="line"> * Called when the database needs to be downgraded. This is strictly similar to</div><div class="line"> * &#123;@link #onUpgrade&#125; method, but is called whenever current version is newer than requested one.</div><div class="line"> * However, this method is not abstract, so it is not mandatory for a customer to</div><div class="line"> * implement it. If not overridden, default implementation will reject downgrade and</div><div class="line"> * throws SQLiteException</div><div class="line"> *</div><div class="line"> * &lt;p&gt;</div><div class="line"> * This method executes within a transaction.  If an exception is thrown, all changes</div><div class="line"> * will automatically be rolled back.</div><div class="line"> * &lt;/p&gt;</div><div class="line"> *</div><div class="line"> * @param db The database.</div><div class="line"> * @param oldVersion The old database version.</div><div class="line"> * @param newVersion The new database version.</div><div class="line"> */</div><div class="line">public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) &#123;</div><div class="line">    throw new SQLiteException(&quot;Can&apos;t downgrade database from version &quot; +</div><div class="line">            oldVersion + &quot; to &quot; + newVersion);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li><code>onCreate</code>原有数据库版本为<code>0</code>时调用，在里面我们进行剪标操作；而<code>onUpgrade/onDowngrade</code>则在不相等时调用，在里面我们对表的字段进行更改。</li>
+<li><code>onDowngrade</code>的默认实现是抛出异常。</li>
+<li><code>onUpgrade</code>没有默认实现。</li>
+<li>这三个操作都是放在事务当中，如果发生了错误，那么会回滚。</li>
+</ul>
+<h3 id="2-2-5-关闭"><a href="#2-2-5-关闭" class="headerlink" title="2.2.5 关闭"></a>2.2.5 关闭</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">/**</div><div class="line"> * Close any open database object.</div><div class="line"> */</div><div class="line">public synchronized void close() &#123;</div><div class="line">    if (mIsInitializing) throw new IllegalStateException(&quot;Closed during initialization&quot;);</div><div class="line"></div><div class="line">    if (mDatabase != null &amp;&amp; mDatabase.isOpen()) &#123;</div><div class="line">        mDatabase.close();</div><div class="line">        mDatabase = null;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>会关闭当前缓存的数据库，并把清空<code>mDatabase</code>缓存，注意这个方法也被加上了对象锁。</p>
+<h1 id="三、多线程情况下对SQLiterDBHelper的使用"><a href="#三、多线程情况下对SQLiterDBHelper的使用" class="headerlink" title="三、多线程情况下对SQLiterDBHelper的使用"></a>三、多线程情况下对<code>SQLiterDBHelper</code>的使用</h1><ul>
+<li>在多线程的情况下，每个线程对同一个<code>SQLiterDBHelper</code>实例进行操作，并不会产生影响，因为刚刚我们看到，在获取和关闭数据库的方法上，都加上了对象锁，所以最终我们只是打开了一条到数据库上的连接，这时候就转变为去讨论<code>SQLiteDatabase</code>的增删改查操作是否是线程安全的了。</li>
+<li>然而，如果每个线程获取<code>SQLiteDatabase</code>时，不是用的同一个<code>SQLiterDBHelper</code>，那么其实是打开了多个连接，假如通过这多个连接同数据库的操作是没有同步的话，那么就会出现问题。</li>
+</ul>
+<p>下面，我们总结一下在多线程情况下，可能出现问题的几种场景：</p>
+<h2 id="3-1-多线程情况下每个线程创建一个SQLiteOpenHelper，并且之前没有创建过关联的db"><a href="#3-1-多线程情况下每个线程创建一个SQLiteOpenHelper，并且之前没有创建过关联的db" class="headerlink" title="3.1 多线程情况下每个线程创建一个SQLiteOpenHelper，并且之前没有创建过关联的db"></a>3.1 多线程情况下每个线程创建一个<code>SQLiteOpenHelper</code>，并且之前没有创建过关联的<code>db</code></h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">/**</div><div class="line"> * 多线程同时创建,每个线程持有一个SQLiteOpenHelper</div><div class="line"> * @param view</div><div class="line"> */</div><div class="line">public void multiOnCreate(View view) &#123;</div><div class="line">    int threadCount = 50;</div><div class="line">    for (int i = 0; i &lt; threadCount; i++) &#123;</div><div class="line">        Thread thread = new Thread() &#123;</div><div class="line">            @Override</div><div class="line">            public void run() &#123;</div><div class="line">                MultiThreadDBHelper dbHelper = new MultiThreadDBHelper(MainActivity.this);</div><div class="line">                SQLiteDatabase database = dbHelper.getWritableDatabase();</div><div class="line">                ContentValues contentValues = new ContentValues(1);</div><div class="line">                contentValues.put(MultiThreadDBContract.TABLE_KEY_VALUE.COLUMN_KEY, &quot;thread_id&quot;);</div><div class="line">                contentValues.put(MultiThreadDBContract.TABLE_KEY_VALUE.COLUMN_VALUE, String.valueOf(Thread.currentThread().getId()));</div><div class="line">                database.insert(MultiThreadDBContract.TABLE_KEY_VALUE.TABLE_NAME, null, contentValues);</div><div class="line">            &#125;</div><div class="line">        &#125;;</div><div class="line">        thread.start();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在上面这种情况下，由于多个线程的<code>getWritableDatabase</code>没有进行同步操作，并且这时候手机里面没有对应的数据库，那么就有可能出现下面的情况：</p>
+<ul>
+<li><code>Thread#1</code>调用<code>getWritableDatabase</code>，在其中获取数据库的版本号为<code>0</code>，因此它调用<code>onCreate</code>建表，建表完成。</li>
+<li><code>Thread#1</code>建表完成，但是还没有来得及给数据库设置版本号时，<code>Thread#2</code>也调用了<code>getWritableDatabase</code>，在其中它获取数据库版本号也是<code>0</code>，因此也执行了<code>onCreate</code>操作，那么这时候就会出现对一个数据库多次建立同一张表的情况发生。<br><img src="http://upload-images.jianshu.io/upload_images/1949836-dbdda774931521d3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></li>
+</ul>
+<h2 id="3-2-多线程情况下每个线程创建一个SQLiteOpenHelper，同时对关联的db进行写入操作"><a href="#3-2-多线程情况下每个线程创建一个SQLiteOpenHelper，同时对关联的db进行写入操作" class="headerlink" title="3.2 多线程情况下每个线程创建一个SQLiteOpenHelper，同时对关联的db进行写入操作"></a>3.2 多线程情况下每个线程创建一个<code>SQLiteOpenHelper</code>，同时对关联的<code>db</code>进行写入操作</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">/**</div><div class="line"> * 多个线程同时写入,每个线程持有一个SQLiteOpenHelper</div><div class="line"> * @param view</div><div class="line"> */</div><div class="line">public void multiWriteUseMultiDBHelper(View view) &#123;</div><div class="line">    MultiThreadDBHelper init = new MultiThreadDBHelper(MainActivity.this);</div><div class="line">    SQLiteDatabase database = init.getWritableDatabase();</div><div class="line">    database.close();</div><div class="line">    int threadCount = 10;</div><div class="line">    for (int i = 0; i &lt; threadCount; i++) &#123;</div><div class="line">        Thread thread = new Thread() &#123;</div><div class="line">            @Override</div><div class="line">            public void run() &#123;</div><div class="line">                MultiThreadDBHelper dbHelper = new MultiThreadDBHelper(MainActivity.this);</div><div class="line">                SQLiteDatabase database = dbHelper.getWritableDatabase();</div><div class="line">                for (int i = 0; i &lt; 1000; i++) &#123;</div><div class="line">                    ContentValues contentValues = new ContentValues(1);</div><div class="line">                    contentValues.put(MultiThreadDBContract.TABLE_KEY_VALUE.COLUMN_KEY, &quot;thread_id&quot;);</div><div class="line">                    contentValues.put(MultiThreadDBContract.TABLE_KEY_VALUE.COLUMN_VALUE, String.valueOf(Thread.currentThread().getId()) + &quot;_&quot; + i);</div><div class="line">                    database.insert(MultiThreadDBContract.TABLE_KEY_VALUE.TABLE_NAME, null, contentValues);</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;;</div><div class="line">        thread.start();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>假如我们启动了多个线程，并且在每个线程中新建了<code>SQLiteOpenHelper</code>实例，那么当它们调用各自的<code>getWritableDatabase</code>方法时，其实是对手机中的<code>db</code>建立了多个数据库连接，当通过多个数据库连接同时对<code>db</code>进行写入，那么会抛出下面的异常：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-d785c06b6d1251d8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>从<code>3.1</code>和<code>3.2</code>我们就可以看出，在多线程的情况下，每个线程新建一个<code>SQLiteOpenHelper</code>会出现问题，因此，我们尽量把它设计为单例的模式，那么是不是多个线程持有同一个<code>SQLiteOpenHelper</code>实例就不会出现问题呢，其实并不然，我们看一下下面这些共用同一个<code>SQLiteOpenHelper</code>的情形。</p>
+<h2 id="3-3-多线程情况下所有线程共用一个SQLiteOpenHelper，其中一个线程调用了close方法"><a href="#3-3-多线程情况下所有线程共用一个SQLiteOpenHelper，其中一个线程调用了close方法" class="headerlink" title="3.3 多线程情况下所有线程共用一个SQLiteOpenHelper，其中一个线程调用了close方法"></a>3.3 多线程情况下所有线程共用一个<code>SQLiteOpenHelper</code>，其中一个线程调用了<code>close</code>方法</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line">/**</div><div class="line"> * 多线程下共用一个SQLiteOpenHelper</div><div class="line"> * @param view</div><div class="line"> */</div><div class="line">public void multiCloseUseOneDBHelper(View view) &#123;</div><div class="line">    final MultiThreadDBHelper init = new MultiThreadDBHelper(MainActivity.this);</div><div class="line">    final SQLiteDatabase database = init.getWritableDatabase();</div><div class="line">    database.close();</div><div class="line">    Thread thread1 = new Thread() &#123;</div><div class="line"></div><div class="line">        @Override</div><div class="line">        public void run() &#123;</div><div class="line">            SQLiteDatabase database = init.getWritableDatabase();</div><div class="line">            try &#123;</div><div class="line">                Thread.sleep(1000);</div><div class="line">            &#125; catch (Exception e) &#123;</div><div class="line">                Log.e(&quot;MainActivity&quot;, &quot;e=&quot; + e);</div><div class="line">            &#125;</div><div class="line">            ContentValues contentValues = new Conten;</div><div class="line">            contentValues.put(MultiThreadDBContract.TABLE_KEY_VALUE.COLUMN_KEY, &quot;thread_id&quot;);</div><div class="line">            contentValues.put(MultiThreadDBContract.TABLE_KEY_VALUE.COLUMN_VALUE, String.valueOf(Thread.currentThread().getId()));</div><div class="line">            //由于Thread2已经关闭了数据库，因此这里再调用插入操作就会出现问题。</div><div class="line">            database.insert(MultiThreadDBContract.TABLE_KEY_VALUE.TABLE_NAME, null, contentValues);</div><div class="line">        &#125;</div><div class="line">    &#125;;</div><div class="line">    thread1.start();</div><div class="line">    Thread thread2 = new Thread() &#123;</div><div class="line">        @Override</div><div class="line">        public void run() &#123;</div><div class="line">            try &#123;</div><div class="line">                Thread.sleep(100);</div><div class="line">            &#125; catch (Exception e) &#123;</div><div class="line">                Log.e(&quot;MainActivity&quot;, &quot;e=&quot; + e);</div><div class="line">            &#125;</div><div class="line">            init.close();</div><div class="line">        &#125;</div><div class="line">    &#125;;</div><div class="line">    thread2.start();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><img src="http://upload-images.jianshu.io/upload_images/1949836-96841e89679da5c2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h2 id="3-4-多线程情况下所有线程共用一个SQLiteOpenHelper，在写的过程中同时读"><a href="#3-4-多线程情况下所有线程共用一个SQLiteOpenHelper，在写的过程中同时读" class="headerlink" title="3.4 多线程情况下所有线程共用一个SQLiteOpenHelper，在写的过程中同时读"></a>3.4 多线程情况下所有线程共用一个<code>SQLiteOpenHelper</code>，在写的过程中同时读</h2><p>由于是共用了同一个<code>SQLiteOpenHelper</code>，因此我们需要考虑的是对于同一个<code>SQLiteDatabase</code>连接，是否允许读写并发，默认情况下是不允许的，但是，我们可以通过<code>SQLiteOpenHelper#setWriteAheadLoggingEnabled</code>，这个配置默认是关的，当开启时表示：它允许一个写线程与多个读线程同时在一个<code>SQLiteDatabase</code>上起作用。实现原理是写操作其实是在一个单独的文件，不是原数据库文件。所以写在执行时，不会影响读操作，读操作读的是原数据文件，是写操作开始之前的内容。在写操作执行成功后，会把修改合并会原数据库文件。此时读操作才能读到修改后的内容。但是这样将花费更多的内存。</p>
+<h1 id="四、解决多线程的例子"><a href="#四、解决多线程的例子" class="headerlink" title="四、解决多线程的例子"></a>四、解决多线程的例子</h1><p>工厂类负责根据<code>dbName</code>创建对应的<code>SQLiteOpenHelper</code>类<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">public abstract class DBHelperFactory &#123;</div><div class="line">    public abstract SQLiteOpenHelper createDBHelper(String dbName);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>通过管理类来插入指定<strong>数据库</strong>的<strong>指定表</strong>。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div></pre></td><td class="code"><pre><div class="line">public class DBHelperManager &#123;</div><div class="line"></div><div class="line">    private HashMap&lt;String, SQLiteOpenHelperWrapper&gt; mDBHelperWrappers;</div><div class="line">    private DBHelperFactory mDBHelperFactory;</div><div class="line"></div><div class="line">    static class Nested &#123;</div><div class="line">        public static DBHelperManager sInstance = new DBHelperManager();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static DBHelperManager getInstance() &#123;</div><div class="line">        return Nested.sInstance;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private DBHelperManager() &#123;</div><div class="line">        mDBHelperWrappers = new HashMap&lt;&gt;();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void setDBHelperFactory(DBHelperFactory dbHelperFactory) &#123;</div><div class="line">        mDBHelperFactory = dbHelperFactory;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private synchronized SQLiteOpenHelperWrapper getSQLiteDBHelperWrapper(String dbName) &#123;</div><div class="line">        SQLiteOpenHelperWrapper wrapper = mDBHelperWrappers.get(dbName);</div><div class="line">        if (wrapper == null) &#123;</div><div class="line">            if (mDBHelperFactory != null) &#123;</div><div class="line">                SQLiteOpenHelper dbHelper = mDBHelperFactory.createDBHelper(dbName);</div><div class="line">                if (dbHelper != null) &#123;</div><div class="line">                    SQLiteOpenHelperWrapper newWrapper = new SQLiteOpenHelperWrapper();</div><div class="line">                    newWrapper.mSQLiteOpenHelper = dbHelper;</div><div class="line">                    newWrapper.mSQLiteOpenHelper.setWriteAheadLoggingEnabled(true);</div><div class="line">                    mDBHelperWrappers.put(dbName, newWrapper);</div><div class="line">                    wrapper = newWrapper;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return wrapper;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private synchronized SQLiteDatabase getReadableDatabase(String dbName) &#123;</div><div class="line">        SQLiteOpenHelperWrapper wrapper = getSQLiteDBHelperWrapper(dbName);</div><div class="line">        if (wrapper != null &amp;&amp; wrapper.mSQLiteOpenHelper != null) &#123;</div><div class="line">            return wrapper.mSQLiteOpenHelper.getReadableDatabase();</div><div class="line">        &#125; else &#123;</div><div class="line">            return null;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private synchronized SQLiteDatabase getWritableDatabase(String dbName) &#123;</div><div class="line">        SQLiteOpenHelperWrapper wrapper = getSQLiteDBHelperWrapper(dbName);</div><div class="line">        if (wrapper != null &amp;&amp; wrapper.mSQLiteOpenHelper != null) &#123;</div><div class="line">            return wrapper.mSQLiteOpenHelper.getWritableDatabase();</div><div class="line">        &#125; else &#123;</div><div class="line">            return null;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private class SQLiteOpenHelperWrapper &#123;</div><div class="line">        public SQLiteOpenHelper mSQLiteOpenHelper;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public long insert(String dbName, String tableName, String nullColumn, ContentValues contentValues) &#123;</div><div class="line">        SQLiteDatabase db = getWritableDatabase(dbName);</div><div class="line">        if (db != null) &#123;</div><div class="line">            return db.insert(tableName, nullColumn, contentValues);</div><div class="line">        &#125;</div><div class="line">        return -1;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public Cursor query(String dbName, String table, String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy) &#123;</div><div class="line">        SQLiteDatabase db = getReadableDatabase(dbName);</div><div class="line">        if (db != null) &#123;</div><div class="line">            return db.query(table, columns, selection, selectionArgs, groupBy, having, orderBy);</div><div class="line">        &#125;</div><div class="line">        return null;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public int update(String dbName, String table, ContentValues values, String whereClause, String[] whereArgs) &#123;</div><div class="line">        SQLiteDatabase db = getWritableDatabase(dbName);</div><div class="line">        if (db != null) &#123;</div><div class="line">            return db.update(table, values, whereClause, whereArgs);</div><div class="line">        &#125;</div><div class="line">        return 0;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public int delete(String dbName, String table, String whereClause, String[] whereArgs) &#123;</div><div class="line">        SQLiteDatabase db = getWritableDatabase(dbName);</div><div class="line">        if (db != null) &#123;</div><div class="line">            return db.delete(table, whereClause, whereArgs);</div><div class="line">        &#125;</div><div class="line">        return 0;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>多线程插入的方式改为下面这样：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">public void multiWriteUseManager(View view) &#123;</div><div class="line">    int threadCount = 10;</div><div class="line">    for (int i = 0; i &lt; threadCount; i++) &#123;</div><div class="line">        Thread thread = new Thread() &#123;</div><div class="line">            @Override</div><div class="line">            public void run() &#123;</div><div class="line">                for (int i = 0; i &lt; 1000; i++) &#123;</div><div class="line">                    ContentValues contentValues = new ContentValues(1);</div><div class="line">                    contentValues.put(MultiThreadDBContract.TABLE_KEY_VALUE.COLUMN_KEY, &quot;thread_id&quot;);</div><div class="line">                    contentValues.put(MultiThreadDBContract.TABLE_KEY_VALUE.COLUMN_VALUE, String.valueOf(Thread.currentThread().getId()) + &quot;_&quot; + i);</div><div class="line">                    DBHelperManager.getInstance().insert(MultiThreadDBContract.DATABASE_NAME, MultiThreadDBContract.TABLE_KEY_VALUE.TABLE_NAME, null, contentValues);</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;;</div><div class="line">        thread.start();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h1 id="五、小结"><a href="#五、小结" class="headerlink" title="五、小结"></a>五、小结</h1><p>这篇文章主要介绍的是<code>SQLiteOpenHelper</code>，需要注意以下三点：</p>
+<ul>
+<li>不要在多线程情况且没有进行线程同步的情况下，操作由不同的<code>SQLiteOpenHelper</code>对象所返回的<code>SQLiteDatabase</code>。</li>
+<li>在多线程共用一个<code>SQLiteOpenHelper</code>时，需要注意关闭时，是否有其它线程正在使用该<code>Helper</code>所关联的<code>db</code>。</li>
+<li>在多线程共用一个<code>SQLiteOpenHelper</code>时，是否有同时读写的需求，如果有，那么需要设置<code>setWriteAheadLoggingEnabled</code>标志位。</li>
+</ul>
+<p>对于<code>SQLiteDatabase</code>，还有更多的优化操作，当我们有关数据库的错误时，我们都可以根据错误码，在下面的网站当中找到说明：</p>
+<blockquote>
+<p><a href="https://www.sqlite.org/rescode.html" target="_blank" rel="external"><code>https://www.sqlite.org/rescode.html</code></a></p>
+</blockquote>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/03/05/Canvas-&-Paint/Canvas&Paint-知识梳理(6)---绘制路线-Path-基本用法/" rel="next" title="Canvas&Paint 知识梳理(6) - 绘制路线 Path 基本用法">
+                <i class="fa fa-chevron-left"></i> Canvas&Paint 知识梳理(6) - 绘制路线 Path 基本用法
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/03/07/Loader/Loader-知识梳理(1)---LoaderManager初探/" rel="prev" title="Loader 知识梳理(1) - LoaderManager初探">
+                Loader 知识梳理(1) - LoaderManager初探 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="zeMao" />
+          <p class="site-author-name" itemprop="name">zeMao</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">104</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">24</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、概述"><span class="nav-number">1.</span> <span class="nav-text">一、概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、使用SQLiteOpenHelper封装数据库"><span class="nav-number">2.</span> <span class="nav-text">二、使用SQLiteOpenHelper封装数据库</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-使用SQLiteOpenHelper的原因"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 使用SQLiteOpenHelper的原因</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-SQLiteOpenHelper的API"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 SQLiteOpenHelper的API</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-1-构造函数"><span class="nav-number">2.2.1.</span> <span class="nav-text">2.2.1 构造函数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-2-获得SQLiteDatabase"><span class="nav-number">2.3.</span> <span class="nav-text">2.2.2 获得SQLiteDatabase</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-3-onConfig-onOpen"><span class="nav-number">2.3.1.</span> <span class="nav-text">2.2.3 onConfig/onOpen</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-4-onCreate-onUpgrade-onDowngrade"><span class="nav-number">2.3.2.</span> <span class="nav-text">2.2.4 onCreate/onUpgrade/onDowngrade</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-5-关闭"><span class="nav-number">2.3.3.</span> <span class="nav-text">2.2.5 关闭</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、多线程情况下对SQLiterDBHelper的使用"><span class="nav-number">3.</span> <span class="nav-text">三、多线程情况下对SQLiterDBHelper的使用</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-多线程情况下每个线程创建一个SQLiteOpenHelper，并且之前没有创建过关联的db"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 多线程情况下每个线程创建一个SQLiteOpenHelper，并且之前没有创建过关联的db</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-多线程情况下每个线程创建一个SQLiteOpenHelper，同时对关联的db进行写入操作"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 多线程情况下每个线程创建一个SQLiteOpenHelper，同时对关联的db进行写入操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-3-多线程情况下所有线程共用一个SQLiteOpenHelper，其中一个线程调用了close方法"><span class="nav-number">3.3.</span> <span class="nav-text">3.3 多线程情况下所有线程共用一个SQLiteOpenHelper，其中一个线程调用了close方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-4-多线程情况下所有线程共用一个SQLiteOpenHelper，在写的过程中同时读"><span class="nav-number">3.4.</span> <span class="nav-text">3.4 多线程情况下所有线程共用一个SQLiteOpenHelper，在写的过程中同时读</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四、解决多线程的例子"><span class="nav-number">4.</span> <span class="nav-text">四、解决多线程的例子</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#五、小结"><span class="nav-number">5.</span> <span class="nav-text">五、小结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zeMao</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

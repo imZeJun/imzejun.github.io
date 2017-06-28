@@ -1,0 +1,822 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="一、概述今天这篇文章我们来了解一下两个类：  Bitmap BitmapFactory  二、Bitmap2.1 创建Bitmap通过Bitmap的源码，我们可以看到它内部提供了很多.createBitmap(xxx)的静态方法，我们可以通过这些方法来获得一个Bitmap：上述的方法最终可以分为以下三类：  通过一个已有的Bitmap创建 创建一个空的Bitmap 创建一个新的Bitmap，该Bi">
+<meta property="og:type" content="article">
+<meta property="og:title" content="图片基础知识梳理(3) - Bitmap&amp;BitmapFactory 解析">
+<meta property="og:url" content="http://yoursite.com/2017/03/22/图片基础/图片基础知识梳理(3)---Bitmap&BitmapFactory-解析/index.html">
+<meta property="og:site_name" content="zeMao&#39;s Blog">
+<meta property="og:description" content="一、概述今天这篇文章我们来了解一下两个类：  Bitmap BitmapFactory  二、Bitmap2.1 创建Bitmap通过Bitmap的源码，我们可以看到它内部提供了很多.createBitmap(xxx)的静态方法，我们可以通过这些方法来获得一个Bitmap：上述的方法最终可以分为以下三类：  通过一个已有的Bitmap创建 创建一个空的Bitmap 创建一个新的Bitmap，该Bi">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-abdf20b136b22a7d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-f766d631df86ece2.png">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-a1b39f27c4fcc38b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-7f21610c5d48520e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-47be8e2da162dec1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2017-06-28T06:47:04.230Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="图片基础知识梳理(3) - Bitmap&amp;BitmapFactory 解析">
+<meta name="twitter:description" content="一、概述今天这篇文章我们来了解一下两个类：  Bitmap BitmapFactory  二、Bitmap2.1 创建Bitmap通过Bitmap的源码，我们可以看到它内部提供了很多.createBitmap(xxx)的静态方法，我们可以通过这些方法来获得一个Bitmap：上述的方法最终可以分为以下三类：  通过一个已有的Bitmap创建 创建一个空的Bitmap 创建一个新的Bitmap，该Bi">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-abdf20b136b22a7d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/03/22/图片基础/图片基础知识梳理(3)---Bitmap&BitmapFactory-解析/"/>
+
+
+
+
+
+  <title>图片基础知识梳理(3) - Bitmap&BitmapFactory 解析 | zeMao's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">zeMao's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/03/22/图片基础/图片基础知识梳理(3)---Bitmap&BitmapFactory-解析/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zeMao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="zeMao's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">图片基础知识梳理(3) - Bitmap&BitmapFactory 解析</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-22T12:21:00+08:00">
+                2017-03-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/图片基础知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">图片基础知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="一、概述"><a href="#一、概述" class="headerlink" title="一、概述"></a>一、概述</h1><p>今天这篇文章我们来了解一下两个类：</p>
+<ul>
+<li><code>Bitmap</code></li>
+<li><code>BitmapFactory</code></li>
+</ul>
+<h1 id="二、Bitmap"><a href="#二、Bitmap" class="headerlink" title="二、Bitmap"></a>二、<code>Bitmap</code></h1><h2 id="2-1-创建Bitmap"><a href="#2-1-创建Bitmap" class="headerlink" title="2.1 创建Bitmap"></a>2.1 创建<code>Bitmap</code></h2><p>通过<code>Bitmap</code>的源码，我们可以看到它内部提供了很多<code>.createBitmap(xxx)</code>的静态方法，我们可以通过这些方法来获得一个<code>Bitmap</code>：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-abdf20b136b22a7d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>上述的方法最终可以分为以下三类：</p>
+<ul>
+<li>通过一个已有的<code>Bitmap</code>创建</li>
+<li>创建一个空的<code>Bitmap</code></li>
+<li>创建一个新的<code>Bitmap</code>，该<code>Bitmap</code>每个像素点的颜色通过一个<code>colors[]</code>数组指定。</li>
+</ul>
+<p>下面，我们来看一下这三类方法对于<code>Bitmap</code>的生产过程：</p>
+<h3 id="第一类"><a href="#第一类" class="headerlink" title="第一类"></a>第一类</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div></pre></td><td class="code"><pre><div class="line">public static Bitmap createBitmap(Bitmap source, int x, int y, int width, int height,</div><div class="line">        Matrix m, boolean filter) &#123;</div><div class="line"></div><div class="line">    checkXYSign(x, y);</div><div class="line">    checkWidthHeight(width, height);</div><div class="line">    //新的bitmap范围不能大于原始的bitmap</div><div class="line">    if (x + width &gt; source.getWidth()) &#123;</div><div class="line">        throw new IllegalArgumentException(&quot;x + width must be &lt;= bitmap.width()&quot;);</div><div class="line">    &#125;</div><div class="line">    if (y + height &gt; source.getHeight()) &#123;</div><div class="line">        throw new IllegalArgumentException(&quot;y + height must be &lt;= bitmap.height()&quot;);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    //如果满足下面这些条件，那么直接返回原始的bitmap</div><div class="line">    if (!source.isMutable() &amp;&amp; x == 0 &amp;&amp; y == 0 &amp;&amp; width == source.getWidth() &amp;&amp;</div><div class="line">            height == source.getHeight() &amp;&amp; (m == null || m.isIdentity())) &#123;</div><div class="line">        return source;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    int neww = width;</div><div class="line">    int newh = height;</div><div class="line">    Canvas canvas = new Canvas();</div><div class="line">    Bitmap bitmap;</div><div class="line">    Paint paint;</div><div class="line">    //生成bitmap对应区域</div><div class="line">    Rect srcR = new Rect(x, y, x + width, y + height);</div><div class="line">    //原始bitmap对应区域</div><div class="line">    RectF dstR = new RectF(0, 0, width, height);</div><div class="line"></div><div class="line">    Config newConfig = Config.ARGB_8888;</div><div class="line">    //获得原始bitmap的config</div><div class="line">    final Config config = source.getConfig();</div><div class="line">    // GIF files generate null configs, assume ARGB_8888</div><div class="line">    if (config != null) &#123;</div><div class="line">        switch (config) &#123;</div><div class="line">            case RGB_565:</div><div class="line">                newConfig = Config.RGB_565;</div><div class="line">                break;</div><div class="line">            case ALPHA_8:</div><div class="line">                newConfig = Config.ALPHA_8;</div><div class="line">                break;</div><div class="line">            //noinspection deprecation</div><div class="line">            case ARGB_4444:</div><div class="line">            case ARGB_8888:</div><div class="line">            default:</div><div class="line">                newConfig = Config.ARGB_8888;</div><div class="line">                break;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    //如果不需要变换，那么创建一个空的bitmap.</div><div class="line">    if (m == null || m.isIdentity()) &#123;</div><div class="line">        bitmap = createBitmap(neww, newh, newConfig, source.hasAlpha());</div><div class="line">        paint = null;   // not needed</div><div class="line">    &#125; else &#123;</div><div class="line">        //根据Matrix，对原始的bitmap进行一些变换操作.</div><div class="line">        final boolean transformed = !m.rectStaysRect();</div><div class="line"></div><div class="line">        RectF deviceR = new RectF();</div><div class="line">        m.mapRect(deviceR, dstR);</div><div class="line"></div><div class="line">        neww = Math.round(deviceR.width());</div><div class="line">        newh = Math.round(deviceR.height());</div><div class="line"></div><div class="line">        bitmap = createBitmap(neww, newh, transformed ? Config.ARGB_8888 : newConfig,</div><div class="line">                transformed || source.hasAlpha());</div><div class="line"></div><div class="line">        canvas.translate(-deviceR.left, -deviceR.top);</div><div class="line">        canvas.concat(m);</div><div class="line"></div><div class="line">        paint = new Paint();</div><div class="line">        paint.setFilterBitmap(filter);</div><div class="line">        if (transformed) &#123;</div><div class="line">            paint.setAntiAlias(true);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    //返回bitmap的这些属性和原始bitmap相同</div><div class="line">    bitmap.mDensity = source.mDensity;</div><div class="line">    bitmap.setHasAlpha(source.hasAlpha());</div><div class="line">    bitmap.setPremultiplied(source.mRequestPremultiplied);</div><div class="line"></div><div class="line">    //设置canvas对应的bitmap为返回的bitmap</div><div class="line">    canvas.setBitmap(bitmap);</div><div class="line"></div><div class="line">    //通过canvas把原始的bitmap绘制上去.</div><div class="line">    canvas.drawBitmap(source, srcR, dstR, paint);</div><div class="line"></div><div class="line">    //重新置为空.</div><div class="line">    canvas.setBitmap(null);</div><div class="line">    return bitmap;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>方法作用：返回原始的<code>Bitmap</code>中一个不可改变的子集，返回的<code>Bitmap</code>有可能是原始的<code>Bitmap</code>（原始的<code>Bitmap</code>不可改变，并且大小和请求的新的<code>Bitmap</code>大小和原来一样），也有可能是复制出来的，它和原始的<code>Bitmap</code>的<code>density</code>相同。</li>
+<li>参数说明：<ul>
+<li><code>source</code>：原始的<code>Bitmap</code></li>
+<li><code>x, y</code>：在原始的<code>Bitmap</code>中的起始坐标。</li>
+<li><code>width, height</code>：返回的<code>Bitmap</code>的宽高，如果超过了原始<code>Bitmap</code>的范围，那么会抛出异常。</li>
+<li><code>m</code>：<code>Matrix</code>类型，表示需要的变换</li>
+<li><code>filter</code>：是否需要优化，只有当<code>m</code>不只有平移操作时才去进行。</li>
+</ul>
+</li>
+</ul>
+<h3 id="第二类"><a href="#第二类" class="headerlink" title="第二类"></a>第二类</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">private static Bitmap createBitmap(DisplayMetrics display, int width, int height, Config config, boolean hasAlpha) &#123;</div><div class="line">    if (width &lt;= 0 || height &lt;= 0) &#123;</div><div class="line">        throw new IllegalArgumentException(&quot;width and height must be &gt; 0&quot;);</div><div class="line">    &#125;</div><div class="line">    Bitmap bm = nativeCreate(null, 0, width, width, height, config.nativeInt, true);</div><div class="line">    if (display != null) &#123;</div><div class="line">        bm.mDensity = display.densityDpi;</div><div class="line">    &#125;</div><div class="line">    bm.setHasAlpha(hasAlpha);</div><div class="line">    if (config == Config.ARGB_8888 &amp;&amp; !hasAlpha) &#123;</div><div class="line">        nativeErase(bm.mNativePtr, 0xff000000);</div><div class="line">    &#125;</div><div class="line">    return bm;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>方法作用：返回一个可变的<code>bitmap</code>，它的<code>density</code>由传入的<code>DisplayMetrics</code>指定。</li>
+<li>参数说明：<ul>
+<li><code>display</code>：<code>Bitmap</code>将要被绘制的<code>Display metrics</code></li>
+<li><code>width, height</code>：<code>bitmap</code>的宽高</li>
+<li><code>config</code>：配置信息，对应<code>ARGB_8888</code>那些。</li>
+<li><code>hasAlpha</code>：如果<code>bitmap</code>的属性是<code>ARGB_8888</code>，那么这个标志为可以用来把<code>bitmap</code>标志为透明，它会把<code>bitmap</code>中的黑色像素转换为透明。</li>
+</ul>
+</li>
+</ul>
+<h3 id="第三类"><a href="#第三类" class="headerlink" title="第三类"></a>第三类</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">public static Bitmap createBitmap(DisplayMetrics display, int colors[],</div><div class="line">        int offset, int stride, int width, int height, Config config) &#123;</div><div class="line"></div><div class="line">    checkWidthHeight(width, height);</div><div class="line">    if (Math.abs(stride) &lt; width) &#123;</div><div class="line">        throw new IllegalArgumentException(&quot;abs(stride) must be &gt;= width&quot;);</div><div class="line">    &#125;</div><div class="line">    int lastScanline = offset + (height - 1) * stride;</div><div class="line">    int length = colors.length;</div><div class="line">    if (offset &lt; 0 || (offset + width &gt; length) || lastScanline &lt; 0 ||</div><div class="line">            (lastScanline + width &gt; length)) &#123;</div><div class="line">        throw new ArrayIndexOutOfBoundsException();</div><div class="line">    &#125;</div><div class="line">    if (width &lt;= 0 || height &lt;= 0) &#123;</div><div class="line">        throw new IllegalArgumentException(&quot;width and height must be &gt; 0&quot;);</div><div class="line">    &#125;</div><div class="line">    Bitmap bm = nativeCreate(colors, offset, stride, width, height,</div><div class="line">                        config.nativeInt, false);</div><div class="line">    if (display != null) &#123;</div><div class="line">        bm.mDensity = display.densityDpi;</div><div class="line">    &#125;</div><div class="line">    return bm;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>方法作用：返回一个不可变的<code>bitmap</code>对象，它的长宽由<code>width/height</code>指定，每个像素点的颜色通过<code>colos[]</code>数组得到，初始的<code>density</code>来自于<code>DisplayMetrics</code>。</li>
+<li>方法参数：<ul>
+<li><code>display</code>：<code>Bitmap</code>将要被绘制的<code>Display metrics</code></li>
+<li><code>colors</code>：用来初始化像素点的颜色</li>
+<li><code>offset</code>：第一个像素点的颜色在数组当中跳过的个数。</li>
+<li><code>stride</code>：两行之间需要跳过的颜色个数。</li>
+<li><code>width/height</code>：宽高。</li>
+<li><code>config</code>：对应<code>ARGB_8888</code>那些。</li>
+</ul>
+</li>
+</ul>
+<h2 id="2-2-压缩bitmap"><a href="#2-2-压缩bitmap" class="headerlink" title="2.2 压缩bitmap"></a>2.2 压缩<code>bitmap</code></h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">public boolean compress(CompressFormat format, int quality, OutputStream stream) &#123;</div><div class="line">    checkRecycled(&quot;Can&apos;t compress a recycled bitmap&quot;);</div><div class="line">    // do explicit check before calling the native method</div><div class="line">    if (stream == null) &#123;</div><div class="line">        throw new NullPointerException();</div><div class="line">    &#125;</div><div class="line">    if (quality &lt; 0 || quality &gt; 100) &#123;</div><div class="line">        throw new IllegalArgumentException(&quot;quality must be 0..100&quot;);</div><div class="line">    &#125;</div><div class="line">    Trace.traceBegin(Trace.TRACE_TAG_RESOURCES, &quot;Bitmap.compress&quot;);</div><div class="line">    boolean result = nativeCompress(mNativePtr, format.nativeInt,</div><div class="line">            quality, stream, new byte[WORKING_COMPRESS_STORAGE]);</div><div class="line">    Trace.traceEnd(Trace.TRACE_TAG_RESOURCES);</div><div class="line">    return result;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>方法作用：把当前这个<code>bitmap</code>的压缩版本写入到某个输出流当中，如果返回<code>true</code>，那么这个<code>bitmap</code>可以被<code>BitmapFactory.decodeStream()</code>恢复。需要注意的是，并不是所有的<code>bitmap</code>都支持所有的格式，因此，通过<code>BitmapFactory</code>恢复回来的<code>bitmap</code>有可能和原来不同。</li>
+<li>方法参数：<ul>
+<li><code>CompressFormat</code>是一个枚举类型，它的值有<code>JPEG/PNG/WEBP</code></li>
+<li><code>quality</code>对应<code>0-100</code></li>
+<li><code>stream</code>则是压缩后结果的输出流。</li>
+</ul>
+</li>
+</ul>
+<h2 id="2-3-回收bitmap"><a href="#2-3-回收bitmap" class="headerlink" title="2.3 回收bitmap"></a>2.3 回收<code>bitmap</code></h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">public void recycle() &#123;</div><div class="line">    if (!mRecycled &amp;&amp; mNativePtr != 0) &#123;</div><div class="line">        if (nativeRecycle(mNativePtr)) &#123;</div><div class="line">            // return value indicates whether native pixel object was actually recycled.</div><div class="line">            // false indicates that it is still in use at the native level and these</div><div class="line">            // objects should not be collected now. They will be collected later when the</div><div class="line">            // Bitmap itself is collected.</div><div class="line">            mBuffer = null;</div><div class="line">            mNinePatchChunk = null;</div><div class="line">        &#125;</div><div class="line">        mRecycled = true;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><code>recycle</code>方法主要做几件事：</p>
+<ul>
+<li>释放和这个<code>bitmap</code>关联的<code>native</code>对象</li>
+<li>清除像素数据<code>mBuffer</code>的引用，但是这一过程不是同步的，它只是将引用置为空，等待垃圾回收器将它回收。</li>
+<li>在调用这个方法之后，<code>mRecycled</code>标志位就为<code>true</code>，之后如果再调用<code>bitmap</code>的方法，那么很有可能发生异常。</li>
+<li>一般情况下，我们不需要手动调用这个方法，因为当这个<code>bitmap</code>不被引用时，垃圾回收器就会自动回收它所占用的内存。</li>
+</ul>
+<h2 id="2-4-获取Bitmap所占内存"><a href="#2-4-获取Bitmap所占内存" class="headerlink" title="2.4 获取Bitmap所占内存"></a>2.4 获取<code>Bitmap</code>所占内存</h2><ul>
+<li><p><code>getAllocationByteCount()</code><br>返回存储这个<code>bitmap</code>对象所需要的内存，当我们对<code>bitmap</code>所占内存区域进行复用的时候，这个函数的返回结果可能要大于<code>getByteCount</code>的值，否则，它和<code>getByteCount</code>的值是相同的。<br>这个值，在<code>bitmap</code>整个生命周期之内都不会改变。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">public final int getAllocationByteCount() &#123;</div><div class="line">    if (mBuffer == null) &#123;</div><div class="line">        return getByteCount();</div><div class="line">    &#125;</div><div class="line">    return mBuffer.length;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p><code>getByteCount</code><br>表示存储<code>bitmap</code>像素所需要的最小字节，自从<code>4.4</code>之后，这个就不能用来确定<code>bitmap</code>占用的内存了，需要用<code>getAllocationByteCount</code>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">public final int getByteCount() &#123;</div><div class="line">    // int result permits bitmaps up to 46,340 x 46,340</div><div class="line">    return getRowBytes() * getHeight();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="2-5-获取缩放后大小"><a href="#2-5-获取缩放后大小" class="headerlink" title="2.5 获取缩放后大小"></a>2.5 获取缩放后大小</h2><p><img src="http://upload-images.jianshu.io/upload_images/1949836-f766d631df86ece2.png" alt=""><br>我们可以通过上面这六个方法获得缩放后的宽高，它们的原理就是传入一个目标的<code>density</code>，然后和当前<code>bitmap</code>的<code>density</code>进行比较，然后算出一个缩放的倍数，在和原来的大小相乘。目标<code>density</code>的来源有以下三个：</p>
+<ul>
+<li>直接传入</li>
+<li><code>Canvas</code>的<code>density</code></li>
+<li><code>DisplayMetrics</code>的<code>density</code></li>
+</ul>
+<p>计算的规则为：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">static public int scaleFromDensity(int size, int sdensity, int tdensity) &#123;</div><div class="line">    if (sdensity == DENSITY_NONE || tdensity == DENSITY_NONE || sdensity == tdensity) &#123;</div><div class="line">        return size;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    // Scale by tdensity / sdensity, rounding up.</div><div class="line">    return ((size * tdensity) + (sdensity &gt;&gt; 1)) / sdensity;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h1 id="三、BitmapFactory"><a href="#三、BitmapFactory" class="headerlink" title="三、BitmapFactory"></a>三、<code>BitmapFactory</code></h1><p><code>BitmapFactory</code>用来从多种不同的来源获得<code>Bitmap</code>：</p>
+<ul>
+<li>文件、文件描述符</li>
+<li>资源文件<code>Resource</code></li>
+<li><code>byte[]</code>数组</li>
+<li>输入流<code>InputStream</code><br><img src="http://upload-images.jianshu.io/upload_images/1949836-a1b39f27c4fcc38b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></li>
+</ul>
+<h2 id="3-1-BitmapFactory-Options类"><a href="#3-1-BitmapFactory-Options类" class="headerlink" title="3.1 BitmapFactory.Options类"></a>3.1 <code>BitmapFactory.Options</code>类</h2><ul>
+<li><code>Bitmap inBitmap</code><br>如果给<code>Options</code>设置了这个<code>Bitmap</code>，那么在通过这个<code>Options</code>解码的时候，解码方法返回的<code>bitmap</code>会尝试复用这个<code>Options</code>中的<code>bitmap</code>，如果不能复用，那么解码方法会返回<code>null</code>，并抛出异常，<strong>它要求复用的<code>bitmap</code>是可变的</strong>。<br>在<code>4.4</code>以后，只要求新申请的<code>bitmap</code>的<code>getByteCount()</code>小于等于<code>Options</code>中的<code>bitmap</code>的<code>getAllocationByteCount()</code>就可以。<br>在<code>4.4</code>以前，格式必须是<code>jpeg/png</code>，并且要求两个<code>bitmap</code>相同并且<code>inSampleSize</code>为<code>1</code>。</li>
+<li><code>boolean inJustDecodeBounds</code><br>如果设为<code>true</code>，那么解码方法的返回值<code>null</code>，但是它会设置<code>outXXX</code>的值，这样调用者就可以在不用解码整张图片的前提下查询到这个<code>bitmap</code>的长宽。</li>
+<li><code>int inSampleSize</code><br>对原来的图片进行采样，如果<code>inSampleSize</code>为<code>4</code>，那么图片的长宽会缩短为原来的<code>1/4</code>，这样就可以减少<code>bitmap</code>占用的内存。</li>
+<li><code>Bitmap.Config inPreferredConfig</code><br>图片解码的格式要求。</li>
+<li><p>缩放相关的标志：<code>inScaled</code>、<code>inDensity</code>、<code>inTargetDensity</code>、<code>inScreenDensity</code><br>首先，只有在<code>inScaled</code>为<code>true</code>的时候，缩放的机制才会生效，这个值默认是<code>true</code>的。</p>
+<ul>
+<li><p><code>inDensity</code><br>我们先讨论一下<code>inDensity</code>，当我们没有给<code>density</code>赋值的时候，系统会给我们初始化它：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">//如果没有设置density</div><div class="line">if (opts.inDensity == 0 &amp;&amp; value != null) &#123;</div><div class="line">    final int density = value.density; //这里的TypeValue会根据存放文件夹的不同而不同.</div><div class="line">    if (density == TypedValue.DENSITY_DEFAULT) &#123;</div><div class="line">        opts.inDensity = DisplayMetrics.DENSITY_DEFAULT; //如果density为0，那么把density设置为160.</div><div class="line">    &#125; else if (density != TypedValue.DENSITY_NONE) &#123;</div><div class="line">        opts.inDensity = density; //否则，设置为value中的density.</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p><code>inTargetDensity</code><br>再来看一下<code>inTargetDensity</code>，它得到的就是屏幕的<code>density</code>.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">if (opts.inTargetDensity == 0 &amp;&amp; res != null) &#123;</div><div class="line">    opts.inTargetDensity = res.getDisplayMetrics().densityDpi;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p><code>inScreenDensity</code><br>最后<code>inScreenDensity</code>没有被赋予默认值，也就是说它为<code>0</code>，如果我们期望图片不要被缩放，那么就要给它设置为手机的<code>density</code>。</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>这三者的关系是：<strong>当<code>inDensity</code>不为<code>0</code>并且<code>inTargetDensity</code>不为<code>0</code>，<code>inDensity</code>和<code>inScreenDensity</code>不相等时，会对图片进行缩放，缩放倍数为<code>inTargetDensity/inDensity</code></strong>。</p>
+<p>这样说可能比较抽象，我们举一个实际的例子，假如我们的手机的<code>density</code>是<code>320dpi</code>的，那么<code>inTargetDensity</code>就等于<code>320</code>，这时候我们把某张图片资源放在了<code>drawable-xxxhpi</code>下，那么<code>inDensity</code>的值就为<code>640</code>，我们没有设置<code>inScreenDensity</code>，那么它的默认值是<code>0</code>，这时候满足：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">inDensity != 0 &amp;&amp; inTargetDensity != 0 &amp;&amp; inDensity != inScreenDensity</div></pre></td></tr></table></figure></p>
+<p>图片就会进行缩放，缩放的倍数就为<code>320/640</code>，也就是说最终得到的<code>bitmap</code>的长宽是原来的一半。</p>
+<ul>
+<li><code>outXXX</code><br>这个返回的结果和<code>inJustDecodeBounds</code>有关，如果<code>inJustDecodeBounds</code>为<code>true</code>，那么返回的是没有经过缩放的大小，如果为<code>false</code>，那么就是缩放后的大小。</li>
+</ul>
+<h2 id="3-2-获取bitmap方法"><a href="#3-2-获取bitmap方法" class="headerlink" title="3.2 获取bitmap方法"></a>3.2 获取<code>bitmap</code>方法</h2><p>下面是<code>BitmapFactory</code>提供的方法：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-7f21610c5d48520e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>所有的获取<code>bitmap</code>最终都是调用了一下四个方法<code>Native</code>方法其中之一，可以看到它可以从这些来源读取：</p>
+<ul>
+<li><code>file</code></li>
+<li><code>byte[]</code></li>
+<li><code>InputStream</code></li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/1949836-47be8e2da162dec1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<p>其中有个需要注意的是<code>Rect</code>，这是一个传入的值，在读取资源完毕后，它会写入读取资源的<code>padding</code>，如果没有那么为<code>[-1, -1, -1,- 1]</code>，而如果返回的<code>bitmap</code>为空，那么传入的值不会改变。</p>
+<h1 id="四、Bitmap的转换方法"><a href="#四、Bitmap的转换方法" class="headerlink" title="四、Bitmap的转换方法"></a>四、<code>Bitmap</code>的转换方法</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div></pre></td><td class="code"><pre><div class="line">public class BitmapConvertUtils &#123;</div><div class="line"></div><div class="line">    public static Bitmap fromResourceIdAutoScale(Resources resources, int resourceId, BitmapFactory.Options options) &#123;</div><div class="line">        return BitmapFactory.decodeResource(resources, resourceId, options);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static Bitmap fromResourceIdNotScale(Resources resources, int resourceId, Rect rect, BitmapFactory.Options options) &#123;</div><div class="line">        InputStream resourceStream = null;</div><div class="line">        Bitmap bitmap = null;</div><div class="line">        try &#123;</div><div class="line">            resourceStream = resources.openRawResource(resourceId);</div><div class="line">            bitmap = BitmapFactory.decodeStream(resourceStream, rect, options);</div><div class="line">        &#125; catch (Exception e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125; finally &#123;</div><div class="line">            try &#123;</div><div class="line">                if (resourceStream != null) &#123;</div><div class="line">                    resourceStream.close();</div><div class="line">                &#125;</div><div class="line">            &#125; catch (Exception e) &#123;</div><div class="line">                e.printStackTrace();</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return bitmap;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static Bitmap fromAssert(Context context, String assertFilePath, Rect rect, BitmapFactory.Options options) &#123;</div><div class="line">        Bitmap bitmap = null;</div><div class="line">        InputStream assertStream = null;</div><div class="line">        AssetManager assetManager = context.getAssets();</div><div class="line">        try &#123;</div><div class="line">            assertStream = assetManager.open(assertFilePath);</div><div class="line">            bitmap = BitmapFactory.decodeStream(assertStream, rect, options);</div><div class="line">        &#125; catch (Exception e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125; finally &#123;</div><div class="line">            try &#123;</div><div class="line">                if (assertStream != null) &#123;</div><div class="line">                    assertStream.close();</div><div class="line">                &#125;</div><div class="line">            &#125; catch (Exception e) &#123;</div><div class="line">                e.printStackTrace();</div><div class="line">            &#125;</div><div class="line"></div><div class="line">        &#125;</div><div class="line">        return bitmap;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static Bitmap fromByteArray(byte[] byteArray, int offset, int length, BitmapFactory.Options options) &#123;</div><div class="line">        return BitmapFactory.decodeByteArray(byteArray, offset, length, options);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static Bitmap fromFile(String filePath, BitmapFactory.Options options) &#123;</div><div class="line">        return BitmapFactory.decodeFile(filePath, options);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static Bitmap fromDrawable(Drawable drawable) &#123;</div><div class="line">        int width = drawable.getIntrinsicWidth();</div><div class="line">        int height = drawable.getIntrinsicHeight();</div><div class="line">        Bitmap bitmap = Bitmap.createBitmap(width, height, drawable.getOpacity() != PixelFormat.OPAQUE ? Bitmap.Config.ARGB_8888 : Bitmap.Config.RGB_565);</div><div class="line">        if (bitmap != null) &#123;</div><div class="line">            Canvas canvas = new Canvas(bitmap);</div><div class="line">            drawable.setBounds(0, 0, width, height);</div><div class="line">            drawable.draw(canvas);</div><div class="line">            return bitmap;</div><div class="line">        &#125;</div><div class="line">        return null;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static Bitmap fromView(View view) &#123;</div><div class="line">        view.clearFocus();</div><div class="line">        view.setPressed(false);</div><div class="line">        boolean willNotCache = view.willNotCacheDrawing();</div><div class="line">        view.setWillNotCacheDrawing(false);</div><div class="line">        int color = view.getDrawingCacheBackgroundColor();</div><div class="line">        view.setDrawingCacheBackgroundColor(color);</div><div class="line">        if (color != 0) &#123;</div><div class="line">            view.destroyDrawingCache();</div><div class="line">        &#125;</div><div class="line">        view.buildDrawingCache();</div><div class="line">        Bitmap cacheBitmap = view.getDrawingCache();</div><div class="line">        if (cacheBitmap == null) &#123;</div><div class="line">            return null;</div><div class="line">        &#125;</div><div class="line">        Bitmap bitmap = Bitmap.createBitmap(cacheBitmap);</div><div class="line">        view.destroyDrawingCache();</div><div class="line">        view.setWillNotCacheDrawing(willNotCache);</div><div class="line">        view.setDrawingCacheBackgroundColor(color);</div><div class="line">        return bitmap;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static Bitmap fromInputStream(InputStream inputStream) &#123;</div><div class="line">        return BitmapFactory.decodeStream(inputStream);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static byte[] toByteArray(Bitmap bitmap, Bitmap.CompressFormat format, int quality) &#123;</div><div class="line">        byte[] bytes = null;</div><div class="line">        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();</div><div class="line">        bitmap.compress(format, quality, outputStream);</div><div class="line">        bytes = outputStream.toByteArray();</div><div class="line">        try &#123;</div><div class="line">            outputStream.close();</div><div class="line">        &#125; catch (Exception e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line">        return bytes;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static Drawable toDrawable(Resources resources, Bitmap bitmap) &#123;</div><div class="line">        return new BitmapDrawable(resources, bitmap);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void toFile(Bitmap bitmap, Bitmap.CompressFormat format, int quality, String path) &#123;</div><div class="line">        FileOutputStream fileOutputStream = null;</div><div class="line">        try &#123;</div><div class="line">            fileOutputStream = new FileOutputStream(path);</div><div class="line">            bitmap.compress(format, quality, fileOutputStream);</div><div class="line">        &#125; catch (Exception e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125; finally &#123;</div><div class="line">            try &#123;</div><div class="line">                if (fileOutputStream != null) &#123;</div><div class="line">                    fileOutputStream.close();</div><div class="line">                &#125;</div><div class="line">            &#125; catch (Exception e) &#123;</div><div class="line">                e.printStackTrace();</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/03/21/Java&Android-基础知识/Java&Android-基础知识梳理(6)---字节输入输出流/" rel="next" title="Java&Android 基础知识梳理(6) - 字节输入输出流">
+                <i class="fa fa-chevron-left"></i> Java&Android 基础知识梳理(6) - 字节输入输出流
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/03/23/Android-数据存储/Android-数据存储知识梳理(2)---Android存储目录/" rel="prev" title="Android 数据存储知识梳理(2) - Android存储目录">
+                Android 数据存储知识梳理(2) - Android存储目录 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="zeMao" />
+          <p class="site-author-name" itemprop="name">zeMao</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">104</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">24</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、概述"><span class="nav-number">1.</span> <span class="nav-text">一、概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、Bitmap"><span class="nav-number">2.</span> <span class="nav-text">二、Bitmap</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-创建Bitmap"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 创建Bitmap</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#第一类"><span class="nav-number">2.1.1.</span> <span class="nav-text">第一类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第二类"><span class="nav-number">2.1.2.</span> <span class="nav-text">第二类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第三类"><span class="nav-number">2.1.3.</span> <span class="nav-text">第三类</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-压缩bitmap"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 压缩bitmap</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-回收bitmap"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 回收bitmap</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-4-获取Bitmap所占内存"><span class="nav-number">2.4.</span> <span class="nav-text">2.4 获取Bitmap所占内存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-5-获取缩放后大小"><span class="nav-number">2.5.</span> <span class="nav-text">2.5 获取缩放后大小</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、BitmapFactory"><span class="nav-number">3.</span> <span class="nav-text">三、BitmapFactory</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-BitmapFactory-Options类"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 BitmapFactory.Options类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-获取bitmap方法"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 获取bitmap方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四、Bitmap的转换方法"><span class="nav-number">4.</span> <span class="nav-text">四、Bitmap的转换方法</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zeMao</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

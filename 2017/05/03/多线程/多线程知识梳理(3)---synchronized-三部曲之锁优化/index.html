@@ -1,0 +1,775 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="一、前言在 多线程知识梳理(2) - synchronized 基本使用 中，我们介绍了使用重量锁来实现的synchronized。今天，我们就来一起学习一下在JDK 1.6之后，对synchronized所采取的一系列优化措施。 二、对象头 &amp;amp; Monitor Record在介绍优化方法之前，我们需要介绍两个重要的概念Java对象头和Monitor： 2.1 对象头在 Java&amp;amp;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="多线程知识梳理(3) - synchronized 三部曲之锁优化">
+<meta property="og:url" content="http://yoursite.com/2017/05/03/多线程/多线程知识梳理(3)---synchronized-三部曲之锁优化/index.html">
+<meta property="og:site_name" content="zeMao&#39;s Blog">
+<meta property="og:description" content="一、前言在 多线程知识梳理(2) - synchronized 基本使用 中，我们介绍了使用重量锁来实现的synchronized。今天，我们就来一起学习一下在JDK 1.6之后，对synchronized所采取的一系列优化措施。 二、对象头 &amp;amp; Monitor Record在介绍优化方法之前，我们需要介绍两个重要的概念Java对象头和Monitor： 2.1 对象头在 Java&amp;amp;">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-09121d975c246628.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-511628641cfb51fe.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-cc1ac4722f08275a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-524e75d319993ee6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2017-06-28T06:47:04.230Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="多线程知识梳理(3) - synchronized 三部曲之锁优化">
+<meta name="twitter:description" content="一、前言在 多线程知识梳理(2) - synchronized 基本使用 中，我们介绍了使用重量锁来实现的synchronized。今天，我们就来一起学习一下在JDK 1.6之后，对synchronized所采取的一系列优化措施。 二、对象头 &amp;amp; Monitor Record在介绍优化方法之前，我们需要介绍两个重要的概念Java对象头和Monitor： 2.1 对象头在 Java&amp;amp;">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-09121d975c246628.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/05/03/多线程/多线程知识梳理(3)---synchronized-三部曲之锁优化/"/>
+
+
+
+
+
+  <title>多线程知识梳理(3) - synchronized 三部曲之锁优化 | zeMao's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">zeMao's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/05/03/多线程/多线程知识梳理(3)---synchronized-三部曲之锁优化/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zeMao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="zeMao's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">多线程知识梳理(3) - synchronized 三部曲之锁优化</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-03T21:16:00+08:00">
+                2017-05-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/多线程知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">多线程知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="一、前言"><a href="#一、前言" class="headerlink" title="一、前言"></a>一、前言</h1><p>在 <a href="http://www.jianshu.com/p/7cc152bf107e" target="_blank" rel="external">多线程知识梳理(2) - synchronized 基本使用</a> 中，我们介绍了使用重量锁来实现的<code>synchronized</code>。今天，我们就来一起学习一下在<code>JDK 1.6</code>之后，对<code>synchronized</code>所采取的一系列优化措施。</p>
+<h1 id="二、对象头-amp-Monitor-Record"><a href="#二、对象头-amp-Monitor-Record" class="headerlink" title="二、对象头 &amp; Monitor Record"></a>二、对象头 &amp; Monitor Record</h1><p>在介绍优化方法之前，我们需要介绍两个重要的概念<code>Java</code>对象头和<code>Monitor</code>：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-09121d975c246628.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h2 id="2-1-对象头"><a href="#2-1-对象头" class="headerlink" title="2.1 对象头"></a>2.1 对象头</h2><p>在 <a href="http://www.jianshu.com/p/bc530b038171" target="_blank" rel="external">Java&amp;Android 基础知识梳理(3) - 内存区域</a> 中介绍内存区域的时候，对于一个<code>Java</code>对象所占的内存区域是这么介绍的：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-511628641cfb51fe.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>在运行过程中，对象头所包含数据的含义不是固定不变的，随着<strong>锁状态标志位</strong>（下图中红框的范围）的改变，其它字段所表示的含义也不同，以<code>32</code>位的虚拟机为例，下图就是锁状态标志位所对应的数据结构含义：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-cc1ac4722f08275a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h2 id="2-2-Monitor-Record"><a href="#2-2-Monitor-Record" class="headerlink" title="2.2 Monitor Record"></a>2.2 Monitor Record</h2><p><code>Monitor</code>是线程私有的数据结构，由于一个线程可能进入多个不同的同步方法，这些方法有可能会关联到不同的<code>Monitor</code>，因此每一个线程都有一个可用的<code>Monitor</code>列表，同时还有一个全局的可用列表，<code>Monitor</code>数据结构包括以下成员变量：</p>
+<ul>
+<li><code>Owner</code>：初始时为空表示当前没有任何线程拥有该<code>Monitor</code>，当线程成功拥有该锁后保存线程唯一标识，当锁被释放时又设置为空。</li>
+<li><code>EntryQ</code>：关联一个系统互斥锁，阻塞所有试图获得<code>Monitor</code>但是最终失败了的线程。</li>
+<li><code>RcThis</code>：表示<code>blocked</code>或<code>waiting</code>在该<code>Monitor</code>上的所有线程的个数。</li>
+<li><code>Nest</code>：用来实现重入锁的计数。</li>
+<li><code>HashCode</code>：保存从对象头拷贝过来的<code>HashCode</code>值。</li>
+<li><code>Candidate</code>：用来避免不必要的阻塞或等待线程唤醒，因为每一次只有一个线程能够成功拥有锁，如果每次前一个释放锁的线程唤醒所有正在阻塞或等待的线程，会引起不必要的上下文切换（从阻塞到就绪然后因为竞争锁失败又被阻塞）从而导致性能严重下降。<code>Candidate</code>只有两种可能的值：<code>0</code>表示没有需要唤醒的线程，<code>1</code>表示要唤醒一个继任线程来竞争锁。</li>
+</ul>
+<h1 id="三、实现优化"><a href="#三、实现优化" class="headerlink" title="三、实现优化"></a>三、实现优化</h1><p>在<code>JDK 1.6</code>之后，它对于锁进行了一系列的优化措施，主要包括：自适应自旋锁、锁消除和锁粗化。</p>
+<h2 id="3-1-自旋锁"><a href="#3-1-自旋锁" class="headerlink" title="3.1 自旋锁"></a>3.1 自旋锁</h2><p>由于线程的阻塞和唤醒需要<code>CPU</code>从用户态转换成核心态，而频繁的阻塞和唤醒对<code>CPU</code>来说是一件负担很重的工作。</p>
+<p>因此，我们在发现锁已经被其它线程占有时，并不直接让当前线程进入阻塞状态，而是让线程执行一段无意义的循环，待循环结束后，如何仍然无法获取到锁，那么才进入阻塞状态。</p>
+<p>决定自旋锁性能的关键在于自旋次数的选择，在<code>JDK 1.6</code>之后，引入了自适应自旋锁，它会根据前一次在同一个锁上的自旋时间及锁的拥有者的状态来决定新的自旋次数。</p>
+<h2 id="3-2-锁消除"><a href="#3-2-锁消除" class="headerlink" title="3.2 锁消除"></a>3.2 锁消除</h2><p>当<code>JVM</code>检测到不可能存在共享数据竞争，会对同步锁进行锁消除。</p>
+<h2 id="3-3-锁粗化"><a href="#3-3-锁粗化" class="headerlink" title="3.3 锁粗化"></a>3.3 锁粗化</h2><p>在使用同步锁的时候，需要让同步块的作用范围尽可能地小，仅在共享数据的实际作用域中才进行同步，这样做的目的是为了使需要同步的操作数量尽可能缩小，如果存在锁竞争，那么等待锁的线程也能尽快拿到锁。</p>
+<p>然而，如果一系列连续加锁解锁操作，可能会导致不必要的性能损耗，所以有时可以将多个连续的加锁、解锁操作连接在一起，扩展成一个范围更大的锁。</p>
+<h1 id="四、状态优化"><a href="#四、状态优化" class="headerlink" title="四、状态优化"></a>四、状态优化</h1><p>在<code>JDK 1.6</code>之前，锁只有两种状态：无锁状态和重量级锁状态，而在这之后增加为四种状态：无锁状态、偏向锁状态、轻量级锁状态、重量级锁状态，这种改进基于两点考虑：</p>
+<ul>
+<li>无锁状态和重量级锁状态之间的切换是依赖于底层操作系统的<code>Mutex Lock</code>实现，操作系统实现线程之间的切换需要从用户态切换到内核态，切换成本很高。</li>
+<li>实验研究发现，对于绝大部分的锁，在整个生命周期内都是不存在竞争的。</li>
+</ul>
+<p>需要注意，对于锁的这四种状态，它们会随着竞争的激烈而逐渐升级，但是它只允许锁升级，不允许锁降级。</p>
+<p>无锁状态和重量级锁状态都比较好理解，下面我们主要介绍新增的两种锁状态：<strong>偏向锁状态</strong>和<strong>轻量级锁状态</strong>。</p>
+<p>整个转换的流程图如下所示，在后面的介绍中可以参考：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-524e75d319993ee6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h2 id="4-1-偏向锁状态"><a href="#4-1-偏向锁状态" class="headerlink" title="4.1 偏向锁状态"></a>4.1 偏向锁状态</h2><p>引入偏向锁的目的是：在无多线程竞争的情况下，尽量减少不必要的轻量级锁执行路径，它的理想情况下是在无竞争时把整个同步都去掉，连<code>CAS</code>操作都省略。</p>
+<p>偏向锁的意思是这个锁会偏向于第一个获得它的线程，如果在接下来的执行过程中，该锁没有被其它线程获取，则持有偏向锁的线程将永远不需要再进行同步。</p>
+<h3 id="4-1-1-获取偏向锁"><a href="#4-1-1-获取偏向锁" class="headerlink" title="4.1.1 获取偏向锁"></a>4.1.1 获取偏向锁</h3><h4 id="a-前提条件"><a href="#a-前提条件" class="headerlink" title="(a) 前提条件"></a>(a) 前提条件</h4><p>获取偏向锁的前提条件是<code>synchronized</code>所修饰的对象处于<strong>可偏向状态</strong></p>
+<ul>
+<li>锁状态为<code>01</code></li>
+<li>偏向锁状态为<code>1</code></li>
+</ul>
+<h4 id="b-获取过程"><a href="#b-获取过程" class="headerlink" title="(b) 获取过程"></a>(b) 获取过程</h4><p>当满足前提条件时，再去判断对象的<code>Mark Word</code>中的线程<code>ID</code>是否指向当前线程</p>
+<ul>
+<li>如果不指向当前线程，那么通过<code>CAS</code>操作竞争锁<ul>
+<li>竞争成功：将<code>Mark Word</code>的线程<code>ID</code>替换为当前线程<code>ID</code>，接着执行同步代码块</li>
+<li>竞争失败：证明存在多线程竞争的情况，当到达全局安全点，获得偏向锁的线程被挂起，偏向锁升级为轻量级锁，然后被阻塞在安全点的线程继续往下执行同步代码块</li>
+</ul>
+</li>
+<li>如果指向当前线程，那么执行同步代码块</li>
+</ul>
+<h3 id="4-1-2-释放偏向锁"><a href="#4-1-2-释放偏向锁" class="headerlink" title="4.1.2 释放偏向锁"></a>4.1.2 释放偏向锁</h3><h4 id="a-前提条件-1"><a href="#a-前提条件-1" class="headerlink" title="(a) 前提条件"></a>(a) 前提条件</h4><p>释放偏向锁的前提条件是其它的线程在竞争偏向锁的过程中出现了失败的情况，并且偏向锁的释放需要等待到达全局安全点。</p>
+<h4 id="b-释放过程"><a href="#b-释放过程" class="headerlink" title="(b) 释放过程"></a>(b) 释放过程</h4><p>当满足释放偏向锁的前提条件时，首先会暂停拥有偏向锁的线程，接着判断锁对象是否处于被锁定的状态，决定锁标志位下一步的状态：</p>
+<ul>
+<li>如果未被锁定，那么将锁标志至为<code>01</code>，偏向锁状态置为<code>0</code>，表示它处于无锁，且不可偏向状态。</li>
+<li>如果已经被锁定，那么将锁标志置为<code>00</code>，表示它处于被轻量级锁定的状态。</li>
+</ul>
+<h2 id="4-2-轻量级锁状态"><a href="#4-2-轻量级锁状态" class="headerlink" title="4.2 轻量级锁状态"></a>4.2 轻量级锁状态</h2><p>引入轻量级锁的目的是：在无多线程竞争的情况下，减少传统的重量级锁使用操作系统互斥量产生的性能消耗。</p>
+<h3 id="4-2-1-获取轻量级锁"><a href="#4-2-1-获取轻量级锁" class="headerlink" title="4.2.1 获取轻量级锁"></a>4.2.1 获取轻量级锁</h3><h4 id="a-前提条件-2"><a href="#a-前提条件-2" class="headerlink" title="(a) 前提条件"></a>(a) 前提条件</h4><p>获取轻量级锁的前提条件时当前对象处于无锁状态，</p>
+<ul>
+<li>锁状态标志位为<code>01</code></li>
+<li>偏向锁标志位为<code>0</code></li>
+</ul>
+<h4 id="b-获取过程-1"><a href="#b-获取过程-1" class="headerlink" title="(b) 获取过程"></a>(b) 获取过程</h4><p><code>JVM</code>首先将在当前线程的栈帧中建立一个名为锁记录（<code>Lock Record</code>）的空间，用于存储对象目前的<code>Mark Word</code>的拷贝，之后<code>JVM</code>利用<code>CAS</code>操作尝试将对象的<code>Mark Word</code>更新为指向<code>Lock Record</code>的指针：</p>
+<ul>
+<li>操作成功：将锁标志置为<code>00</code>，表示处于锁定的状态，之后执行同步操作。</li>
+<li>操作失败：那么检查对象的<code>Mark Word</code>是否指向当前线程的栈针<ul>
+<li>如果是，则直接执行同步代码块</li>
+<li>如果不是，说明该锁对象已经被其他线程抢占了，此时轻量级锁升级为重量锁，锁标志位变为<code>10</code>，后面等待的线程将会进入阻塞状态。</li>
+</ul>
+</li>
+</ul>
+<h3 id="4-2-2-释放轻量级锁"><a href="#4-2-2-释放轻量级锁" class="headerlink" title="4.2.2 释放轻量级锁"></a>4.2.2 释放轻量级锁</h3><h4 id="a-释放过程"><a href="#a-释放过程" class="headerlink" title="(a) 释放过程"></a>(a) 释放过程</h4><p>轻量级锁的释放也是通过<code>CAS</code>操作来进行的：</p>
+<ul>
+<li>取出在获取轻量级锁时，保存在<code>Displaced Mark Word</code>中的数据。</li>
+<li>用<code>CAS</code>操作将取出的数据替换到当前对象的<code>Mark Word</code>中：<ul>
+<li>如果成功，则说明释放锁成功</li>
+<li>如果失败，说明有其它线程尝试获取该锁，那么需要在释放锁的同时，唤醒需要被唤醒的线程</li>
+</ul>
+</li>
+</ul>
+<p>对于轻量级锁，它性能提升的依据是默认”对于绝大部分的锁，在整个生命周期内是不会存在竞争的”，如果不符合这种情况，那么除了互斥的开销外，还有额外的<code>CAS</code>操作，这样轻量级锁比重量级锁更慢。</p>
+<h1 id="五、参考文章"><a href="#五、参考文章" class="headerlink" title="五、参考文章"></a>五、参考文章</h1><p><a href="http://www.cnblogs.com/paddix/p/5405678.html" target="_blank" rel="external">Java 并发编程：Synchronized 底层优化（偏向锁、轻量级锁）</a><br><a href="http://blog.csdn.net/chenssy/article/details/54883355" target="_blank" rel="external">死磕 Java 并发 —–深入分析 synchronized 的实现原理</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/04/29/多线程/多线程知识梳理(2)---synchronized-三部曲之基本使用/" rel="next" title="多线程知识梳理(2) - synchronized 三部曲之基本使用">
+                <i class="fa fa-chevron-left"></i> 多线程知识梳理(2) - synchronized 三部曲之基本使用
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/05/05/Android-数据存储/Android-数据存储知识梳理(3)---SharedPreference-源码解析/" rel="prev" title="Android 数据存储知识梳理(3) - SharedPreference 源码解析">
+                Android 数据存储知识梳理(3) - SharedPreference 源码解析 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="zeMao" />
+          <p class="site-author-name" itemprop="name">zeMao</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">104</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">24</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、前言"><span class="nav-number">1.</span> <span class="nav-text">一、前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、对象头-amp-Monitor-Record"><span class="nav-number">2.</span> <span class="nav-text">二、对象头 & Monitor Record</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-对象头"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 对象头</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-Monitor-Record"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 Monitor Record</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、实现优化"><span class="nav-number">3.</span> <span class="nav-text">三、实现优化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-自旋锁"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 自旋锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-锁消除"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 锁消除</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-3-锁粗化"><span class="nav-number">3.3.</span> <span class="nav-text">3.3 锁粗化</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四、状态优化"><span class="nav-number">4.</span> <span class="nav-text">四、状态优化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#4-1-偏向锁状态"><span class="nav-number">4.1.</span> <span class="nav-text">4.1 偏向锁状态</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-1-获取偏向锁"><span class="nav-number">4.1.1.</span> <span class="nav-text">4.1.1 获取偏向锁</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#a-前提条件"><span class="nav-number">4.1.1.1.</span> <span class="nav-text">(a) 前提条件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#b-获取过程"><span class="nav-number">4.1.1.2.</span> <span class="nav-text">(b) 获取过程</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-2-释放偏向锁"><span class="nav-number">4.1.2.</span> <span class="nav-text">4.1.2 释放偏向锁</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#a-前提条件-1"><span class="nav-number">4.1.2.1.</span> <span class="nav-text">(a) 前提条件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#b-释放过程"><span class="nav-number">4.1.2.2.</span> <span class="nav-text">(b) 释放过程</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-2-轻量级锁状态"><span class="nav-number">4.2.</span> <span class="nav-text">4.2 轻量级锁状态</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-1-获取轻量级锁"><span class="nav-number">4.2.1.</span> <span class="nav-text">4.2.1 获取轻量级锁</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#a-前提条件-2"><span class="nav-number">4.2.1.1.</span> <span class="nav-text">(a) 前提条件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#b-获取过程-1"><span class="nav-number">4.2.1.2.</span> <span class="nav-text">(b) 获取过程</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-2-释放轻量级锁"><span class="nav-number">4.2.2.</span> <span class="nav-text">4.2.2 释放轻量级锁</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#a-释放过程"><span class="nav-number">4.2.2.1.</span> <span class="nav-text">(a) 释放过程</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#五、参考文章"><span class="nav-number">5.</span> <span class="nav-text">五、参考文章</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zeMao</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

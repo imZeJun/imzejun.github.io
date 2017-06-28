@@ -1,0 +1,774 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="一、概述在使用ImageView的过程当中，经常需要通过scaleType来对原始的图像进行处理，使得它能在空间中合理地展示。 二、scaleType的分类首先，我们简单介绍一下scaleType的分类： 2.1 通过Matrix设置这种情况下，对应的模式只有一种：  ScaleType.MATRIX  最终，在这种情况下，我们可以同setImageMatrix(Matrix matrix)来改变">
+<meta property="og:type" content="article">
+<meta property="og:title" content="图片基础知识梳理(1) - ImageView 的 ScaleType 属性解析">
+<meta property="og:url" content="http://yoursite.com/2017/03/14/图片基础/图片基础知识梳理(1)---ImageView-的-ScaleType-属性解析/index.html">
+<meta property="og:site_name" content="zeMao&#39;s Blog">
+<meta property="og:description" content="一、概述在使用ImageView的过程当中，经常需要通过scaleType来对原始的图像进行处理，使得它能在空间中合理地展示。 二、scaleType的分类首先，我们简单介绍一下scaleType的分类： 2.1 通过Matrix设置这种情况下，对应的模式只有一种：  ScaleType.MATRIX  最终，在这种情况下，我们可以同setImageMatrix(Matrix matrix)来改变">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-533142642e255233.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-5f205b5a6f3d542b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-3ddf5ea76bfec809.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-af2fa4c47d3d77c4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-ebde8261d02d6642.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-0511928f95fb59e9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-b01b50fdc39ece39.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2017-06-28T06:47:04.230Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="图片基础知识梳理(1) - ImageView 的 ScaleType 属性解析">
+<meta name="twitter:description" content="一、概述在使用ImageView的过程当中，经常需要通过scaleType来对原始的图像进行处理，使得它能在空间中合理地展示。 二、scaleType的分类首先，我们简单介绍一下scaleType的分类： 2.1 通过Matrix设置这种情况下，对应的模式只有一种：  ScaleType.MATRIX  最终，在这种情况下，我们可以同setImageMatrix(Matrix matrix)来改变">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-533142642e255233.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/03/14/图片基础/图片基础知识梳理(1)---ImageView-的-ScaleType-属性解析/"/>
+
+
+
+
+
+  <title>图片基础知识梳理(1) - ImageView 的 ScaleType 属性解析 | zeMao's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">zeMao's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/03/14/图片基础/图片基础知识梳理(1)---ImageView-的-ScaleType-属性解析/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zeMao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="zeMao's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">图片基础知识梳理(1) - ImageView 的 ScaleType 属性解析</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-14T20:03:00+08:00">
+                2017-03-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/图片基础知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">图片基础知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="一、概述"><a href="#一、概述" class="headerlink" title="一、概述"></a>一、概述</h1><p>在使用<code>ImageView</code>的过程当中，经常需要通过<code>scaleType</code>来对原始的图像进行处理，使得它能在空间中合理地展示。</p>
+<h1 id="二、scaleType的分类"><a href="#二、scaleType的分类" class="headerlink" title="二、scaleType的分类"></a>二、<code>scaleType</code>的分类</h1><p>首先，我们简单介绍一下<code>scaleType</code>的分类：</p>
+<h2 id="2-1-通过Matrix设置"><a href="#2-1-通过Matrix设置" class="headerlink" title="2.1 通过Matrix设置"></a>2.1 通过<code>Matrix</code>设置</h2><p>这种情况下，对应的模式只有一种：</p>
+<ul>
+<li><code>ScaleType.MATRIX</code></li>
+</ul>
+<p>最终，在这种情况下，我们可以同<code>setImageMatrix(Matrix matrix)</code>来改变。</p>
+<h2 id="2-2-填充类型"><a href="#2-2-填充类型" class="headerlink" title="2.2 填充类型"></a>2.2 填充类型</h2><p>这一类属性的特点就是<strong>通过拉伸或者压缩图片，使得原图片中所有元素都能够展现，并且至少填满控件<code>x,y</code>轴的其中一个</strong>。<br>一共有四类：</p>
+<ul>
+<li><code>ScaleType.FIX_XY</code>：<strong>不考虑原图的比例</strong>，拉伸或者压缩使得它等于控件的宽高。</li>
+</ul>
+<p>下面三种都会<strong>维持原图的比例</strong>，使得它们的<code>x,y</code>都小于等于控件的宽高，只是最终的图形放的位置不同。</p>
+<ul>
+<li><code>ScaleType.FIT_START</code>：放置在左上角。</li>
+<li><code>ScaleType.FIT_CENTER</code>：放置在中间。</li>
+<li><code>ScaleType.FIT_END</code>：放置在右下角。</li>
+</ul>
+<h2 id="2-3-中心重合类型"><a href="#2-3-中心重合类型" class="headerlink" title="2.3 中心重合类型"></a>2.3 中心重合类型</h2><p>下面的三种类型都会使得控件的中心和图片中心重合：</p>
+<ul>
+<li><code>ScaleType.CENTER</code><br>要求一点：<ul>
+<li>原图的中心和控件的中心重合</li>
+</ul>
+</li>
+<li><p><code>ScaleType.CENTER_CROP</code><br>要求三点：</p>
+<ul>
+<li>整个控件能够被填满</li>
+<li>原图的比例不变</li>
+<li>原图的中心和控件的中心重合。</li>
+<li>保证原图的<code>x,y</code>轴上的元素至少有一个在控件中能被完全展示，那么有一下两种情况，在下面的操作做完之后，裁剪掉多余的部分：<ul>
+<li>如果原图没有填满控件，那么会慢慢按比例放大，直到填满控件；</li>
+<li>如果原图已经填满控件，那么它会慢慢缩小，直到某一边和控件重合。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><code>ScaleType.CENTER_INSIDE</code><br>要求三点：</p>
+<ul>
+<li>原图的所有像素位于控件内部</li>
+<li>原图的比例不变</li>
+<li>图片的中心和控件的中心重合。</li>
+</ul>
+</li>
+</ul>
+<p>它不要求原始图片填满<code>x,y</code>轴的任意一个，因此，<strong>如果原图的长宽都小于等于控件的长宽，不会进行放大操作，这也是它和<code>ScaleType.FIT_CENTER</code>的区别</strong>。</p>
+<h1 id="三、示例"><a href="#三、示例" class="headerlink" title="三、示例"></a>三、示例</h1><p>下面，我们通过一个简单的<code>Demo</code>来展示一下各种类型的具体表现，我们有两个大小一样的<code>ImageView</code>和两个大小不同的原图，其中左边的<code>ImageView</code>要比原图小，右边的<code>ImageView</code>要比原图大。</p>
+<ul>
+<li><code>ScaleType.FIX_XY</code>：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-533142642e255233.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></li>
+<li><code>ScaleType.FIT_START</code>：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-5f205b5a6f3d542b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></li>
+<li><code>ScaleType.FIT_CENTER</code><br><img src="http://upload-images.jianshu.io/upload_images/1949836-3ddf5ea76bfec809.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></li>
+<li><code>ScaleType.FIT_END</code><br><img src="http://upload-images.jianshu.io/upload_images/1949836-af2fa4c47d3d77c4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></li>
+<li><code>ScaleType.CENTER</code><br><img src="http://upload-images.jianshu.io/upload_images/1949836-ebde8261d02d6642.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></li>
+<li><code>ScaleType.CENTER_CROP</code><br><img src="http://upload-images.jianshu.io/upload_images/1949836-0511928f95fb59e9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></li>
+<li><code>ScaleType.CENTER_INSIDE</code><br><img src="http://upload-images.jianshu.io/upload_images/1949836-b01b50fdc39ece39.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></li>
+</ul>
+<h1 id="四、源码分析"><a href="#四、源码分析" class="headerlink" title="四、源码分析"></a>四、源码分析</h1><h2 id="4-1-给ImageVIew设置src的接口"><a href="#4-1-给ImageVIew设置src的接口" class="headerlink" title="4.1 给ImageVIew设置src的接口"></a>4.1 给<code>ImageVIew</code>设置<code>src</code>的接口</h2><p>在<code>ImageView</code>当中，设置图片的接口主要有下面几个函数：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">public void setImageBitmap(Bitmap bm)</div><div class="line">public void setImageResource(@DrawableRes int resId)</div><div class="line">public void setImageURI(@Nullable Uri uri)</div><div class="line">public void setImageDrawable(@Nullable Drawable drawable)</div></pre></td></tr></table></figure></p>
+<h2 id="4-2-setImageBitmap的流程"><a href="#4-2-setImageBitmap的流程" class="headerlink" title="4.2 setImageBitmap的流程"></a>4.2 <code>setImageBitmap</code>的流程</h2><p>我们就以平时常用的<code>setImageBitmap</code>为例，分析一下它整个的流程：</p>
+<ul>
+<li><p>第一步：当我们调用<code>setImageBitmap</code>之后，它会把<code>Bitmap</code>封装在<code>BitmapDrawable</code>当中，之后调用了<code>setImageDrawable(Drawable drawable)</code>方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">public void setImageBitmap(Bitmap bm) &#123;</div><div class="line">    mDrawable = null;</div><div class="line">    if (mRecycleableBitmapDrawable == null) &#123;</div><div class="line">        mRecycleableBitmapDrawable = new BitmapDrawable(mContext.getResources(), bm);</div><div class="line">    &#125; else &#123;</div><div class="line">        mRecycleableBitmapDrawable.setBitmap(bm);</div><div class="line">    &#125;</div><div class="line">    setImageDrawable(mRecycleableBitmapDrawable);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>第二步：调用<code>setImageDrawable</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">public void setImageDrawable(@Nullable Drawable drawable) &#123;</div><div class="line">    //如果不是同一个资源.</div><div class="line">    if (mDrawable != drawable) &#123;</div><div class="line">        mResource = 0;</div><div class="line">        mUri = null;</div><div class="line">        //旧的宽高.</div><div class="line">        final int oldWidth = mDrawableWidth;</div><div class="line">        final int oldHeight = mDrawableHeight;</div><div class="line">        //关键方法</div><div class="line">        updateDrawable(drawable);</div><div class="line">        //如果宽高不同，才请求重新布局.</div><div class="line">        if (oldWidth != mDrawableWidth || oldHeight != mDrawableHeight) &#123;</div><div class="line">            requestLayout();</div><div class="line">        &#125;</div><div class="line">        //只要替换了资源就需要重新绘制.</div><div class="line">        invalidate();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>上面的关键方法在<code>updateDrawable</code>当中：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">private void updateDrawable(Drawable d) &#123;</div><div class="line">    //....</div><div class="line">    if (d != null) &#123;</div><div class="line">        //...</div><div class="line">        //这里面根据scaleType配置mDrawMatrix.</div><div class="line">        configureBounds();</div><div class="line">    &#125; else &#123;</div><div class="line">        mDrawableWidth = mDrawableHeight = -1;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="4-3-configureBounds改变Matrix"><a href="#4-3-configureBounds改变Matrix" class="headerlink" title="4.3 configureBounds改变Matrix"></a>4.3 <code>configureBounds</code>改变<code>Matrix</code></h2><p>在<code>configureBounds</code>里就会根据我们所配置的<code>scaleType</code>来决定<code>mDrawable</code>如何显示，在这里面有一个重要的变量<code>mDrawMatrix</code>，我们前面说到的所有变换都是通过它来实现的，当然，我们除了可以让系统自己根据<code>scaleType</code>来生成<code>matrix</code>，也可以通过<code>setImageMatrix</code>手动的指定自己的变换：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div></pre></td><td class="code"><pre><div class="line">private void configureBounds() &#123;</div><div class="line">    if (mDrawable == null || !mHaveFrame) &#123;</div><div class="line">        return;</div><div class="line">    &#125;</div><div class="line">　     //1.得到原始资源的宽高.</div><div class="line">    final int dwidth = mDrawableWidth;</div><div class="line">    final int dheight = mDrawableHeight;</div><div class="line">    //2.得到控件的宽高，这里去掉了控件的padding.</div><div class="line">    final int vwidth = getWidth() - mPaddingLeft - mPaddingRight;</div><div class="line">    final int vheight = getHeight() - mPaddingTop - mPaddingBottom;</div><div class="line"></div><div class="line">    //3.表示原始资源已经能够填满控件.</div><div class="line">    final boolean fits = (dwidth &lt; 0 || vwidth == dwidth)</div><div class="line">            &amp;&amp; (dheight &lt; 0 || vheight == dheight);</div><div class="line"></div><div class="line">    //4.假如有一边是wrap_content，或者是FIX_XY，那么填满整个控件.</div><div class="line">    if (dwidth &lt;= 0 || dheight &lt;= 0 || ScaleType.FIT_XY == mScaleType) &#123;</div><div class="line">        mDrawable.setBounds(0, 0, vwidth, vheight);</div><div class="line">        mDrawMatrix = null;</div><div class="line">    &#125; else &#123;</div><div class="line">        mDrawable.setBounds(0, 0, dwidth, dheight);</div><div class="line">        //如果scaleType是matrix.</div><div class="line">        if (ScaleType.MATRIX == mScaleType) &#123;</div><div class="line">            //单位矩阵的情况，设为null.</div><div class="line">            if (mMatrix.isIdentity()) &#123;</div><div class="line">                mDrawMatrix = null;</div><div class="line">            &#125; else &#123;</div><div class="line">                //否则最后的DrawMatrix就是我们传入的Matrix.</div><div class="line">                mDrawMatrix = mMatrix;</div><div class="line">            &#125;</div><div class="line">        &#125; else if (fits) &#123;</div><div class="line">            //如果原始资源已经填满控件，那么不需要考虑其它的变换了.</div><div class="line">            mDrawMatrix = null;</div><div class="line">        &#125; else if (ScaleType.CENTER == mScaleType) &#123;</div><div class="line">            //当scaleType为center的时候.</div><div class="line">            mDrawMatrix = mMatrix;</div><div class="line">            //移动到中心，初始时候，控件和原始资源的(0,0)点是重合的.</div><div class="line">            mDrawMatrix.setTranslate(Math.round((vwidth - dwidth) * 0.5f), Math.round((vheight - dheight) * 0.5f));</div><div class="line">        &#125; else if (ScaleType.CENTER_CROP == mScaleType) &#123;</div><div class="line">            mDrawMatrix = mMatrix;</div><div class="line">            //当scaleType是centerCrop的时候.</div><div class="line">            float scale;</div><div class="line">            float dx = 0, dy = 0;</div><div class="line">            //取需要变换最小的轴，进行等比缩放.</div><div class="line">            if (dwidth * vheight &gt; vwidth * dheight) &#123;</div><div class="line">                scale = (float) vheight / (float) dheight;</div><div class="line">                dx = (vwidth - dwidth * scale) * 0.5f;</div><div class="line">            &#125; else &#123;</div><div class="line">                scale = (float) vwidth / (float) dwidth;</div><div class="line">                dy = (vheight - dheight * scale) * 0.5f;</div><div class="line">            &#125;</div><div class="line">            //先缩放，再移动到中心点.</div><div class="line">            mDrawMatrix.setScale(scale, scale);</div><div class="line">            mDrawMatrix.postTranslate(Math.round(dx), Math.round(dy));</div><div class="line">        &#125; else if (ScaleType.CENTER_INSIDE == mScaleType) &#123;</div><div class="line">            //当scaleType是centetInside时</div><div class="line">            mDrawMatrix = mMatrix;</div><div class="line">            float scale;</div><div class="line">            float dx;</div><div class="line">            float dy;</div><div class="line">            //如果原始资源的宽高都小于控件的宽高，那么不做缩放.</div><div class="line">            if (dwidth &lt;= vwidth &amp;&amp; dheight &lt;= vheight) &#123;</div><div class="line">                scale = 1.0f;</div><div class="line">            &#125; else &#123;</div><div class="line">               //否则等比缩放.</div><div class="line">                scale = Math.min((float) vwidth / (float) dwidth,</div><div class="line">                        (float) vheight / (float) dheight);</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            dx = Math.round((vwidth - dwidth * scale) * 0.5f);</div><div class="line">            dy = Math.round((vheight - dheight * scale) * 0.5f);</div><div class="line">            //和上面类似，也是先缩放后平移.</div><div class="line">            mDrawMatrix.setScale(scale, scale);</div><div class="line">            mDrawMatrix.postTranslate(dx, dy);</div><div class="line">        &#125; else &#123;</div><div class="line">            //设置两个区域的大小.</div><div class="line">            mTempSrc.set(0, 0, dwidth, dheight);</div><div class="line">            mTempDst.set(0, 0, vwidth, vheight);</div><div class="line">            mDrawMatrix = mMatrix;</div><div class="line">            //这里处理FIX_START,FIX_END,FIX_CENTER的情况.</div><div class="line">            mDrawMatrix.setRectToRect(mTempSrc, mTempDst, scaleTypeToScaleToFit(mScaleType));</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="4-4-onDraw中进行绘制"><a href="#4-4-onDraw中进行绘制" class="headerlink" title="4.4 onDraw中进行绘制"></a>4.4 <code>onDraw</code>中进行绘制</h2><p>那么这个<code>mDrawMatrix</code>是在什么时候使用的呢，我们看一下<code>onDraw</code>方法：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">protected void onDraw(Canvas canvas) &#123;</div><div class="line">    super.onDraw(canvas);</div><div class="line"></div><div class="line">    if (mDrawMatrix == null &amp;&amp; mPaddingTop == 0 &amp;&amp; mPaddingLeft == 0) &#123;</div><div class="line">        mDrawable.draw(canvas);</div><div class="line">    &#125; else &#123;</div><div class="line">        final int saveCount = canvas.getSaveCount();</div><div class="line">        //创建一个新的图层.</div><div class="line">        canvas.save();</div><div class="line">        if (mCropToPadding) &#123;</div><div class="line">            final int scrollX = mScrollX;</div><div class="line">            final int scrollY = mScrollY;</div><div class="line">            canvas.clipRect(scrollX + mPaddingLeft, scrollY + mPaddingTop,</div><div class="line">                    scrollX + mRight - mLeft - mPaddingRight,</div><div class="line">                    scrollY + mBottom - mTop - mPaddingBottom);</div><div class="line">        &#125;</div><div class="line">        //移动到去掉padding的左上角.</div><div class="line">        canvas.translate(mPaddingLeft, mPaddingTop);</div><div class="line">        //根据mDrawMatrix进行变换.</div><div class="line">        if (mDrawMatrix != null) &#123;</div><div class="line">            canvas.concat(mDrawMatrix);</div><div class="line">        &#125;</div><div class="line">        //再在这个变换上面绘制我们的资源.</div><div class="line">        mDrawable.draw(canvas);</div><div class="line">        //把合成完成的图片绘制上去.</div><div class="line">        canvas.restoreToCount(saveCount);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="4-5-小结"><a href="#4-5-小结" class="headerlink" title="4.5 小结"></a>4.5 小结</h2><p>我们总结一下，整个<code>scaleType</code>的原理就是在<code>configureBounds</code>中配置了<code>mDrawMatrix</code>，而在<code>onDraw</code>当中会根据<code>mDrawMatrix</code>来对图层进行变换，在这个变换之后的图层上进行绘制<code>mDrawable</code>，之后再恢复图层。</p>
+<h2 id="五、ImageView的src和background的区别"><a href="#五、ImageView的src和background的区别" class="headerlink" title="五、ImageView的src和background的区别"></a>五、<code>ImageView</code>的<code>src</code>和<code>background</code>的区别</h2><p>上面，我们看到的都是<code>src</code>设置的效果，我们回忆一下，通过设置<code>android:background</code>也可以设置一个图片给它，其实<code>background</code>是<code>View</code>的属性，在我们之前分析<code>View</code>的绘制流程的时候，<code>draw(canvas)</code>中有一步就是绘制背景：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">private void drawBackground(Canvas canvas) &#123;</div><div class="line">    //1.设置背景的边界.</div><div class="line">    setBackgroundBounds();</div><div class="line">   //2.如果有滚动，那么背景需要相应的滚动.</div><div class="line">    final int scrollX = mScrollX;</div><div class="line">    final int scrollY = mScrollY;</div><div class="line">    if ((scrollX | scrollY) == 0) &#123;</div><div class="line">        background.draw(canvas);</div><div class="line">    &#125; else &#123;</div><div class="line">        canvas.translate(scrollX, scrollY);</div><div class="line">        //3.绘制背景.</div><div class="line">        background.draw(canvas);</div><div class="line">        canvas.translate(-scrollX, -scrollY);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>我们来看一下设置背景的边界的函数，可以看到，这里没有考虑<code>padding</code>值，也就是说我们通过<code>background</code>设置的图片是填满整个控件，并且不考虑<code>padding</code>的：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">void setBackgroundBounds() &#123;</div><div class="line">    if (mBackgroundSizeChanged &amp;&amp; mBackground != null) &#123;</div><div class="line">        //没有考虑padding部分.</div><div class="line">        mBackground.setBounds(0, 0, mRight - mLeft, mBottom - mTop);</div><div class="line">        mBackgroundSizeChanged = false;</div><div class="line">        rebuildOutline();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>最后再结合一下第四节的知识，我们是先绘制背景，然后才在<code>ImageView</code>的<code>onDraw</code>函数当中在<code>canvas</code>上绘制的，因此，<code>src</code>的图片一定会绘制在<code>backgroud</code>之上。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/03/13/Glide/Glide-知识梳理(5)---自定义GlideModule/" rel="next" title="Glide 知识梳理(5) - 自定义GlideModule">
+                <i class="fa fa-chevron-left"></i> Glide 知识梳理(5) - 自定义GlideModule
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/03/16/图片基础/图片基础知识梳理(2)---Bitmap-占用内存分析/" rel="prev" title="图片基础知识梳理(2) - Bitmap 占用内存分析">
+                图片基础知识梳理(2) - Bitmap 占用内存分析 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="zeMao" />
+          <p class="site-author-name" itemprop="name">zeMao</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">104</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">24</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、概述"><span class="nav-number">1.</span> <span class="nav-text">一、概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、scaleType的分类"><span class="nav-number">2.</span> <span class="nav-text">二、scaleType的分类</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-通过Matrix设置"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 通过Matrix设置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-填充类型"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 填充类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-中心重合类型"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 中心重合类型</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、示例"><span class="nav-number">3.</span> <span class="nav-text">三、示例</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四、源码分析"><span class="nav-number">4.</span> <span class="nav-text">四、源码分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#4-1-给ImageVIew设置src的接口"><span class="nav-number">4.1.</span> <span class="nav-text">4.1 给ImageVIew设置src的接口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-2-setImageBitmap的流程"><span class="nav-number">4.2.</span> <span class="nav-text">4.2 setImageBitmap的流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-3-configureBounds改变Matrix"><span class="nav-number">4.3.</span> <span class="nav-text">4.3 configureBounds改变Matrix</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-4-onDraw中进行绘制"><span class="nav-number">4.4.</span> <span class="nav-text">4.4 onDraw中进行绘制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-5-小结"><span class="nav-number">4.5.</span> <span class="nav-text">4.5 小结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#五、ImageView的src和background的区别"><span class="nav-number">4.6.</span> <span class="nav-text">五、ImageView的src和background的区别</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zeMao</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

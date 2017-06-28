@@ -1,0 +1,792 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="一、概述前面说的都是如何使用Glide提供的接口来展示图片资源，今天这篇，我们来讲一下如何改变Glide的配置。 二、定义GlideModule2.1 步骤首先，我们需要一个实现了GlideModule接口的类，重写其中的方法来改变Glide的配置，然后让Glide在构造实例的过程中，读取这个类中的配置信息。  第一步：实现GlideModule接口 123456789101112public c">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Glide 知识梳理(5) - 自定义GlideModule">
+<meta property="og:url" content="http://yoursite.com/2017/03/13/Glide/Glide-知识梳理(5)---自定义GlideModule/index.html">
+<meta property="og:site_name" content="zeMao&#39;s Blog">
+<meta property="og:description" content="一、概述前面说的都是如何使用Glide提供的接口来展示图片资源，今天这篇，我们来讲一下如何改变Glide的配置。 二、定义GlideModule2.1 步骤首先，我们需要一个实现了GlideModule接口的类，重写其中的方法来改变Glide的配置，然后让Glide在构造实例的过程中，读取这个类中的配置信息。  第一步：实现GlideModule接口 123456789101112public c">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-6d07f9ef1c0b3e17.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2017-06-28T06:47:04.226Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Glide 知识梳理(5) - 自定义GlideModule">
+<meta name="twitter:description" content="一、概述前面说的都是如何使用Glide提供的接口来展示图片资源，今天这篇，我们来讲一下如何改变Glide的配置。 二、定义GlideModule2.1 步骤首先，我们需要一个实现了GlideModule接口的类，重写其中的方法来改变Glide的配置，然后让Glide在构造实例的过程中，读取这个类中的配置信息。  第一步：实现GlideModule接口 123456789101112public c">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-6d07f9ef1c0b3e17.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/03/13/Glide/Glide-知识梳理(5)---自定义GlideModule/"/>
+
+
+
+
+
+  <title>Glide 知识梳理(5) - 自定义GlideModule | zeMao's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">zeMao's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/03/13/Glide/Glide-知识梳理(5)---自定义GlideModule/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zeMao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="zeMao's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Glide 知识梳理(5) - 自定义GlideModule</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-13T23:02:00+08:00">
+                2017-03-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Glide-知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">Glide 知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="一、概述"><a href="#一、概述" class="headerlink" title="一、概述"></a>一、概述</h1><p>前面说的都是如何使用<code>Glide</code>提供的接口来展示图片资源，今天这篇，我们来讲一下如何改变<code>Glide</code>的配置。</p>
+<h1 id="二、定义GlideModule"><a href="#二、定义GlideModule" class="headerlink" title="二、定义GlideModule"></a>二、定义<code>GlideModule</code></h1><h2 id="2-1-步骤"><a href="#2-1-步骤" class="headerlink" title="2.1 步骤"></a>2.1 步骤</h2><p>首先，我们需要一个实现了<code>GlideModule</code>接口的类，重写其中的方法来改变<code>Glide</code>的配置，然后让<code>Glide</code>在构造实例的过程中，读取这个类中的配置信息。</p>
+<ul>
+<li><p>第一步：实现<code>GlideModule</code>接口</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">public class CustomGlideModule implements GlideModule &#123;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void applyOptions(Context context, GlideBuilder builder) &#123;</div><div class="line">        //通过builder.setXXX进行配置.</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void registerComponents(Context context, Glide glide) &#123;</div><div class="line">        //通过glide.register进行配置.</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>第二步：在<code>AndroidManifest.xml</code>中的<code>&lt;application&gt;</code>标签下定义<code>&lt;meta-data&gt;</code>，这样<code>Glide</code>才能知道我们定义了这么一个类，其中<code>android:name</code>是我们自定义的<code>GlideModule</code>的完整路径，而<code>android:value</code>就固定写死<code>GlideModule</code>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">&lt;application</div><div class="line">    android:allowBackup=&quot;true&quot;</div><div class="line">    android:icon=&quot;@mipmap/ic_launcher&quot;</div><div class="line">    android:label=&quot;@string/app_name&quot;</div><div class="line">    android:supportsRtl=&quot;true&quot;</div><div class="line">    android:theme=&quot;@style/AppTheme&quot;&gt;</div><div class="line">    &lt;meta-data</div><div class="line">        android:name=&quot;com.example.lizejun.repoglidelearn.CustomGlideModule&quot;</div><div class="line">        android:value=&quot;GlideModule&quot;/&gt;</div><div class="line">&lt;/application&gt;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="2-2-源码分析"><a href="#2-2-源码分析" class="headerlink" title="2.2 源码分析"></a>2.2 源码分析</h2><p>上面<code>2.1</code>所做的工作都是为了在<code>Glide</code>创建时可以读取我们在两个回调中配置的信息，我们来看一下<code>Glide</code>是如何使用这个自定义的类的，它的整个流程在<code>Glide</code>的<code>get</code>方法中：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">public static Glide get(Context context) &#123;</div><div class="line">    if (glide == null) &#123;</div><div class="line">        synchronized (Glide.class) &#123;</div><div class="line">            if (glide == null) &#123;</div><div class="line">                Context applicationContext = context.getApplicationContext();</div><div class="line"></div><div class="line">                //第一步</div><div class="line">                List&lt;GlideModule&gt; modules = new ManifestParser(applicationContext).parse();</div><div class="line">                </div><div class="line">                 //第二步</div><div class="line">                GlideBuilder builder = new GlideBuilder(applicationContext);</div><div class="line">                for (GlideModule module : modules) &#123;</div><div class="line">                    //在builder构造出glide之前，读取使用者自定义的配置.</div><div class="line">                    module.applyOptions(applicationContext, builder);</div><div class="line">                &#125;</div><div class="line">                glide = builder.createGlide();</div><div class="line"></div><div class="line">                //第三步</div><div class="line">                for (GlideModule module : modules) &#123;</div><div class="line">                    module.registerComponents(applicationContext, glide);</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    return glide;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>可以看到，整个实例化<code>Glide</code>的过程分为三步：</p>
+<ul>
+<li>第一步：去<code>AndroidManifest</code>中查找<code>meta-data</code>为<code>GlideModule</code>的类，然后通过反射实例化它。</li>
+<li><p>第二步：之后<code>Glide</code>会新建一个<code>GlideBuilder</code>对象，它会先调用我们自定义的<code>GlideModule</code>的<code>applyOptions</code>方法，并把自己传进去，这样，自定义的<code>GlideModule</code>就可以通过<code>GlideBuilder</code>提供的接口来设置它内部的参数，在<code>builder.createGlide()</code>的过程中就会根据它内部的参数来构建<code>Glide</code>，假如我们没有设置相应的参数，那么在<code>createGlide</code>时，就会采取默认的实现，下面就是<code>memoryCache</code>的例子。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">//我们在applyOptions中，可以通过GlideBuilder的这个方法来设定自己的memoryCache.</div><div class="line">public GlideBuilder setMemoryCache(MemoryCache memoryCache) &#123;</div><div class="line">    this.memoryCache = memoryCache;</div><div class="line">    return this;</div><div class="line">&#125;</div><div class="line"></div><div class="line">Glide createGlide() &#123;</div><div class="line">    //如果builder中没有设定memoryCache，那么采用默认的实现.</div><div class="line">    if (memoryCache == null) &#123;</div><div class="line">        memoryCache = new LruResourceCache(calculator.getMemoryCacheSize());</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    return new Glide(engine, memoryCache, bitmapPool, context, decodeFormat);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>第三步：在<code>Glide</code>实例化完毕之后，调用自定义<code>GlideModule</code>的<code>registerComponents</code>，并传入当前的<code>Glide</code>实例来让使用者注册自己的组件，其实在<code>Glide</code>实例化的过程中已经注册了默认的组件，如果用户定义了相同的组件，那么就会替换之前的。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">Glide(Engine engine, MemoryCache memoryCache, BitmapPool bitmapPool, Context context, DecodeFormat decodeFormat) &#123;</div><div class="line">    //Glide默认注册的组件.</div><div class="line">    register(File.class, ParcelFileDescriptor.class, new FileDescriptorFileLoader.Factory());</div><div class="line">    register(File.class, InputStream.class, new StreamFileLoader.Factory());</div><div class="line">    register(int.class, ParcelFileDescriptor.class, new FileDescriptorResourceLoader.Factory());</div><div class="line">    register(int.class, InputStream.class, new StreamResourceLoader.Factory());</div><div class="line">    register(Integer.class, ParcelFileDescriptor.class, new FileDescriptorResourceLoader.Factory());</div><div class="line">    register(Integer.class, InputStream.class, new StreamResourceLoader.Factory());</div><div class="line">    register(String.class, ParcelFileDescriptor.class, new FileDescriptorStringLoader.Factory());</div><div class="line">    register(String.class, InputStream.class, new StreamStringLoader.Factory());</div><div class="line">    register(Uri.class, ParcelFileDescriptor.class, new FileDescriptorUriLoader.Factory());</div><div class="line">    register(Uri.class, InputStream.class, new StreamUriLoader.Factory());</div><div class="line">    register(URL.class, InputStream.class, new StreamUrlLoader.Factory());</div><div class="line">    register(GlideUrl.class, InputStream.class, new HttpUrlGlideUrlLoader.Factory());</div><div class="line">    register(byte[].class, InputStream.class, new StreamByteArrayLoader.Factory());</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>通俗的来说，注册组件的目的就是告诉<code>Glide</code>，当我们调用<code>load(xxxx)</code>方法时，应该用什么方式来获取这个<code>xxxx</code>所指向的资源。因此，我们可以看到<code>register</code>的第一个参数就是我们<code>load(xxxx)</code>的类型，第二个参数是对应的输入流，而第三个参数就是定义获取资源的方式。<br>我们也就分两个部分，在第三、四节，我们分两部分讨论这两个回调函数的用法：<code>applyOptions/registerComponents</code>。</p>
+<h2 id="2-3-注意事项"><a href="#2-3-注意事项" class="headerlink" title="2.3 注意事项"></a>2.3 注意事项</h2><ul>
+<li>由于<code>Glide</code>是通过反射的方法来实例化<code>GlideModule</code>对象的，因此自定义的<code>GlideModule</code>只能有一个无参的构造方法。</li>
+<li>可以看到，上面是支持配置多个<code>GlideModule</code>的，但是<code>GlideModule</code>的读取顺序并不能保证，因此，不要在多个<code>GlideModule</code>对同一个属性进行不同的配置。</li>
+</ul>
+<h1 id="三、applyOptions-Context-context-GlideBuilder-builder-方法详解"><a href="#三、applyOptions-Context-context-GlideBuilder-builder-方法详解" class="headerlink" title="三、applyOptions(Context context, GlideBuilder builder)方法详解"></a>三、<code>applyOptions(Context context, GlideBuilder builder)</code>方法详解</h1><p>在第二节中，我们已经解释过，这个回调方法的目的就是为了让使用者能通过<code>builder</code>定义自己的配置，而所支持的配置也就是<code>GlideBuilder</code>的<code>setXXX</code>方法，它们包括：</p>
+<ul>
+<li><code>setBitmapPool(BitmapPool bitmapPool)</code><br>设置<code>Bitmap</code>的缓存池，用来重用<code>Bitmap</code>，需要实现<code>BitmapPool</code>接口，它的默认实现是<code>LruBitmapPool</code></li>
+<li><code>setMemoryCache(MemoryCache memoryCache)</code><br>设置内存缓存，需要实现<code>MemoryCache</code>接口，默认实现是<code>LruResourceCache</code>。</li>
+<li><code>setDiskCache(DiskCache.Factory diskCacheFactory)</code><br>设置磁盘缓存，需要实现<code>DiskCache.Factory</code>，默认实现是<code>InternalCacheDiskCacheFactory</code></li>
+<li><code>setResizeService(ExecutorService service)</code><br>当资源不在缓存中时，需要通过这个<code>Executor</code>发起请求，默认是实现是<code>FifoPriorityThreadPoolExecutor</code>。</li>
+<li><p><code>setDiskCacheService(ExecutorService service)</code><br>读取磁盘缓存的服务，默认实现是<code>FifoPriorityThreadPoolExecutor</code>。</p>
+</li>
+<li><p><code>setDecodeFormat(DecodeFormat decodeFormat)</code><br>用于控制<code>Bitmap</code>解码的清晰度，<code>DecodeFormat</code>可选的值有<code>PREFER_ARGB_8888/PREFER_RGB_565</code>，默认为<code>PREFER_RGB_565</code>。</p>
+</li>
+</ul>
+<h1 id="四、registerComponents-Context-context-Glide-glide-方法详解"><a href="#四、registerComponents-Context-context-Glide-glide-方法详解" class="headerlink" title="四、registerComponents(Context context, Glide glide)方法详解"></a>四、<code>registerComponents(Context context, Glide glide)</code>方法详解</h1><p><code>registerComponents</code>相对来说就复杂了很多，它主要和三个接口有关：</p>
+<ul>
+<li><code>ModelLoaderFactory</code></li>
+<li><code>ModelLoader</code></li>
+<li><code>DataFetcher</code></li>
+</ul>
+<p>为了便于理解，我们先通过它内部一个默认<code>Module</code>的实现来看一下源码是如何实现的。</p>
+<p>我们选取是通用的加载普通图片的<code>url</code>的例子，它对应的注册方法是下面这句：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">Glide(Engine engine, MemoryCache memoryCache, BitmapPool bitmapPool, Context context, DecodeFormat decodeFormat) &#123;</div><div class="line">        //注册加载网络url的组件.</div><div class="line">        register(GlideUrl.class, InputStream.class, new HttpUrlGlideUrlLoader.Factory());</div><div class="line">    &#125;</div></pre></td></tr></table></figure></p>
+<h2 id="4-1-源码分析"><a href="#4-1-源码分析" class="headerlink" title="4.1 源码分析"></a>4.1 源码分析</h2><h3 id="4-1-1-HttpUrlGlideUrlLoader-Factory"><a href="#4-1-1-HttpUrlGlideUrlLoader-Factory" class="headerlink" title="4.1.1 HttpUrlGlideUrlLoader.Factory"></a>4.1.1 <code>HttpUrlGlideUrlLoader.Factory</code></h3><p>首先看一下<code>HttpUrlGlideUrlLoader</code>的内部工厂类，它实现了<code>ModelLoaderFactory&lt;T, Y&gt;</code>接口<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">public interface ModelLoaderFactory&lt;T, Y&gt; &#123;</div><div class="line">    ModelLoader&lt;T, Y&gt; build(Context context, GenericLoaderFactory factories);</div><div class="line">    void teardown();</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>它要求我们返回一个<code>ModelLoader</code>，我们看一下<code>HttpUrlGlideUrlLoader.Factory</code>是怎么做的，可以看到，它返回了<code>HttpUrlGlideUrlLoader</code>，而它的两个泛型参数就是我们<code>register</code>中指定的前两个参数类型。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">public static class Factory implements ModelLoaderFactory&lt;GlideUrl, InputStream&gt; &#123;</div><div class="line">    private final ModelCache&lt;GlideUrl, GlideUrl&gt; modelCache = new ModelCache&lt;GlideUrl, GlideUrl&gt;(500);</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public ModelLoader&lt;GlideUrl, InputStream&gt; build(Context context, GenericLoaderFactory factories) &#123;</div><div class="line">        return new HttpUrlGlideUrlLoader(modelCache);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void teardown() &#123;&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h3 id="4-1-2-HttpUrlGlideUrlLoader"><a href="#4-1-2-HttpUrlGlideUrlLoader" class="headerlink" title="4.1.2 HttpUrlGlideUrlLoader"></a>4.1.2 <code>HttpUrlGlideUrlLoader</code></h3><p><code>HttpUrlGlideUrlLoader</code>实现了<code>ModelLoader</code>接口：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"></div><div class="line">public interface ModelLoader&lt;T, Y&gt; &#123;</div><div class="line">    DataFetcher&lt;Y&gt; getResourceFetcher(T model, int width, int height);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><code>ModelLoader</code>提供了一个<code>DataFetcher</code>，它会去请求这个抽象模型所表示的数据：</p>
+<ul>
+<li><code>T</code>：模型的类型。</li>
+<li><code>Y</code>：一个可以被<code>ResourceDecoder</code>解析出数据的表示。</li>
+</ul>
+<p><code>GlideUrl</code>的实现如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">public class HttpUrlGlideUrlLoader implements ModelLoader&lt;GlideUrl, InputStream&gt; &#123;</div><div class="line"></div><div class="line">    private final ModelCache&lt;GlideUrl, GlideUrl&gt; modelCache;</div><div class="line"></div><div class="line">    public HttpUrlGlideUrlLoader() &#123;</div><div class="line">        this(null);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public HttpUrlGlideUrlLoader(ModelCache&lt;GlideUrl, GlideUrl&gt; modelCache) &#123;</div><div class="line">        this.modelCache = modelCache;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">     //最主要的方法，它决定了我们获取数据的方式.</div><div class="line">    @Override</div><div class="line">    public DataFetcher&lt;InputStream&gt; getResourceFetcher(GlideUrl model, int width, int height) &#123;</div><div class="line">        GlideUrl url = model;</div><div class="line">        if (modelCache != null) &#123;</div><div class="line">            url = modelCache.get(model, 0, 0);</div><div class="line">            if (url == null) &#123;</div><div class="line">                modelCache.put(model, 0, 0, model);</div><div class="line">                url = model;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return new HttpUrlFetcher(url);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h3 id="4-1-3-HttpUrlFetcher"><a href="#4-1-3-HttpUrlFetcher" class="headerlink" title="4.1.3 HttpUrlFetcher"></a>4.1.3 <code>HttpUrlFetcher</code></h3><p><code>DataFetcher</code>就是我们读取数据的方式，它的关键方法是<code>loadData</code>，该<code>loadData</code>的返回值就是我们<code>register</code>的第二个参数：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">public interface DataFetcher&lt;T&gt; &#123;</div><div class="line">    T loadData(Priority priority) throws Exception;</div><div class="line">    void cleanup();</div><div class="line">    String getId();</div><div class="line">    void cancel();</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><code>HttpUrlFetcher</code>实现了<code>DataFetcher</code>接口，在它的<code>loadData</code>方法中，通过传入的<code>url</code>发起请求，最终返回一个<code>InputStream</code>。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div></pre></td><td class="code"><pre><div class="line">public class HttpUrlFetcher implements DataFetcher&lt;InputStream&gt; &#123;</div><div class="line">    private static final String TAG = &quot;HttpUrlFetcher&quot;;</div><div class="line">    private static final int MAXIMUM_REDIRECTS = 5;</div><div class="line">    private static final HttpUrlConnectionFactory DEFAULT_CONNECTION_FACTORY = new DefaultHttpUrlConnectionFactory();</div><div class="line"></div><div class="line">    private final GlideUrl glideUrl;</div><div class="line">    private final HttpUrlConnectionFactory connectionFactory;</div><div class="line"></div><div class="line">    private HttpURLConnection urlConnection;</div><div class="line">    private InputStream stream;</div><div class="line">    private volatile boolean isCancelled;</div><div class="line"></div><div class="line">    public HttpUrlFetcher(GlideUrl glideUrl) &#123;</div><div class="line">        this(glideUrl, DEFAULT_CONNECTION_FACTORY);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    HttpUrlFetcher(GlideUrl glideUrl, HttpUrlConnectionFactory connectionFactory) &#123;</div><div class="line">        this.glideUrl = glideUrl;</div><div class="line">        this.connectionFactory = connectionFactory;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public InputStream loadData(Priority priority) throws Exception &#123;</div><div class="line">        return loadDataWithRedirects(glideUrl.toURL(), 0 /*redirects*/, null /*lastUrl*/, glideUrl.getHeaders());</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private InputStream loadDataWithRedirects(URL url, int redirects, URL lastUrl, Map&lt;String, String&gt; headers) throws IOException &#123;</div><div class="line">        //就是调用HttpUrlConnection请求.</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void cleanup() &#123;</div><div class="line">        if (stream != null) &#123;</div><div class="line">            try &#123;</div><div class="line">                stream.close();</div><div class="line">            &#125; catch (IOException e) &#123;</div><div class="line">                // Ignore</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        if (urlConnection != null) &#123;</div><div class="line">            urlConnection.disconnect();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public String getId() &#123;</div><div class="line">        return glideUrl.getCacheKey();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void cancel() &#123;</div><div class="line">        isCancelled = true;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h3 id="4-1-4-小结"><a href="#4-1-4-小结" class="headerlink" title="4.1.4 小结"></a>4.1.4 小结</h3><p>对上面做个总结，整个流程如下：通过<code>register</code>传入一个<code>ModelLoaderFactory&lt;T, Y&gt;</code>工厂类，该工厂生产的是<code>ModelLoader&lt;T, Y&gt;</code>，而这个<code>ModelLoader</code>会根据<code>T</code>返回一个<code>DataFetcher&lt;Y&gt;</code>，在<code>DataFetcher&lt;Y&gt;</code>中，我们去获取数据。（在上面的例子中<code>T</code>就是<code>GlideUrl</code>，<code>Y</code>就是<code>InputStream</code>）</p>
+<h2 id="4-2-自定义ModuleLoader示例：用OkHttpClient替换HttpURLConnection"><a href="#4-2-自定义ModuleLoader示例：用OkHttpClient替换HttpURLConnection" class="headerlink" title="4.2 自定义ModuleLoader示例：用OkHttpClient替换HttpURLConnection"></a>4.2 自定义<code>ModuleLoader</code>示例：用<code>OkHttpClient</code>替换<code>HttpURLConnection</code></h2><p>下面的例子来自于这篇文章：</p>
+<blockquote>
+<p><a href="https://futurestud.io/tutorials/glide-module-example-accepting-self-signed-https-certificates" target="_blank" rel="external"><code>https://futurestud.io/tutorials/glide-module-example-accepting-self-signed-https-certificates</code></a></p>
+</blockquote>
+<ul>
+<li>第一步：定义<code>ModelLoader</code>和<code>ModelLoader.Factory</code></li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">public class OkHttpGlideUrlLoader implements ModelLoader&lt;GlideUrl, InputStream&gt; &#123;</div><div class="line"></div><div class="line">        @Override</div><div class="line">        public ModelLoader&lt;GlideUrl, InputStream&gt; build(Context context, GenericLoaderFactory factories) &#123;</div><div class="line">            return new OkHttpGlideUrlLoader(getOkHttpClient());</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        @Override</div><div class="line">        public void teardown() &#123;&#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public DataFetcher&lt;InputStream&gt; getResourceFetcher(GlideUrl model, int width, int height) &#123;</div><div class="line">        return new OkHttpGlideUrlFetcher(mOkHttpClient, model);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>第二步：<code>ModelLoader</code>的<code>getResourceFetcher</code>返回一个<code>DataFetcher</code>，我们给它传入一个<code>OkHttpClient</code>实例，让它通过<code>OkHttpClient</code>发起请求。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">public class OkHttpGlideUrlFetcher implements DataFetcher&lt;InputStream&gt; &#123;</div><div class="line"></div><div class="line">    public OkHttpGlideUrlFetcher(OkHttpClient client, GlideUrl url) &#123;</div><div class="line">        this.client = client;</div><div class="line">        this.url = url;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public InputStream loadData(Priority priority) throws Exception &#123;</div><div class="line">        Request.Builder requestBuilder = new Request.Builder().url(url.toStringUrl());</div><div class="line">        for (Map.Entry&lt;String, String&gt; headerEntry : url.getHeaders().entrySet()) &#123;</div><div class="line">            String key = headerEntry.getKey();</div><div class="line">            requestBuilder.addHeader(key, headerEntry.getValue());</div><div class="line">        &#125;</div><div class="line">        Request request = requestBuilder.build();</div><div class="line">        Response response = client.newCall(request).execute();</div><div class="line">        responseBody = response.body();</div><div class="line">        if (!response.isSuccessful()) &#123;</div><div class="line">            throw new IOException(&quot;Request failed with code: &quot; + response.code());</div><div class="line">        &#125;</div><div class="line">        long contentLength = responseBody.contentLength();</div><div class="line">        stream = ContentLengthInputStream.obtain(responseBody.byteStream(), contentLength);</div><div class="line">        return stream;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>第三步：在<code>CustomGlideModule</code>中注册这个组件：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">public class CustomGlideModule implements GlideModule &#123;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void applyOptions(Context context, GlideBuilder builder) &#123;</div><div class="line">        //通过builder.setXXX进行配置.</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void registerComponents(Context context, Glide glide) &#123;</div><div class="line">        //通过glide.register进行配置.</div><div class="line">        glide.register(GlideUrl.class, InputStream.class, new OkHttpGlideUrlLoader.Factory());</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>接着我们发起一次请求，通过断点可以发现，调用的是<code>OkHttpClient</code>来进行数据的拉取：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-6d07f9ef1c0b3e17.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h2 id="4-3-自定义处理的Module"><a href="#4-3-自定义处理的Module" class="headerlink" title="4.3 自定义处理的Module"></a>4.3 自定义处理的<code>Module</code></h2><p>上面我们分析了如何定义<code>ModuleLoader</code>来关联已有的<code>Module</code>和最终的数据类型，下面我们介绍一些如何定义自己的<code>Model</code>，也就是前面在基础介绍中，所说的<code>load(Module)</code>方法。</p>
+<ul>
+<li><p>第一步：定义<code>Module</code>的接口</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">public interface AutoSizeModel &#123;</div><div class="line">    String requestSizeUrl(int width, int height);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>第二步：实现<code>Module</code>接口</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">public class AutoSizeModelImpl implements AutoSizeModel &#123;</div><div class="line"></div><div class="line">    String mUrl;</div><div class="line"></div><div class="line">    public AutoSizeModelImpl(String url) &#123;</div><div class="line">        mUrl = url;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public String requestSizeUrl(int width, int height) &#123;</div><div class="line">        return mUrl;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>第三步：定义<code>ModuleLoader</code>和<code>ModuleLoader.Factory</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">public class AutoSizeModelLoader extends BaseGlideUrlLoader&lt;AutoSizeModel&gt; &#123;</div><div class="line"></div><div class="line">    public static class Factory implements ModelLoaderFactory&lt;AutoSizeModel, InputStream&gt; &#123;</div><div class="line"></div><div class="line">        @Override</div><div class="line">        public ModelLoader&lt;AutoSizeModel, InputStream&gt; build(Context context, GenericLoaderFactory factories) &#123;</div><div class="line">            return new AutoSizeModelLoader(context);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        @Override</div><div class="line">        public void teardown() &#123;&#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public AutoSizeModelLoader(Context context) &#123;</div><div class="line">        super(context);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    protected String getUrl(AutoSizeModel model, int width, int height) &#123;</div><div class="line">        return model.requestSizeUrl(width, height);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>第四步：在<code>CustomGlideModule</code>中进行关联：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">public class CustomGlideModule implements GlideModule &#123;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void applyOptions(Context context, GlideBuilder builder) &#123;</div><div class="line">        //通过builder.setXXX进行配置.</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void registerComponents(Context context, Glide glide) &#123;</div><div class="line">        //通过glide.register进行配置.</div><div class="line">        glide.register(AutoSizeModel.class, InputStream.class, new AutoSizeModelLoader.Factory());</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>第五步：调用</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">public void loadCustomModule(View view) &#123;</div><div class="line">    AutoSizeModelImpl autoSizeModel = new AutoSizeModelImpl(&quot;http://i.imgur.com/DvpvklR.png&quot;);</div><div class="line">    Glide.with(this)</div><div class="line">            .load(autoSizeModel)</div><div class="line">            .diskCacheStrategy(DiskCacheStrategy.NONE)</div><div class="line">            .skipMemoryCache(true)</div><div class="line">            .into(mImageView);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="4-4-动态指定ModelLoader"><a href="#4-4-动态指定ModelLoader" class="headerlink" title="4.4 动态指定ModelLoader"></a>4.4 动态指定<code>ModelLoader</code></h2><p>在上面的例子中，我们是在自定义的<code>CustomGlideModule</code>中指定了<code>Model</code>和<code>ModuleLoader</code>的关联，当然，我们也可以采用动态指定<code>ModelLoader</code>的方法，也就是说，我们去掉<code>4.3</code>中的第四步，并把第五步改成下面这样：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">public void loadDynamicModule(View view) &#123;</div><div class="line">    AutoSizeModelImpl autoSizeModel = new AutoSizeModelImpl(&quot;http://i.imgur.com/DvpvklR.png&quot;);</div><div class="line">    AutoSizeModelLoader autoSizeModelLoader = new AutoSizeModelLoader(this);</div><div class="line">    Glide.with(this)</div><div class="line">            .using(autoSizeModelLoader)</div><div class="line">            .load(autoSizeModel)</div><div class="line">            .diskCacheStrategy(DiskCacheStrategy.NONE)</div><div class="line">            .skipMemoryCache(true)</div><div class="line">            .into(mImageView);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>使用<code>using</code>方法，我们就可以在运行时根据情况为同一个<code>Module</code>选择不同类型的<code>ModuleLoader</code>了。</p>
+<h1 id="五、小结"><a href="#五、小结" class="headerlink" title="五、小结"></a>五、小结</h1><p>这也是我们<code>Glide</code>学习的最后一章，所有的源码都可以从下面的链接中找到：</p>
+<blockquote>
+<p><a href="https://github.com/imZeJun/RepoGlideLearn" target="_blank" rel="external"><code>https://github.com/imZeJun/RepoGlideLearn</code></a></p>
+</blockquote>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/03/12/Glide/Glide-知识梳理(4)---自定义animate/" rel="next" title="Glide 知识梳理(4) - 自定义animate">
+                <i class="fa fa-chevron-left"></i> Glide 知识梳理(4) - 自定义animate
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/03/14/图片基础/图片基础知识梳理(1)---ImageView-的-ScaleType-属性解析/" rel="prev" title="图片基础知识梳理(1) - ImageView 的 ScaleType 属性解析">
+                图片基础知识梳理(1) - ImageView 的 ScaleType 属性解析 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="zeMao" />
+          <p class="site-author-name" itemprop="name">zeMao</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">104</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">24</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、概述"><span class="nav-number">1.</span> <span class="nav-text">一、概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、定义GlideModule"><span class="nav-number">2.</span> <span class="nav-text">二、定义GlideModule</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-步骤"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 步骤</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-源码分析"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 源码分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-注意事项"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 注意事项</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、applyOptions-Context-context-GlideBuilder-builder-方法详解"><span class="nav-number">3.</span> <span class="nav-text">三、applyOptions(Context context, GlideBuilder builder)方法详解</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四、registerComponents-Context-context-Glide-glide-方法详解"><span class="nav-number">4.</span> <span class="nav-text">四、registerComponents(Context context, Glide glide)方法详解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#4-1-源码分析"><span class="nav-number">4.1.</span> <span class="nav-text">4.1 源码分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-1-HttpUrlGlideUrlLoader-Factory"><span class="nav-number">4.1.1.</span> <span class="nav-text">4.1.1 HttpUrlGlideUrlLoader.Factory</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-2-HttpUrlGlideUrlLoader"><span class="nav-number">4.1.2.</span> <span class="nav-text">4.1.2 HttpUrlGlideUrlLoader</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-3-HttpUrlFetcher"><span class="nav-number">4.1.3.</span> <span class="nav-text">4.1.3 HttpUrlFetcher</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-4-小结"><span class="nav-number">4.1.4.</span> <span class="nav-text">4.1.4 小结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-2-自定义ModuleLoader示例：用OkHttpClient替换HttpURLConnection"><span class="nav-number">4.2.</span> <span class="nav-text">4.2 自定义ModuleLoader示例：用OkHttpClient替换HttpURLConnection</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-3-自定义处理的Module"><span class="nav-number">4.3.</span> <span class="nav-text">4.3 自定义处理的Module</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-4-动态指定ModelLoader"><span class="nav-number">4.4.</span> <span class="nav-text">4.4 动态指定ModelLoader</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#五、小结"><span class="nav-number">5.</span> <span class="nav-text">五、小结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zeMao</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

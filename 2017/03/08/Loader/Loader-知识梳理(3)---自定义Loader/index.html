@@ -1,0 +1,712 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="一、概述前面我们比较关注的是LoaderManager的原理和使用，如果我们只是需要通过LoaderManager来读取ContentProvider封装的数据，那么采用系统已经定义好的CursorLoader就可以了，但是有的时候，我们的数据可能不是用ContentProvider封装的，那么这时候就要学会如何定义自己的Loader。 二、Loader&amp;lt;D&amp;gt;类对于LoaderMana">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Loader 知识梳理(3) - 自定义Loader">
+<meta property="og:url" content="http://yoursite.com/2017/03/08/Loader/Loader-知识梳理(3)---自定义Loader/index.html">
+<meta property="og:site_name" content="zeMao&#39;s Blog">
+<meta property="og:description" content="一、概述前面我们比较关注的是LoaderManager的原理和使用，如果我们只是需要通过LoaderManager来读取ContentProvider封装的数据，那么采用系统已经定义好的CursorLoader就可以了，但是有的时候，我们的数据可能不是用ContentProvider封装的，那么这时候就要学会如何定义自己的Loader。 二、Loader&amp;lt;D&amp;gt;类对于LoaderMana">
+<meta property="og:updated_time" content="2017-06-28T06:47:04.226Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Loader 知识梳理(3) - 自定义Loader">
+<meta name="twitter:description" content="一、概述前面我们比较关注的是LoaderManager的原理和使用，如果我们只是需要通过LoaderManager来读取ContentProvider封装的数据，那么采用系统已经定义好的CursorLoader就可以了，但是有的时候，我们的数据可能不是用ContentProvider封装的，那么这时候就要学会如何定义自己的Loader。 二、Loader&amp;lt;D&amp;gt;类对于LoaderMana">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/03/08/Loader/Loader-知识梳理(3)---自定义Loader/"/>
+
+
+
+
+
+  <title>Loader 知识梳理(3) - 自定义Loader | zeMao's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">zeMao's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/03/08/Loader/Loader-知识梳理(3)---自定义Loader/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zeMao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="zeMao's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Loader 知识梳理(3) - 自定义Loader</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-08T13:16:00+08:00">
+                2017-03-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Loader-知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">Loader 知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="一、概述"><a href="#一、概述" class="headerlink" title="一、概述"></a>一、概述</h1><p>前面我们比较关注的是<code>LoaderManager</code>的原理和使用，如果我们只是需要通过<code>LoaderManager</code>来读取<code>ContentProvider</code>封装的数据，那么采用系统已经定义好的<code>CursorLoader</code>就可以了，但是有的时候，我们的数据可能不是用<code>ContentProvider</code>封装的，那么这时候就要学会如何定义自己的<code>Loader</code>。</p>
+<h1 id="二、Loader-lt-D-gt-类"><a href="#二、Loader-lt-D-gt-类" class="headerlink" title="二、Loader&lt;D&gt;类"></a>二、<code>Loader&lt;D&gt;</code>类</h1><p>对于<code>LoaderManager</code>来说，它所看到的只是一个<code>Loader</code>类，并调用它对应的方法，这些方法分为三类：</p>
+<ul>
+<li>状态标志：<code>isXXX</code></li>
+<li>调用接口：<code>startLoading/stopLoading/reset/cancelLoad/forceLoad/onReset</code></li>
+<li>调用接口之后的回调：<code>onXXX</code></li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div></pre></td><td class="code"><pre><div class="line">public class Loader&lt;D&gt; &#123;</div><div class="line">    </div><div class="line">    public void deliverResult(D data) &#123;</div><div class="line">        if (mListener != null) &#123;</div><div class="line">            mListener.onLoadComplete(this, data);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void deliverCancellation() &#123;</div><div class="line">        if (mOnLoadCanceledListener != null) &#123;</div><div class="line">            mOnLoadCanceledListener.onLoadCanceled(this);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    //在startLoading执行完，且没有调用stopLoading或reset。</div><div class="line">    public boolean isStarted() &#123;</div><div class="line">        return mStarted;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    //在该状态下，不应该上报新的数据，并且应该保持着最后一次上报的数据直到被reset。</div><div class="line">    public boolean isAbandoned() &#123;</div><div class="line">        return mAbandoned;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    //没有启动，或者调用了reset方法。</div><div class="line">    public boolean isReset() &#123;</div><div class="line">        return mReset;</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    &lt;!-- 开始任务相关 --&gt;</div><div class="line">    //开始任务。    </div><div class="line">    public final void startLoading() &#123;</div><div class="line">        mStarted = true;</div><div class="line">        mReset = false;</div><div class="line">        mAbandoned = false;</div><div class="line">        onStartLoading();</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    //开始任务后回调该方法，调用者重写该方法来加载数据。</div><div class="line">    protected void onStartLoading() &#123;&#125;</div><div class="line"></div><div class="line">    &lt;!-- 取消任务相关 --&gt;   </div><div class="line">   //取消任务。</div><div class="line">   //1.返回 false 表示不能取消，有可能是已经完成，或者 startLoading 还没有被调用。</div><div class="line">   //2.这不是一个立刻的过程，因为加载是在后台线程中运行的。</div><div class="line">   public boolean cancelLoad() &#123;</div><div class="line">        return onCancelLoad();</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    //调用者重写该方法来做取消后的操作。</div><div class="line">    protected boolean onCancelLoad() &#123;</div><div class="line">        return false;</div><div class="line">    &#125;</div><div class="line"> </div><div class="line">    &lt;!-- 强制刷新数据相关 --&gt;   </div><div class="line">    public void forceLoad() &#123;</div><div class="line">        onForceLoad();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    protected void onForceLoad() &#123;&#125;</div><div class="line"></div><div class="line">    &lt;!-- 停止任务相关 --&gt; </div><div class="line">    public void stopLoading() &#123;</div><div class="line">        mStarted = false;</div><div class="line">        onStopLoading();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    protected void onStopLoading() &#123;&#125;</div><div class="line">  </div><div class="line">   &lt;!-- 废弃任务相关 --&gt;</div><div class="line">    public void abandon() &#123;</div><div class="line">        mAbandoned = true;</div><div class="line">        onAbandon();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    protected void onAbandon() &#123;&#125;</div><div class="line"></div><div class="line">    public void reset() &#123;</div><div class="line">        onReset();</div><div class="line">        mReset = true;</div><div class="line">        mStarted = false;</div><div class="line">        mAbandoned = false;</div><div class="line">        mContentChanged = false;</div><div class="line">        mProcessingChange = false;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    protected void onReset() &#123;&#125;</div><div class="line">    </div><div class="line">    //得到mContentChanged的值，并把mContentChanged设为false</div><div class="line">    public boolean takeContentChanged() &#123;</div><div class="line">        boolean res = mContentChanged;</div><div class="line">        mContentChanged = false;</div><div class="line">        mProcessingChange |= res;</div><div class="line">        return res;</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    //表明正在处理变化。</div><div class="line">    public void commitContentChanged() &#123;</div><div class="line">        mProcessingChange = false;</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    //如果正在处理变化，那么停止它，并且把mContentChanged设为true。</div><div class="line">    public void rollbackContentChanged() &#123;</div><div class="line">        if (mProcessingChange) &#123;</div><div class="line">            mContentChanged = true;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    //如果当前是start状态，那么收到变化的通知就立即重新加载，否则记录下这个标志mContentChanged。</div><div class="line">    public void onContentChanged() &#123;</div><div class="line">        if (mStarted) &#123;</div><div class="line">            forceLoad();</div><div class="line">        &#125; else &#123;</div><div class="line">            mContentChanged = true;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>可以看到，在<code>Loader&lt;D&gt;</code>中，提供的是给<code>LoaderManager</code>调用的接口，但是它并没有真正地执行操作，而是在<code>startLoading</code>等方法之后，提供了<code>onStartLoading</code>等回调，让子类在这些回调中去执行对应的操作。</p>
+<h1 id="三、AsyncTaskLoader"><a href="#三、AsyncTaskLoader" class="headerlink" title="三、AsyncTaskLoader"></a>三、AsyncTaskLoader<d></d></h1><p>对于<code>Loader</code>的使用者来说，它更加希望自己只用处理业务的逻辑，而不用再去关心如何把耗时的任务放到异步线程中。因此系统帮我们实现了一个<code>Loader</code>的实现类<code>AsyncTaskLoader&lt;D&gt;</code>，里面封装了一个<code>AsyncTask</code>用来执行耗时操作。但是它也是一个抽象类，我们并不能直接使用它，而是让子类取实现它的<code>loadInBackground</code>方法去处理自己的业务逻辑。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div><div class="line">156</div><div class="line">157</div><div class="line">158</div><div class="line">159</div><div class="line">160</div><div class="line">161</div><div class="line">162</div><div class="line">163</div><div class="line">164</div><div class="line">165</div><div class="line">166</div><div class="line">167</div><div class="line">168</div><div class="line">169</div><div class="line">170</div><div class="line">171</div><div class="line">172</div><div class="line">173</div><div class="line">174</div><div class="line">175</div><div class="line">176</div><div class="line">177</div><div class="line">178</div><div class="line">179</div><div class="line">180</div><div class="line">181</div><div class="line">182</div><div class="line">183</div><div class="line">184</div><div class="line">185</div><div class="line">186</div><div class="line">187</div><div class="line">188</div><div class="line">189</div><div class="line">190</div><div class="line">191</div><div class="line">192</div><div class="line">193</div><div class="line">194</div><div class="line">195</div><div class="line">196</div><div class="line">197</div><div class="line">198</div><div class="line">199</div><div class="line">200</div><div class="line">201</div><div class="line">202</div><div class="line">203</div><div class="line">204</div><div class="line">205</div></pre></td><td class="code"><pre><div class="line">public abstract class AsyncTaskLoader&lt;D&gt; extends Loader&lt;D&gt; &#123;</div><div class="line">    static final String TAG = &quot;AsyncTaskLoader&quot;;</div><div class="line">    static final boolean DEBUG = false;</div><div class="line"></div><div class="line">    final class LoadTask extends ModernAsyncTask&lt;Void, Void, D&gt; implements Runnable &#123;</div><div class="line">        </div><div class="line">        private final CountDownLatch mDone = new CountDownLatch(1);</div><div class="line"></div><div class="line">        //表示该Task已经被post到了Handler当中，用来做延时操作。</div><div class="line">        boolean waiting;</div><div class="line"></div><div class="line">        /* Runs on a worker thread */</div><div class="line">        @Override</div><div class="line">        protected D doInBackground(Void... params) &#123;</div><div class="line">            try &#123;</div><div class="line">                //在后台获取数据。</div><div class="line">                D data = AsyncTaskLoader.this.onLoadInBackground();</div><div class="line">                return data;</div><div class="line">            //onLoadInBackground表明要取消。</div><div class="line">            &#125; catch (OperationCanceledException ex) &#123; </div><div class="line">                if (!isCancelled()) &#123;</div><div class="line">                    //LoaderManager仍然期望得到结果，因此继续抛出这个异常。</div><div class="line">                    throw ex;</div><div class="line">                &#125;</div><div class="line">                return null;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        //完成。</div><div class="line">        @Override</div><div class="line">        protected void onPostExecute(D data) &#123;</div><div class="line">            if (DEBUG) Log.v(TAG, this + &quot; onPostExecute&quot;);</div><div class="line">            try &#123;</div><div class="line">                AsyncTaskLoader.this.dispatchOnLoadComplete(this, data);</div><div class="line">            &#125; finally &#123;</div><div class="line">                mDone.countDown();</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        //取消。</div><div class="line">        @Override</div><div class="line">        protected void onCancelled(D data) &#123;</div><div class="line">            if (DEBUG) Log.v(TAG, this + &quot; onCancelled&quot;);</div><div class="line">            try &#123;</div><div class="line">                AsyncTaskLoader.this.dispatchOnCancelled(this, data);</div><div class="line">            &#125; finally &#123;</div><div class="line">                mDone.countDown();</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        //由于实现了Runnable接口，在这里执行executePendingTask。</div><div class="line">        @Override</div><div class="line">        public void run() &#123;</div><div class="line">            waiting = false;</div><div class="line">            AsyncTaskLoader.this.executePendingTask();</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        //在计数达到0时，一直等待，也就是onPostExecute或onCancelled回调了。</div><div class="line">        public void waitForLoader() &#123;</div><div class="line">            try &#123;</div><div class="line">                mDone.await();</div><div class="line">            &#125; catch (InterruptedException e) &#123;</div><div class="line">                // Ignore</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private final Executor mExecutor;</div><div class="line"></div><div class="line">    volatile LoadTask mTask;</div><div class="line">    volatile LoadTask mCancellingTask;</div><div class="line"></div><div class="line">    long mUpdateThrottle;</div><div class="line">    long mLastLoadCompleteTime = -10000;</div><div class="line">    Handler mHandler;</div><div class="line"></div><div class="line">    public AsyncTaskLoader(Context context) &#123;</div><div class="line">        this(context, ModernAsyncTask.THREAD_POOL_EXECUTOR);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private AsyncTaskLoader(Context context, Executor executor) &#123;</div><div class="line">        super(context);</div><div class="line">        mExecutor = executor;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    //从上一次loadInBackground返回，到下次Task执行的时间。</div><div class="line">    public void setUpdateThrottle(long delayMS) &#123;</div><div class="line">        mUpdateThrottle = delayMS;</div><div class="line">        if (delayMS != 0) &#123;</div><div class="line">            mHandler = new Handler();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    protected void onForceLoad() &#123;</div><div class="line">        super.onForceLoad();</div><div class="line">        cancelLoad(); //这里会回调onCancelLoad。</div><div class="line">        mTask = new LoadTask(); //新建一个Task。</div><div class="line">        executePendingTask(); //执行这个Task。</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    //cancelLoad后回调。</div><div class="line">    @Override</div><div class="line">    protected boolean onCancelLoad() &#123;</div><div class="line">        //当前没有Task在执行。</div><div class="line">        if (mTask != null) &#123;</div><div class="line">            //如果正在等待一个被取消的任务执行完毕，那么先取消最后的那个任务。</div><div class="line">            if (mCancellingTask != null) &#123;</div><div class="line">                if (mTask.waiting) &#123;</div><div class="line">                    mTask.waiting = false;</div><div class="line">                    mHandler.removeCallbacks(mTask);</div><div class="line">                &#125;</div><div class="line">                mTask = null;</div><div class="line">                return false;</div><div class="line">            &#125; else if (mTask.waiting) &#123; //如果当前的任务正在等待被执行，那么直接取消它。</div><div class="line">                mTask.waiting = false;</div><div class="line">                mHandler.removeCallbacks(mTask);</div><div class="line">                mTask = null;</div><div class="line">                return false;</div><div class="line">            &#125; else &#123;</div><div class="line">                //如果当前的任务已经开始执行了，那么先记录下，赋值给mCancellingTask。</div><div class="line">                boolean cancelled = mTask.cancel(false);</div><div class="line">                if (cancelled) &#123;</div><div class="line">                    mCancellingTask = mTask;</div><div class="line">                    cancelLoadInBackground();</div><div class="line">                &#125;</div><div class="line">                mTask = null;</div><div class="line">                return cancelled;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return false;</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    //dispatchOnCancelled 或者在 dispatchOnLoadComplete 是判断是 abandon 了。</div><div class="line">    public void onCanceled(D data) &#123;&#125;</div><div class="line"></div><div class="line">    void executePendingTask() &#123;</div><div class="line">        if (mCancellingTask == null &amp;&amp; mTask != null) &#123;</div><div class="line">            //如果mTask正在等待被执行。</div><div class="line">            if (mTask.waiting) &#123;</div><div class="line">                mTask.waiting = false; //那么把它从队列中移除。</div><div class="line">                mHandler.removeCallbacks(mTask);</div><div class="line">            &#125;</div><div class="line">            if (mUpdateThrottle &gt; 0) &#123;</div><div class="line">                long now = SystemClock.uptimeMillis();</div><div class="line">                if (now &lt; (mLastLoadCompleteTime+mUpdateThrottle)) &#123;</div><div class="line">                    //放入等待队列当中。</div><div class="line">                    mTask.waiting = true;</div><div class="line">                    mHandler.postAtTime(mTask, mLastLoadCompleteTime+mUpdateThrottle);</div><div class="line">                    return;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">            //执行这个任务。</div><div class="line">            mTask.executeOnExecutor(mExecutor, (Void[]) null);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    void dispatchOnCancelled(LoadTask task, D data) &#123;</div><div class="line">        onCanceled(data); //回调onCanceled.</div><div class="line">        if (mCancellingTask == task) &#123; //如果被取消的task执行完了。</div><div class="line">            rollbackContentChanged(); </div><div class="line">            mLastLoadCompleteTime = SystemClock.uptimeMillis();</div><div class="line">            mCancellingTask = null;</div><div class="line">            deliverCancellation(); //通过被取消的task执行完了。</div><div class="line">            executePendingTask(); //执行当前的Task。</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    void dispatchOnLoadComplete(LoadTask task, D data) &#123;</div><div class="line">        if (mTask != task) &#123; //如果执行完的task不是最新的。</div><div class="line">            dispatchOnCancelled(task, data);</div><div class="line">        &#125; else &#123;</div><div class="line">            if (isAbandoned()) &#123; //如果被abandon了。</div><div class="line">                onCanceled(data);</div><div class="line">            &#125; else &#123;</div><div class="line">                commitContentChanged();</div><div class="line">                mLastLoadCompleteTime = SystemClock.uptimeMillis();</div><div class="line">                mTask = null;</div><div class="line">                deliverResult(data);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public abstract D loadInBackground();</div><div class="line">    </div><div class="line">    //mTask在后台执行时回调这个方法。</div><div class="line">    protected D onLoadInBackground() &#123;</div><div class="line">        return loadInBackground();</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    //mTask在执行过程中被通过cancelLoad()取消了。</div><div class="line">    public void cancelLoadInBackground() &#123;&#125;</div><div class="line"></div><div class="line">    public boolean isLoadInBackgroundCanceled() &#123;</div><div class="line">        return mCancellingTask != null;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void waitForLoader() &#123;</div><div class="line">        LoadTask task = mTask;</div><div class="line">        if (task != null) &#123;</div><div class="line">            task.waitForLoader();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h1 id="四、自定义Loader"><a href="#四、自定义Loader" class="headerlink" title="四、自定义Loader"></a>四、自定义<code>Loader</code></h1><p>关于如何实现<code>AsyncTaskLoader</code>，系统提供了一个很好的例子，那就是<code>CursorLoader</code>，它用来读取<code>ContentProvider</code>中的数据，并支持传入关于查询的<code>projection/selection/selectionArgs</code>等条件，最终返回一个<code>cursor</code>，在返回之后负责<code>cursor</code>的关闭。<br>为了更加灵活，我们参照它的写法，抽象出其中的关键代码，让使用者最多只需要负责两样东西：</p>
+<ul>
+<li>数据的加载</li>
+<li>资源的释放</li>
+</ul>
+<p><code>BaseLoader</code>的实现者只需要关注下面这三个方法：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">//异步加载数据，这个Bundle就是onCreateLoader时传入的Bundle，我们可以把查询的关键词放在其中，这个是子类必须实现的方法。</div><div class="line">protected abstract Result loadData(Bundle bundle);</div><div class="line">//下面两个方法是用于结果资源的回收，例如cursor的关闭，当我们的返回值只是一些基本数据类型时，并不需要实现它。</div><div class="line">protected void releaseResult(Result result) &#123;&#125;</div><div class="line">protected boolean isResultReleased(Result result) &#123; return true; &#125;</div></pre></td></tr></table></figure></p>
+<p>下面是全部的实现代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div></pre></td><td class="code"><pre><div class="line">public abstract class BaseDataLoader&lt;Result&gt; extends AsyncTaskLoader&lt;Result&gt; &#123;</div><div class="line"></div><div class="line">    Result mResult;</div><div class="line">    Bundle mBundles;</div><div class="line">    CancellationSignal mCancellationSignal;</div><div class="line"></div><div class="line">    //所有的子类最多只需要实现下面的三个方法，而不要回收资源的只用实现loadData就可以了。</div><div class="line">    protected abstract Result loadData(Bundle bundle);</div><div class="line">    protected void releaseResult(Result result) &#123;&#125;</div><div class="line">    protected boolean isResultReleased(Result result) &#123; return true; &#125;</div><div class="line"></div><div class="line">    public BaseDataLoader(Context context, Bundle bundle) &#123;</div><div class="line">        super(context);</div><div class="line">        mBundles = bundle;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public Result loadInBackground() &#123;</div><div class="line">        synchronized (this) &#123;</div><div class="line">            if (isLoadInBackgroundCanceled()) &#123;</div><div class="line">                throw new OperationCanceledException();</div><div class="line">            &#125;</div><div class="line">            mCancellationSignal = new CancellationSignal();</div><div class="line">        &#125;</div><div class="line">        try &#123;</div><div class="line">            return loadData(mBundles);</div><div class="line">        &#125; finally &#123;</div><div class="line">            synchronized (this) &#123;</div><div class="line">                mCancellationSignal = null;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void cancelLoadInBackground() &#123;</div><div class="line">        super.cancelLoadInBackground();</div><div class="line">        synchronized (this) &#123;</div><div class="line">            if (mCancellationSignal != null) &#123;</div><div class="line">                mCancellationSignal.cancel();</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void deliverResult(Result result) &#123;</div><div class="line">        if (isReset()) &#123;</div><div class="line">            if (result != null &amp;&amp; !isResultReleased(result)) &#123;</div><div class="line">                releaseResult(result);</div><div class="line">            &#125;</div><div class="line">            return;</div><div class="line">        &#125;</div><div class="line">        Result oldResult = mResult;</div><div class="line">        mResult = result;</div><div class="line">        if (isStarted()) &#123;</div><div class="line">            super.deliverResult(result);</div><div class="line">        &#125;</div><div class="line">        if (oldResult != null &amp;&amp; oldResult != result &amp;&amp; !isResultReleased(oldResult)) &#123;</div><div class="line">            releaseResult(oldResult);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    protected void onStartLoading() &#123;</div><div class="line">        if (mResult != null) &#123;</div><div class="line">            deliverResult(mResult);</div><div class="line">        &#125;</div><div class="line">        if (takeContentChanged() || mResult == null) &#123;</div><div class="line">            forceLoad();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    protected void onStopLoading() &#123;</div><div class="line">        cancelLoad();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void onCanceled(Result result) &#123;</div><div class="line">        if (result != null &amp;&amp; !isResultReleased(result)) &#123;</div><div class="line">            releaseResult(result);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    protected void onReset() &#123;</div><div class="line">        super.onReset();</div><div class="line">        onStopLoading();</div><div class="line">        if (mResult != null &amp;&amp; !isResultReleased(mResult)) &#123;</div><div class="line">            releaseResult(mResult);</div><div class="line">        &#125;</div><div class="line">        mResult = null;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/03/08/Loader/Loader-知识梳理(2)---initLoader和restartLoader的区别/" rel="next" title="Loader 知识梳理(2) - initLoader和restartLoader的区别">
+                <i class="fa fa-chevron-left"></i> Loader 知识梳理(2) - initLoader和restartLoader的区别
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/03/09/Retrofit/Retrofit-知识梳理(1)---流程分析/" rel="prev" title="Retrofit 知识梳理(1) - 流程分析">
+                Retrofit 知识梳理(1) - 流程分析 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="zeMao" />
+          <p class="site-author-name" itemprop="name">zeMao</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">104</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">24</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、概述"><span class="nav-number">1.</span> <span class="nav-text">一、概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、Loader-lt-D-gt-类"><span class="nav-number">2.</span> <span class="nav-text">二、Loader<D>类</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、AsyncTaskLoader"><span class="nav-number">3.</span> <span class="nav-text">三、AsyncTaskLoader</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四、自定义Loader"><span class="nav-number">4.</span> <span class="nav-text">四、自定义Loader</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zeMao</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,740 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="一、概述在前面两篇文章当中，我们介绍了synchronized的基本使用和原理，但是在使用synchronized保证数据一致性的同时，我们希望能够让线程之间进行一些交互逻辑，也是我们今天要介绍的等待/通知模型，那么就需要使用到wait/notify。 二、等待/通知相关方法2.1 方法说明下面，我们先介绍等待/通知机制的相关方法，首先要说明两点：  这些都是Object定义的方法 调用这些方法的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="多线程知识梳理(4) - synchronized 三部曲之等待&#x2F;通知模型">
+<meta property="og:url" content="http://yoursite.com/2017/05/05/多线程/多线程知识梳理(4)---synchronized-三部曲之等待-通知模型/index.html">
+<meta property="og:site_name" content="zeMao&#39;s Blog">
+<meta property="og:description" content="一、概述在前面两篇文章当中，我们介绍了synchronized的基本使用和原理，但是在使用synchronized保证数据一致性的同时，我们希望能够让线程之间进行一些交互逻辑，也是我们今天要介绍的等待/通知模型，那么就需要使用到wait/notify。 二、等待/通知相关方法2.1 方法说明下面，我们先介绍等待/通知机制的相关方法，首先要说明两点：  这些都是Object定义的方法 调用这些方法的">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-cd58d49fbbd236c5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-3497701a1482b326.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-d5798a318b8c8281.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-febc0f2cbc884bc4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-add0979bc7229931.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-bc42d9e8cc847dfd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-bc42d9e8cc847dfd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-38456e34948bb108.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-4d0b527326a65a6b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-33e2ba405dffa721.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2017-06-28T06:47:04.230Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="多线程知识梳理(4) - synchronized 三部曲之等待&#x2F;通知模型">
+<meta name="twitter:description" content="一、概述在前面两篇文章当中，我们介绍了synchronized的基本使用和原理，但是在使用synchronized保证数据一致性的同时，我们希望能够让线程之间进行一些交互逻辑，也是我们今天要介绍的等待/通知模型，那么就需要使用到wait/notify。 二、等待/通知相关方法2.1 方法说明下面，我们先介绍等待/通知机制的相关方法，首先要说明两点：  这些都是Object定义的方法 调用这些方法的">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-cd58d49fbbd236c5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/05/05/多线程/多线程知识梳理(4)---synchronized-三部曲之等待-通知模型/"/>
+
+
+
+
+
+  <title>多线程知识梳理(4) - synchronized 三部曲之等待/通知模型 | zeMao's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">zeMao's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/05/05/多线程/多线程知识梳理(4)---synchronized-三部曲之等待-通知模型/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zeMao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="zeMao's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">多线程知识梳理(4) - synchronized 三部曲之等待/通知模型</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-05T21:49:00+08:00">
+                2017-05-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/多线程知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">多线程知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="一、概述"><a href="#一、概述" class="headerlink" title="一、概述"></a>一、概述</h1><p>在前面两篇文章当中，我们介绍了<code>synchronized</code>的基本使用和原理，但是在使用<code>synchronized</code>保证数据一致性的同时，我们希望能够让线程之间进行一些交互逻辑，也是我们今天要介绍的等待/通知模型，那么就需要使用到<code>wait/notify</code>。</p>
+<h1 id="二、等待-通知相关方法"><a href="#二、等待-通知相关方法" class="headerlink" title="二、等待/通知相关方法"></a>二、等待/通知相关方法</h1><h2 id="2-1-方法说明"><a href="#2-1-方法说明" class="headerlink" title="2.1 方法说明"></a>2.1 方法说明</h2><p>下面，我们先介绍等待/通知机制的相关方法，首先要说明两点：</p>
+<ul>
+<li>这些都是<code>Object</code>定义的方法</li>
+<li>调用这些方法的前提条件是：该线程已经获得了<code>Object</code>对象所关联的锁，也就是说它们需要位于<code>synchronized</code>修饰的同步代码块中。</li>
+</ul>
+<p><strong>(a) wait() </strong><br>调用该方法的线程进入等待状态，并释放它所获取的对象锁，只有出现这两种情况之一，它才会从<code>wait</code>方法中返回，否则将会一直处于等待状态：</p>
+<ul>
+<li>其它线程通过<code>notify / notifyAll</code>方法通知该线程，并且该线程获取到了对象锁</li>
+<li>线程被中断</li>
+</ul>
+<p><strong>(b) wait(long) / wait(long, int)</strong><br>和<code>wait</code>方法相同，差别是增加一种从<code>wait</code>方法返回的情况：等待的时间已经到了，并且获取到了对象锁。</p>
+<p><strong>(c) notify()</strong><br>通知位于等待队列中的第一个线程，使其从<code>wait()</code>方法返回，而被通知的线程的继续执行需要等到它获得对象所为止。<br>需要注意，调用<code>notify</code>方法后，并不会立刻释放它所持有的对象锁，这需要等到它执行完同步代码块为止。</p>
+<p><strong>(d) notifyAll()</strong><br>与<code>notify()</code>类似，但是它是通知所有在对象上等待的线程。</p>
+<h2 id="2-2-实现原理"><a href="#2-2-实现原理" class="headerlink" title="2.2 实现原理"></a>2.2 实现原理</h2><p>通过上面的介绍，我们可以看到，在整个等待/通知机制当中，线程被挂起时主要有以下三种状态：等待状态、超时等待状态、阻塞状态，这些状态都是通过<code>synchroized</code>所修饰的对象来实现的。</p>
+<p>在前面我们介绍<code>synchronized</code>原理的时候，曾经说过每个对象都会和一个<code>Monitor</code>相关联，其实每个<code>Monitor</code>又包含有两个队列：等待队列和同步队列，其中等待队列中存放是进入等待状态的线程，而同步队列中存放的是等待获取锁的线程。</p>
+<p>下面，我们通过一段简单的伪代码来立即两个线程的状态转换过程：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">synchronized public void waitThread() &#123;</div><div class="line">    //执行a方法.</div><div class="line">    wait();</div><div class="line">    //执行b方法</div><div class="line">&#125;</div><div class="line"></div><div class="line">synchronized public void notifyThread() &#123;</div><div class="line">    //执行c方法</div><div class="line">    notify();</div><div class="line">    //执行d方法</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>我们有<code>AB</code>两个线程，我们模拟以下的一系列行为：</p>
+<p><strong>(1) A 线程执行 waitThread 方法</strong><br>此时由于对象锁没有被任何线程持有，因此，<code>A</code>线程成为对象锁的持有者：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-cd58d49fbbd236c5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br><strong>(2) B 线程执行 notifyThread 方法</strong><br>当<code>B</code>线程执行<code>notifyThread</code>方法时，由于此时对象锁已经被<code>A</code>线程持有，因此它被加入到同步队列中：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-3497701a1482b326.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br><strong>(3) A 线程执行 a 方法</strong><br><img src="http://upload-images.jianshu.io/upload_images/1949836-d5798a318b8c8281.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br><strong>(4) A 线程执行 wait 方法 </strong><br>当<code>A</code>线程执行<code>wait</code>方法后，它会释放对象锁，并加入到同步队列当中，而<code>B</code>线程则成为对象锁新的持有者：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-febc0f2cbc884bc4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br><strong>(5) B 线程执行 c 方法</strong><br><img src="http://upload-images.jianshu.io/upload_images/1949836-add0979bc7229931.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br><strong>(6) B 线程执行 notify 方法</strong><br>此时会唤醒等待队列中<code>A</code>线程，但是此时<code>B</code>线程仍然持有对象锁，因此，<code>A</code>线程只能被加入到同步队列：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-bc42d9e8cc847dfd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br><strong>(7) B 线程执行 d 方法</strong><br><img src="http://upload-images.jianshu.io/upload_images/1949836-bc42d9e8cc847dfd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br><strong>(8) B 线程从 notifyThread 方法返回</strong><br>此时<code>A</code>线程重新获取到对象锁，因此它被从同步队列中取出，继续执行接下来的逻辑：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-38456e34948bb108.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br><strong>(9) A 线程执行 b 方法</strong><br><img src="http://upload-images.jianshu.io/upload_images/1949836-4d0b527326a65a6b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br><strong>(10) A 线程从 waitThread 方法中返回</strong><br>当<code>A</code>线程从同步方法返回之后，那么会释放它所持有的锁<br><img src="http://upload-images.jianshu.io/upload_images/1949836-33e2ba405dffa721.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h1 id="三、等待-通知的经典范式"><a href="#三、等待-通知的经典范式" class="headerlink" title="三、等待/通知的经典范式"></a>三、等待/通知的经典范式</h1><p>对于等待/通知模型，我们可以总结出它的经典范式，分别针对等待方和通知方。</p>
+<h2 id="3-1-等待方"><a href="#3-1-等待方" class="headerlink" title="3.1 等待方"></a>3.1 等待方</h2><p>等待方遵循如下的原则：</p>
+<ul>
+<li>获取对象的锁</li>
+<li>如果条件不满足，那么调用对象的<code>wait</code>方法，被通知后仍然需要检查条件</li>
+<li>条件满足则继续执行对应的逻辑</li>
+</ul>
+<p>对应的伪代码为：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">synchronized( 对象 ) &#123;</div><div class="line">    while( 条件不满足 ) &#123;</div><div class="line">        对象.wait();</div><div class="line">    &#125;</div><div class="line">    对应的处理逻辑</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="3-2-通知方"><a href="#3-2-通知方" class="headerlink" title="3.2 通知方"></a>3.2 通知方</h2><p>通知方遵循如下的原则：</p>
+<ul>
+<li>获得对象的锁</li>
+<li>改变条件</li>
+<li>通知所有等待在对象上的线程</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">synchronized( 对象 ) &#123;</div><div class="line">    改变条件;</div><div class="line">    对象.notifyAll();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/05/05/Android-数据存储/Android-数据存储知识梳理(3)---SharedPreference-源码解析/" rel="next" title="Android 数据存储知识梳理(3) - SharedPreference 源码解析">
+                <i class="fa fa-chevron-left"></i> Android 数据存储知识梳理(3) - SharedPreference 源码解析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/05/07/多线程/多线程知识梳理(5)---线程池四部曲之-Executor-框架/" rel="prev" title="多线程知识梳理(5) - 线程池四部曲之 Executor 框架">
+                多线程知识梳理(5) - 线程池四部曲之 Executor 框架 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="zeMao" />
+          <p class="site-author-name" itemprop="name">zeMao</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">104</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">24</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、概述"><span class="nav-number">1.</span> <span class="nav-text">一、概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、等待-通知相关方法"><span class="nav-number">2.</span> <span class="nav-text">二、等待/通知相关方法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-方法说明"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 方法说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-实现原理"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 实现原理</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、等待-通知的经典范式"><span class="nav-number">3.</span> <span class="nav-text">三、等待/通知的经典范式</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-等待方"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 等待方</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-通知方"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 通知方</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zeMao</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

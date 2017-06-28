@@ -1,0 +1,736 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="一、前言在 Retrofit 知识梳理(1) - 流程分析 中，我们对于Retrofit的流程进行了简单的分析，大家谈到Retrofit的时候，往往也会提到动态代理，今天这篇文章，我们就来一起研究一下这一过程的内部实现。 二、内部实现涉及到动态代理的部分为下面这两句：1234//1.返回代理对象GitHubService service = retrofit.create(GitHubServic">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Retrofit 知识梳理(2) - Retrofit 动态代理内部实现">
+<meta property="og:url" content="http://yoursite.com/2017/06/01/Retrofit/Retrofit-知识梳理(2)---Retrofit-动态代理内部实现/index.html">
+<meta property="og:site_name" content="zeMao&#39;s Blog">
+<meta property="og:description" content="一、前言在 Retrofit 知识梳理(1) - 流程分析 中，我们对于Retrofit的流程进行了简单的分析，大家谈到Retrofit的时候，往往也会提到动态代理，今天这篇文章，我们就来一起研究一下这一过程的内部实现。 二、内部实现涉及到动态代理的部分为下面这两句：1234//1.返回代理对象GitHubService service = retrofit.create(GitHubServic">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-72e23e146d4581a2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-2faa0fa800e7fd85.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2017-06-28T06:47:04.230Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Retrofit 知识梳理(2) - Retrofit 动态代理内部实现">
+<meta name="twitter:description" content="一、前言在 Retrofit 知识梳理(1) - 流程分析 中，我们对于Retrofit的流程进行了简单的分析，大家谈到Retrofit的时候，往往也会提到动态代理，今天这篇文章，我们就来一起研究一下这一过程的内部实现。 二、内部实现涉及到动态代理的部分为下面这两句：1234//1.返回代理对象GitHubService service = retrofit.create(GitHubServic">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-72e23e146d4581a2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/06/01/Retrofit/Retrofit-知识梳理(2)---Retrofit-动态代理内部实现/"/>
+
+
+
+
+
+  <title>Retrofit 知识梳理(2) - Retrofit 动态代理内部实现 | zeMao's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">zeMao's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/01/Retrofit/Retrofit-知识梳理(2)---Retrofit-动态代理内部实现/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zeMao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="zeMao's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Retrofit 知识梳理(2) - Retrofit 动态代理内部实现</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-01T21:13:00+08:00">
+                2017-06-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Retrofit-知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">Retrofit 知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="一、前言"><a href="#一、前言" class="headerlink" title="一、前言"></a>一、前言</h1><p>在 <a href="http://www.jianshu.com/p/721fb07a1cff" target="_blank" rel="external">Retrofit 知识梳理(1) - 流程分析</a> 中，我们对于<code>Retrofit</code>的流程进行了简单的分析，大家谈到<code>Retrofit</code>的时候，往往也会提到动态代理，今天这篇文章，我们就来一起研究一下这一过程的内部实现。</p>
+<h1 id="二、内部实现"><a href="#二、内部实现" class="headerlink" title="二、内部实现"></a>二、内部实现</h1><p>涉及到动态代理的部分为下面这两句：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">//1.返回代理对象</div><div class="line">GitHubService service = retrofit.create(GitHubService.class);</div><div class="line">//2.调用该代理对象的接口方法</div><div class="line">Call&lt;ResponseBody&gt; call = service.listRepos(&quot;octocat&quot;);</div></pre></td></tr></table></figure></p>
+<h2 id="2-1-生成代理对象"><a href="#2-1-生成代理对象" class="headerlink" title="2.1 生成代理对象"></a>2.1 生成代理对象</h2><p>第一步的目的就是通过<code>Retrofit</code>的<code>create</code>方法，根据<code>GithubService</code>这个接口所声明的方法来得到一个代理对象：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">@SuppressWarnings(&quot;unchecked&quot;) // Single-interface proxy creation guarded by parameter safety.</div><div class="line">public &lt;T&gt; T create(final Class&lt;T&gt; service) &#123;</div><div class="line">  //...忽略</div><div class="line">  return (T) Proxy.newProxyInstance(service.getClassLoader(), new Class&lt;?&gt;[] &#123; service &#125;,</div><div class="line">      new InvocationHandler() &#123;</div><div class="line">        private final Platform platform = Platform.get();</div><div class="line"></div><div class="line">        @Override public Object invoke(Object proxy, Method method, Object[] args)</div><div class="line">            throws Throwable &#123;</div><div class="line">          //...</div><div class="line"></div><div class="line">          //1.得到ServiceMethod对象.</div><div class="line">          ServiceMethod&lt;Object, Object&gt; serviceMethod = (ServiceMethod&lt;Object, Object&gt;) loadServiceMethod(method);</div><div class="line"></div><div class="line">          //2.通过serviceMethod和args来构建OkHttpCall对象，args就是“octocat”.</div><div class="line">          OkHttpCall&lt;Object&gt; okHttpCall = new OkHttpCall&lt;&gt;(serviceMethod, args);</div><div class="line"></div><div class="line">          //3.其实就是调用ExecutorCallbackCall.adapt方法.</div><div class="line">          return serviceMethod.callAdapter.adapt(okHttpCall);</div><div class="line">        &#125;</div><div class="line">      &#125;);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>可以看到，这里面最核心的方法就是：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Proxy.newProxyInstance(ClassLoader loader, Class&lt;?&gt;[] interfaces, InvocationHandler h)</div></pre></td></tr></table></figure></p>
+<p>以上三个形参的含义为：</p>
+<ul>
+<li><code>ClassLoader</code>：表示由哪一个<code>ClassLoader</code>来加载这个代理类。</li>
+<li><code>Class&lt;?&gt;[]</code>：一个<code>interface</code>对象的数组，表明将要给被代理的对象提供一组什么样的接口来访问，这个可能比较抽象。从上面的例子来说，我们传入的是<code>GitHubService.class</code>，而它是一个接口，其方法包含有<code>listRepos</code>，那么<code>Proxy.newProxyInstance</code>所生成的代理对象也会有这个接口<code>listRepos</code>，所以我们才能在第二步当中调用它的方法。</li>
+<li><code>InvocationHandler</code>：当调用代理对象的接口方法时，最终会回调到这个<code>InvocationHandler</code>对象的<code>invoke</code>方法中。</li>
+</ul>
+<p>在对形参进行了简要的介绍之后，我们再来看一下其内部的实现：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">public static Object newProxyInstance(ClassLoader loader, Class&lt;?&gt;[] interfaces, InvocationHandler h) throws IllegalArgumentException &#123;</div><div class="line">    if (h == null) &#123;</div><div class="line">        throw new NullPointerException();</div><div class="line">    &#125;</div><div class="line">    //1.根据前两个参数创建一个代理类.</div><div class="line">    Class&lt;?&gt; cl = getProxyClass0(loader, interfaces);</div><div class="line">    try &#123;</div><div class="line">        //2.实例化该代理类，并将第三个参数作为成员变量.</div><div class="line">        final Constructor&lt;?&gt; cons = cl.getConstructor(constructorParams);</div><div class="line">        return newInstance(cons, h);</div><div class="line">    &#125; catch (NoSuchMethodException e) &#123;</div><div class="line">        throw new InternalError(e.toString());</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>可以看到，生成代理对象又可以细分为两步：</p>
+<ul>
+<li>根据类加载器和声明的接口，首先创建一个代理类，该代理类继承于<code>Proxy</code>，并且它实现了<code>interfaces</code>数组中所声明的接口</li>
+<li>实例化第一步中创建的代理类，并将第三个参数所对象的<code>InvocationHandler</code>传入作为其成员变量<code>h</code>。</li>
+</ul>
+<h3 id="2-1-1-创建代理类"><a href="#2-1-1-创建代理类" class="headerlink" title="2.1.1 创建代理类"></a>2.1.1 创建代理类</h3><p>创建代理类的代码比较多，也就是对应于<code>getProxyClass0</code>方法：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div></pre></td><td class="code"><pre><div class="line">private static Class&lt;?&gt; getProxyClass0(ClassLoader loader, Class&lt;?&gt;... interfaces) &#123;</div><div class="line">        if (interfaces.length &gt; 65535) &#123;</div><div class="line">            throw new IllegalArgumentException(&quot;interface limit exceeded&quot;);</div><div class="line">        &#125;</div><div class="line">        //最终要创建的代理类</div><div class="line">        Class&lt;?&gt; proxyClass = null;</div><div class="line">        String[] interfaceNames = new String[interfaces.length];</div><div class="line">        Set&lt;Class&lt;?&gt;&gt; interfaceSet = new HashSet&lt;&gt;();</div><div class="line">        //1.遍历传入的接口数组</div><div class="line">        for (int i = 0; i &lt; interfaces.length; i++) &#123;</div><div class="line">            String interfaceName = interfaces[i].getName();</div><div class="line">            Class&lt;?&gt; interfaceClass = null;</div><div class="line">            try &#123;</div><div class="line">                interfaceClass = Class.forName(interfaceName, false, loader);</div><div class="line">            &#125; catch (ClassNotFoundException e) &#123;</div><div class="line">            &#125;</div><div class="line">            if (interfaceClass != interfaces[i]) &#123;</div><div class="line">                throw new IllegalArgumentException(</div><div class="line">                    interfaces[i] + &quot; is not visible from class loader&quot;);</div><div class="line">            &#125;</div><div class="line">            //必须是接口</div><div class="line">            if (!interfaceClass.isInterface()) &#123;</div><div class="line">                throw new IllegalArgumentException(</div><div class="line">                    interfaceClass.getName() + &quot; is not an interface&quot;);</div><div class="line">            &#125;</div><div class="line">            //不允许重复</div><div class="line">            if (interfaceSet.contains(interfaceClass)) &#123;</div><div class="line">                throw new IllegalArgumentException(</div><div class="line">                    &quot;repeated interface: &quot; + interfaceClass.getName());</div><div class="line">            &#125;</div><div class="line">            interfaceSet.add(interfaceClass);</div><div class="line"></div><div class="line">            interfaceNames[i] = interfaceName;</div><div class="line">        &#125;</div><div class="line">        //2.如果之前已经生成过，那么就不需要再去生成.</div><div class="line">        List&lt;String&gt; key = Arrays.asList(interfaceNames);</div><div class="line">        Map&lt;List&lt;String&gt;, Object&gt; cache;</div><div class="line">        synchronized (loaderToCache) &#123;</div><div class="line">            cache = loaderToCache.get(loader);</div><div class="line">            if (cache == null) &#123;</div><div class="line">                cache = new HashMap&lt;&gt;();</div><div class="line">                loaderToCache.put(loader, cache);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        synchronized (cache) &#123;</div><div class="line">            do &#123;</div><div class="line">                Object value = cache.get(key);</div><div class="line">                if (value instanceof Reference) &#123;</div><div class="line">                    proxyClass = (Class&lt;?&gt;) ((Reference) value).get();</div><div class="line">                &#125;</div><div class="line">                if (proxyClass != null) &#123;</div><div class="line">                    return proxyClass;</div><div class="line">                &#125; else if (value == pendingGenerationMarker) &#123;</div><div class="line">                    try &#123;</div><div class="line">                        cache.wait();</div><div class="line">                    &#125; catch (InterruptedException e) &#123;</div><div class="line">                    &#125;</div><div class="line">                    continue;</div><div class="line">                &#125; else &#123;</div><div class="line">                    cache.put(key, pendingGenerationMarker);</div><div class="line">                    break;</div><div class="line">                &#125;</div><div class="line">            &#125; while (true);</div><div class="line">        &#125;</div><div class="line">        //3.真正的产生操作.</div><div class="line">        try &#123;</div><div class="line">            String proxyPkg = null;</div><div class="line">            for (int i = 0; i &lt; interfaces.length; i++) &#123;</div><div class="line">                int flags = interfaces[i].getModifiers();</div><div class="line">                if (!Modifier.isPublic(flags)) &#123;</div><div class="line">                    String name = interfaces[i].getName();</div><div class="line">                    int n = name.lastIndexOf(&apos;.&apos;);</div><div class="line">                    String pkg = ((n == -1) ? &quot;&quot; : name.substring(0, n + 1));</div><div class="line">                    if (proxyPkg == null) &#123;</div><div class="line">                        proxyPkg = pkg;</div><div class="line">                    &#125; else if (!pkg.equals(proxyPkg)) &#123;</div><div class="line">                        throw new IllegalArgumentException(</div><div class="line">                            &quot;non-public interfaces from different packages&quot;);</div><div class="line">                    &#125;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            if (proxyPkg == null) &#123;</div><div class="line">                proxyPkg = &quot;&quot;;</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            &#123;</div><div class="line">                List&lt;Method&gt; methods = getMethods(interfaces);</div><div class="line">                Collections.sort(methods, ORDER_BY_SIGNATURE_AND_SUBTYPE);</div><div class="line">                validateReturnTypes(methods);</div><div class="line">                List&lt;Class&lt;?&gt;[]&gt; exceptions = deduplicateAndGetExceptions(methods);</div><div class="line"></div><div class="line">                Method[] methodsArray = methods.toArray(new Method[methods.size()]);</div><div class="line">                Class&lt;?&gt;[][] exceptionsArray = exceptions.toArray(new Class&lt;?&gt;[exceptions.size()][]);</div><div class="line"></div><div class="line">                final long num;</div><div class="line">                synchronized (nextUniqueNumberLock) &#123;</div><div class="line">                    num = nextUniqueNumber++;</div><div class="line">                &#125;</div><div class="line">                String proxyName = proxyPkg + proxyClassNamePrefix + num;</div><div class="line"></div><div class="line">                proxyClass = generateProxy(proxyName, interfaces, loader, methodsArray,</div><div class="line">                        exceptionsArray);</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            proxyClasses.put(proxyClass, null);</div><div class="line"></div><div class="line">        &#125; finally &#123;</div><div class="line">            synchronized (cache) &#123;</div><div class="line">                if (proxyClass != null) &#123;</div><div class="line">                    cache.put(key, new WeakReference&lt;Class&lt;?&gt;&gt;(proxyClass));</div><div class="line">                &#125; else &#123;</div><div class="line">                    cache.remove(key);</div><div class="line">                &#125;</div><div class="line">                cache.notifyAll();</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return proxyClass;</div><div class="line">    &#125;</div></pre></td></tr></table></figure></p>
+<h2 id="2-1-2-实例化代理类"><a href="#2-1-2-实例化代理类" class="headerlink" title="2.1.2 实例化代理类"></a>2.1.2 实例化代理类</h2><p>当创建完代理类之后，接下来就是进行实例化，这里实例化调用的是参数为<code>InvocationHandler</code>的构造函数：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">protected Proxy(InvocationHandler h) &#123;</div><div class="line">     this.h = h;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>也就是说，最后通过<code>Proxy.newProxyInstance</code>返回的代理类实例，其内部的<code>InvocationHandler</code>对象，就是通过第三个参数所传入的对象，而当我们调用代理类所声明的方法时，最终会调用到该<code>InvocationHandler</code>的<code>invoke</code>方法，通过<code>invoke</code>方法的参数，我们又可以区分具体调用的方法。</p>
+<h2 id="2-2-调用代理对象的接口方法"><a href="#2-2-调用代理对象的接口方法" class="headerlink" title="2.2 调用代理对象的接口方法"></a>2.2 调用代理对象的接口方法</h2><p>通过第一步，我们就可以得到一个代理对象，而当我们调用这个代理对象的接口方法之后，该代理对象又会回调它的基类<code>Proxy</code>中的这个方法：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">private static Object invoke(Proxy proxy, Method method, Object[] args) throws Throwable &#123;</div><div class="line">    InvocationHandler h = proxy.h;</div><div class="line">    return h.invoke(proxy, method, args);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><code>invoke</code>的三个参数解释为：</p>
+<ul>
+<li><code>Proxy</code>：代理对象实例，也就是上面在<code>2.1</code>中所返回的实例对象。</li>
+<li><code>Method</code>：代理对象所被调用的对应接口方法。</li>
+<li><code>Object[]</code>：接口方法所传入的参数。</li>
+</ul>
+<h1 id="三、示例"><a href="#三、示例" class="headerlink" title="三、示例"></a>三、示例</h1><p>在第二节当中，我们对于源码进行了简单的走读，下面，我们以一个具体的示例来强化一下认识：</p>
+<h2 id="3-1-实例代码"><a href="#3-1-实例代码" class="headerlink" title="3.1 实例代码"></a>3.1 实例代码</h2><p><strong> (1) 接口类</strong></p>
+<p>对应于我们在上面所定义的<code>GitHubService.java</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">public interface Subject &#123;</div><div class="line">    public CallObject getCallObject(String args);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><strong>(2) 请求类</strong></p>
+<p>对应于最终发起网络请求的类：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">public class CallObject &#123;</div><div class="line"></div><div class="line">    private String args;</div><div class="line"></div><div class="line">    public CallObject(String args) &#123;</div><div class="line">        this.args = args;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void call() &#123;</div><div class="line">        Log.d(&quot;simulate&quot;, &quot;call args=&quot; + args);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><strong>(3) 模拟代理过程</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">public class Simulator &#123;</div><div class="line"></div><div class="line">    public static void simulate() &#123;</div><div class="line">        Class mClass = Subject.class;</div><div class="line">        Subject proxySubject = (Subject) Proxy.newProxyInstance(</div><div class="line">                mClass.getClassLoader(),</div><div class="line">                new Class[]&#123; mClass &#125;,</div><div class="line">                new InvocationHandler() &#123;</div><div class="line"></div><div class="line">                    @Override</div><div class="line">                    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable &#123;</div><div class="line">                        String modifiedArgs = (String) args[0] + &quot; after modified&quot;;</div><div class="line">                        Log.d(&quot;simulate&quot;, &quot;invoke&quot;);</div><div class="line">                        return new CallObject(modifiedArgs);</div><div class="line">                    &#125;</div><div class="line"></div><div class="line">                &#125;);</div><div class="line">        Log.d(&quot;simulate&quot;, &quot;createProxy finished&quot;);</div><div class="line">        CallObject callObject = proxySubject.getCallObject(&quot;args&quot;);</div><div class="line">        Log.d(&quot;simulate&quot;, &quot;getCallObject finished&quot;);</div><div class="line">        callObject.call();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="3-2-示例详解"><a href="#3-2-示例详解" class="headerlink" title="3.2 示例详解"></a>3.2 示例详解</h2><p>按照我们之前的分析，在上面的模拟过程中的第三步，会返回一个代理类，我们来看一下这个代理类具体是什么：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-72e23e146d4581a2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>通过断点，我们可以看到它不再是我们之前声明的接口，而是一个代理类<code>$Proxy</code>，它的内部有一个<code>InvocationHandler</code>的实现类<code>h</code>，也就是我们通过<code>newProxyInstance</code>传入的实例。</p>
+<p>之后，我们调用该代理类的接口方法，那么上面的<code>h</code>对象的<code>invoke</code>方法的就被回调，我们可以从中获取到传入的参数、注解等信息，通过该信息，我们构造出一个<code>CallObject</code>对象。</p>
+<p>最后，再通过这个<code>CallObject</code>发起请求：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-2faa0fa800e7fd85.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h1 id="四、总结"><a href="#四、总结" class="headerlink" title="四、总结"></a>四、总结</h1><p>普通的代理模式，往往会在<code>InvocationHandler</code>的实现类中包含一个接口的实现类，当该<code>InvocationHandler</code>的<code>invoke</code>方法被回调时，再调用他所包含的接口实现类进行操作，并在之前和之后进行一些处理的操作。对于标准的动态代理，可以参考 <a href="http://paddy-w.iteye.com/blog/841798" target="_blank" rel="external">这篇文章</a>。</p>
+<p><code>Retrofit</code>用到的动态代理，并不能算是严格的代理模式。它只是利用了代理模式中<code>invoke</code>这一中转过程，来解析接口中的注解声明，然后通过这些注解声明来创建一个请求类，最终再通过该请求类来发起请求。</p>
+<p>也就是说，<code>Retrofit</code>所关注的重点在于如何创建<code>invoke</code>方法所返回的实例，而普通的代理模式则在于控制接口实现类的访问。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/05/21/NDK/NDK-知识梳理(2)---使用-CMake-进行-NDK-开发之如何编写-CMakeLists-txt-脚本/" rel="next" title="NDK 知识梳理(2) - 使用 CMake 进行 NDK 开发之如何编写 CMakeLists.txt 脚本">
+                <i class="fa fa-chevron-left"></i> NDK 知识梳理(2) - 使用 CMake 进行 NDK 开发之如何编写 CMakeLists.txt 脚本
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/06/03/插件化/插件化知识梳理(1)---Small-框架之如何引入应用插件/" rel="prev" title="插件化知识梳理(1) - Small 框架之如何引入应用插件">
+                插件化知识梳理(1) - Small 框架之如何引入应用插件 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="zeMao" />
+          <p class="site-author-name" itemprop="name">zeMao</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">104</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">24</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、前言"><span class="nav-number">1.</span> <span class="nav-text">一、前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、内部实现"><span class="nav-number">2.</span> <span class="nav-text">二、内部实现</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-生成代理对象"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 生成代理对象</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-1-创建代理类"><span class="nav-number">2.1.1.</span> <span class="nav-text">2.1.1 创建代理类</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-2-实例化代理类"><span class="nav-number">2.2.</span> <span class="nav-text">2.1.2 实例化代理类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-调用代理对象的接口方法"><span class="nav-number">2.3.</span> <span class="nav-text">2.2 调用代理对象的接口方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、示例"><span class="nav-number">3.</span> <span class="nav-text">三、示例</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-实例代码"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 实例代码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-示例详解"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 示例详解</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四、总结"><span class="nav-number">4.</span> <span class="nav-text">四、总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zeMao</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

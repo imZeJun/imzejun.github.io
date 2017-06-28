@@ -1,0 +1,728 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="一、概述经过前面三篇文章的分析：  绘制流程 - Measure 绘制过程 - Layout 绘制过程 - Draw  对于绘制的整个分发过程已经有了一个大致的了解，我们可以发现一个规律，无论是测量、布局还是绘制，对于任何一个View/Group来说，它都是一个至上而下的递归事件调用，直到到达整个View树的叶节点为止。下面，我们来分析几个平时常用的方法：  requestLayout inval">
+<meta property="og:type" content="article">
+<meta property="og:title" content="View 绘制体系知识梳理(6) - 绘制过程之 requestLayout 和 invalidate 详解">
+<meta property="og:url" content="http://yoursite.com/2017/02/28/View-绘制体系/View-绘制体系知识梳理(6)---绘制过程之-requestLayout-和-invalidate-详解/index.html">
+<meta property="og:site_name" content="zeMao&#39;s Blog">
+<meta property="og:description" content="一、概述经过前面三篇文章的分析：  绘制流程 - Measure 绘制过程 - Layout 绘制过程 - Draw  对于绘制的整个分发过程已经有了一个大致的了解，我们可以发现一个规律，无论是测量、布局还是绘制，对于任何一个View/Group来说，它都是一个至上而下的递归事件调用，直到到达整个View树的叶节点为止。下面，我们来分析几个平时常用的方法：  requestLayout inval">
+<meta property="og:updated_time" content="2017-06-28T06:47:04.230Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="View 绘制体系知识梳理(6) - 绘制过程之 requestLayout 和 invalidate 详解">
+<meta name="twitter:description" content="一、概述经过前面三篇文章的分析：  绘制流程 - Measure 绘制过程 - Layout 绘制过程 - Draw  对于绘制的整个分发过程已经有了一个大致的了解，我们可以发现一个规律，无论是测量、布局还是绘制，对于任何一个View/Group来说，它都是一个至上而下的递归事件调用，直到到达整个View树的叶节点为止。下面，我们来分析几个平时常用的方法：  requestLayout inval">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/02/28/View-绘制体系/View-绘制体系知识梳理(6)---绘制过程之-requestLayout-和-invalidate-详解/"/>
+
+
+
+
+
+  <title>View 绘制体系知识梳理(6) - 绘制过程之 requestLayout 和 invalidate 详解 | zeMao's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">zeMao's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/02/28/View-绘制体系/View-绘制体系知识梳理(6)---绘制过程之-requestLayout-和-invalidate-详解/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zeMao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="zeMao's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">View 绘制体系知识梳理(6) - 绘制过程之 requestLayout 和 invalidate 详解</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-02-28T21:06:00+08:00">
+                2017-02-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/View-绘制体系知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">View 绘制体系知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="一、概述"><a href="#一、概述" class="headerlink" title="一、概述"></a>一、概述</h1><p>经过前面三篇文章的分析：</p>
+<ul>
+<li><a href="http://www.jianshu.com/p/8bfdeaf01661" target="_blank" rel="external"><code>绘制流程 - Measure</code></a></li>
+<li><a href="http://www.jianshu.com/p/6b8c99dd2dd6" target="_blank" rel="external"><code>绘制过程 - Layout</code></a></li>
+<li><a href="http://www.jianshu.com/p/531804c77247" target="_blank" rel="external"><code>绘制过程 - Draw</code></a></li>
+</ul>
+<p>对于绘制的整个分发过程已经有了一个大致的了解，我们可以发现一个规律，无论是测量、布局还是绘制，对于任何一个<code>View/Group</code>来说，它都是一个至上而下的递归事件调用，直到到达整个<code>View</code>树的叶节点为止。<br>下面，我们来分析几个平时常用的方法：</p>
+<ul>
+<li><code>requestLayout</code></li>
+<li><code>invalidate</code></li>
+<li><code>postInvalidate</code></li>
+</ul>
+<h1 id="二、requestLayout"><a href="#二、requestLayout" class="headerlink" title="二、requestLayout"></a>二、<code>requestLayout</code></h1><p><code>requestLayout</code>是在<code>View</code>中定义的，并且在<code>ViewGroup</code>中没有重写该方法，它的注释是这样解释的：在需要刷新<code>View</code>的布局时调用这个函数，它会安排一个布局的传递。我们不应该在布局的过程中（<code>isInLayout()</code>）调用这个函数，如果当前正在布局，那么这一请求有可能在以下时刻被执行：当前布局结束、当前帧被绘制完或者下次布局发生时。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div></pre></td><td class="code"><pre><div class="line">/**</div><div class="line"> * Call this when something has changed which has invalidated the</div><div class="line"> * layout of this view. This will schedule a layout pass of the view</div><div class="line"> * tree. This should not be called while the view hierarchy is currently in a layout</div><div class="line"> * pass (&#123;@link #isInLayout()&#125;. If layout is happening, the request may be honored at the</div><div class="line"> * end of the current layout pass (and then layout will run again) or after the current</div><div class="line"> * frame is drawn and the next layout occurs.</div><div class="line"> *</div><div class="line"> * &lt;p&gt;Subclasses which override this method should call the superclass method to</div><div class="line"> * handle possible request-during-layout errors correctly.&lt;/p&gt;</div><div class="line"> */</div><div class="line">@CallSuper</div><div class="line">public void requestLayout() &#123;</div><div class="line">    if (mMeasureCache != null) mMeasureCache.clear();</div><div class="line"></div><div class="line">    if (mAttachInfo != null &amp;&amp; mAttachInfo.mViewRequestingLayout == null) &#123;</div><div class="line">        // Only trigger request-during-layout logic if this is the view requesting it,</div><div class="line">        // not the views in its parent hierarchy</div><div class="line">        ViewRootImpl viewRoot = getViewRootImpl();</div><div class="line">        if (viewRoot != null &amp;&amp; viewRoot.isInLayout()) &#123;</div><div class="line">            if (!viewRoot.requestLayoutDuringLayout(this)) &#123;</div><div class="line">                return;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        mAttachInfo.mViewRequestingLayout = this;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    mPrivateFlags |= PFLAG_FORCE_LAYOUT;</div><div class="line">    mPrivateFlags |= PFLAG_INVALIDATED;</div><div class="line"></div><div class="line">    if (mParent != null &amp;&amp; !mParent.isLayoutRequested()) &#123;</div><div class="line">        mParent.requestLayout();</div><div class="line">    &#125;</div><div class="line">    if (mAttachInfo != null &amp;&amp; mAttachInfo.mViewRequestingLayout == this) &#123;</div><div class="line">        mAttachInfo.mViewRequestingLayout = null;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>在上面的代码当中，设置了两个标志位：<code>PFLAG_FORCE_LAYOUT/PFLAG_INVALIDATED</code>，除此之外最关键的一句话是：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">protected ViewParent mParent;</div><div class="line">//....</div><div class="line">mParent.requestLayout();</div></pre></td></tr></table></figure></p>
+<p>这个<code>mParent</code>存储的时候该<code>View</code>所对应的父节点，而当调用父节点的<code>requestLayout()</code>时，它又会调用它的父节点的<code>requestLayout</code>，就这样，以调用<code>requestLayout</code>的<code>View</code>为起始节点，一步步沿着<code>View</code>树传递上去，那么这个过程什么时候会终止呢？<br>根据前面的分析，我们知道整个<code>View</code>树的根节点是<code>DecorView</code>，那么我们需要看一下<code>DecorView</code>的<code>mParent</code>变量是什么，回到<code>ViewRootImpl</code>的<code>setView</code>方法当中，有这么一句：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">view.assignParent(this);</div></pre></td></tr></table></figure></p>
+<p>因此，<code>DecorView</code>中的<code>mParent</code>就是<code>ViewRootImpl</code>，而<code>ViewRootImpl</code>中的<code>mView</code>就是<code>DecorView</code>，所以，这一传递过程的终点就是<code>ViewRootImpl</code>的<code>requestLayout</code>方法：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div></pre></td><td class="code"><pre><div class="line">//ViewRootImpl中的requestLayout方法.</div><div class="line">@Override</div><div class="line">public void requestLayout() &#123;</div><div class="line">    if (!mHandlingLayoutInLayoutRequest) &#123;</div><div class="line">        checkThread();</div><div class="line">        mLayoutRequested = true;</div><div class="line">        scheduleTraversals();</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">void scheduleTraversals() &#123;</div><div class="line">    if (!mTraversalScheduled) &#123;</div><div class="line">        mTraversalScheduled = true;</div><div class="line">        mTraversalBarrier = mHandler.getLooper().getQueue().postSyncBarrier();</div><div class="line">        //该Runnable进行操作doTraversal.</div><div class="line">        mChoreographer.postCallback(Choreographer.CALLBACK_TRAVERSAL, mTraversalRunnable, null);</div><div class="line">        if (!mUnbufferedInputDispatch) &#123;</div><div class="line">            scheduleConsumeBatchedInput();</div><div class="line">        &#125;</div><div class="line">        notifyRendererOfFramePending();</div><div class="line">        pokeDrawLockIfNeeded();</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">final class TraversalRunnable implements Runnable &#123;</div><div class="line">    @Override</div><div class="line">    public void run() &#123;</div><div class="line">        doTraversal();</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">void doTraversal() &#123;</div><div class="line">    if (mTraversalScheduled) &#123;</div><div class="line">        mTraversalScheduled = false;</div><div class="line">        mHandler.getLooper().getQueue().removeSyncBarrier(mTraversalBarrier);</div><div class="line"></div><div class="line">        if (mProfile) &#123;</div><div class="line">            Debug.startMethodTracing(&quot;ViewAncestor&quot;);</div><div class="line">        &#125;</div><div class="line">        //这里最终会进行布局.</div><div class="line">        performTraversals();</div><div class="line"></div><div class="line">        if (mProfile) &#123;</div><div class="line">            Debug.stopMethodTracing();</div><div class="line">            mProfile = false;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>其中<code>scheduleTraversals()</code>中会执行一个<code>mTraversalRunnable</code>，该<code>Runnable</code>中最终会调用<code>doTraversal</code>，而<code>doTraversal</code>中执行的就是我们前面一直在谈到的<code>performTraversals</code>。<br>那么，前面我们分析过，<code>performTraversals</code>的<code>measure</code>方法会从根节点调用子节点的测量操作，并依次传递下去，那么是否所有的子<code>View</code>都有必要重新测量呢，这就需要我们在调用<code>View</code>的<code>requestLayout</code>是设置的标志位<code>PFLAG_FORCE_LAYOUT</code>来判断，在<code>measure</code>当中，调用<code>onMeasure</code>之前，会有这么一个判断条件：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">if ((mPrivateFlags &amp; PFLAG_FORCE_LAYOUT) == PFLAG_FORCE_LAYOUT ||</div><div class="line">                widthMeasureSpec != mOldWidthMeasureSpec ||</div><div class="line">                heightMeasureSpec != mOldHeightMeasureSpec) &#123;</div><div class="line">    onMeasure(widthMeasureSpec, heightMeasureSpec);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这个标志位会在<code>layout</code>完成之后被恢复：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">public void layout(int l, int t, int r, int b) &#123;</div><div class="line">    if (changed || (mPrivateFlags &amp; PFLAG_LAYOUT_REQUIRED) == PFLAG_LAYOUT_REQUIRED) &#123;</div><div class="line">        onLayout(changed, l, t, r, b);</div><div class="line">    &#125;</div><div class="line">    mPrivateFlags &amp;= ~PFLAG_FORCE_LAYOUT;</div><div class="line">    mPrivateFlags3 |= PFLAG3_IS_LAID_OUT;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>在进行完<code>layout</code>之后，<code>requestLayout()</code>所引发的过程就此终止了，它不会调用<code>draw</code>，不会重新绘制任何视图包括该调用者本身。</p>
+<h1 id="三、invalidate"><a href="#三、invalidate" class="headerlink" title="三、invalidate"></a>三、<code>invalidate</code></h1><p><code>invalidate</code>最终会调用到下面这个方法：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div></pre></td><td class="code"><pre><div class="line">void invalidateInternal(int l, int t, int r, int b, boolean invalidateCache,</div><div class="line">        boolean fullInvalidate) &#123;</div><div class="line">    if (mGhostView != null) &#123;</div><div class="line">        mGhostView.invalidate(true);</div><div class="line">        return;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    if (skipInvalidate()) &#123;</div><div class="line">        return;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    if ((mPrivateFlags &amp; (PFLAG_DRAWN | PFLAG_HAS_BOUNDS)) == (PFLAG_DRAWN | PFLAG_HAS_BOUNDS)</div><div class="line">            || (invalidateCache &amp;&amp; (mPrivateFlags &amp; PFLAG_DRAWING_CACHE_VALID) == PFLAG_DRAWING_CACHE_VALID)</div><div class="line">            || (mPrivateFlags &amp; PFLAG_INVALIDATED) != PFLAG_INVALIDATED</div><div class="line">            || (fullInvalidate &amp;&amp; isOpaque() != mLastIsOpaque)) &#123;</div><div class="line">        if (fullInvalidate) &#123;</div><div class="line">            mLastIsOpaque = isOpaque();</div><div class="line">            mPrivateFlags &amp;= ~PFLAG_DRAWN;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        mPrivateFlags |= PFLAG_DIRTY;</div><div class="line"></div><div class="line">        if (invalidateCache) &#123;</div><div class="line">            mPrivateFlags |= PFLAG_INVALIDATED;</div><div class="line">            mPrivateFlags &amp;= ~PFLAG_DRAWING_CACHE_VALID;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        // Propagate the damage rectangle to the parent view.</div><div class="line">        final AttachInfo ai = mAttachInfo;</div><div class="line">        final ViewParent p = mParent;</div><div class="line">        if (p != null &amp;&amp; ai != null &amp;&amp; l &lt; r &amp;&amp; t &lt; b) &#123;</div><div class="line">            final Rect damage = ai.mTmpInvalRect;</div><div class="line">            damage.set(l, t, r, b);</div><div class="line">            p.invalidateChild(this, damage);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        // Damage the entire projection receiver, if necessary.</div><div class="line">        if (mBackground != null &amp;&amp; mBackground.isProjected()) &#123;</div><div class="line">            final View receiver = getProjectionReceiver();</div><div class="line">            if (receiver != null) &#123;</div><div class="line">                receiver.damageInParent();</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        // Damage the entire IsolatedZVolume receiving this view&apos;s shadow.</div><div class="line">        if (isHardwareAccelerated() &amp;&amp; getZ() != 0) &#123;</div><div class="line">            damageShadowReceiver();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>其中，关键的一句是：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">p.invalidateChild(this, damage);</div></pre></td></tr></table></figure></p>
+<p>在这里，<code>p</code>一定不为空并且它一定是一个<code>ViewGroup</code>，那么我们来看一下<code>ViewGroup</code>的这个方法：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">public final void invalidateChild(View child, final Rect dirty) &#123;</div><div class="line">    do &#123;</div><div class="line">        parent = parent.invalidateChildInParent(location, dirty);</div><div class="line">    &#125; while (parent != null);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>而<code>ViewGroup</code>当中的<code>invalidateChildInParent</code>会根据传入的区域来决定自己的绘制区域，和<code>requestLayout</code>类似，最终会调用<code>ViewRootImpl</code>的该方法：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">@Override</div><div class="line">public ViewParent invalidateChildInParent(int[] location, Rect dirty) &#123;</div><div class="line">    checkThread();</div><div class="line">    if (DEBUG_DRAW) Log.v(TAG, &quot;Invalidate child: &quot; + dirty);</div><div class="line"></div><div class="line">    if (dirty == null) &#123;</div><div class="line">        invalidate();</div><div class="line">        return null;</div><div class="line">    &#125; else if (dirty.isEmpty() &amp;&amp; !mIsAnimating) &#123;</div><div class="line">        return null;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    if (mCurScrollY != 0 || mTranslator != null) &#123;</div><div class="line">        mTempRect.set(dirty);</div><div class="line">        dirty = mTempRect;</div><div class="line">        if (mCurScrollY != 0) &#123;</div><div class="line">            dirty.offset(0, -mCurScrollY);</div><div class="line">        &#125;</div><div class="line">        if (mTranslator != null) &#123;</div><div class="line">            mTranslator.translateRectInAppWindowToScreen(dirty);</div><div class="line">        &#125;</div><div class="line">        if (mAttachInfo.mScalingRequired) &#123;</div><div class="line">            dirty.inset(-1, -1);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    invalidateRectOnScreen(dirty);</div><div class="line">    return null;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这其中又会调用<code>invalidate</code>：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">void invalidate() &#123;</div><div class="line">    mDirty.set(0, 0, mWidth, mHeight);</div><div class="line">    if (!mWillDrawSoon) &#123;</div><div class="line">        scheduleTraversals();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这里，最终又会走到前面说的<code>performTraversals()</code>方法，请求重绘<code>View</code>树，即<code>draw()</code>过程，假如视图发生大小没有变化就不会调用<code>layout()</code>过程，并且只绘制那些需要重绘的视图。</p>
+<h1 id="三、其它知识点"><a href="#三、其它知识点" class="headerlink" title="三、其它知识点"></a>三、其它知识点</h1><ul>
+<li><code>invalidate</code>，请求重新<code>draw</code>，只会绘制调用者本身。</li>
+<li><code>setSelection</code>，同上。</li>
+<li><code>setVisibility</code>：当<code>View</code>从<code>INVISIBLE</code>变为<code>VISIBILE</code>，会间接调用<code>invalidate</code>方法，继而绘制该<code>View</code>，而从<code>INVISIBLE/VISIBLE</code>变为<code>GONE</code>之后，由于<code>View</code>树的大小发生了变化，会进行<code>measure/layout/draw</code>，同样，他只会绘制需要重绘的视图。</li>
+<li><code>setEnable</code>：请求重新<code>draw</code>，只会绘制调用者本身。</li>
+<li><code>requestFocus</code>：请求重新<code>draw</code>，只会绘制需要重绘的视图。</li>
+</ul>
+<h1 id="四、参考文献"><a href="#四、参考文献" class="headerlink" title="四、参考文献"></a>四、参考文献</h1><p><a href="http://blog.csdn.net/yanbober/article/details/46128379/" target="_blank" rel="external"><code>1.http://blog.csdn.net/yanbober/article/details/46128379/</code></a><br><a href="http://blog.csdn.net/a553181867/article/details/51583060" target="_blank" rel="external"><code>2.http://blog.csdn.net/a553181867/article/details/51583060</code></a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/02/28/View-绘制体系/View-绘制体系知识梳理(5)---绘制过程之-Draw-详解/" rel="next" title="View 绘制体系知识梳理(6) - 绘制过程之 requestLayout 和 invalidate 详解">
+                <i class="fa fa-chevron-left"></i> View 绘制体系知识梳理(6) - 绘制过程之 requestLayout 和 invalidate 详解
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/03/02/Canvas-&-Paint/Canvas&Paint-知识梳理(2)---Canvas-的保存和恢复/" rel="prev" title="Canvas&Paint 知识梳理(2) - Canvas 的保存和恢复">
+                Canvas&Paint 知识梳理(2) - Canvas 的保存和恢复 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="zeMao" />
+          <p class="site-author-name" itemprop="name">zeMao</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">104</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">24</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、概述"><span class="nav-number">1.</span> <span class="nav-text">一、概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、requestLayout"><span class="nav-number">2.</span> <span class="nav-text">二、requestLayout</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、invalidate"><span class="nav-number">3.</span> <span class="nav-text">三、invalidate</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、其它知识点"><span class="nav-number">4.</span> <span class="nav-text">三、其它知识点</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四、参考文献"><span class="nav-number">5.</span> <span class="nav-text">四、参考文献</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zeMao</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

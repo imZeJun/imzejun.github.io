@@ -1,0 +1,777 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="Material Design 控件知识梳理(1) - Android Design Support Library 是什么Material Design 控件知识梳理(2) - AppBarLayout &amp;amp; CollapsingToolbarLayoutMaterial Design 控件知识梳理(3) - BottomSheet &amp;amp;&amp;amp; BottomSheetDialo">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Material Design 控件知识梳理(3) - BottomSheet &amp;&amp; BottomSheetDialog &amp;&amp; BottomSheetDialogFragment">
+<meta property="og:url" content="http://yoursite.com/2017/04/12/Material-Design-控件/Material-Design-控件知识梳理(3)---BottomSheet-&&-BottomSheetDialog-&&-Bottom/index.html">
+<meta property="og:site_name" content="zeMao&#39;s Blog">
+<meta property="og:description" content="Material Design 控件知识梳理(1) - Android Design Support Library 是什么Material Design 控件知识梳理(2) - AppBarLayout &amp;amp; CollapsingToolbarLayoutMaterial Design 控件知识梳理(3) - BottomSheet &amp;amp;&amp;amp; BottomSheetDialo">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-af25cafbf35f7c60.gif?imageMogr2/auto-orient/strip">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-a97e435dc766d765.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-1c62bc30fb8ecbf1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-e995b8ea474e4812.gif?imageMogr2/auto-orient/strip">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-5f1fd51600ab51ca.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-dfa352b9220f186a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-0fbecb8ca4abea55.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-dd6229bb846b659c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2017-06-28T06:47:04.226Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Material Design 控件知识梳理(3) - BottomSheet &amp;&amp; BottomSheetDialog &amp;&amp; BottomSheetDialogFragment">
+<meta name="twitter:description" content="Material Design 控件知识梳理(1) - Android Design Support Library 是什么Material Design 控件知识梳理(2) - AppBarLayout &amp;amp; CollapsingToolbarLayoutMaterial Design 控件知识梳理(3) - BottomSheet &amp;amp;&amp;amp; BottomSheetDialo">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-af25cafbf35f7c60.gif?imageMogr2/auto-orient/strip">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/04/12/Material-Design-控件/Material-Design-控件知识梳理(3)---BottomSheet-&&-BottomSheetDialog-&&-Bottom/"/>
+
+
+
+
+
+  <title>Material Design 控件知识梳理(3) - BottomSheet && BottomSheetDialog && BottomSheetDialogFragment | zeMao's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">zeMao's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/04/12/Material-Design-控件/Material-Design-控件知识梳理(3)---BottomSheet-&&-BottomSheetDialog-&&-Bottom/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zeMao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="zeMao's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Material Design 控件知识梳理(3) - BottomSheet && BottomSheetDialog && BottomSheetDialogFragment</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-12T17:06:00+08:00">
+                2017-04-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Material-Design-控件知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">Material Design 控件知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p><a href="http://www.jianshu.com/p/32b2638a1785" target="_blank" rel="external">Material Design 控件知识梳理(1) - Android Design Support Library 是什么</a><br><a href="http://www.jianshu.com/p/d4fd636d7c44" target="_blank" rel="external">Material Design 控件知识梳理(2) - AppBarLayout &amp; CollapsingToolbarLayout</a><br><a href="http://www.jianshu.com/p/2a5be29123e5" target="_blank" rel="external">Material Design 控件知识梳理(3) - BottomSheet &amp;&amp; BottomSheetDialog &amp;&amp; BottomSheetDialogFragment</a><br><a href="http://www.jianshu.com/p/5a354e318019" target="_blank" rel="external">Material Design 控件知识梳理(4) - FloatingActionButton</a><br><a href="http://www.jianshu.com/p/d70cfd724c7f" target="_blank" rel="external">Material Design 控件知识梳理(5) - DrawerLayout &amp;&amp; NavigationView</a><br><a href="http://www.jianshu.com/p/6aea94f9ae2f" target="_blank" rel="external">Material Design 控件知识梳理(6) - Snackbar</a><br><a href="http://www.jianshu.com/p/22ec4fc1cb71" target="_blank" rel="external">Material Design 控件知识梳理(7) - BottomNavigationBar</a><br><a href="http://www.jianshu.com/p/5dd04fda13ab" target="_blank" rel="external">Material Design 控件知识梳理(8) - TabLayout</a><br><a href="http://www.jianshu.com/p/ed9642fc8634" target="_blank" rel="external">Material Design 控件知识梳理(9) - TextInputLayout</a></p>
+</blockquote>
+<h1 id="一、概述"><a href="#一、概述" class="headerlink" title="一、概述"></a>一、概述</h1><p>今天，我们介绍三种底部菜单的实现方式，不同于之前的弹窗，它们支持通过手势对底部菜单的布局进行拖动，来显示或者隐藏，类似于下面的效果：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-af25cafbf35f7c60.gif?imageMogr2/auto-orient/strip" alt=""><br>这三个布局各有特点：</p>
+<ul>
+<li><code>BottomSheet</code><br>依赖于<code>CoordinatorLayout</code>和<code>BottomSheetBehavior</code>，需要将底部菜单布局作为<code>CoordinatorLayout</code>的子<code>View</code>，实现简单但不够灵活，适用于<strong>底部菜单布局稳定</strong>的情况。</li>
+<li><code>BottomSheetDialog</code><br>使用方式类似于<code>Dialog</code>，适用于需要<strong>动态指定底部菜单布局</strong>的情况。</li>
+<li><code>BottomSheetDialogFragment</code><br>通过继承于<code>BottomSheetFragment</code>来实现底部菜单布局，适用于需要<strong>动态指定布局，并根据<code>Fragment</code>的生命周期做较多逻辑操作</strong>的情况。</li>
+</ul>
+<h1 id="二、BottomSheet详解"><a href="#二、BottomSheet详解" class="headerlink" title="二、BottomSheet详解"></a>二、<code>BottomSheet</code>详解</h1><p><code>BottomSheet</code>需要依赖于<code>CoordinatorLayout</code>，采用<code>BottomSheet</code>的时候，我们的布局一般类似于下面这样：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-a97e435dc766d765.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">&lt;android.support.design.widget.CoordinatorLayout </div><div class="line">    xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;</div><div class="line">    xmlns:tools=&quot;http://schemas.android.com/tools&quot;</div><div class="line">    android:layout_width=&quot;match_parent&quot;</div><div class="line">    android:layout_height=&quot;match_parent&quot;</div><div class="line">    tools:context=&quot;com.demo.lizejun.repotransition.BottomSheetActivity&quot;&gt;</div><div class="line">    &lt;!-- 其它布局 --&gt;</div><div class="line">    &lt;!-- 底部菜单布局 --&gt;</div><div class="line">    &lt;include layout=&quot;@layout/layout_bottom_sheet_linear&quot;/&gt;</div><div class="line">&lt;/android.support.design.widget.CoordinatorLayout&gt;</div></pre></td></tr></table></figure></p>
+<p>下面，我们用两种方式来实现<code>BottomSheet</code>的底部菜单：</p>
+<ul>
+<li><code>LinearLayout</code></li>
+<li><code>RecyclerView</code></li>
+</ul>
+<h2 id="2-1-LinearLayout实现的BottomSheet"><a href="#2-1-LinearLayout实现的BottomSheet" class="headerlink" title="2.1 LinearLayout实现的BottomSheet"></a>2.1 <code>LinearLayout</code>实现的<code>BottomSheet</code></h2><p>在进行实例演示之前，我们先介绍<code>BottomSheet</code>的五种状态：</p>
+<ul>
+<li><code>STATE_DRAGGING</code>：手指在<code>BottomSheet</code>上下拖动从而使得布局跟着上下移动。</li>
+<li><code>STATE_SETTLING</code>：当手指抬起之后，会根据当前的偏移量，决定是要将<code>BottomSheet</code>收起还是展开。</li>
+</ul>
+<p>这两种属于中间态，类似于<code>ViewPager</code>的<code>SCROLL_STATE_DRAGGING</code>和<code>SCROLL_STATE_SETTLING</code>。</p>
+<ul>
+<li><code>STATE_EXPANDED</code>：展开。</li>
+<li><code>STATE_COLLAPSED</code>：收起。</li>
+<li><code>STATE_HIDDEN</code>：隐藏。</li>
+</ul>
+<p>这三种属于稳定态，当<code>BottomSheet</code>稳定下来，最终都会恢复到上面三种状态之一，展开很容易理解，需要区别的是收起和隐藏：</p>
+<ul>
+<li>隐藏：意味着整个底部布局完全不可见，默认情况下没有这种状态，需要设置<code>app:behavior_hideable=&quot;true&quot;</code></li>
+<li>收起：我们可以设置收起时的高度，让它仍然部分可见，并可以通过拖动这部分布局让它进入到展开状态，收起时的高度通过<code>app:behavior_peekHeight</code>设置。</li>
+</ul>
+<p>下面是我们底部菜单的<code>LinearLayout</code>，也就是上面<code>include</code>的布局：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</div><div class="line">&lt;LinearLayout</div><div class="line">    xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;</div><div class="line">    xmlns:app=&quot;http://schemas.android.com/apk/res-auto&quot;</div><div class="line">    android:id=&quot;@+id/bottom_sheet&quot;</div><div class="line">    android:layout_width=&quot;match_parent&quot;</div><div class="line">    android:layout_height=&quot;wrap_content&quot;</div><div class="line">    android:orientation=&quot;vertical&quot;</div><div class="line">    app:behavior_hideable=&quot;true&quot;</div><div class="line">    app:behavior_peekHeight=&quot;66dp&quot;</div><div class="line">    app:layout_behavior=&quot;@string/bottom_sheet_behavior&quot;&gt;</div><div class="line">    &lt;TextView</div><div class="line">        android:layout_width=&quot;match_parent&quot;</div><div class="line">        android:layout_height=&quot;66dp&quot;</div><div class="line">        android:background=&quot;@android:color/holo_green_dark&quot; /&gt;</div><div class="line">    &lt;TextView</div><div class="line">        android:background=&quot;@android:color/holo_orange_dark&quot;</div><div class="line">        android:layout_width=&quot;match_parent&quot;</div><div class="line">        android:layout_height=&quot;66dp&quot; /&gt;</div><div class="line">    &lt;TextView</div><div class="line">        android:background=&quot;@android:color/holo_green_dark&quot;</div><div class="line">        android:layout_width=&quot;match_parent&quot;</div><div class="line">        android:layout_height=&quot;66dp&quot; /&gt;</div><div class="line">    &lt;TextView</div><div class="line">        android:background=&quot;@android:color/holo_orange_dark&quot;</div><div class="line">        android:layout_width=&quot;match_parent&quot;</div><div class="line">        android:layout_height=&quot;66dp&quot; /&gt;</div><div class="line">    &lt;TextView</div><div class="line">        android:background=&quot;@android:color/holo_green_dark&quot;</div><div class="line">        android:layout_width=&quot;match_parent&quot;</div><div class="line">        android:layout_height=&quot;66dp&quot; /&gt;</div><div class="line">    &lt;TextView</div><div class="line">        android:background=&quot;@android:color/holo_orange_dark&quot;</div><div class="line">        android:layout_width=&quot;match_parent&quot;</div><div class="line">        android:layout_height=&quot;66dp&quot; /&gt;</div><div class="line">&lt;/LinearLayout&gt;</div></pre></td></tr></table></figure></p>
+<p>这个底部菜单的根布局中有三个关键的属性：</p>
+<ul>
+<li><p>必须设置：<code>layout_behavior</code>，只有设置了这个才能达到<code>BottomSheet</code>的效果，否则和放置一个普通布局没有区别：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">app:layout_behavior=&quot;@string/bottom_sheet_behavior&quot;</div></pre></td></tr></table></figure>
+</li>
+<li><p>必须设置：收起高度，否则在监听偏移的时候会出现异常：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">app:behavior_peekHeight=&quot;66dp&quot;</div></pre></td></tr></table></figure>
+</li>
+<li><p>可选设置：是否支持隐藏，如果设置为<code>false</code>，或者没有设置，那么不允许调用<code>setState(BottomSheetBehavior.STATE_HIDDEN)</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">app:behavior_hideable=&quot;true&quot;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>这样，一个底部菜单布局的声明就完成了，接下来，我们通过<code>BottomSheetBehavior</code>来管理这个菜单：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">private View mBottomLayout;</div><div class="line">private BottomSheetBehavior mBottomSheetBehavior;</div><div class="line"></div><div class="line">@Override</div><div class="line">protected void onCreate(Bundle savedInstanceState) &#123;</div><div class="line">    super.onCreate(savedInstanceState);</div><div class="line">    setContentView(R.layout.activity_bottom_sheet);</div><div class="line">    //1.通过id获得底部菜单布局的实例</div><div class="line">    mBottomLayout = findViewById(R.id.bottom_sheet);</div><div class="line">    //2.把这个底部菜单和一个BottomSheetBehavior关联起来</div><div class="line">    mBottomSheetBehavior = BottomSheetBehavior.from(mBottomLayout);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>通过这个<code>Behavior</code>，我们可以实现底部菜单的展开、隐藏和收起：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">public void expandBottomSheet(View view) &#123;</div><div class="line">    mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);</div><div class="line">&#125;</div><div class="line"></div><div class="line">public void hideBottomSheet(View view) &#123;</div><div class="line">    mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);</div><div class="line">&#125;</div><div class="line"></div><div class="line">public void collapseBottomSheet(View view) &#123;</div><div class="line">    mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1949836-1c62bc30fb8ecbf1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>除此之外，我们还可以通过<code>BottomSheetBehavior</code>监听底部菜单的滑动变化：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">mBottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() &#123;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void onStateChanged(@NonNull View bottomSheet, int newState) &#123;</div><div class="line">        Log.d(&quot;BottomSheet&quot;, &quot;newState=&quot; + newState);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void onSlide(@NonNull View bottomSheet, float slideOffset) &#123;</div><div class="line">        Log.d(&quot;BottomSheet&quot;, &quot;onSlide=&quot; + slideOffset);</div><div class="line">    &#125;</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<p>第一个回调函数用来监听<code>BottomSheet</code>状态的改变，也就是我们上面所说到的五种状态，而<code>onSlide</code>回调当中的<code>slideOffset</code>则用来监听底部菜单的偏移量：</p>
+<ul>
+<li>当处于展开状态时，偏移量为<code>1</code></li>
+<li>当处于收起状态时，偏移量为<code>0</code></li>
+<li>当处于隐藏状态时，偏移量为<code>-1</code></li>
+</ul>
+<h2 id="2-2-RecyclerView实现的BottomSheet"><a href="#2-2-RecyclerView实现的BottomSheet" class="headerlink" title="2.2 RecyclerView实现的BottomSheet"></a>2.2 <code>RecyclerView</code>实现的<code>BottomSheet</code></h2><p>如果我们列表内的<code>Items</code>较多，那么可以考虑使用<code>RecyclerView</code>来实现底部菜单，实现方式和前面类似，这里，我们最好固定<code>RecyclerView</code>的高度：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">&lt;android.support.v7.widget.RecyclerView</div><div class="line">    xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;</div><div class="line">    xmlns:app=&quot;http://schemas.android.com/apk/res-auto&quot;</div><div class="line">    android:id=&quot;@+id/bottom_sheet&quot;</div><div class="line">    android:background=&quot;@android:color/darker_gray&quot;</div><div class="line">    android:layout_width=&quot;match_parent&quot;</div><div class="line">    android:layout_height=&quot;300dp&quot;</div><div class="line">    android:orientation=&quot;vertical&quot;</div><div class="line">    app:behavior_hideable=&quot;true&quot;</div><div class="line">    app:behavior_peekHeight=&quot;60dp&quot;</div><div class="line">    app:layout_behavior=&quot;@string/bottom_sheet_behavior&quot;/&gt;</div></pre></td></tr></table></figure></p>
+<p>当使用这种方式，如果初始时候处于收起状态，那么当手指上滑时，会优先让底部菜单慢慢进入展开状态，当完全进入展开状态之后，开始让列表向底部滚动。而当手指下滑时，优先让列表向顶部滚动，当滚动到顶部之后，让菜单从展开状态慢慢进入到收起状态。<br><img src="http://upload-images.jianshu.io/upload_images/1949836-e995b8ea474e4812.gif?imageMogr2/auto-orient/strip" alt=""><br>这整个过程，<code>state</code>和<code>slideOffset</code>的变化趋势为：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-5f1fd51600ab51ca.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h1 id="三、BottomSheetDialog详解"><a href="#三、BottomSheetDialog详解" class="headerlink" title="三、BottomSheetDialog详解"></a>三、<code>BottomSheetDialog</code>详解</h1><p><code>BottomSheet</code>的使用非常简单，但是也有它的局限性，它要求我们要实现预定根布局为<code>CoordinatorLayout</code>，同时它也没有平时我们使用弹框时的阴影效果，下面，我们介绍另一种实现方式：<code>BottomSheetDialog</code>，它的使用方式和我们平时使用<code>Dialog</code>时很类似，但是它增加了通过手势展开和收起对话框的操作。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">public class BottomSheetDialogActivity extends AppCompatActivity &#123;</div><div class="line"></div><div class="line">    private BottomSheetDialog mDialog;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    protected void onCreate(Bundle savedInstanceState) &#123;</div><div class="line">        super.onCreate(savedInstanceState);</div><div class="line">        setContentView(R.layout.activity_bottom_sheet_dialog);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void showDialog(View view) &#123;</div><div class="line">        mDialog = new BottomSheetDialog(this);</div><div class="line">        mDialog.setContentView(R.layout.layout_bottom_sheet_dialog);</div><div class="line">        mDialog.show();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void hideDialog(View view) &#123;</div><div class="line">        if (mDialog != null &amp;&amp; mDialog.isShowing()) &#123;</div><div class="line">            mDialog.hide();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><code>BottomSheetDialog</code>继承于<code>Dialog</code>，当我们通过<code>setContentView</code>方法传入自定义布局的时候，它会将这个布局使用<code>CoordinatorLayout</code>包裹起来，所以当使用<code>BottomSheetDialog</code>的时候，底部菜单和根布局并不属于同一个<code>window</code>：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-dfa352b9220f186a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>而我们的<code>Dialog</code>内部的布局其实是这样的：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-0fbecb8ca4abea55.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>由上图可以看出，<strong><code>Dialog</code>的根节点其实并不是通过<code>setContentView()</code>传入的<code>View</code>，它实际上是用<code>CoordinatorLayout</code>把它包装了起来</strong>，这才实现了拖动展开和隐藏的行为。</p>
+<h1 id="四、BottomSheetDialogFragment"><a href="#四、BottomSheetDialogFragment" class="headerlink" title="四、BottomSheetDialogFragment"></a>四、<code>BottomSheetDialogFragment</code></h1><p><code>BottomSheetDialogFragment</code>继承于<code>DialogFragment</code>，并重写了<code>onCreateDialog</code>返回我们上一节所说的<code>BottomSheetDialog</code>，它的使用方法和<code>DialogFragment</code>相同：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">public class BottomSheetDialogFragment extends AppCompatDialogFragment &#123;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public Dialog onCreateDialog(Bundle savedInstanceState) &#123;</div><div class="line">        return new BottomSheetDialog(getContext(), getTheme());</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>下面，我们看一下如何使用：</p>
+<ul>
+<li>首先，定义<code>Fragment</code>：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">public class DemoBottomSheetDialogFragment extends BottomSheetDialogFragment &#123;</div><div class="line"></div><div class="line">    public static DemoBottomSheetDialogFragment newInstance() &#123;</div><div class="line">        return new DemoBottomSheetDialogFragment();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Nullable</div><div class="line">    @Override</div><div class="line">    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) &#123;</div><div class="line">        return inflater.inflate(R.layout.layout_bottom_sheet_dialog, container, false);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>弹出和收起的方式<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">public class BottomSheetDialogFragmentActivity extends AppCompatActivity &#123;</div><div class="line"></div><div class="line">    private DemoBottomSheetDialogFragment mDemoBottomSheetDialogFragment;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    protected void onCreate(Bundle savedInstanceState) &#123;</div><div class="line">        super.onCreate(savedInstanceState);</div><div class="line">        setContentView(R.layout.activity_bottom_sheet_dialog_fragment);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void showDialog(View view) &#123;</div><div class="line">        mDemoBottomSheetDialogFragment = DemoBottomSheetDialogFragment.newInstance();</div><div class="line">        mDemoBottomSheetDialogFragment.show(getSupportFragmentManager(), &quot;demoBottom&quot;);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void hideDialog(View view) &#123;</div><div class="line">        if (mDemoBottomSheetDialogFragment != null) &#123;</div><div class="line">            mDemoBottomSheetDialogFragment.dismiss();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>最终它的布局和<code>BottomSheetDialog</code>一样，都是在一个新的<code>Window</code>当中：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-dd6229bb846b659c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h1 id="五、总结"><a href="#五、总结" class="headerlink" title="五、总结"></a>五、总结</h1><p>通过上面的学习，我们发现，其实这三种方法最核心的就是使用了<code>CoordinatorLayout + bottom_sheet_behavior</code>：</p>
+<ul>
+<li><code>BottomSheet</code>需要我们自己去声明<code>CoordinatorLayout</code>布局，并把底部菜单作为它的子<code>View</code>。</li>
+<li><code>BottomSheetDialog</code>和<code>BottomSheetDialogFragment</code>，只需要我们提供一个底部菜单的布局，在它们内部的实现当中，它再把我们传入的布局放入到<code>CoordinatorLayout</code>当中，之后再把这一整个包装好的布局作为<code>Dialog</code>的布局。</li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/04/10/Material-Design-控件/Material-Design-控件知识梳理(2)---AppBarLayout-&-CollapsingToolbarLayout/" rel="next" title="Material Design 控件知识梳理(2) - AppBarLayout & CollapsingToolbarLayout">
+                <i class="fa fa-chevron-left"></i> Material Design 控件知识梳理(2) - AppBarLayout & CollapsingToolbarLayout
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/04/13/Material-Design-控件/Material-Design-控件知识梳理(4)---FloatingActionButton/" rel="prev" title="Material Design 控件知识梳理(4) - FloatingActionButton">
+                Material Design 控件知识梳理(4) - FloatingActionButton <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="zeMao" />
+          <p class="site-author-name" itemprop="name">zeMao</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">104</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">24</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、概述"><span class="nav-number">1.</span> <span class="nav-text">一、概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、BottomSheet详解"><span class="nav-number">2.</span> <span class="nav-text">二、BottomSheet详解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-LinearLayout实现的BottomSheet"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 LinearLayout实现的BottomSheet</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-RecyclerView实现的BottomSheet"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 RecyclerView实现的BottomSheet</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、BottomSheetDialog详解"><span class="nav-number">3.</span> <span class="nav-text">三、BottomSheetDialog详解</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四、BottomSheetDialogFragment"><span class="nav-number">4.</span> <span class="nav-text">四、BottomSheetDialogFragment</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#五、总结"><span class="nav-number">5.</span> <span class="nav-text">五、总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zeMao</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

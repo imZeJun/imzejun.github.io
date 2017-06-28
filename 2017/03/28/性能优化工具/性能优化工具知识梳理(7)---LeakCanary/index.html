@@ -1,0 +1,756 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="性能优化工具知识梳理(1) - TraceView性能优化工具知识梳理(2) - Systrace性能优化工具知识梳理(3) - 调试GPU过度绘制 &amp;amp; GPU呈现模式分析性能优化工具知识梳理(4) - Hierarchy Viewer性能优化工具知识梳理(5) - MAT性能优化工具知识梳理(6) - Memory Monitor &amp;amp; Heap Viewer &amp;amp; All">
+<meta property="og:type" content="article">
+<meta property="og:title" content="性能优化工具知识梳理(7) - LeakCanary">
+<meta property="og:url" content="http://yoursite.com/2017/03/28/性能优化工具/性能优化工具知识梳理(7)---LeakCanary/index.html">
+<meta property="og:site_name" content="zeMao&#39;s Blog">
+<meta property="og:description" content="性能优化工具知识梳理(1) - TraceView性能优化工具知识梳理(2) - Systrace性能优化工具知识梳理(3) - 调试GPU过度绘制 &amp;amp; GPU呈现模式分析性能优化工具知识梳理(4) - Hierarchy Viewer性能优化工具知识梳理(5) - MAT性能优化工具知识梳理(6) - Memory Monitor &amp;amp; Heap Viewer &amp;amp; All">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-200d7378fb46983c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-d0da5bfdb42349b7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2017-06-28T07:08:58.370Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="性能优化工具知识梳理(7) - LeakCanary">
+<meta name="twitter:description" content="性能优化工具知识梳理(1) - TraceView性能优化工具知识梳理(2) - Systrace性能优化工具知识梳理(3) - 调试GPU过度绘制 &amp;amp; GPU呈现模式分析性能优化工具知识梳理(4) - Hierarchy Viewer性能优化工具知识梳理(5) - MAT性能优化工具知识梳理(6) - Memory Monitor &amp;amp; Heap Viewer &amp;amp; All">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-200d7378fb46983c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/03/28/性能优化工具/性能优化工具知识梳理(7)---LeakCanary/"/>
+
+
+
+
+
+  <title>性能优化工具知识梳理(7) - LeakCanary | zeMao's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">zeMao's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/03/28/性能优化工具/性能优化工具知识梳理(7)---LeakCanary/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zeMao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="zeMao's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">性能优化工具知识梳理(7) - LeakCanary</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-28T22:51:00+08:00">
+                2017-03-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/性能优化工具知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">性能优化工具知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p><a href="http://www.jianshu.com/p/37c263f9886b" target="_blank" rel="external">性能优化工具知识梳理(1) - TraceView</a><br><a href="http://www.jianshu.com/p/41bb27235921" target="_blank" rel="external">性能优化工具知识梳理(2) - Systrace</a><br><a href="http://www.jianshu.com/p/ac2d58666106" target="_blank" rel="external">性能优化工具知识梳理(3) - 调试GPU过度绘制 &amp; GPU呈现模式分析</a><br><a href="http://www.jianshu.com/p/7ac6a2b8d740" target="_blank" rel="external">性能优化工具知识梳理(4) - Hierarchy Viewer</a><br><a href="http://www.jianshu.com/p/fa016c32360f" target="_blank" rel="external">性能优化工具知识梳理(5) - MAT</a><br><a href="http://www.jianshu.com/p/29a539bca730" target="_blank" rel="external">性能优化工具知识梳理(6) - Memory Monitor &amp; Heap Viewer &amp; Allocation Tracker</a><br><a href="http://www.jianshu.com/p/3c055862f353" target="_blank" rel="external">性能优化工具知识梳理(7) - LeakCanary</a><br><a href="http://www.jianshu.com/p/4ebe5d502842" target="_blank" rel="external">性能优化工具知识梳理(8) - Lint</a></p>
+</blockquote>
+<h1 id="一、概述"><a href="#一、概述" class="headerlink" title="一、概述"></a>一、概述</h1><p><code>LeakCanary</code>提供了一种很便捷的方式，让我们在开发阶段检测内存泄漏问题，我们不需要自己去根据内存快照来分析内存泄漏的原因，所需要做的仅仅是在<code>Debug</code>包中集成它，它会自动地帮我们检测内存泄漏，并给出导致泄漏的引用链。</p>
+<h1 id="二、集成"><a href="#二、集成" class="headerlink" title="二、集成"></a>二、集成</h1><p>下面，就来看一下如何在项目当中集成它：</p>
+<ul>
+<li><p>第一步：需要引入远程依赖，这里我们引入了两个，在<code>release</code>版本中，所有的调用都是空实现，这样就会避免在<code>release</code>的版本中也在桌面生成一个泄漏检测结果的图标。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">dependencies &#123;</div><div class="line">        //在 debug 版本中才会实现真正的功能</div><div class="line">        debugCompile &apos;com.squareup.leakcanary:leakcanary-android:1.3&apos;</div><div class="line">        //在 release 版本中为空实现</div><div class="line">        releaseCompile &apos;com.squareup.leakcanary:leakcanary-android-no-op:1.3&apos;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>第二步：重写<code>Application</code>，初始化一个全局<code>RefWatcher</code>对象，它负责监视所有应当要被回收的对象：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">public class LeakCanaryApplication extends Application &#123;</div><div class="line"></div><div class="line">    private RefWatcher mRefWatcher;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void onCreate() &#123;</div><div class="line">        super.onCreate();</div><div class="line">        mRefWatcher = LeakCanary.install(this);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static RefWatcher getRefWatcher(Context context) &#123;</div><div class="line">        LeakCanaryApplication application = (LeakCanaryApplication) context.getApplicationContext();</div><div class="line">        return application.mRefWatcher;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>第三步：在需要回收的对象上，添加监测代码，这里我们以<code>Activity</code>为例就需要在它的<code>onDestory()</code>方法中加入监测的代码，我们通过单例持有<code>Activity</code>的引用，模拟了一种内存泄漏发生的场景：</p>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line">public class LeakSingleton &#123;</div><div class="line"></div><div class="line">    private static LeakSingleton sInstance;</div><div class="line">    private Context mContext;</div><div class="line"></div><div class="line">    public static LeakSingleton getInstance(Context context) &#123;</div><div class="line">        if (sInstance == null) &#123;</div><div class="line">            sInstance = new LeakSingleton(context);</div><div class="line">        &#125;</div><div class="line">        return sInstance;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private LeakSingleton(Context context) &#123;</div><div class="line">        mContext = context;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">public class LeakCanaryActivity extends Activity &#123;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    protected void onCreate(Bundle savedInstanceState) &#123;</div><div class="line">        super.onCreate(savedInstanceState);</div><div class="line">        setContentView(R.layout.activity_leak_canary);</div><div class="line">        //让这个单例对象持有 Activity 的引用</div><div class="line">        LeakSingleton.getInstance(this);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    protected void onDestroy() &#123;</div><div class="line">        super.onDestroy();</div><div class="line">        //在 onDestroy 方法中使用 Application 中创建的 RefWatcher 监视需要回收的对象</div><div class="line">        LeakCanaryApplication.getRefWatcher(this).watch(this);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在退出应用程序之后，我们会发现在桌面上生成了一个新的图标，点击图标进入，就是<code>LeakCanary</code>为我们分析出的导致泄漏的引用链：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-200d7378fb46983c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>以上就是把<code>LeakCanary</code>集成到项目中的方法，下面，我们来讨论一下它的实现原理。</p>
+<h1 id="三、原理"><a href="#三、原理" class="headerlink" title="三、原理"></a>三、原理</h1><p>当调用了<code>RefWatcher.watch()</code>方法之后，会触发以下逻辑：</p>
+<ul>
+<li><p>创建一个<code>KeyedWeakReference</code>，它内部引用了<code>watch</code>传入的对象：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">final KeyedWeakReference reference = new KeyedWeakReference(watchedReference, key, referenceName, this.queue);</div></pre></td></tr></table></figure>
+</li>
+<li><p>在后台线程检查引用是否被清除：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"> this.watchExecutor.execute(new Runnable() &#123;</div><div class="line">      public void run() &#123;</div><div class="line">           RefWatcher.this.ensureGone(reference, watchStartNanoTime);</div><div class="line">      &#125;</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+</li>
+<li><p>如果没有清除，那么首先调用一次<code>GC</code>，假如引用还是没有被清除，那么把当前的内存快照保存到<code>.hprof</code>文件当中，并调用<code>heapdumpListener</code>进行分析：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">void ensureGone(KeyedWeakReference reference, long watchStartNanoTime) &#123;</div><div class="line">        long gcStartNanoTime = System.nanoTime();</div><div class="line">        long watchDurationMs = TimeUnit.NANOSECONDS.toMillis(gcStartNanoTime - watchStartNanoTime);</div><div class="line">        this.removeWeaklyReachableReferences();</div><div class="line">        if(!this.gone(reference) &amp;&amp; !this.debuggerControl.isDebuggerAttached()) &#123;</div><div class="line">            this.gcTrigger.runGc();</div><div class="line">            this.removeWeaklyReachableReferences();</div><div class="line">            if(!this.gone(reference)) &#123;</div><div class="line">                long startDumpHeap = System.nanoTime();</div><div class="line">                long gcDurationMs = TimeUnit.NANOSECONDS.toMillis(startDumpHeap - gcStartNanoTime);</div><div class="line">                File heapDumpFile = this.heapDumper.dumpHeap();</div><div class="line">                if(heapDumpFile == null) &#123;</div><div class="line">                    return;</div><div class="line">                &#125;</div><div class="line">                long heapDumpDurationMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startDumpHeap);</div><div class="line">                this.heapdumpListener.analyze(new HeapDump(heapDumpFile, reference.key, reference.name, watchDurationMs, gcDurationMs, heapDumpDurationMs));</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>上面说到的<code>heapdumpListener</code>的实现类为<code>ServiceHeapDumpListener</code>，它会启动内部的<code>HeapAnalyzerService</code>：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"> public void analyze(HeapDump heapDump) &#123;</div><div class="line">        Preconditions.checkNotNull(heapDump, &quot;heapDump&quot;);</div><div class="line">        HeapAnalyzerService.runAnalysis(this.context, heapDump, this.listenerServiceClass);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>这是一个<code>IntentService</code>，因此它的<code>onHandlerIntent</code>方法是运行在子线程中的，在通过<code>HeapAnalyzer</code>分析完毕之后，把最终的结果传回给<code>App</code>端展示检测的结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">protected void onHandleIntent(Intent intent) &#123;</div><div class="line">     String listenerClassName = intent.getStringExtra(&quot;listener_class_extra&quot;);</div><div class="line">     HeapDump heapDump = (HeapDump)intent.getSerializableExtra(&quot;heapdump_extra&quot;);</div><div class="line">     AnalysisResult result = this.heapAnalyzer.checkForLeak(heapDump.heapDumpFile, heapDump.referenceKey);</div><div class="line">     AbstractAnalysisResultService.sendResultToListener(this, listenerClassName, heapDump, result);</div><div class="line"> &#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p><code>HeapAnalyzer</code>会计算未能回收的引用到<code>Gc Roots</code>的最短引用路径，如果泄漏，那么建立导致泄漏的引用链并通过<code>AnalysisResult</code>返回：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line">public AnalysisResult checkForLeak(File heapDumpFile, String referenceKey) &#123;</div><div class="line">    long analysisStartNanoTime = System.nanoTime();</div><div class="line">    if(!heapDumpFile.exists()) &#123;</div><div class="line">        IllegalArgumentException snapshot1 = new IllegalArgumentException(&quot;File does not exist: &quot; + heapDumpFile);</div><div class="line">        return AnalysisResult.failure(snapshot1, this.since(analysisStartNanoTime));</div><div class="line">    &#125; else &#123;</div><div class="line">        ISnapshot snapshot = null;</div><div class="line"></div><div class="line">        AnalysisResult className;</div><div class="line">        try &#123;</div><div class="line">            snapshot = this.openSnapshot(heapDumpFile);</div><div class="line">            IObject e = this.findLeakingReference(referenceKey, snapshot);</div><div class="line">            if(e != null) &#123;</div><div class="line">                String className1 = e.getClazz().getName();</div><div class="line">                AnalysisResult result = this.findLeakTrace(analysisStartNanoTime, snapshot, e, className1, true);</div><div class="line">                if(!result.leakFound) &#123;</div><div class="line">                    result = this.findLeakTrace(analysisStartNanoTime, snapshot, e, className1, false);</div><div class="line">                &#125;</div><div class="line"></div><div class="line">                AnalysisResult var9 = result;</div><div class="line">                return var9;</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            className = AnalysisResult.noLeak(this.since(analysisStartNanoTime));</div><div class="line">        &#125; catch (SnapshotException var13) &#123;</div><div class="line">            className = AnalysisResult.failure(var13, this.since(analysisStartNanoTime));</div><div class="line">            return className;</div><div class="line">        &#125; finally &#123;</div><div class="line">            this.cleanup(heapDumpFile, snapshot);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        return className;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1 id="四、自定义处理行为"><a href="#四、自定义处理行为" class="headerlink" title="四、自定义处理行为"></a>四、自定义处理行为</h1><p>默认<code>LeakCanary</code>是会在桌面生成一个图标，点击图标之后，会展示导致泄漏的引用链，有时候，我们希望把这些信息上传到服务器中，那么就需要自定义收到结果后的处理的行为，下面，我们看一下要怎么做：</p>
+<ul>
+<li>第一步：继承<code>DisplayLeakService</code>，进行自己的处理逻辑，这里我们只是打印出泄漏的信息，<code>heapDump</code>为对应的内存快照，<code>result</code>为分析的结果，<code>leakInfo</code>则是相关的信息：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">public class MyLeakUploadService extends DisplayLeakService &#123;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    protected void afterDefaultHandling(HeapDump heapDump, AnalysisResult result, String leakInfo) &#123;</div><div class="line">        if (!result.leakFound || result.excludedLeak) &#123;</div><div class="line">            return;</div><div class="line">        &#125;</div><div class="line">        Log.d(&quot;MyLeakUploadService&quot;, &quot;leakInfo=&quot; + leakInfo);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>第二步：改变<code>Application</code>中初始化<code>RefWatcher</code>的方式，第二个参数中传入我们自定义的<code>Service</code>类名：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">public class LeakCanaryApplication extends Application &#123;</div><div class="line">    private RefWatcher mRefWatcher;</div><div class="line">    @Override</div><div class="line">    public void onCreate() &#123;</div><div class="line">        super.onCreate();</div><div class="line">        mRefWatcher = LeakCanary.install(this, MyLeakUploadService.class);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>第三步：在<code>AndroidManifest.xml</code>中注册自定义的<code>Service</code>：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&lt;application&gt;</div><div class="line">     &lt;service android:name=&quot;.leakcanary.MyLeakUploadService&quot;/&gt;</div><div class="line"> &lt;/application&gt;</div></pre></td></tr></table></figure>
+<ul>
+<li>最后，我们运行和之前一样的操作，会看到在输出台上打印出了泄漏的分析结果：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-d0da5bfdb42349b7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></li>
+</ul>
+<h1 id="五、小结"><a href="#五、小结" class="headerlink" title="五、小结"></a>五、小结</h1><p>在调试阶段，我们可以通过引入<code>LeakCanary</code>，让它帮助我们排查出一些会导致内存泄漏的问题。</p>
+<h1 id="六、参考文献"><a href="#六、参考文献" class="headerlink" title="六、参考文献"></a>六、参考文献</h1><blockquote>
+<p><a href="https://www.liaohuqiu.net/cn/posts/leak-canary-read-me/" target="_blank" rel="external"><code>https://www.liaohuqiu.net/cn/posts/leak-canary-read-me/</code></a></p>
+</blockquote>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/03/28/性能优化工具/性能优化工具知识梳理(6)---Memory-Monitor-&-Heap-Viewer-&-Allocation-Tracker/" rel="next" title="性能优化工具知识梳理(6) - Memory Monitor & Heap Viewer & Allocation Tracker">
+                <i class="fa fa-chevron-left"></i> 性能优化工具知识梳理(6) - Memory Monitor & Heap Viewer & Allocation Tracker
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/03/30/性能优化工具/性能优化工具知识梳理(8)---Lint/" rel="prev" title="性能优化工具知识梳理(8) - Lint">
+                性能优化工具知识梳理(8) - Lint <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="zeMao" />
+          <p class="site-author-name" itemprop="name">zeMao</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">104</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">24</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、概述"><span class="nav-number">1.</span> <span class="nav-text">一、概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、集成"><span class="nav-number">2.</span> <span class="nav-text">二、集成</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、原理"><span class="nav-number">3.</span> <span class="nav-text">三、原理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四、自定义处理行为"><span class="nav-number">4.</span> <span class="nav-text">四、自定义处理行为</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#五、小结"><span class="nav-number">5.</span> <span class="nav-text">五、小结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#六、参考文献"><span class="nav-number">6.</span> <span class="nav-text">六、参考文献</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zeMao</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

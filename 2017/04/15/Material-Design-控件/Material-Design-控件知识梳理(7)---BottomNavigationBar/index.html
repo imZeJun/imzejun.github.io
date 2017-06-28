@@ -1,0 +1,764 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="Material Design 控件知识梳理(1) - Android Design Support Library 是什么Material Design 控件知识梳理(2) - AppBarLayout &amp;amp; CollapsingToolbarLayoutMaterial Design 控件知识梳理(3) - BottomSheet &amp;amp;&amp;amp; BottomSheetDialo">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Material Design 控件知识梳理(7) - BottomNavigationBar">
+<meta property="og:url" content="http://yoursite.com/2017/04/15/Material-Design-控件/Material-Design-控件知识梳理(7)---BottomNavigationBar/index.html">
+<meta property="og:site_name" content="zeMao&#39;s Blog">
+<meta property="og:description" content="Material Design 控件知识梳理(1) - Android Design Support Library 是什么Material Design 控件知识梳理(2) - AppBarLayout &amp;amp; CollapsingToolbarLayoutMaterial Design 控件知识梳理(3) - BottomSheet &amp;amp;&amp;amp; BottomSheetDialo">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-6a28d73218df941d.gif?imageMogr2/auto-orient/strip">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-cd27685e06c2d86d.gif?imageMogr2/auto-orient/strip">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-07a8b9965a998612.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-807ec898e80dc375.gif?imageMogr2/auto-orient/strip">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-bbae3b6e91633665.gif?imageMogr2/auto-orient/strip">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-0fa723d4a230fefb.gif?imageMogr2/auto-orient/strip">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-c6eda5afa04ff926.gif?imageMogr2/auto-orient/strip">
+<meta property="og:updated_time" content="2017-06-28T06:47:04.226Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Material Design 控件知识梳理(7) - BottomNavigationBar">
+<meta name="twitter:description" content="Material Design 控件知识梳理(1) - Android Design Support Library 是什么Material Design 控件知识梳理(2) - AppBarLayout &amp;amp; CollapsingToolbarLayoutMaterial Design 控件知识梳理(3) - BottomSheet &amp;amp;&amp;amp; BottomSheetDialo">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-6a28d73218df941d.gif?imageMogr2/auto-orient/strip">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/04/15/Material-Design-控件/Material-Design-控件知识梳理(7)---BottomNavigationBar/"/>
+
+
+
+
+
+  <title>Material Design 控件知识梳理(7) - BottomNavigationBar | zeMao's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">zeMao's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/04/15/Material-Design-控件/Material-Design-控件知识梳理(7)---BottomNavigationBar/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zeMao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="zeMao's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Material Design 控件知识梳理(7) - BottomNavigationBar</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-15T12:12:00+08:00">
+                2017-04-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Material-Design-控件知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">Material Design 控件知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p><a href="http://www.jianshu.com/p/32b2638a1785" target="_blank" rel="external">Material Design 控件知识梳理(1) - Android Design Support Library 是什么</a><br><a href="http://www.jianshu.com/p/d4fd636d7c44" target="_blank" rel="external">Material Design 控件知识梳理(2) - AppBarLayout &amp; CollapsingToolbarLayout</a><br><a href="http://www.jianshu.com/p/2a5be29123e5" target="_blank" rel="external">Material Design 控件知识梳理(3) - BottomSheet &amp;&amp; BottomSheetDialog &amp;&amp; BottomSheetDialogFragment</a><br><a href="http://www.jianshu.com/p/5a354e318019" target="_blank" rel="external">Material Design 控件知识梳理(4) - FloatingActionButton</a><br><a href="http://www.jianshu.com/p/d70cfd724c7f" target="_blank" rel="external">Material Design 控件知识梳理(5) - DrawerLayout &amp;&amp; NavigationView</a><br><a href="http://www.jianshu.com/p/6aea94f9ae2f" target="_blank" rel="external">Material Design 控件知识梳理(6) - Snackbar</a><br><a href="http://www.jianshu.com/p/22ec4fc1cb71" target="_blank" rel="external">Material Design 控件知识梳理(7) - BottomNavigationBar</a><br><a href="http://www.jianshu.com/p/5dd04fda13ab" target="_blank" rel="external">Material Design 控件知识梳理(8) - TabLayout</a><br><a href="http://www.jianshu.com/p/ed9642fc8634" target="_blank" rel="external">Material Design 控件知识梳理(9) - TextInputLayout</a></p>
+</blockquote>
+<h1 id="一、概述"><a href="#一、概述" class="headerlink" title="一、概述"></a>一、概述</h1><p>当某个主页面有多个子页面时，我们一般会采用<code>ViewPager</code>来承载这些子页面，并会提供一组选项卡让用户通过点击对应的选项的方式来进行页面之间的快速切换，而这一组选项卡根据摆放位置的不同，一般可以分为下面两种实现方式：</p>
+<ul>
+<li>放在顶部，采用<code>TabLayout</code></li>
+<li>放在底部，采用<code>BottomNavigationBar</code></li>
+</ul>
+<p>今天，我们介绍第二种方式。</p>
+<h1 id="二、BottomNavigationBar详解"><a href="#二、BottomNavigationBar详解" class="headerlink" title="二、BottomNavigationBar详解"></a>二、<code>BottomNavigationBar</code>详解</h1><h2 id="2-1-基本用法"><a href="#2-1-基本用法" class="headerlink" title="2.1 基本用法"></a>2.1 基本用法</h2><p>引入依赖包：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">compile &apos;com.ashokvarma.android:bottom-navigation-bar:1.2.0&apos;</div></pre></td></tr></table></figure></p>
+<p>在布局当中引入控件，这里，我们将它放置在容器的底部：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">&lt;android.support.design.widget.CoordinatorLayout </div><div class="line">    xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;</div><div class="line">    xmlns:tools=&quot;http://schemas.android.com/tools&quot;</div><div class="line">    android:layout_width=&quot;match_parent&quot;</div><div class="line">    android:layout_height=&quot;match_parent&quot;</div><div class="line">    tools:context=&quot;com.demo.lizejun.repotransition.NavigationBarActivity&quot;&gt;</div><div class="line">    &lt;com.ashokvarma.bottomnavigation.BottomNavigationBar</div><div class="line">        android:id=&quot;@+id/bottom_navigation&quot;</div><div class="line">        android:layout_gravity=&quot;bottom&quot;</div><div class="line">        android:layout_width=&quot;match_parent&quot;</div><div class="line">        android:layout_height=&quot;wrap_content&quot;/&gt;</div><div class="line">&lt;/android.support.design.widget.CoordinatorLayout&gt;</div></pre></td></tr></table></figure></p>
+<p>在代码中对数据进行初始化：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">private void initViews() &#123;</div><div class="line">    mBottomNavigationBar = (BottomNavigationBar) findViewById(R.id.bottom_navigation);</div><div class="line">    //1.设置Mode</div><div class="line">    mBottomNavigationBar.setMode(BottomNavigationBar.MODE_FIXED);</div><div class="line">    //2.设置BackgroundStyle</div><div class="line">    mBottomNavigationBar.setBackgroundStyle(BottomNavigationBar.BACKGROUND_STYLE_STATIC);</div><div class="line">    //3.设置背景色</div><div class="line">    mBottomNavigationBar.setBarBackgroundColor(android.R.color.white);</div><div class="line">    //4.设置每个Item</div><div class="line">    mBottomNavigationBar.addItem(new BottomNavigationItem(R.drawable.ic_1, &quot;Item 1&quot;).setActiveColorResource(android.R.color.holo_blue_dark));</div><div class="line">    mBottomNavigationBar.addItem(new BottomNavigationItem(R.drawable.ic_2, &quot;Item 2&quot;).setActiveColorResource(android.R.color.holo_green_dark));</div><div class="line">    mBottomNavigationBar.addItem(new BottomNavigationItem(R.drawable.ic_3, &quot;Item 3&quot;).setActiveColorResource(android.R.color.holo_orange_dark));</div><div class="line">    mBottomNavigationBar.addItem(new BottomNavigationItem(R.drawable.ic_4, &quot;Item 4&quot;).setActiveColorResource(android.R.color.holo_green_dark));</div><div class="line">    mBottomNavigationBar.addItem(new BottomNavigationItem(R.drawable.ic_5, &quot;Item 5&quot;).setActiveColorResource(android.R.color.holo_orange_dark));</div><div class="line">    //5.初始化</div><div class="line">    mBottomNavigationBar.initialise();</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>上面代码的运行效果如下图所示：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-6a28d73218df941d.gif?imageMogr2/auto-orient/strip" alt=""><br>可以看到，上面我们设置了很多的属性，下面我们就一一来讲解各个属性的含义。</p>
+<h2 id="2-2-BottomNavigationBar的Mode属性"><a href="#2-2-BottomNavigationBar的Mode属性" class="headerlink" title="2.2 BottomNavigationBar的Mode属性"></a>2.2 <code>BottomNavigationBar</code>的<code>Mode</code>属性</h2><p><code>Mode</code>的设置对应于这句：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mBottomNavigationBar.setMode(BottomNavigationBar.MODE_FIXED);</div></pre></td></tr></table></figure></p>
+<p>这个属性有两种可选的值，<code>MODE_FIXED</code>和<code>MODE_SHIFTING</code></p>
+<ul>
+<li><code>MODE_FIXED</code>：选中的<code>Item</code>会稍大于未选中的<code>Item</code>，无论<code>Item</code>是否选中，都会显示文字和图标。</li>
+<li><code>MODE_SHIFTING</code>：选中的<code>Item</code>明显大于未选中的<code>Item</code>，未选中的<code>Item</code>只显示图标，并且在选中项切换的时候，会有一定的偏移效果。</li>
+</ul>
+<p>在<code>2.1</code>当中，我们演示的就是第一种方式，下面，我们看一下第二种方式的效果：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mBottomNavigationBar.setMode(BottomNavigationBar.MODE_SHIFTING);</div></pre></td></tr></table></figure></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1949836-cd27685e06c2d86d.gif?imageMogr2/auto-orient/strip" alt=""></p>
+<h2 id="2-3-BottomNavigationBar的BackgroundStyle属性"><a href="#2-3-BottomNavigationBar的BackgroundStyle属性" class="headerlink" title="2.3 BottomNavigationBar的BackgroundStyle属性"></a>2.3 <code>BottomNavigationBar</code>的<code>BackgroundStyle</code>属性</h2><p><code>BackgroundStyle</code>的设置对应于这句：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mBottomNavigationBar.setBackgroundStyle(BottomNavigationBar.BACKGROUND_STYLE_STATIC);</div></pre></td></tr></table></figure></p>
+<p>这个属性有两个可选的值：</p>
+<ul>
+<li><code>BACKGROUND_STYLE_STATIC</code></li>
+<li><code>BACKGROUND_STYLE_RIPPLE</code></li>
+</ul>
+<p>这两种选项决定了两点：<strong>整个<code>BottomNavigationBar</code>的颜色</strong>和<strong>被选中<code>Item</code>的颜色</strong>，在解释这个之前，我们需要先了解一下三种颜色：</p>
+<ul>
+<li><p><code>barBackgroudColor</code>：只能通过<code>BottomNavigationBar</code>来设置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mBottomNavigationBar.setBarBackgroundColor(android.R.color.white);</div></pre></td></tr></table></figure>
+</li>
+<li><p><code>activeColor</code>：被激活颜色，可以通过<code>BottomNavigationBar</code>来进行全局的设置，也可以给每个<code>Item</code>单独设置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mBottomNavigationBar.addItem(new BottomNavigationItem(R.drawable.ic_1, &quot;Item 1&quot;).setActiveColorResource(android.R.color.holo_blue_dark));</div></pre></td></tr></table></figure>
+</li>
+<li><p><code>inActiveColor</code>：未被激活颜色，可以通过<code>BottomNavigationBar</code>来进行全局的设置，也可以给每个<code>Item</code>单独设置。</p>
+</li>
+</ul>
+<p>注意到，上面这三种颜色并不是说被选中的<code>Item</code>的文字和图标的颜色一定是被激活颜色，这需要根据<code>BackgroundStyle</code>来决定，在每种模式下，被选中<code>Item</code>的文字图片颜色、未被选中的<code>Item</code>的文字图标颜色、整个<code>BottomNavigationBar</code>的背景颜色的对应关系为：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-07a8b9965a998612.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>也就是说，<code>inActiveColor</code>在任何时候都是未被选中<code>Item</code>的文字和图片颜色，而其它两种则不然：</p>
+<ul>
+<li>在<code>static</code>模式下，<code>activeColor</code>是被选中<code>Item</code>的文字图标颜色，<code>backgroundColor</code>为<code>BottomNavigationBar</code>的背景色</li>
+<li>而在<code>ripple</code>模式下，恰巧是反过来。</li>
+</ul>
+<p>对于<code>2.1</code>中例子的<code>Item 1</code>，它的<code>BackgroundStyle</code>为<code>BACKGROUND_STYLE_STATIC</code>，因此在它被选中的时候，文字和图片的颜色为给它设置的<code>ActiveColor</code>，而整个<code>BottomNavigationBar</code>的背景色为<code>BackgroundColor</code>，现在我们看一下<code>BACKGROUND_STYLE_RIPPLE</code>的情况：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mBottomNavigationBar.setBackgroundStyle(BottomNavigationBar.BACKGROUND_STYLE_RIPPLE);</div></pre></td></tr></table></figure></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1949836-807ec898e80dc375.gif?imageMogr2/auto-orient/strip" alt=""></p>
+<h2 id="2-4-给Item设置角标"><a href="#2-4-给Item设置角标" class="headerlink" title="2.4 给Item设置角标"></a>2.4 给<code>Item</code>设置角标</h2><p>通过<code>BottomNavigationItem</code>的<code>setBadgeItem</code>方法，可以给每个<code>Item</code>设置一个独立的角标，对于角标支持设置它的背景、文案、文案颜色以及在选中时是否隐藏角标：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">BadgeItem badgeItem = new BadgeItem()</div><div class="line">                .setBackgroundColorResource(android.R.color.holo_red_dark) //设置角标背景色</div><div class="line">                .setText(&quot;5&quot;) //设置角标的文字</div><div class="line">                .setTextColorResource(android.R.color.white) //设置角标文字颜色</div><div class="line">                .setHideOnSelect(true); //在选中时是否隐藏角标</div><div class="line">mBottomNavigationBar.addItem(new BottomNavigationItem(R.drawable.ic_5, &quot;Item 5&quot;)</div><div class="line">    .setActiveColorResource(android.R.color.holo_orange_dark)</div><div class="line">    .setBadgeItem(badgeItem));</div></pre></td></tr></table></figure></p>
+<p>效果如下图所示：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-bbae3b6e91633665.gif?imageMogr2/auto-orient/strip" alt=""></p>
+<h2 id="2-5-监听Item的切换"><a href="#2-5-监听Item的切换" class="headerlink" title="2.5 监听Item的切换"></a>2.5 监听<code>Item</code>的切换</h2><p>可以通过下面的方法来监听<code>Item</code>之间的切换：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">mBottomNavigationBar.addItem(new BottomNavigationItem(R.drawable.ic_5, &quot;Item 5&quot;).setActiveColorResource(android.R.color.holo_orange_dark).setBadgeItem(badgeItem));</div><div class="line">mBottomNavigationBar.setTabSelectedListener(new BottomNavigationBar.OnTabSelectedListener() &#123;</div><div class="line"></div><div class="line">            @Override</div><div class="line">            public void onTabSelected(int position) &#123;</div><div class="line">                Log.d(&quot;onTabSelected&quot;, &quot;position=&quot; + position);</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            @Override</div><div class="line">            public void onTabUnselected(int position) &#123;</div><div class="line">                Log.d(&quot;onTabUnselected&quot;, &quot;position=&quot; + position);</div><div class="line"></div><div class="line">            &#125;</div><div class="line"></div><div class="line">            @Override</div><div class="line">            public void onTabReselected(int position) &#123;</div><div class="line">                Log.d(&quot;onTabReselected&quot;, &quot;position=&quot; + position);</div><div class="line"></div><div class="line">            &#125;</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<ul>
+<li><code>onTabSelected</code>，某个<code>Item</code>从未选中状态变为选中状态时回调</li>
+<li><code>onTabUnselected</code>，某个<code>Item</code>从选中变为未选中时回调</li>
+<li><code>onTabReselected</code>，某个<code>Item</code>已经处于选中状态，但是它又被再次点击了，那么回调这个函数。</li>
+</ul>
+<h2 id="2-6-指定当前选中的位置"><a href="#2-6-指定当前选中的位置" class="headerlink" title="2.6 指定当前选中的位置"></a>2.6 指定当前选中的位置</h2><p>指定初始时刻的位置：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mBottomNavigationBar.setFirstSelectedPosition(3).initialise();</div></pre></td></tr></table></figure></p>
+<p>动态改变位置：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mBottomNavigationBar.selectTab(2);</div></pre></td></tr></table></figure></p>
+<h2 id="2-7-初始化"><a href="#2-7-初始化" class="headerlink" title="2.7 初始化"></a>2.7 初始化</h2><p>在改变设置之后，需要在最后调用下面这句才会生效<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mBottomNavigationBar.initialise();</div></pre></td></tr></table></figure></p>
+<h1 id="三、BottomNavigationBar的显示和隐藏"><a href="#三、BottomNavigationBar的显示和隐藏" class="headerlink" title="三、BottomNavigationBar的显示和隐藏"></a>三、<code>BottomNavigationBar</code>的显示和隐藏</h1><h2 id="3-1-手动隐藏和显示BottomNavigationBar"><a href="#3-1-手动隐藏和显示BottomNavigationBar" class="headerlink" title="3.1 手动隐藏和显示BottomNavigationBar"></a>3.1 手动隐藏和显示<code>BottomNavigationBar</code></h2><p>通过下面的两个方法可以手动显示和隐藏<code>BottomNavigationBar</code>：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">public void show(View view) &#123;</div><div class="line">    mBottomNavigationBar.unHide(true);</div><div class="line">&#125;</div><div class="line"></div><div class="line">public void hide(View view) &#123;</div><div class="line">    mBottomNavigationBar.hide(true);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1949836-0fa723d4a230fefb.gif?imageMogr2/auto-orient/strip" alt=""></p>
+<h2 id="3-2-根据列表的滚动来显示和隐藏"><a href="#3-2-根据列表的滚动来显示和隐藏" class="headerlink" title="3.2 根据列表的滚动来显示和隐藏"></a>3.2 根据列表的滚动来显示和隐藏</h2><p>如果我们的根布局使用的是<code>CoordinatorLayout</code>，那么可以通过给<code>BottomNavigationBar</code>设置内置的<code>Behavior</code>来实现动态地显示和隐藏，首先继承于这个内置的<code>Bahavior</code>，给它指定一个构造函数：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">public class BottomBehavior extends BottomVerticalScrollBehavior&lt;BottomNavigationBar&gt; &#123;</div><div class="line"></div><div class="line">    public BottomBehavior(Context context, AttributeSet attributeSet) &#123;</div><div class="line">        super();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>把这个<code>Behavior</code>设置给<code>BottomNavigationBar</code>：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">&lt;android.support.design.widget.CoordinatorLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;</div><div class="line">    xmlns:tools=&quot;http://schemas.android.com/tools&quot;</div><div class="line">    android:layout_width=&quot;match_parent&quot;</div><div class="line">    android:layout_height=&quot;match_parent&quot;</div><div class="line">    xmlns:app=&quot;http://schemas.android.com/apk/res-auto&quot;</div><div class="line">    tools:context=&quot;com.demo.lizejun.repotransition.NavigationBarActivity&quot;&gt;</div><div class="line">    &lt;android.support.v7.widget.RecyclerView</div><div class="line">        android:id=&quot;@+id/rv_content&quot;</div><div class="line">        android:layout_width=&quot;match_parent&quot;</div><div class="line">        android:layout_height=&quot;match_parent&quot;/&gt;</div><div class="line">    &lt;com.ashokvarma.bottomnavigation.BottomNavigationBar</div><div class="line">        android:id=&quot;@+id/bottom_navigation&quot;</div><div class="line">        android:layout_gravity=&quot;bottom&quot;</div><div class="line">        android:layout_width=&quot;match_parent&quot;</div><div class="line">        android:layout_height=&quot;wrap_content&quot;</div><div class="line">        app:layout_behavior=&quot;com.demo.lizejun.repotransition.behavior.BottomBehavior&quot;/&gt;</div><div class="line">&lt;/android.support.design.widget.CoordinatorLayout&gt;</div></pre></td></tr></table></figure></p>
+<p>只需要这两部操作，就可以实现动态地显示和隐藏了：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-c6eda5afa04ff926.gif?imageMogr2/auto-orient/strip" alt=""></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/04/14/Material-Design-控件/Material-Design-控件知识梳理(6)---Snackbar/" rel="next" title="Material Design 控件知识梳理(6) - Snackbar">
+                <i class="fa fa-chevron-left"></i> Material Design 控件知识梳理(6) - Snackbar
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/04/15/Material-Design-控件/Material-Design-控件知识梳理(8)---TabLayout/" rel="prev" title="Material Design 控件知识梳理(8) - TabLayout">
+                Material Design 控件知识梳理(8) - TabLayout <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="zeMao" />
+          <p class="site-author-name" itemprop="name">zeMao</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">104</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">24</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、概述"><span class="nav-number">1.</span> <span class="nav-text">一、概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、BottomNavigationBar详解"><span class="nav-number">2.</span> <span class="nav-text">二、BottomNavigationBar详解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-基本用法"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 基本用法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-BottomNavigationBar的Mode属性"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 BottomNavigationBar的Mode属性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-BottomNavigationBar的BackgroundStyle属性"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 BottomNavigationBar的BackgroundStyle属性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-4-给Item设置角标"><span class="nav-number">2.4.</span> <span class="nav-text">2.4 给Item设置角标</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-5-监听Item的切换"><span class="nav-number">2.5.</span> <span class="nav-text">2.5 监听Item的切换</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-6-指定当前选中的位置"><span class="nav-number">2.6.</span> <span class="nav-text">2.6 指定当前选中的位置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-7-初始化"><span class="nav-number">2.7.</span> <span class="nav-text">2.7 初始化</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、BottomNavigationBar的显示和隐藏"><span class="nav-number">3.</span> <span class="nav-text">三、BottomNavigationBar的显示和隐藏</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-手动隐藏和显示BottomNavigationBar"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 手动隐藏和显示BottomNavigationBar</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-根据列表的滚动来显示和隐藏"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 根据列表的滚动来显示和隐藏</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zeMao</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

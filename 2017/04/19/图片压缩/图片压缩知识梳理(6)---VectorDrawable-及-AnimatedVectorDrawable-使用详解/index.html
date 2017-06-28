@@ -1,0 +1,813 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="一、Vector优点VectorDrawable主要有两个优点：屏幕自适应和体积小。  如果我们使用的是普通的png或者jpg图片，那么为了能让图片在不同分辨率的机型上能够很好地展现，通常会在各个drawable文件夹下放置不同分辨率大小的图片文件，而VectorDrawable则不需要，仅仅只使用一套资源，就能够适应任何分辨率的手机。 对于某些图片，VectorDrawable素材的大小要比pn">
+<meta property="og:type" content="article">
+<meta property="og:title" content="图片压缩知识梳理(6) - VectorDrawable 及 AnimatedVectorDrawable 使用详解">
+<meta property="og:url" content="http://yoursite.com/2017/04/19/图片压缩/图片压缩知识梳理(6)---VectorDrawable-及-AnimatedVectorDrawable-使用详解/index.html">
+<meta property="og:site_name" content="zeMao&#39;s Blog">
+<meta property="og:description" content="一、Vector优点VectorDrawable主要有两个优点：屏幕自适应和体积小。  如果我们使用的是普通的png或者jpg图片，那么为了能让图片在不同分辨率的机型上能够很好地展现，通常会在各个drawable文件夹下放置不同分辨率大小的图片文件，而VectorDrawable则不需要，仅仅只使用一套资源，就能够适应任何分辨率的手机。 对于某些图片，VectorDrawable素材的大小要比pn">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-3634b6bdd5ce60aa.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-fde24ec547e6017a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-445d3e8c2384622a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-35fd0804200ad33b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-0f4192e7f0f80944.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-0e93f6cb10d8c3d3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-e394555235a05bd7.gif?imageMogr2/auto-orient/strip">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-06ec01384109f3a8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-6340698e8f2f8ca9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-676722116802c0c5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-5813bf990c855195.gif?imageMogr2/auto-orient/strip">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-f43e0a0ed1dd5e09.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-35e45621445b9f0b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-65d5f7948ac77989.gif?imageMogr2/auto-orient/strip">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-539d24eaebd962fe.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-6080ce01bd059b4b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-58f6f8683f2103b4.gif?imageMogr2/auto-orient/strip">
+<meta property="og:updated_time" content="2017-06-28T06:47:04.230Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="图片压缩知识梳理(6) - VectorDrawable 及 AnimatedVectorDrawable 使用详解">
+<meta name="twitter:description" content="一、Vector优点VectorDrawable主要有两个优点：屏幕自适应和体积小。  如果我们使用的是普通的png或者jpg图片，那么为了能让图片在不同分辨率的机型上能够很好地展现，通常会在各个drawable文件夹下放置不同分辨率大小的图片文件，而VectorDrawable则不需要，仅仅只使用一套资源，就能够适应任何分辨率的手机。 对于某些图片，VectorDrawable素材的大小要比pn">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-3634b6bdd5ce60aa.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/04/19/图片压缩/图片压缩知识梳理(6)---VectorDrawable-及-AnimatedVectorDrawable-使用详解/"/>
+
+
+
+
+
+  <title>图片压缩知识梳理(6) - VectorDrawable 及 AnimatedVectorDrawable 使用详解 | zeMao's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">zeMao's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/04/19/图片压缩/图片压缩知识梳理(6)---VectorDrawable-及-AnimatedVectorDrawable-使用详解/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zeMao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="zeMao's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">图片压缩知识梳理(6) - VectorDrawable 及 AnimatedVectorDrawable 使用详解</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-19T21:22:00+08:00">
+                2017-04-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/图片压缩知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">图片压缩知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="一、Vector优点"><a href="#一、Vector优点" class="headerlink" title="一、Vector优点"></a>一、<code>Vector</code>优点</h1><p><code>VectorDrawable</code>主要有两个优点：<strong>屏幕自适应</strong>和<strong>体积小</strong>。</p>
+<ul>
+<li>如果我们使用的是普通的<code>png</code>或者<code>jpg</code>图片，那么为了能让图片在不同分辨率的机型上能够很好地展现，通常会在各个<code>drawable</code>文件夹下放置不同分辨率大小的图片文件，而<code>VectorDrawable</code>则不需要，仅仅只使用一套资源，就能够适应任何分辨率的手机。</li>
+<li>对于某些图片，<code>VectorDrawable</code>素材的大小要比<code>png</code>和<code>jpg</code>小很多。</li>
+</ul>
+<h1 id="二、SVG和Vector的基本概念"><a href="#二、SVG和Vector的基本概念" class="headerlink" title="二、SVG和Vector的基本概念"></a>二、<code>SVG</code>和<code>Vector</code>的基本概念</h1><p>下面，我们先介绍一下<code>SVG</code>和<code>VectorDrawable</code>的基本概念：</p>
+<ul>
+<li><code>SVG</code>：它并不是<code>Android</code>平台特有的概念，它的全称为<strong>可缩放矢量图形</strong>，简单的来说，就是用于描述二维矢量图形的图形格式，更加详细的解释可以参考：<a href="http://baike.baidu.com/link?url=ISadOgvEUHXOGmzlZubRlMyxFxld_rUt5W6MUOKDz-bV5OqKXnTEA_rQOSgVo3NMCSp9cJ3xXh_mRV3T_FNh8a" target="_blank" rel="external">SVG - 百度百科</a>。</li>
+<li><code>VectorDrawable</code>：它是<code>Android</code>当中的<code>SVG</code>实现，它并不支持<code>SVG</code>的全部语法，只是支持部分有必要的部分。</li>
+</ul>
+<h1 id="三、获取VectorDrawable"><a href="#三、获取VectorDrawable" class="headerlink" title="三、获取VectorDrawable"></a>三、获取<code>VectorDrawable</code></h1><p>俗话说的好，巧妇难为无米炊，这一节我们就来介绍一下如何获得一个<code>VectorDrawable</code>，一般获取的方式有以下三种方式：</p>
+<ul>
+<li>先获取<code>SVG</code>素材，再通过工具转换成为<code>VectorDrawable</code></li>
+<li>通过<code>Android Studio</code>中的素材库，直接获取<code>VectorDrawable</code></li>
+<li>根据<code>Vector</code>的语法，自己描述</li>
+</ul>
+<h2 id="3-1-先获取SVG素材，再通过工具转换成为VectorDrawable"><a href="#3-1-先获取SVG素材，再通过工具转换成为VectorDrawable" class="headerlink" title="3.1 先获取SVG素材，再通过工具转换成为VectorDrawable"></a>3.1 先获取<code>SVG</code>素材，再通过工具转换成为<code>VectorDrawable</code></h2><p>首先获取<code>SVG</code>素材，再将它转换成为<code>VectorDrawable</code>是最常用的方式，而<code>SVG</code>素材的获取又有以下几种途径：</p>
+<ul>
+<li>网站直接下载<code>SVG</code>图像</li>
+<li>由<code>UI</code>设计师使用专业的工具导出</li>
+<li>通过 <a href="https://vectormagic.com/" target="_blank" rel="external">VectorMagic</a> 软件，将<code>png</code>和<code>jpg</code>素材转换为<code>SVG</code>图像</li>
+</ul>
+<p>对于个人开发者而言，一般都会采用第一种方式，我们这里也只介绍第一种方式。很多文章都推荐过这个网站：<a href="http://www.iconfont.cn/plus" target="_blank" rel="external">iconFront - 阿里巴巴</a>，它提供了<code>SVG</code>和<code>PNG</code>素材的直接下载：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-3634b6bdd5ce60aa.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>下载完毕之后，在<code>Android Studio</code>的<code>New</code>选项中，选择<code>Vector Asset</code>：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-fde24ec547e6017a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>打开之后，选择<code>Local file</code>，并打开我们下载后的图像，再选择<code>next</code>保存到指定的文件夹：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-445d3e8c2384622a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>最后，我们会得到一个<code>*.xml</code>文件，这个就是<code>VectorDrawable</code>：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">&lt;vector</div><div class="line">    xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;</div><div class="line">    android:height=&quot;24dp&quot; </div><div class="line">    android:viewportHeight=&quot;1024.0&quot;</div><div class="line">    android:viewportWidth=&quot;1024.0&quot; </div><div class="line">    android:width=&quot;24dp&quot;&gt;</div><div class="line">    &lt;path android:fillColor=&quot;#FF000000&quot; </div><div class="line">        android:pathData=&quot;M887.9,298.2c-12.9,-12.1 -33.2,-11.5 -45.2,1.4L415.9,754l-233.1,-229.7C170.2,511.9 150,512 137.5,524.6c-12.4,12.6 -12.3,32.9 0.4,45.2l256.5,252.7c0.1,0.1 0.2,0.1 0.3,0.2 0.1,0.1 0.1,0.2 0.2,0.3 2,1.9 4.4,3 6.8,4.3 1.2,0.7 2.1,1.7 3.4,2.1 3.8,1.5 7.8,2.2 11.7,2.2 4.2,0 8.4,-0.8 12.3,-2.5 1.3,-0.5 2.3,-1.7 3.6,-2.4 2.4,-1.4 4.9,-2.6 6.9,-4.7 0.1,-0.1 0.1,-0.3 0.2,-0.4 0.1,-0.1 0.2,-0.1 0.3,-0.2l449.2,-478.2C901.4,330.6 900.8,310.3 887.9,298.2z&quot;/&gt;</div><div class="line">&lt;/vector&gt;</div></pre></td></tr></table></figure></p>
+<h2 id="3-2-通过Android-Studio中的素材库，直接获取VectorDrawable"><a href="#3-2-通过Android-Studio中的素材库，直接获取VectorDrawable" class="headerlink" title="3.2 通过Android Studio中的素材库，直接获取VectorDrawable"></a>3.2 通过<code>Android Studio</code>中的素材库，直接获取<code>VectorDrawable</code></h2><p>还是在上面的那个界面，我们勾选另外一个选项：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-35fd0804200ad33b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>这里面有<code>Material Design</code>提供的素材库：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-0f4192e7f0f80944.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>通过这种方式，同样可以获取到一个<code>*.xml</code>的<code>VectorDrawable</code>：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">&lt;vector xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;</div><div class="line">        android:width=&quot;24dp&quot;</div><div class="line">        android:height=&quot;24dp&quot;</div><div class="line">        android:viewportWidth=&quot;24.0&quot;</div><div class="line">        android:viewportHeight=&quot;24.0&quot;&gt;</div><div class="line">    &lt;path</div><div class="line">        android:fillColor=&quot;#FF000000&quot;</div><div class="line">        android:pathData=&quot;M12,2C6.48,2 2,6.48 2,12s4.48,10 10,10 10,-4.48 10,-10S17.52,2 12,2zM12,5c1.66,0 3,1.34 3,3s-1.34,3 -3,3 -3,-1.34 -3,-3 1.34,-3 3,-3zM12,19.2c-2.5,0 -4.71,-1.28 -6,-3.22 0.03,-1.99 4,-3.08 6,-3.08 1.99,0 5.97,1.09 6,3.08 -1.29,1.94 -3.5,3.22 -6,3.22z&quot;/&gt;</div><div class="line">&lt;/vector&gt;</div></pre></td></tr></table></figure></p>
+<h2 id="3-3-根据Vector的语法，自己描述"><a href="#3-3-根据Vector的语法，自己描述" class="headerlink" title="3.3 根据Vector的语法，自己描述"></a>3.3 根据<code>Vector</code>的语法，自己描述</h2><p>在<code>3.1</code>和<code>3.2</code>当中，我们可以看到，最终<code>VectorDrawable</code>都是用一个<code>*.xml</code>来表示的，那么，我们当然可以根据<code>SVG</code>的语法，来编写一个<code>xml</code>文件，通过<code>pathData</code>属性进行描述，不过这种方式较为繁琐，一般不会采用。</p>
+<h1 id="四、Vector语法"><a href="#四、Vector语法" class="headerlink" title="四、Vector语法"></a>四、<code>Vector</code>语法</h1><p>虽然说大多数情况下，我们不会完全手动去编写<code>Vector</code>的<code>xml</code>文件，但是，对于<code>Vector</code>的基本语法还是有必要了解一些的，因为在我们后边谈到的动态<code>Vector</code>中需要了解对于每个标签有哪些属性可以设置，<code>Vector</code>包含下面三种标签：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&lt;vector&gt;</div><div class="line">    &lt;group&gt;</div><div class="line">        &lt;path&gt;</div><div class="line">        &lt;path&gt;</div><div class="line">    &lt;/group&gt;</div><div class="line">&lt;/vector&gt;</div></pre></td></tr></table></figure></p>
+<h2 id="4-1-lt-vector-gt-标签"><a href="#4-1-lt-vector-gt-标签" class="headerlink" title="4.1 &lt;vector&gt;标签"></a>4.1 <code>&lt;vector&gt;</code>标签</h2><ul>
+<li><code>name</code>：矢量图的名字</li>
+<li><code>width, height</code>：矢量图的固有宽高，通常使用<code>dp</code>。</li>
+<li><code>viewportWidth, viewportHeight</code>：把矢量图的宽高分成多少个单元，这里的每个单元就对应<code>pathData</code>中的一个点坐标。</li>
+</ul>
+<h2 id="4-2-lt-path-gt-标签"><a href="#4-2-lt-path-gt-标签" class="headerlink" title="4.2 &lt;path&gt;标签"></a>4.2 <code>&lt;path&gt;</code>标签</h2><ul>
+<li><code>name</code>：路径的名称。</li>
+<li><code>fillColor</code>：图形的填充颜色。</li>
+<li><code>pathData</code>：定义控制点的位置，类似与<code>Canvas</code>当中的<code>Path</code>类。</li>
+</ul>
+<h2 id="4-3-lt-group-gt-标签"><a href="#4-3-lt-group-gt-标签" class="headerlink" title="4.3 &lt;group&gt;标签"></a>4.3 <code>&lt;group&gt;</code>标签</h2><p><code>&lt;group&gt;</code>用来把多个<code>&lt;path&gt;</code>组合在一起，进行相同的处理。</p>
+<p>更多的属性可以查阅下面这两篇文章：</p>
+<p><a href="http://blog.chengyunfeng.com/?p=834&amp;utm_source=tuicool&amp;utm_medium=referral" target="_blank" rel="external">VectorDrawable 详解</a><br><a href="http://blog.csdn.net/zyjzyj2/article/details/53530568" target="_blank" rel="external">Android 中的 SVG 图像的各个属性意义</a></p>
+<h1 id="五、Vector的兼容性问题"><a href="#五、Vector的兼容性问题" class="headerlink" title="五、Vector的兼容性问题"></a>五、<code>Vector</code>的兼容性问题</h1><p>为了让<code>VectorDrawable</code>能够在<code>Android 5.0</code>以下版本的手机上使用，我们需要引入<code>support</code>包，并修改<code>gradle</code>的配置。 </p>
+<h2 id="5-1-引入support包"><a href="#5-1-引入support包" class="headerlink" title="5.1 引入support包"></a>5.1 引入<code>support</code>包</h2><p><code>VectorDrawable</code>是在<code>Android 5.0</code>之后提出来的，因此，如果我们需要在低版本上使用，那么就要引入<code>com.android.support:appcompat-v7</code>包，要求版本号大于等于<code>23.2.0</code>，这里我们选用的是：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">compile &apos;com.android.support:appcompat-v7:25.3.1&apos;</div></pre></td></tr></table></figure></p>
+<p>与<code>Vector</code>相关的两个包为：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-0e93f6cb10d8c3d3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h2 id="5-2-修改gradle配置文件"><a href="#5-2-修改gradle配置文件" class="headerlink" title="5.2 修改gradle配置文件"></a>5.2 修改<code>gradle</code>配置文件</h2><p>如果<strong><code>gradle</code>的版本小于<code>2.0</code></strong>：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">android &#123;</div><div class="line">    defaultConfig &#123;</div><div class="line">        generatedDensities = []</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    aaptOptions &#123;</div><div class="line">        additionalParameters &quot;--no-version-vectors&quot;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>如果<strong><code>gradle</code>的版本大于<code>2.0</code></strong>，例如我们所用的版本：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">buildscript &#123;</div><div class="line">    repositories &#123;</div><div class="line">        jcenter()</div><div class="line">    &#125;</div><div class="line">    dependencies &#123;</div><div class="line">        classpath &apos;com.android.tools.build:gradle:2.3.0&apos;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>那么需要这样配置：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">android &#123;</div><div class="line">    defaultConfig &#123;</div><div class="line">         vectorDrawables.useSupportLibrary = true</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>关于更多兼容性的问题，可以查看下面这篇文章</p>
+<p><a href="http://blog.csdn.net/eclipsexys/article/details/51838119" target="_blank" rel="external">Android Vector 曲折的兼容之路</a></p>
+<h1 id="六、静态VectorDrawable"><a href="#六、静态VectorDrawable" class="headerlink" title="六、静态VectorDrawable"></a>六、静态<code>VectorDrawable</code></h1><p>如果使用静态的方式展示<code>VectorDrawable</code>，那么很简单，只需要像使用普通的<code>drawable</code>一样，首先，我们按照第三节的方法，获取到一个<code>vectorDrawable</code>，并把它放在<code>drawable</code>文件夹下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">&lt;vector xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;</div><div class="line">        android:width=&quot;24dp&quot;</div><div class="line">        android:height=&quot;24dp&quot;</div><div class="line">        android:viewportWidth=&quot;24.0&quot;</div><div class="line">        android:viewportHeight=&quot;24.0&quot;&gt;</div><div class="line">    &lt;path</div><div class="line">        android:fillColor=&quot;#FF000000&quot;</div><div class="line">        android:pathData=&quot;M12,2C6.48,2 2,6.48 2,12s4.48,10 10,10 10,-4.48 10,-10S17.52,2 12,2zM12,5c1.66,0 3,1.34 3,3s-1.34,3 -3,3 -3,-1.34 -3,-3 1.34,-3 3,-3zM12,19.2c-2.5,0 -4.71,-1.28 -6,-3.22 0.03,-1.99 4,-3.08 6,-3.08 1.99,0 5.97,1.09 6,3.08 -1.29,1.94 -3.5,3.22 -6,3.22z&quot;/&gt;</div><div class="line">&lt;/vector&gt;</div></pre></td></tr></table></figure></p>
+<p>我们可以应用于：</p>
+<ul>
+<li><code>ImageView</code>的<code>src</code></li>
+<li><code>View</code>的<code>background</code></li>
+<li><code>TextView</code>的<code>drawable</code></li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</div><div class="line">&lt;LinearLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;</div><div class="line">    android:layout_width=&quot;match_parent&quot;</div><div class="line">    android:layout_height=&quot;match_parent&quot;</div><div class="line">    android:orientation=&quot;vertical&quot;</div><div class="line">    android:gravity=&quot;center_horizontal&quot;&gt;</div><div class="line">    &lt;ImageView</div><div class="line">        android:id=&quot;@+id/iv_static&quot;</div><div class="line">        android:layout_width=&quot;50dp&quot;</div><div class="line">        android:layout_height=&quot;50dp&quot;</div><div class="line">        android:clickable=&quot;true&quot;</div><div class="line">        android:src=&quot;@drawable/ic_account_circle_selector&quot;/&gt;</div><div class="line">    &lt;View</div><div class="line">        android:layout_width=&quot;50dp&quot;</div><div class="line">        android:layout_height=&quot;50dp&quot;</div><div class="line">        android:clickable=&quot;true&quot;</div><div class="line">        android:background=&quot;@drawable/ic_account_circle_selector&quot;/&gt;</div><div class="line">    &lt;TextView</div><div class="line">        android:drawableStart=&quot;@drawable/ic_account_circle_black_24dp&quot;</div><div class="line">        android:text=&quot;UserName&quot;</div><div class="line">        android:layout_width=&quot;wrap_content&quot;</div><div class="line">        android:layout_height=&quot;wrap_content&quot; /&gt;</div><div class="line">&lt;/LinearLayout&gt;</div></pre></td></tr></table></figure>
+<p>在上面的例子中，我们还使用了<code>ic_account_circle_selector</code>，其定义如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</div><div class="line">&lt;selector xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;&gt;</div><div class="line">    &lt;item android:drawable=&quot;@drawable/ic_account_circle_black_24dp&quot; android:state_pressed=&quot;true&quot;/&gt;</div><div class="line">    &lt;item android:drawable=&quot;@drawable/ic_account_circle_black_normal_24dp&quot;/&gt;</div><div class="line">&lt;/selector&gt;</div></pre></td></tr></table></figure></p>
+<p><code>ic_account_circle_black_24dp</code>就是之前获取到的素材，而<code>ic_account_circle_black_normal_24dp</code>就是改变了它的<code>fillColor</code>属性：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">&lt;vector xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;</div><div class="line">    android:width=&quot;24dp&quot;</div><div class="line">    android:height=&quot;24dp&quot;</div><div class="line">    android:viewportWidth=&quot;24.0&quot;</div><div class="line">    android:viewportHeight=&quot;24.0&quot;&gt;</div><div class="line">    &lt;path</div><div class="line">        android:fillColor=&quot;#80000000&quot;</div><div class="line">        android:pathData=&quot;M12,2C6.48,2 2,6.48 2,12s4.48,10 10,10 10,-4.48 10,-10S17.52,2 12,2zM12,5c1.66,0 3,1.34 3,3s-1.34,3 -3,3 -3,-1.34 -3,-3 1.34,-3 3,-3zM12,19.2c-2.5,0 -4.71,-1.28 -6,-3.22 0.03,-1.99 4,-3.08 6,-3.08 1.99,0 5.97,1.09 6,3.08 -1.29,1.94 -3.5,3.22 -6,3.22z&quot;/&gt;</div><div class="line">&lt;/vector&gt;</div></pre></td></tr></table></figure></p>
+<p>点击后的效果为：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-e394555235a05bd7.gif?imageMogr2/auto-orient/strip" alt=""></p>
+<h1 id="七、动态VectorDrawable"><a href="#七、动态VectorDrawable" class="headerlink" title="七、动态VectorDrawable"></a>七、动态<code>VectorDrawable</code></h1><p>动态的<code>VectorDrawable</code>，也就是<code>AnimatedVectorDrawable</code>，一般来说，它的整个结构如下图所示：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-06ec01384109f3a8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>为了实现动态的<code>VectorDrawable</code>，一般需要提供三种类型的<code>*.xml</code>文件，这三个<code>xml</code>文件的根标签分别为：</p>
+<ul>
+<li><code>vector</code>：图像资源，也就是我们上面讨论的静态<code>vector</code>，定义于<code>res/drawable</code>文件夹下。</li>
+<li><code>objectAnimator</code>：定义图像资源中个元素的动画行为，定义于<code>res/anim</code>文件夹下。</li>
+<li><code>animated - vector</code>：对<code>vector</code>中的元素与<code>objectAnimator</code>进行组合，定义于<code>res/drawable</code>文件夹下。</li>
+</ul>
+<h2 id="7-1-对-lt-group-gt-标签进行动画"><a href="#7-1-对-lt-group-gt-标签进行动画" class="headerlink" title="7.1 对&lt;group&gt;标签进行动画"></a>7.1 对<code>&lt;group&gt;</code>标签进行动画</h2><p>下面，我们先看一个简单的例子，上面我们所谈到的三个<code>*.xml</code>文件如下：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-6340698e8f2f8ca9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h3 id="7-1-1-vector文件"><a href="#7-1-1-vector文件" class="headerlink" title="7.1.1 vector文件"></a>7.1.1 <code>vector</code>文件</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">&lt;vector xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;</div><div class="line">    android:width=&quot;24dp&quot;</div><div class="line">    android:height=&quot;24dp&quot;</div><div class="line">    android:viewportWidth=&quot;24.0&quot;</div><div class="line">    android:viewportHeight=&quot;24.0&quot;&gt;</div><div class="line">    &lt;group android:name=&quot;group_account&quot; android:pivotX=&quot;12&quot; android:pivotY=&quot;12&quot;&gt;</div><div class="line">        &lt;path</div><div class="line">            android:fillColor=&quot;#FF000000&quot;</div><div class="line">            android:pathData=&quot;M12,2C6.48,2 2,6.48 2,12s4.48,10 10,10 10,-4.48 10,-10S17.52,2 12,2zM12,5c1.66,0 3,1.34 3,3s-1.34,3 -3,3 -3,-1.34 -3,-3 1.34,-3 3,-3zM12,19.2c-2.5,0 -4.71,-1.28 -6,-3.22 0.03,-1.99 4,-3.08 6,-3.08 1.99,0 5.97,1.09 6,3.08 -1.29,1.94 -3.5,3.22 -6,3.22z&quot;/&gt;</div><div class="line">    &lt;/group&gt;</div><div class="line">&lt;/vector&gt;</div></pre></td></tr></table></figure>
+<p>这里我们生成了一个头像的<code>Vector</code>素材，它的图像如下，注意到，我们用一个<code>group</code>标签把<code>path</code>标签包裹起来，并且给它定义了一个<code>name</code>属性为<code>group_account</code>，这个属性在后面会用到。<br><img src="http://upload-images.jianshu.io/upload_images/1949836-676722116802c0c5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h3 id="7-1-2-objectAnimator文件"><a href="#7-1-2-objectAnimator文件" class="headerlink" title="7.1.2 objectAnimator文件"></a>7.1.2 <code>objectAnimator</code>文件</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</div><div class="line">&lt;set xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;&gt;</div><div class="line">    &lt;objectAnimator</div><div class="line">        android:duration=&quot;500&quot;</div><div class="line">        android:propertyName=&quot;rotation&quot;</div><div class="line">        android:repeatCount=&quot;infinite&quot;</div><div class="line">        android:valueFrom=&quot;0&quot;</div><div class="line">        android:valueTo=&quot;360&quot;/&gt;</div><div class="line">&lt;/set&gt;</div></pre></td></tr></table></figure>
+<p><code>objectAnimator</code>的定义和属性动画是相同的，我们需要指定需要变换的属性，也就是<code>propertyName</code>，并通过<code>valueFrom/valueTo</code>指定变化的起点值和终点值，这里我们选择了采用无限循环的方式来变换目标的<code>rotation</code>属性。</p>
+<h3 id="7-1-3-animated-vector文件"><a href="#7-1-3-animated-vector文件" class="headerlink" title="7.1.3 animated-vector文件"></a>7.1.3 <code>animated-vector</code>文件</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&lt;animated-vector xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;</div><div class="line">    android:drawable=&quot;@drawable/account_vector&quot;&gt;</div><div class="line">    &lt;target</div><div class="line">        android:animation=&quot;@anim/account_object_animator&quot;</div><div class="line">        android:name=&quot;group_account&quot;/&gt;</div><div class="line">&lt;/animated-vector&gt;</div></pre></td></tr></table></figure>
+<p><code>animated-vector</code>和<code>vector</code>是一一对应的关系，因此需要在根标签中指定<code>android:drawable</code>，也就是在<code>7.1.1</code>中的<code>vector</code>文件。<br>而每一个<code>target</code>标签是内是成对的<code>name - animation</code>属性，<code>name</code>就是在<code>7.1.1</code>中声明的<code>group</code>的<code>name</code>，而<code>animation</code>则是在<code>7.1.2</code>中定义的动画文件。</p>
+<p>如果<code>objectAnimator</code>所指定的属性在<code>name</code>所对应的标签中没有，那么不会发生任何变化。</p>
+<h3 id="7-1-4-启动动画"><a href="#7-1-4-启动动画" class="headerlink" title="7.1.4 启动动画"></a>7.1.4 启动动画</h3><p>首先，在布局的<code>xml</code>文件中，把<code>imageView</code>的<code>src</code>指定为<code>7.1.3</code>中的<code>animate-vector</code>：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">&lt;LinearLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;</div><div class="line">    android:layout_width=&quot;match_parent&quot;</div><div class="line">    android:layout_height=&quot;match_parent&quot;</div><div class="line">    android:orientation=&quot;vertical&quot;</div><div class="line">    android:gravity=&quot;center_horizontal&quot;&gt;</div><div class="line">    &lt;ImageView</div><div class="line">        android:id=&quot;@+id/iv_dynamic&quot;</div><div class="line">        android:src=&quot;@drawable/account_animated_vector&quot;</div><div class="line">        android:text=&quot;UserName&quot;</div><div class="line">        android:layout_width=&quot;50dp&quot;</div><div class="line">        android:layout_height=&quot;50dp&quot;/&gt;</div><div class="line">&lt;/LinearLayout&gt;</div></pre></td></tr></table></figure></p>
+<p>在代码中，需要手动获得这个<code>vectorDrawable</code>，然后启动动画：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">public class VectorDrawableActivity extends AppCompatActivity &#123;</div><div class="line"></div><div class="line">    private ImageView mAnimateView;</div><div class="line">    private AnimatedVectorDrawable mAnimatedVectorDrawable;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    protected void onCreate(Bundle savedInstanceState) &#123;</div><div class="line">        super.onCreate(savedInstanceState);</div><div class="line">        setContentView(R.layout.activity_vector_drawable);</div><div class="line">        mAnimateView = (ImageView) findViewById(R.id.iv_dynamic);</div><div class="line">        mAnimatedVectorDrawable = (AnimatedVectorDrawable) mAnimateView.getDrawable();</div><div class="line">        mAnimateView.setOnClickListener(new View.OnClickListener() &#123;</div><div class="line">            @Override</div><div class="line">            public void onClick(View v) &#123;</div><div class="line">                mAnimatedVectorDrawable.start();</div><div class="line">            &#125;</div><div class="line">        &#125;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>效果如下：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-5813bf990c855195.gif?imageMogr2/auto-orient/strip" alt=""></p>
+<h2 id="7-2-对-lt-path-gt-标签中的属性进行动画"><a href="#7-2-对-lt-path-gt-标签中的属性进行动画" class="headerlink" title="7.2 对&lt;path&gt;标签中的属性进行动画"></a>7.2 对<code>&lt;path&gt;</code>标签中的属性进行动画</h2><p>在<code>7.1</code>中，演示了如何对<code>group</code>标签的属性进行变换，下面，我们再演示一下如何对<code>path</code>标签中的属性进行变换。和前面类似，我们依然需要三种类性的<code>*.xml</code>文件<br><img src="http://upload-images.jianshu.io/upload_images/1949836-f43e0a0ed1dd5e09.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h3 id="7-2-1-vector文件"><a href="#7-2-1-vector文件" class="headerlink" title="7.2.1 vector文件"></a>7.2.1 <code>vector</code>文件</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">&lt;vector xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;</div><div class="line">    android:width=&quot;24dp&quot;</div><div class="line">    android:height=&quot;24dp&quot;</div><div class="line">    android:viewportWidth=&quot;24.0&quot;</div><div class="line">    android:viewportHeight=&quot;24.0&quot;&gt;</div><div class="line">    &lt;path</div><div class="line">        android:name=&quot;path_check&quot;</div><div class="line">        android:fillColor=&quot;#FF000000&quot;</div><div class="line">        android:pathData=&quot;M9,16.17L4.83,12l-1.42,1.41L9,19 21,7l-1.41,-1.41z&quot;/&gt;</div><div class="line">&lt;/vector&gt;</div></pre></td></tr></table></figure>
+<p>这里，同样需要给<code>path</code>指定一个名字，用于后面和<code>objectAnimator</code>进行关联，它的素材为：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-35e45621445b9f0b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h3 id="7-2-2-objectAnimator文件"><a href="#7-2-2-objectAnimator文件" class="headerlink" title="7.2.2 objectAnimator文件"></a>7.2.2 <code>objectAnimator</code>文件</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</div><div class="line">&lt;set xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;&gt;</div><div class="line">    &lt;objectAnimator</div><div class="line">        android:duration=&quot;500&quot;</div><div class="line">        android:propertyName=&quot;trimPathEnd&quot;</div><div class="line">        android:valueFrom=&quot;0&quot;</div><div class="line">        android:valueTo=&quot;1&quot;</div><div class="line">        android:valueType=&quot;floatType&quot;/&gt;</div><div class="line">&lt;/set&gt;</div></pre></td></tr></table></figure>
+<p>这里，我们选择的是<code>path</code>标签下的<code>trimPathEnd</code>属性，它表示从<code>Path</code>终点的位置去除<code>Path</code>，与之对应的还有<code>trimPathStart</code>属性，它表示从<code>Path</code>起点的位置去除<code>Path</code>，而<code>trimPathOffset</code>则可以改变<code>Path</code>的起点，这三个值的取值范围都是<code>0~1</code>。</p>
+<h3 id="7-2-3-animated-vector文件"><a href="#7-2-3-animated-vector文件" class="headerlink" title="7.2.3 animated-vector文件"></a>7.2.3 <code>animated-vector</code>文件</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&lt;animated-vector xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;</div><div class="line">    android:drawable=&quot;@drawable/check_vector&quot;&gt;</div><div class="line">    &lt;target</div><div class="line">        android:animation=&quot;@anim/check_object_animator&quot;</div><div class="line">        android:name=&quot;path_check&quot;/&gt;</div><div class="line">&lt;/animated-vector&gt;</div></pre></td></tr></table></figure>
+<p>效果如下：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-65d5f7948ac77989.gif?imageMogr2/auto-orient/strip" alt=""></p>
+<h2 id="7-3-lt-path-gt-之间切换"><a href="#7-3-lt-path-gt-之间切换" class="headerlink" title="7.3 &lt;path&gt;之间切换"></a>7.3 <code>&lt;path&gt;</code>之间切换</h2><p>除了上面普通的属性之外，还支持对<code>&lt;path&gt;</code>标签下的<code>&lt;pathData&gt;</code>进行改变，系统会比较两个<code>pathData</code>之间的差别，并自动产生合适的动画。需要注意，<strong>它要求这两个<code>pathData</code>的点坐标的个数是相同的</strong>。</p>
+<h3 id="7-3-1-Vector文件"><a href="#7-3-1-Vector文件" class="headerlink" title="7.3.1 Vector文件"></a>7.3.1 <code>Vector</code>文件</h3><p>这里，我们需要生成两个<code>vectorDrawable</code>，首先是起始的<code>VectorDrawable</code>：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">&lt;vector xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;</div><div class="line">        android:width=&quot;24dp&quot;</div><div class="line">        android:height=&quot;24dp&quot;</div><div class="line">        android:viewportWidth=&quot;24.0&quot;</div><div class="line">        android:viewportHeight=&quot;24.0&quot;&gt;</div><div class="line">    &lt;path</div><div class="line">        android:name=&quot;path_arrow_down&quot;</div><div class="line">        android:fillColor=&quot;#FF000000&quot;</div><div class="line">        android:pathData=&quot;M7,10l5,5 5,-5z&quot;/&gt;</div><div class="line">&lt;/vector&gt;</div></pre></td></tr></table></figure></p>
+<p>它的素材为：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-539d24eaebd962fe.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>接着是终点的<code>VectorDrawable</code>：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">&lt;vector xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;</div><div class="line">        android:width=&quot;24dp&quot;</div><div class="line">        android:height=&quot;24dp&quot;</div><div class="line">        android:viewportWidth=&quot;24.0&quot;</div><div class="line">        android:viewportHeight=&quot;24.0&quot;&gt;</div><div class="line">    &lt;path</div><div class="line">        android:fillColor=&quot;#FF000000&quot;</div><div class="line">        android:pathData=&quot;M7,14l5,-5 5,5z&quot;/&gt;</div><div class="line">&lt;/vector&gt;</div></pre></td></tr></table></figure></p>
+<p>它对应的素材为：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-6080ce01bd059b4b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h3 id="7-3-2-objectAnimator文件"><a href="#7-3-2-objectAnimator文件" class="headerlink" title="7.3.2 objectAnimator文件"></a>7.3.2 <code>objectAnimator</code>文件</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</div><div class="line">&lt;set xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;&gt;</div><div class="line">    &lt;objectAnimator</div><div class="line">        android:duration=&quot;500&quot;</div><div class="line">        android:propertyName=&quot;pathData&quot;</div><div class="line">        android:valueFrom=&quot;M7,10l5,5 5,-5z&quot;</div><div class="line">        android:valueTo=&quot;M7,14l5,-5 5,5z&quot;</div><div class="line">        android:valueType=&quot;pathType&quot;/&gt;</div><div class="line">&lt;/set&gt;</div></pre></td></tr></table></figure>
+<p>这里的<code>propertyName</code>和<code>valueType</code>需要分别定义为<code>pathData</code>和<code>pathType</code>，而起点和终点的值就是我们在<code>7.3.1</code>生成的两个<code>VectorDrawable</code>所对应的<code>pathData</code>属性的值。</p>
+<h3 id="7-3-3-animated-vector文件"><a href="#7-3-3-animated-vector文件" class="headerlink" title="7.3.3 animated-vector文件"></a>7.3.3 <code>animated-vector</code>文件</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&lt;animated-vector xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;</div><div class="line">    android:drawable=&quot;@drawable/arrow_down_vector&quot;&gt;</div><div class="line">    &lt;target</div><div class="line">        android:animation=&quot;@anim/arrow_down_object_animator&quot;</div><div class="line">        android:name=&quot;path_arrow_down&quot;/&gt;</div><div class="line">&lt;/animated-vector&gt;</div></pre></td></tr></table></figure>
+<p>最终的效果为：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-58f6f8683f2103b4.gif?imageMogr2/auto-orient/strip" alt=""></p>
+<h1 id="八、VectorDrawable的性能"><a href="#八、VectorDrawable的性能" class="headerlink" title="八、VectorDrawable的性能"></a>八、<code>VectorDrawable</code>的性能</h1><p> 关于<code>VectorDrawable</code>的性能问题，<a href="http://blog.csdn.net/eclipsexys/article/details/51838119" target="_blank" rel="external">Android Vector 曲折的兼容之路</a> 这篇文章说的很好，因此直接引用过来了：</p>
+<blockquote>
+<ul>
+<li><code>Bitmap</code>的绘制效率并不一定会比<code>Vector</code>高，它们有一定的平衡点，当<code>Vector</code>比较简单时，其效率是一定比<code>Bitmap</code>高的，所以，为了保证<code>Vector</code>的高效率，<code>Vector</code>需要更加简单，<code>PathData</code>更加标准、精简，当<code>Vector</code>图像变得非常复杂时，就需要使用<code>Bitmap</code>来代替了。</li>
+<li><code>Vector</code>适用于<code>ICON</code>、<code>Button</code>、<code>ImageView</code>的图标等小的<code>ICON</code>，或者是需要的动画效果，由于<code>Bitmap</code>在<code>GPU</code>中有缓存功能，而<code>Vector</code>并没有，所以<code>Vector</code>图像不能做频繁的重绘</li>
+<li><code>Vector</code>图像过于复杂时，不仅仅要注意绘制效率，初始化效率也是需要考虑的重要因素</li>
+<li><code>SVG</code>加载速度会快于<code>PNG</code>，但渲染速度会慢于<code>PNG</code>，毕竟<code>PNG</code>有硬件加速，但平均下来，加载速度的提升弥补了绘制的速度缺陷。</li>
+</ul>
+</blockquote>
+<h1 id="九、参考文献"><a href="#九、参考文献" class="headerlink" title="九、参考文献"></a>九、参考文献</h1><p> <a href="http://blog.csdn.net/eclipsexys/article/details/51838119" target="_blank" rel="external">1. Android Vector 曲折的兼容之路</a><br><a href="http://www.jianshu.com/p/456df1434739" target="_blank" rel="external">2. VectorDrawable 怎么玩</a><br><a href="http://www.jianshu.com/p/0555b8c1d26a" target="_blank" rel="external">3. Android 使用矢量图（SVG, VectorDrawable）实践篇</a><br><a href="http://baike.baidu.com/link?url=ISadOgvEUHXOGmzlZubRlMyxFxld_rUt5W6MUOKDz-bV5OqKXnTEA_rQOSgVo3NMCSp9cJ3xXh_mRV3T_FNh8a" target="_blank" rel="external">4. SVG - 百度百科</a><br><a href="http://blog.csdn.net/zyjzyj2/article/details/53530568" target="_blank" rel="external">5. Android 中的 SVG 图像的各个属性意义</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/04/18/Material-Design-控件/Material-Design-控件知识梳理(9)---TextInputLayout/" rel="next" title="Material Design 控件知识梳理(9) - TextInputLayout">
+                <i class="fa fa-chevron-left"></i> Material Design 控件知识梳理(9) - TextInputLayout
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/04/21/图片压缩/图片压缩知识梳理(8)---WebP-使用详解/" rel="prev" title="图片压缩知识梳理(8) - WebP 使用详解">
+                图片压缩知识梳理(8) - WebP 使用详解 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="zeMao" />
+          <p class="site-author-name" itemprop="name">zeMao</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">104</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">24</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、Vector优点"><span class="nav-number">1.</span> <span class="nav-text">一、Vector优点</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、SVG和Vector的基本概念"><span class="nav-number">2.</span> <span class="nav-text">二、SVG和Vector的基本概念</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、获取VectorDrawable"><span class="nav-number">3.</span> <span class="nav-text">三、获取VectorDrawable</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-先获取SVG素材，再通过工具转换成为VectorDrawable"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 先获取SVG素材，再通过工具转换成为VectorDrawable</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-通过Android-Studio中的素材库，直接获取VectorDrawable"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 通过Android Studio中的素材库，直接获取VectorDrawable</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-3-根据Vector的语法，自己描述"><span class="nav-number">3.3.</span> <span class="nav-text">3.3 根据Vector的语法，自己描述</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四、Vector语法"><span class="nav-number">4.</span> <span class="nav-text">四、Vector语法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#4-1-lt-vector-gt-标签"><span class="nav-number">4.1.</span> <span class="nav-text">4.1 <vector>标签</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-2-lt-path-gt-标签"><span class="nav-number">4.2.</span> <span class="nav-text">4.2 <path>标签</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-3-lt-group-gt-标签"><span class="nav-number">4.3.</span> <span class="nav-text">4.3 <group>标签</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#五、Vector的兼容性问题"><span class="nav-number">5.</span> <span class="nav-text">五、Vector的兼容性问题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#5-1-引入support包"><span class="nav-number">5.1.</span> <span class="nav-text">5.1 引入support包</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-2-修改gradle配置文件"><span class="nav-number">5.2.</span> <span class="nav-text">5.2 修改gradle配置文件</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#六、静态VectorDrawable"><span class="nav-number">6.</span> <span class="nav-text">六、静态VectorDrawable</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#七、动态VectorDrawable"><span class="nav-number">7.</span> <span class="nav-text">七、动态VectorDrawable</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#7-1-对-lt-group-gt-标签进行动画"><span class="nav-number">7.1.</span> <span class="nav-text">7.1 对<group>标签进行动画</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#7-1-1-vector文件"><span class="nav-number">7.1.1.</span> <span class="nav-text">7.1.1 vector文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-1-2-objectAnimator文件"><span class="nav-number">7.1.2.</span> <span class="nav-text">7.1.2 objectAnimator文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-1-3-animated-vector文件"><span class="nav-number">7.1.3.</span> <span class="nav-text">7.1.3 animated-vector文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-1-4-启动动画"><span class="nav-number">7.1.4.</span> <span class="nav-text">7.1.4 启动动画</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-2-对-lt-path-gt-标签中的属性进行动画"><span class="nav-number">7.2.</span> <span class="nav-text">7.2 对<path>标签中的属性进行动画</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#7-2-1-vector文件"><span class="nav-number">7.2.1.</span> <span class="nav-text">7.2.1 vector文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-2-2-objectAnimator文件"><span class="nav-number">7.2.2.</span> <span class="nav-text">7.2.2 objectAnimator文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-2-3-animated-vector文件"><span class="nav-number">7.2.3.</span> <span class="nav-text">7.2.3 animated-vector文件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-3-lt-path-gt-之间切换"><span class="nav-number">7.3.</span> <span class="nav-text">7.3 <path>之间切换</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#7-3-1-Vector文件"><span class="nav-number">7.3.1.</span> <span class="nav-text">7.3.1 Vector文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-3-2-objectAnimator文件"><span class="nav-number">7.3.2.</span> <span class="nav-text">7.3.2 objectAnimator文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-3-3-animated-vector文件"><span class="nav-number">7.3.3.</span> <span class="nav-text">7.3.3 animated-vector文件</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#八、VectorDrawable的性能"><span class="nav-number">8.</span> <span class="nav-text">八、VectorDrawable的性能</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#九、参考文献"><span class="nav-number">9.</span> <span class="nav-text">九、参考文献</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zeMao</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

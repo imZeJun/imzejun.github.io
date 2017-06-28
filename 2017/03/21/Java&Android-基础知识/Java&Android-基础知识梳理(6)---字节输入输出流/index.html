@@ -1,0 +1,757 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="一、概述Java IO库中的流代表有能力产出数据的数据源对象或者是有能力接收数据的接收端对象，我们一般把它分成输入和输出两部分：  继承自InputStream或Reader派生的类都含有名为read的方法，用于读取单个字节或字节数组。 继承自OuputStream或Writer派生的类都含有名为write的方法，用于写入单个字节或字节数组。  我们通常通过叠合多个对象来提供所期望的功能，这其实是">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java&amp;Android 基础知识梳理(6) - 字节输入输出流">
+<meta property="og:url" content="http://yoursite.com/2017/03/21/Java&Android-基础知识/Java&Android-基础知识梳理(6)---字节输入输出流/index.html">
+<meta property="og:site_name" content="zeMao&#39;s Blog">
+<meta property="og:description" content="一、概述Java IO库中的流代表有能力产出数据的数据源对象或者是有能力接收数据的接收端对象，我们一般把它分成输入和输出两部分：  继承自InputStream或Reader派生的类都含有名为read的方法，用于读取单个字节或字节数组。 继承自OuputStream或Writer派生的类都含有名为write的方法，用于写入单个字节或字节数组。  我们通常通过叠合多个对象来提供所期望的功能，这其实是">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-bd0b01206b763fc3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-4338a4e237b5505a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2017-06-28T06:47:04.226Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java&amp;Android 基础知识梳理(6) - 字节输入输出流">
+<meta name="twitter:description" content="一、概述Java IO库中的流代表有能力产出数据的数据源对象或者是有能力接收数据的接收端对象，我们一般把它分成输入和输出两部分：  继承自InputStream或Reader派生的类都含有名为read的方法，用于读取单个字节或字节数组。 继承自OuputStream或Writer派生的类都含有名为write的方法，用于写入单个字节或字节数组。  我们通常通过叠合多个对象来提供所期望的功能，这其实是">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-bd0b01206b763fc3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/03/21/Java&Android-基础知识/Java&Android-基础知识梳理(6)---字节输入输出流/"/>
+
+
+
+
+
+  <title>Java&Android 基础知识梳理(6) - 字节输入输出流 | zeMao's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">zeMao's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/03/21/Java&Android-基础知识/Java&Android-基础知识梳理(6)---字节输入输出流/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zeMao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="zeMao's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Java&Android 基础知识梳理(6) - 字节输入输出流</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-21T15:35:00+08:00">
+                2017-03-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java-Android-基础知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">Java&Android 基础知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="一、概述"><a href="#一、概述" class="headerlink" title="一、概述"></a>一、概述</h1><p><code>Java IO</code>库中的<strong>流</strong>代表有能力产出数据的数据源对象或者是有能力接收数据的接收端对象，我们一般把它分成输入和输出两部分：</p>
+<ul>
+<li>继承自<code>InputStream</code>或<code>Reader</code>派生的类都含有名为<code>read</code>的方法，用于读取单个字节或字节数组。</li>
+<li>继承自<code>OuputStream</code>或<code>Writer</code>派生的类都含有名为<code>write</code>的方法，用于写入单个字节或字节数组。</li>
+</ul>
+<p>我们通常通过叠合多个对象来提供所期望的功能，这其实是一种装饰器设计模式。</p>
+<h2 id="二、字节输入流"><a href="#二、字节输入流" class="headerlink" title="二、字节输入流"></a>二、字节输入流</h2><h1 id="2-1-InputStream的作用"><a href="#2-1-InputStream的作用" class="headerlink" title="2.1 InputStream的作用"></a>2.1 <code>InputStream</code>的作用</h1><p>它的作用是用来表示那些从不同数据源产生输入的类，而最终结果就是通过<code>read</code>方法获得数据源的内容，从数据源中读出的内容<strong>用<code>int</code>或<code>byte[]</code>来表示</strong>：</p>
+<ul>
+<li>字节数组</li>
+<li><code>String</code>对象</li>
+<li>文件</li>
+<li>管道</li>
+<li>一个由其它种类的流组成的序列，以便我们可以将它们收集合并到一个流内</li>
+<li>其它数据源，如网络等</li>
+</ul>
+<h2 id="2-2-InputStream源码"><a href="#2-2-InputStream源码" class="headerlink" title="2.2 InputStream源码"></a>2.2 <code>InputStream</code>源码</h2><p><code>InputStream</code>是一个抽象类，所有表示字节输入的流都是继承于它，它实现了以下接口：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-bd0b01206b763fc3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>比较关键的是前面四个方法：</p>
+<ul>
+<li><code>public abstract int read() throws IOException</code><br>返回输入流的<strong>下一个字节（<code>next byte</code>）</strong>，如果已经到达输入流的末尾，那么返回<code>-1</code></li>
+<li><code>public int read(byte b[]) throws IOException</code><br>尝试从输入流中读取<code>b.length</code>长度的字节，存入到<code>b</code>中，如果已经到达末尾返回<code>-1</code>，否则返回成功写入到<code>b</code>中的字节数。</li>
+<li><code>public int read(byte b[], int off, int len) throws IOException</code><br>尝试从输入流中读取下<code>len</code>长度的字节，如果<code>len</code>为<code>0</code>，那么返回<code>0</code>，否则返回实际读入的字节数，读入的第一个字节存放在数据<code>b[off]</code>中，如果没有可读的，那么返回<code>-1</code>。</li>
+<li><code>public long skip(long n) throws IOException</code><br>跳过，并丢弃掉<code>n</code>个字节，其最大值为<code>2048</code>。</li>
+</ul>
+<h2 id="2-3-InputStream的具体实现类"><a href="#2-3-InputStream的具体实现类" class="headerlink" title="2.3 InputStream的具体实现类"></a>2.3 <code>InputStream</code>的具体实现类</h2><ul>
+<li><p><code>ByteArrayInputStream</code><br>它接收<code>byte[]</code>作为构造函数的参数，我们调用<code>read</code>方法时，就是从<code>byte[]</code>数组里，读取字节。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">public ByteArrayInputStream(byte buf[], int offset, int length) &#123;</div><div class="line">    this.buf = buf;</div><div class="line">    this.pos = offset;</div><div class="line">    this.count = Math.min(offset + length, buf.length);</div><div class="line">    this.mark = offset;</div><div class="line">&#125;</div><div class="line"></div><div class="line">public synchronized int read() &#123;</div><div class="line">    return (pos &lt; count) ? (buf[pos++] &amp; 0xff) : -1;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p><code>StringBufferInputStream</code><br>已经过时，推荐使用<code>StringReader</code>。</p>
+</li>
+<li><p><code>FileInputStream</code><br><code>FileInputStream</code>支持提供文件名、<code>File</code>和<code>FileDescription</code>作为构造函数的参数，它的<code>read</code>调用的是底层的<code>native</code>方法。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">public FileInputStream(File file) throws FileNotFoundException &#123;</div><div class="line">    String name = (file != null ? file.getPath() : null);</div><div class="line">    SecurityManager security = System.getSecurityManager();</div><div class="line">    if (security != null) &#123;</div><div class="line">        security.checkRead(name);</div><div class="line">    &#125;</div><div class="line">    if (name == null) &#123;</div><div class="line">        throw new NullPointerException();</div><div class="line">    &#125;</div><div class="line">    if (file.isInvalid()) &#123;</div><div class="line">        throw new FileNotFoundException(&quot;Invalid file path&quot;);</div><div class="line">    &#125;</div><div class="line">    fd = new FileDescriptor();</div><div class="line">    fd.attach(this);</div><div class="line">    path = name;</div><div class="line">    open(name);</div><div class="line">&#125;</div><div class="line"></div><div class="line">public int read() throws IOException &#123;</div><div class="line">    return read0();</div><div class="line">&#125;</div><div class="line"></div><div class="line">private native int read0() throws IOException;</div></pre></td></tr></table></figure>
+</li>
+<li><p><code>PipedInputStream</code><br>通过通信管道来交换数据，如果两个线程希望进行数据的传输，那么它们一个创建管道输出流，另一个创建管道输入流，它必须要和一个<code>PipedOutputStream</code>相连接。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div></pre></td><td class="code"><pre><div class="line">public PipedInputStream(int pipeSize) &#123;</div><div class="line">    if (pipeSize &lt;= 0) &#123;</div><div class="line">        throw new IllegalArgumentException(&quot;pipe size &quot; + pipeSize + &quot; too small&quot;);</div><div class="line">    &#125;</div><div class="line">    buffer = new byte[pipeSize];</div><div class="line">&#125;</div><div class="line"></div><div class="line">public PipedInputStream(PipedOutputStream out, int pipeSize) throws IOException &#123;</div><div class="line">    this(pipeSize);</div><div class="line">    connect(out);</div><div class="line">&#125;</div><div class="line"></div><div class="line">@Override</div><div class="line">public synchronized int read() throws IOException &#123;</div><div class="line">    if (!isConnected) &#123;</div><div class="line">        throw new IOException(&quot;Not connected&quot;);</div><div class="line">    &#125;</div><div class="line">    if (buffer == null) &#123;</div><div class="line">        throw new IOException(&quot;InputStream is closed&quot;);</div><div class="line">    &#125;</div><div class="line">    lastReader = Thread.currentThread();</div><div class="line">    try &#123;</div><div class="line">        int attempts = 3;</div><div class="line">        while (in == -1) &#123;</div><div class="line">            // Are we at end of stream?</div><div class="line">            if (isClosed) &#123;</div><div class="line">                return -1;</div><div class="line">            &#125;</div><div class="line">            if ((attempts-- &lt;= 0) &amp;&amp; lastWriter != null &amp;&amp; !lastWriter.isAlive()) &#123;</div><div class="line">                throw new IOException(&quot;Pipe broken&quot;);</div><div class="line">            &#125;</div><div class="line">            notifyAll();</div><div class="line">            wait(1000);</div><div class="line">        &#125;</div><div class="line">    &#125; catch (InterruptedException e) &#123;</div><div class="line">        IoUtils.throwInterruptedIoException();</div><div class="line">    &#125;</div><div class="line">    int result = buffer[out++] &amp; 0xff;</div><div class="line">    if (out == buffer.length) &#123;</div><div class="line">        out = 0;</div><div class="line">    &#125;</div><div class="line">    if (out == in) &#123;</div><div class="line">        in = -1;</div><div class="line">        out = 0;</div><div class="line">    &#125;</div><div class="line">    notifyAll();</div><div class="line">    return result;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p><code>SequenceInputStream</code><br>将多个<code>InputStream</code>连接在一起，一个读完后就完毕，并读下一个，它接收两个<code>InputStream</code>对象或者一个容纳<code>InputStream</code>对象的容器<code>Enumeration</code>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">public int read() throws IOException &#123;</div><div class="line">    while (in != null) &#123;</div><div class="line">        int c = in.read();</div><div class="line">        if (c != -1) &#123;</div><div class="line">            return c;</div><div class="line">        &#125;</div><div class="line">        nextStream();</div><div class="line">    &#125;</div><div class="line">    return -1;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p><code>ObjectInputStream</code><br>它和一个<code>InputStream</code>相关联，源数据都是来自于这个<code>InputStream</code>，它继承于<code>InputStream</code>，并且它和传入的<code>InputStream</code>并不是直接关联的，中间通过了<code>BlockDataInputStream</code>进行中转，要关注的就是它的<code>readObject</code>方法，它会把一个之前序列化过的对象进行反序列化，然后得到一个<code>Object</code>对象，它的<strong>目的在于将（把二进制流转换成为对象）和（从某个数据源中读出字节流）这两个操作独立开来，让它们可以随意地组合</strong>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line">public ObjectInputStream(InputStream in) throws IOException &#123;</div><div class="line">    verifySubclass();</div><div class="line">    bin = new BlockDataInputStream(in);</div><div class="line">    handles = new HandleTable(10);</div><div class="line">    vlist = new ValidationList();</div><div class="line">    serialFilter = ObjectInputFilter.Config.getSerialFilter();</div><div class="line">    enableOverride = false;</div><div class="line">    readStreamHeader();</div><div class="line">    bin.setBlockDataMode(true);</div><div class="line">&#125;</div><div class="line"></div><div class="line">public final Object readObject() throws IOException, ClassNotFoundException &#123;</div><div class="line">    if (enableOverride) &#123;</div><div class="line">        return readObjectOverride();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    // if nested read, passHandle contains handle of enclosing object</div><div class="line">    int outerHandle = passHandle;</div><div class="line">    try &#123;</div><div class="line">        Object obj = readObject0(false);</div><div class="line">        handles.markDependency(outerHandle, passHandle);</div><div class="line">        ClassNotFoundException ex = handles.lookupException(passHandle);</div><div class="line">        if (ex != null) &#123;</div><div class="line">            throw ex;</div><div class="line">        &#125;</div><div class="line">        if (depth == 0) &#123;</div><div class="line">            vlist.doCallbacks();</div><div class="line">        &#125;</div><div class="line">        return obj;</div><div class="line">    &#125; finally &#123;</div><div class="line">        passHandle = outerHandle;</div><div class="line">        if (closed &amp;&amp; depth == 0) &#123;</div><div class="line">            clear();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p><code>FilterInputStream</code><br>它的构造函数参数就是一个<code>InputStream</code>：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">protected FilterInputStream(InputStream in) &#123;</div><div class="line">    this.in = in;</div><div class="line">&#125;</div><div class="line"></div><div class="line">public int read() throws IOException &#123;</div><div class="line">    return in.read();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>这个类很特殊，前面的<code>InputStream</code>子类都是传入一个数据源（<code>Pipe/byte[]/File</code>）等等，然后通过重写<code>read</code>方法从数据源中读取数据，而<code>FilterInputStream</code>则是将<code>InputStream</code>组合在内部，它调用<code>in</code>去执行<code>InputStream</code>定义的抽象方法，也就是说它不会改变组合在内部的<code>InputStream</code>所对应的数据源。<br>另外，它还新增了一些方法，这些方法底层还是调用了<code>read</code>方法，但是它封装了一些别的操作，比如<code>DataInputStream</code>中的<code>readInt</code>，它调用<code>in</code>连续读取了四次，然后拼成一个<code>int</code>型返回给调用者，之所以采用组合，而不是继承，<strong>目的是将（把二进制流转换成别的格式）和（从某个数据源中读出字节流）这两个操作独立开来，让它们可以随意地组合</strong>。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">public final int readInt() throws IOException &#123;</div><div class="line">    int ch1 = in.read();</div><div class="line">    int ch2 = in.read();</div><div class="line">    int ch3 = in.read();</div><div class="line">    int ch4 = in.read();</div><div class="line">    if ((ch1 | ch2 | ch3 | ch4) &lt; 0)</div><div class="line">        throw new EOFException();</div><div class="line">    return ((ch1 &lt;&lt; 24) + (ch2 &lt;&lt; 16) + (ch3 &lt;&lt; 8) + (ch4 &lt;&lt; 0));</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="三、字节输出流"><a href="#三、字节输出流" class="headerlink" title="三、字节输出流"></a>三、字节输出流</h2><h2 id="3-1-OuputStream的作用"><a href="#3-1-OuputStream的作用" class="headerlink" title="3.1 OuputStream的作用"></a>3.1 <code>OuputStream</code>的作用</h2><p><code>OuputStream</code>决定了输出要去往的目标：</p>
+<ul>
+<li>字节数组</li>
+<li>文件</li>
+<li>管道</li>
+</ul>
+<h2 id="3-2-OutputStream源码"><a href="#3-2-OutputStream源码" class="headerlink" title="3.2 OutputStream源码"></a>3.2 <code>OutputStream</code>源码</h2><p>和<code>InputStream</code>类似，也是一个抽象类，它的子类代表了输出所要去往的目标，它的关键方法如下：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-4338a4e237b5505a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>我们主要关注的是<code>write</code>方法，前两个<code>write</code>方法最终都是调用了抽象的<code>write(int oneByte)</code>方法，最终怎么写入是由子类实现的。</p>
+<h2 id="3-3-OutputStream的具体实现类"><a href="#3-3-OutputStream的具体实现类" class="headerlink" title="3.3 OutputStream的具体实现类"></a>3.3 <code>OutputStream</code>的具体实现类</h2><ul>
+<li><code>ByteArrayOutputStream</code><br>在<code>ByteArrayOutputStream</code>的内部，有一个可变长的<code>byte[]</code>数组，当我们调用<code>write</code>方法时，就是向这个数组中写入数据，它还提供了<code>toByteArray/toString</code>方法，来获得当前内部<code>byte[]</code>数组中的内容。</li>
+<li><code>FileOutputStream</code><br>它和上面类似，只不过写入的终点换成了所打开的文件。</li>
+<li><code>PipedOutputStream</code><br>和<code>PipedInputStream</code>相关联。</li>
+<li><code>ObjectOutputStream</code><br>和<code>ObjectInputStream</code>类似，只不过它内部组合的是一个<code>OutputStream</code>，当调用<code>writeObject(Object object)</code>方法时，其实是先将<code>Object</code>进行反序列化转换为<code>byte</code>，再输出到<code>OuputStream</code>所指向的目的地。</li>
+<li><code>FilterOutputStream</code><br>它的思想和<code>FilterInputStream</code>类似，都是在内部组合了一个<code>OuputStream</code>，<code>FilterOutputStream</code>提供了写入<code>int/long/short</code>的<code>write</code>重载函数，当我们调用这些函数之后，<code>FilterOutputStream</code>最终会通过内部的<code>OuputStream</code>向它所指向的目的地写入字节。</li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/03/20/Java&Android-基础知识/Java&Android-基础知识梳理(5)---类加载&对象实例化/" rel="next" title="Java&Android 基础知识梳理(5) - 类加载&对象实例化">
+                <i class="fa fa-chevron-left"></i> Java&Android 基础知识梳理(5) - 类加载&对象实例化
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/03/22/图片基础/图片基础知识梳理(3)---Bitmap&BitmapFactory-解析/" rel="prev" title="图片基础知识梳理(3) - Bitmap&BitmapFactory 解析">
+                图片基础知识梳理(3) - Bitmap&BitmapFactory 解析 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="zeMao" />
+          <p class="site-author-name" itemprop="name">zeMao</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">104</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">24</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、概述"><span class="nav-number">1.</span> <span class="nav-text">一、概述</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#二、字节输入流"><span class="nav-number">1.1.</span> <span class="nav-text">二、字节输入流</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-1-InputStream的作用"><span class="nav-number">2.</span> <span class="nav-text">2.1 InputStream的作用</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-InputStream源码"><span class="nav-number">2.1.</span> <span class="nav-text">2.2 InputStream源码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-InputStream的具体实现类"><span class="nav-number">2.2.</span> <span class="nav-text">2.3 InputStream的具体实现类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、字节输出流"><span class="nav-number">2.3.</span> <span class="nav-text">三、字节输出流</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-OuputStream的作用"><span class="nav-number">2.4.</span> <span class="nav-text">3.1 OuputStream的作用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-OutputStream源码"><span class="nav-number">2.5.</span> <span class="nav-text">3.2 OutputStream源码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-3-OutputStream的具体实现类"><span class="nav-number">2.6.</span> <span class="nav-text">3.3 OutputStream的具体实现类</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zeMao</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

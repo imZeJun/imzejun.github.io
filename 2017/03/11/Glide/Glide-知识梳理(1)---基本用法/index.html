@@ -1,0 +1,771 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="一、概述本文的内容大部分都是参考了下面这个链接中Glide分类的文章：  https://futurestud.io/tutorials/glide-getting-started  为了区分，我们这篇只介绍一些基本用法，掌握这些基本就可以在项目中使用Glide了，而关于如何自定义Target/Glide Module等高级的用法，之后再进行讨论。 二、导入依赖包&amp;amp;加载网络静态图片在使用前">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Glide 知识梳理(1) - 基本用法">
+<meta property="og:url" content="http://yoursite.com/2017/03/11/Glide/Glide-知识梳理(1)---基本用法/index.html">
+<meta property="og:site_name" content="zeMao&#39;s Blog">
+<meta property="og:description" content="一、概述本文的内容大部分都是参考了下面这个链接中Glide分类的文章：  https://futurestud.io/tutorials/glide-getting-started  为了区分，我们这篇只介绍一些基本用法，掌握这些基本就可以在项目中使用Glide了，而关于如何自定义Target/Glide Module等高级的用法，之后再进行讨论。 二、导入依赖包&amp;amp;加载网络静态图片在使用前">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-bd1c502db8f6716b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2017-06-28T06:47:04.226Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Glide 知识梳理(1) - 基本用法">
+<meta name="twitter:description" content="一、概述本文的内容大部分都是参考了下面这个链接中Glide分类的文章：  https://futurestud.io/tutorials/glide-getting-started  为了区分，我们这篇只介绍一些基本用法，掌握这些基本就可以在项目中使用Glide了，而关于如何自定义Target/Glide Module等高级的用法，之后再进行讨论。 二、导入依赖包&amp;amp;加载网络静态图片在使用前">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-bd1c502db8f6716b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/03/11/Glide/Glide-知识梳理(1)---基本用法/"/>
+
+
+
+
+
+  <title>Glide 知识梳理(1) - 基本用法 | zeMao's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">zeMao's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/03/11/Glide/Glide-知识梳理(1)---基本用法/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zeMao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="zeMao's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Glide 知识梳理(1) - 基本用法</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-11T21:27:00+08:00">
+                2017-03-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Glide-知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">Glide 知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="一、概述"><a href="#一、概述" class="headerlink" title="一、概述"></a>一、概述</h1><p>本文的内容大部分都是参考了下面这个链接中<code>Glide</code>分类的文章：</p>
+<blockquote>
+<p><a href="https://futurestud.io/tutorials/glide-getting-started" target="_blank" rel="external"><code>https://futurestud.io/tutorials/glide-getting-started</code></a></p>
+</blockquote>
+<p>为了区分，我们这篇只介绍一些基本用法，掌握这些基本就可以在项目中使用<code>Glide</code>了，而关于如何自定义<code>Target/Glide Module</code>等高级的用法，之后再进行讨论。</p>
+<h2 id="二、导入依赖包-amp-加载网络静态图片"><a href="#二、导入依赖包-amp-加载网络静态图片" class="headerlink" title="二、导入依赖包&amp;加载网络静态图片"></a>二、导入依赖包&amp;加载网络静态图片</h2><p>在使用前，首先需要在<code>build.gradle</code>中引入：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">dependencies &#123;</div><div class="line">    //....</div><div class="line">    compile &apos;com.github.bumptech.glide:glide:3.7.0&apos;</div><div class="line">    //...</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>下面是<code>Glide</code>加载一张网络静态图片最基本的用法：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">Glide</div><div class="line">.with(this)　//传入关联的Context，如果是Activity/Fragment，那么它会根据组件当前的状态来控制请求。</div><div class="line">.load(&quot;http://i.imgur.com/DvpvklR.png&quot;) //需要加载的图片，大多数情况下就是网络图片的链接。</div><div class="line">.into(getImageView()); //用来展现图片的ImageView.</div></pre></td></tr></table></figure></p>
+<h1 id="三、load的其它用法"><a href="#三、load的其它用法" class="headerlink" title="三、load的其它用法"></a>三、<code>load</code>的其它用法</h1><p>在第二章的例子当中，当我们调用完<code>.with(Context context)</code>之后，会返回一个<code>RequestManager</code>对象，之前我们就是调用它的<code>load(String string)</code>方法，除此之外，还提供了下面的这些<code>load</code>方法，<code>load</code>方法最终会返回一个<code>DrawableTypeRequest&lt;xxxx&gt;</code>，而<code>xxx</code>就是我们传入的参数的类型：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-bd1c502db8f6716b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<ul>
+<li><code>load(byte[] model)</code>，从<code>byte[]</code>中读取</li>
+<li><code>load(File file)</code>，从<code>File</code>中读取</li>
+<li><code>load(Integer resourceId)</code>，从<code>resourceId</code>中读取</li>
+<li><code>load(String string)</code>，从<code>String</code>当中读取，这个一般对应于网络图片的链接，这个图片有可能是普通的图片，也可能是一个<code>Gif</code>，当我们需要展示一个<code>Gif</code>图片时，只需要像加载普通图片一样就可以了，在加载完之后，这个<code>Gif</code>会被自动播放。</li>
+<li><code>load(T model)</code>，从任意类型<code>T</code>的中读取，这个后面讲到自定义<code>Model</code>时再介绍</li>
+<li><code>load(Uri uri)</code>，从<code>Uri</code>类型中读取，这个<code>Uri</code>必须能够被<code>UriLoader</code>识别。</li>
+<li><code>loadFromMediaStore(Uri uri)</code>，从媒体设备的<code>Uri</code>中读取，这个方法用来展示一个<strong>本地</strong>媒体视频的缩略图，也就是视频的第一帧，需要注意，这个链接只能是本地的，网络上视频链接地址是无效的。</li>
+</ul>
+<p>下面是各个方法加载的例子：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div></pre></td><td class="code"><pre><div class="line">//从byte[]中加载.</div><div class="line">public void loadByteArray(View view) &#123;</div><div class="line">    Bitmap sourceBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.book_local);</div><div class="line">    ByteArrayOutputStream bArrayOS = new ByteArrayOutputStream();</div><div class="line">    sourceBitmap.compress(Bitmap.CompressFormat.PNG, 100, bArrayOS);</div><div class="line">    sourceBitmap.recycle();</div><div class="line">    byte[] byteArray = bArrayOS.toByteArray();</div><div class="line">    try &#123;</div><div class="line">        bArrayOS.close();</div><div class="line">    &#125; catch (Exception e) &#123;</div><div class="line">        e.printStackTrace();</div><div class="line">    &#125;</div><div class="line">    Glide.with(this)</div><div class="line">            .load(byteArray)</div><div class="line">            .into(mImageView);</div><div class="line">&#125;</div><div class="line">//从File中加载.</div><div class="line">public void loadFile(View view) &#123;</div><div class="line">    String storePath = &quot;mnt/sdcard/book_local.jpg&quot;;</div><div class="line">    File file = new File(storePath);</div><div class="line">    Glide.with(this)</div><div class="line">            .load(file)</div><div class="line">            .into(mImageView);</div><div class="line">&#125;</div><div class="line">//从resourceId中加载.</div><div class="line">public void loadResourceId(View view) &#123;</div><div class="line">    Glide.with(this)</div><div class="line">            .load(R.drawable.book_local)</div><div class="line">            .into(mImageView);</div><div class="line">&#125;</div><div class="line">//从普通url中加载.</div><div class="line">public void loadNormalUrl(View view) &#123;</div><div class="line">    Glide.with(this)</div><div class="line">            .load(&quot;http://i.imgur.com/DvpvklR.png&quot;)</div><div class="line">            .into(mImageView);</div><div class="line">&#125;</div><div class="line">//从gif加载.</div><div class="line">public void loadGif(View view) &#123;</div><div class="line">    Glide.with(this)</div><div class="line">            .load(&quot;http://s1.dwstatic.com/group1/M00/66/4D/d52ff9b0727dfd0133a52de627e39d2a.gif&quot;)</div><div class="line">            .diskCacheStrategy(DiskCacheStrategy.SOURCE) //要加上这句，否则有可能会出现加载很慢，或者加载不出来的情况.</div><div class="line">            .into(mImageView);</div><div class="line">&#125;</div><div class="line">//从本地媒体视频中加载.</div><div class="line">public void loadMedia(View view) &#123;</div><div class="line">    String storePath = &quot;mnt/sdcard/media.mp4&quot;;</div><div class="line">    File file = new File(storePath);</div><div class="line">    Glide.with(this)</div><div class="line">            .load(Uri.fromFile(file))</div><div class="line">            .into(mImageView);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="四、占位图片和错误图片"><a href="#四、占位图片和错误图片" class="headerlink" title="四、占位图片和错误图片"></a>四、占位图片和错误图片</h2><h2 id="4-1-显示占位图片"><a href="#4-1-显示占位图片" class="headerlink" title="4.1 显示占位图片"></a>4.1 显示占位图片</h2><p>有时候由于网络原因，导致请求耗时，此时就需要在得到图片资源之前，采用一个占位图片，这样就不会显得界面太空，<code>placeHolder</code>就是做这个事的，当我们调用了<code>into</code>方法之后，如果需要从网络上获取图片，那么它会先展示<code>placeHolder</code>设置的图片，<code>placeHolder</code>除了支持传入<code>resourceId</code>，还支持直接传入一个<code>Drawable</code>对象。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">@Override</div><div class="line">public DrawableRequestBuilder&lt;ModelType&gt; placeholder(int resourceId) &#123;</div><div class="line">    super.placeholder(resourceId);</div><div class="line">    return this;</div><div class="line">&#125;</div><div class="line">@Override</div><div class="line">public DrawableRequestBuilder&lt;ModelType&gt; placeholder(Drawable drawable) &#123;</div><div class="line">    super.placeholder(drawable);</div><div class="line">    return this;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>使用<code>placeHolder</code>的例子：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">public void loadHolder(View view) &#123;</div><div class="line">    Glide.with(this)</div><div class="line">            .load(&quot;http://i.imgur.com/DvpvklR.png&quot;)</div><div class="line">            .placeholder(R.drawable.book_placeholder)</div><div class="line">            .into(mImageView);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="4-2-显示错误图片"><a href="#4-2-显示错误图片" class="headerlink" title="4.2 显示错误图片"></a>4.2 显示错误图片</h2><p>有时候，当我们请求网络图片失败时，我们希望给用户一些提示，这时候给它设置一些回调，并在回调当中进行处理。但是一般情况下，我们显示一个表示错误的本地图片就可以了，为了和前面加载时的占位图片区分，它提供了另一个<code>error()</code>方法，和<code>placeHolder</code>类似，我们可以给它传入一个<code>resourceId</code>或者<code>Drawable</code>对象。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">public void loadHolderError(View view) &#123;</div><div class="line">    Glide.with(this)</div><div class="line">            .load(&quot;http://i.imgur.com/DvpvklR.png&quot;) </div><div class="line">            .asGif()  //为了模拟加载失败的情况.</div><div class="line">            .placeholder(R.drawable.book_placeholder)</div><div class="line">            .error(R.drawable.book_error)</div><div class="line">            .into(mImageView);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>上面为了模拟失败的情况，我们传入了一个<code>png</code>的链接，但是指定为加载<code>asGif()</code>资源。<br>我们发现它会先展示<code>placeHolder</code>的资源，再展示<code>error</code>的资源。</p>
+<h2 id="4-3-定义图片切换动画"><a href="#4-3-定义图片切换动画" class="headerlink" title="4.3 定义图片切换动画"></a>4.3 定义图片切换动画</h2><p>无论是<code>placeHolder</code>还是<code>error</code>，都会涉及到切换<code>ImageView</code>的图片，这时我们可以通过设置一个动画来让这个切换的过程显得不那么突兀，默认情况下动画是开启的，<code>crossFade</code>有下面这三个重载方法：</p>
+<ul>
+<li><code>crossFade()</code>：采用默认动画和默认时长。</li>
+<li><code>crossFade(int duration)</code>：采用默认动画，自定义时长。</li>
+<li><code>crossFade(int animationId, int duration)</code>：采用自定义动画，并自定义时长。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">public void loadCustomCrossFade(View view) &#123;</div><div class="line">    Glide.with(this)</div><div class="line">            .load(&quot;http://i.imgur.com/DvpvklR.png&quot;)</div><div class="line">            .placeholder(R.drawable.book_placeholder)</div><div class="line">            .crossFade(5000) //改变的时长.</div><div class="line">            .into(mImageView);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="4-4-关闭切换动画"><a href="#4-4-关闭切换动画" class="headerlink" title="4.4 关闭切换动画"></a>4.4 关闭切换动画</h1><p>当然我们也可以通过<code>dontAnimate</code>，来关闭动画，这样在切换的时候就不会出现动画。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">public void loadNoCrossFade(View view) &#123;</div><div class="line">    Glide.with(this)</div><div class="line">            .load(&quot;http://i.imgur.com/DvpvklR.png&quot;)</div><div class="line">            .placeholder(R.drawable.book_placeholder)</div><div class="line">            .dontAnimate()</div><div class="line">            .into(mImageView);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="五、获得图片资源后，进行裁剪"><a href="#五、获得图片资源后，进行裁剪" class="headerlink" title="五、获得图片资源后，进行裁剪"></a>五、获得图片资源后，进行裁剪</h2><h2 id="5-1-裁剪"><a href="#5-1-裁剪" class="headerlink" title="5.1 裁剪"></a>5.1 裁剪</h2><p>和<code>Picasso</code>相比，<code>Glide</code>提供了一种更加高效的处理方式，它会把内存和缓存中的图片限制到所展示的<code>ImageView</code>的返回内，<code>Picasso</code>也可以实现这一功能，但是需要调用<code>fit()</code>方法。在使用<code>Glide</code>时，如果我们不希望它自动地去匹配<code>ImageView</code>的宽高，那么可以调用<code>override(width, height)</code>，这样图片资源在被展示之前就会裁剪为指定的大小。</p>
+<p>这个方法还有另一种场景，就是当我们确切的知道需要加载多大的图片，但是此时<code>ImageView</code>的宽高并没有得到。</p>
+<h2 id="5-2-定义裁剪的方式"><a href="#5-2-定义裁剪的方式" class="headerlink" title="5.2 定义裁剪的方式"></a>5.2 定义裁剪的方式</h2><p>因为有时候采用<code>override</code>直接裁剪图片有可能导致只裁剪到了不必要的信息，因此<code>Glide</code>还提供了两个类似于<code>ImageView</code>中的<code>scaleType</code>属性：</p>
+<ul>
+<li><code>centerCrop</code>：使原始的图片的宽高按同等比例放大到<code>override</code>所指定的大小，并裁剪到多余的部分，这时最终的图片资源的大小为<code>(width, height)</code></li>
+<li><code>fitCenter</code>：使得原始图片的宽高放大到小于等于<code>override</code>所指定的宽高，因此，我们最终得到图片的大小有可能不为<code>(width, height)</code>，也就是说不会撑满整个<code>ImageView</code>。<br>下面是相关的代码：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">public void loadOverride(View view) &#123;</div><div class="line">    Glide.with(this)</div><div class="line">            .load(R.drawable.shader_pic)</div><div class="line">            .override(20, 20)</div><div class="line">            .into(mImageView);</div><div class="line">&#125;</div><div class="line"></div><div class="line">public void loadOverrideCenterCrop(View view) &#123;</div><div class="line">    Glide.with(this)</div><div class="line">            .load(R.drawable.shader_pic)</div><div class="line">            .override(20, 20)</div><div class="line">            .centerCrop()</div><div class="line">            .into(mImageView);</div><div class="line">&#125;</div><div class="line"></div><div class="line">public void loadOverrideFitCenter(View view) &#123;</div><div class="line">    Glide.with(this)</div><div class="line">            .load(R.drawable.shader_pic)</div><div class="line">            .override(20, 20)</div><div class="line">            .fitCenter()</div><div class="line">            .into(mImageView);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="5-3-和ImageView的scaleType的关系"><a href="#5-3-和ImageView的scaleType的关系" class="headerlink" title="5.3 和ImageView的scaleType的关系"></a>5.3 和<code>ImageView</code>的<code>scaleType</code>的关系</h2><p>由于<code>ImageView</code>的展示还需要受<code>android:scaleType</code>的影响，这里情况有很多，所以上面裁剪出来，并不是说在<code>ImageView</code>里面展示就是<code>20 * 20</code>，具体会出现的情况很多，这个之后再专门分析。</p>
+<h1 id="六、Gif图片"><a href="#六、Gif图片" class="headerlink" title="六、Gif图片"></a>六、<code>Gif</code>图片</h1><p>在第二节中，我们简单的介绍了如何用<code>Glide</code>展示<code>Gif</code>图片的展示，下面我们深入地讨论一下其它两点。</p>
+<h2 id="5-1-asGif"><a href="#5-1-asGif" class="headerlink" title="5.1 asGif()"></a>5.1 <code>asGif()</code></h2><p>有时候，我们获取的<code>Gif</code>图片链接是服务器配置的，因此我们无法知道这个链接到底是不是一个<code>Gif</code>图片。这时我们可以配置一个<code>asGif()</code>选项，这样<code>Glide</code>就会知道我们是需要加载一个<code>Gif</code>图片，当这个链接不是<code>Gif</code>时，加载就会失败，如果我们定义了<code>.error(xxx)</code>，就会展示这个失败的图片。<br>例如，下面这段代码就会失败：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">public void loadHolderError(View view) &#123;</div><div class="line">    Glide.with(this)</div><div class="line">            .load(&quot;http://i.imgur.com/DvpvklR.png&quot;)  //传入的是一个静态图片的链接.</div><div class="line">            .asGif()  //为了模拟加载失败的情况.</div><div class="line">            .placeholder(R.drawable.book_placeholder)</div><div class="line">            .error(R.drawable.book_error)</div><div class="line">            .into(mImageView);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="5-2-asBitmap"><a href="#5-2-asBitmap" class="headerlink" title="5.2 asBitmap()"></a>5.2 <code>asBitmap()</code></h2><p>现在讨论另外一种情况，在列表当中，虽然我们获得的是<code>Gif</code>链接，但是我们希望这时候不让它播放，这时候就可以指定<code>asBitmap()</code>，那么就只会展示<code>Gif</code>图片的第一帧。</p>
+<h2 id="5-3-定义缓存"><a href="#5-3-定义缓存" class="headerlink" title="5.3 定义缓存"></a>5.3 定义缓存</h2><p>如果我们使用了<code>.diskCacheStrategy(DiskCacheStrategy.SOURCE)</code>，那么<code>Gif</code>资源的加载将会更快。</p>
+<h1 id="六、缓存策略"><a href="#六、缓存策略" class="headerlink" title="六、缓存策略"></a>六、缓存策略</h1><p>对于任何一个网络图片加载框架来说，缓存无疑是最关键的部分，<code>Glide</code>使用了<strong>内存和磁盘</strong>缓存来避免不必要的网络请求，同时它也提供了一系列地接口让使用者自定义缓存策略。</p>
+<h2 id="6-1-内存缓存策略"><a href="#6-1-内存缓存策略" class="headerlink" title="6.1 内存缓存策略"></a>6.1 内存缓存策略</h2><p>默认情况下，<code>Glide</code>会将图片资源缓存到内存当中。而如果使用了<code>skipMemoryCache(true)</code>，<code>Glide</code>不会将这张图片缓存到内存当中。<br>有一点需要注意：如果之前对某个指向<code>url</code>的图片使用了内存缓存，后面又用<code>skipMemoryCache(true)</code>声明想让同一个<code>url</code>不缓存到内存中，那么是不会生效的。</p>
+<h2 id="6-2-磁盘缓存策略"><a href="#6-2-磁盘缓存策略" class="headerlink" title="6.2 磁盘缓存策略"></a>6.2 磁盘缓存策略</h2><p>当某个图片变化很快时，我们有可能不需要将它缓存到磁盘当中，我们可以采用<code>diskCacheStrategy(int mode)</code>来定义缓存的策略，<code>Glide</code>默认情况下既会缓存原始的图片，也会缓存解析后的图片，举个例子，假如服务器上的图片是<code>1000 * 1000</code>，而<code>ImageView</code>的大小只有<code>500 * 500</code>，默认情况下<code>Glide</code>会缓存这两个版本的图片，我们可以设定的磁盘缓存类型有下面四种：</p>
+<ul>
+<li><code>DiskCacheStrategy.NONE</code>：不缓存</li>
+<li><code>DiskCacheStrategy.SOURCE</code>：只缓存原始大小的图片，也就是<code>1000 * 1000</code>。</li>
+<li><code>DiskCacheStrategy.RESULT</code>：只缓存解析之后的图片，也就是上面<code>500 * 500</code>的图片，也就是说假如我们有两个不同大小的<code>ImageView</code>，用他们加载同一个<code>url</code>的图片，那么最终磁盘当中会有两份不同大小的图片资源。</li>
+<li><code>DiskCacheStrategy.ALL</code>：缓存所有版本的图片。</li>
+</ul>
+<p>现在我们介绍一下采用了<code>DiskCacheStrategy.RESULT</code>后的缓存文件名的命名策略，具体可以参考下面这篇文章：</p>
+<blockquote>
+<p><a href="https://github.com/bumptech/glide/wiki/Caching-and-Cache-Invalidation" target="_blank" rel="external"><code>https://github.com/bumptech/glide/wiki/Caching-and-Cache-Invalidation</code></a></p>
+</blockquote>
+<p>缓存文件的命名会依赖于四个部分：</p>
+<ul>
+<li><code>DataFecher</code>的<code>getId()</code>方法的返回值，一般情况下就是<code>Data Model</code>的<code>toString</code>方法。对于传入<code>String</code>类型的网络链接而言，就是<code>url</code>，而如果是<code>File</code>，那么就是<code>File</code>的<code>path</code>。</li>
+<li>目标的宽高，如果定义了<code>override(width, height)</code>，那就是指定的数值，默认情况下是<code>Target</code>的<code>getSize()</code>方法，也就是<code>ImageView</code>的宽高。</li>
+<li>用来加载和缓存图片的<code>encoders</code>和<code>decoders</code>的<code>toString</code>方法。</li>
+<li>在加载时的可选签名，这个方法在某些特殊的场景下很有用，例如加载的<code>url</code>没有变，但是服务器上这个<code>url</code>对应的图片资源更新了，我们就可以通过<code>.signature(xxx)</code>来刷新缓存。</li>
+</ul>
+<h2 id="6-3-两种策略的关系"><a href="#6-3-两种策略的关系" class="headerlink" title="6.3 两种策略的关系"></a>6.3 两种策略的关系</h2><p>上面我们讨论了两种缓存策略的定义，这两种策略是相互独立的，默认情况下内存的缓存为打开，而磁盘的缓存策略为<code>DiskCacheStrategy.ALL</code>。</p>
+<h1 id="七、请求优先级"><a href="#七、请求优先级" class="headerlink" title="七、请求优先级"></a>七、请求优先级</h1><p>有时候，在同一个界面上我们会展示多个图片，而为了用户体验，那么某个图片我们希望先加载出来，这时候就可以采用<code>.priority(int priority)</code>来定义请求的优先级，当然，这些优先级只是给<code>Glide</code>作为参考，因为还涉及到图片的大小，服务器的响应事件和网络环境等因素，最后图片展示的顺序并不一定是根据优先级来的，可选的优先级包括：</p>
+<ul>
+<li><code>Priority.LOW</code></li>
+<li><code>Priority.NORMAL</code></li>
+<li><code>Priority.HIGH</code></li>
+<li><code>Priority.IMMEDIATE</code></li>
+</ul>
+<h1 id="八、缩略图"><a href="#八、缩略图" class="headerlink" title="八、缩略图"></a>八、缩略图</h1><p>前面，我们介绍了<code>placeHolder</code>，它可以指定一个本地资源，用来在网络资源加载完成之前进行展示，而<code>thumbnails</code>则可以认为是一个动态的<code>placeHolder</code>，与<code>placeHolder</code>不同，我们<strong>可以给它指定一个网络图片链接</strong>。如果这个缩略图请求在<code>load</code>请求之前返回那么，那么会先展示这个图片，等到<code>load</code>请求返回之后，这个图片就会消失。假如缩略图的请求在<code>load</code>请求之后返回，那么请求结果会被丢弃掉。<br><code>Glide</code>提供了两种指定缩略图的方式：</p>
+<h2 id="8-1-Simple-Thumbnails"><a href="#8-1-Simple-Thumbnails" class="headerlink" title="8.1 Simple Thumbnails"></a>8.1 <code>Simple Thumbnails</code></h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">public void loadScaleThumbnail(View view) &#123;</div><div class="line">    Glide.with(this)</div><div class="line">            .load(&quot;http://i.imgur.com/DvpvklR.png&quot;)</div><div class="line">            .diskCacheStrategy(DiskCacheStrategy.NONE)</div><div class="line">            .thumbnail(0.1f)</div><div class="line">            .into(mImageView);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="8-2-Complete-Different-Request"><a href="#8-2-Complete-Different-Request" class="headerlink" title="8.2 Complete Different Request"></a>8.2 <code>Complete Different Request</code></h2><p><code>thumbnails</code>还支持传入一个<code>Glide Request</code>作为参数，这个请求和原本的请求是相互独立的，我们可以给它指定一个完全不同的<code>url</code>、缓存策略、大小等等。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">public void loadRequestThumbnail(View view) &#123;</div><div class="line">    DrawableRequestBuilder&lt;String&gt; thumbnailRequest = Glide</div><div class="line">            .with(this)</div><div class="line">            .load(&quot;http://i.imgur.com/DvpvklR.png&quot;);</div><div class="line">    Glide.with(this)</div><div class="line">            .load(&quot;http://s1.dwstatic.com/group1/M00/66/4D/d52ff9b0727dfd0133a52de627e39d2a.gif&quot;)</div><div class="line">            .diskCacheStrategy(DiskCacheStrategy.NONE)</div><div class="line">            .thumbnail(thumbnailRequest)</div><div class="line">            .into(mImageView);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/03/09/Retrofit/Retrofit-知识梳理(1)---流程分析/" rel="next" title="Retrofit 知识梳理(1) - 流程分析">
+                <i class="fa fa-chevron-left"></i> Retrofit 知识梳理(1) - 流程分析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/03/12/Glide/Glide-知识梳理(2)---自定义Target/" rel="prev" title="Glide 知识梳理(2) - 自定义Target">
+                Glide 知识梳理(2) - 自定义Target <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="zeMao" />
+          <p class="site-author-name" itemprop="name">zeMao</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">104</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">24</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、概述"><span class="nav-number">1.</span> <span class="nav-text">一、概述</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#二、导入依赖包-amp-加载网络静态图片"><span class="nav-number">1.1.</span> <span class="nav-text">二、导入依赖包&加载网络静态图片</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、load的其它用法"><span class="nav-number">2.</span> <span class="nav-text">三、load的其它用法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#四、占位图片和错误图片"><span class="nav-number">2.1.</span> <span class="nav-text">四、占位图片和错误图片</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-1-显示占位图片"><span class="nav-number">2.2.</span> <span class="nav-text">4.1 显示占位图片</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-2-显示错误图片"><span class="nav-number">2.3.</span> <span class="nav-text">4.2 显示错误图片</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-3-定义图片切换动画"><span class="nav-number">2.4.</span> <span class="nav-text">4.3 定义图片切换动画</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#4-4-关闭切换动画"><span class="nav-number">3.</span> <span class="nav-text">4.4 关闭切换动画</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#五、获得图片资源后，进行裁剪"><span class="nav-number">3.1.</span> <span class="nav-text">五、获得图片资源后，进行裁剪</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-1-裁剪"><span class="nav-number">3.2.</span> <span class="nav-text">5.1 裁剪</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-2-定义裁剪的方式"><span class="nav-number">3.3.</span> <span class="nav-text">5.2 定义裁剪的方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-3-和ImageView的scaleType的关系"><span class="nav-number">3.4.</span> <span class="nav-text">5.3 和ImageView的scaleType的关系</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#六、Gif图片"><span class="nav-number">4.</span> <span class="nav-text">六、Gif图片</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#5-1-asGif"><span class="nav-number">4.1.</span> <span class="nav-text">5.1 asGif()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-2-asBitmap"><span class="nav-number">4.2.</span> <span class="nav-text">5.2 asBitmap()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-3-定义缓存"><span class="nav-number">4.3.</span> <span class="nav-text">5.3 定义缓存</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#六、缓存策略"><span class="nav-number">5.</span> <span class="nav-text">六、缓存策略</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#6-1-内存缓存策略"><span class="nav-number">5.1.</span> <span class="nav-text">6.1 内存缓存策略</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-2-磁盘缓存策略"><span class="nav-number">5.2.</span> <span class="nav-text">6.2 磁盘缓存策略</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-3-两种策略的关系"><span class="nav-number">5.3.</span> <span class="nav-text">6.3 两种策略的关系</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#七、请求优先级"><span class="nav-number">6.</span> <span class="nav-text">七、请求优先级</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#八、缩略图"><span class="nav-number">7.</span> <span class="nav-text">八、缩略图</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#8-1-Simple-Thumbnails"><span class="nav-number">7.1.</span> <span class="nav-text">8.1 Simple Thumbnails</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-2-Complete-Different-Request"><span class="nav-number">7.2.</span> <span class="nav-text">8.2 Complete Different Request</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zeMao</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

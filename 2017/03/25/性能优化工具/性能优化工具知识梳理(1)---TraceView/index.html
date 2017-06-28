@@ -1,0 +1,770 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="性能优化工具知识梳理(1) - TraceView性能优化工具知识梳理(2) - Systrace性能优化工具知识梳理(3) - 调试GPU过度绘制 &amp;amp; GPU呈现模式分析性能优化工具知识梳理(4) - Hierarchy Viewer性能优化工具知识梳理(5) - MAT性能优化工具知识梳理(6) - Memory Monitor &amp;amp; Heap Viewer &amp;amp; All">
+<meta property="og:type" content="article">
+<meta property="og:title" content="插性能优化工具知识梳理(1) - TraceView">
+<meta property="og:url" content="http://yoursite.com/2017/03/25/性能优化工具/性能优化工具知识梳理(1)---TraceView/index.html">
+<meta property="og:site_name" content="zeMao&#39;s Blog">
+<meta property="og:description" content="性能优化工具知识梳理(1) - TraceView性能优化工具知识梳理(2) - Systrace性能优化工具知识梳理(3) - 调试GPU过度绘制 &amp;amp; GPU呈现模式分析性能优化工具知识梳理(4) - Hierarchy Viewer性能优化工具知识梳理(5) - MAT性能优化工具知识梳理(6) - Memory Monitor &amp;amp; Heap Viewer &amp;amp; All">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-3a6b1999c36b8210.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-40b2fac6954fec4d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-8e3c61e581d0cc84.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-a38efe53a2dc5ae4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-347ecd8a7f0a0d7b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-d4f50ca97381560b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-56672cf6fc93b510.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-5f6fcfc2366b596d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-a2ccf719b0cfeca0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-9a7dd8e02563c2bb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-ec2851ac52e51535.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-8bd51807c19ca232.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-9d36dd128b39b9ee.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2017-06-28T07:07:27.154Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="插性能优化工具知识梳理(1) - TraceView">
+<meta name="twitter:description" content="性能优化工具知识梳理(1) - TraceView性能优化工具知识梳理(2) - Systrace性能优化工具知识梳理(3) - 调试GPU过度绘制 &amp;amp; GPU呈现模式分析性能优化工具知识梳理(4) - Hierarchy Viewer性能优化工具知识梳理(5) - MAT性能优化工具知识梳理(6) - Memory Monitor &amp;amp; Heap Viewer &amp;amp; All">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-3a6b1999c36b8210.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/03/25/性能优化工具/性能优化工具知识梳理(1)---TraceView/"/>
+
+
+
+
+
+  <title>插性能优化工具知识梳理(1) - TraceView | zeMao's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">zeMao's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/03/25/性能优化工具/性能优化工具知识梳理(1)---TraceView/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zeMao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="zeMao's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">插性能优化工具知识梳理(1) - TraceView</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-25T12:08:00+08:00">
+                2017-03-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/性能优化工具知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">性能优化工具知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p><a href="http://www.jianshu.com/p/37c263f9886b" target="_blank" rel="external">性能优化工具知识梳理(1) - TraceView</a><br><a href="http://www.jianshu.com/p/41bb27235921" target="_blank" rel="external">性能优化工具知识梳理(2) - Systrace</a><br><a href="http://www.jianshu.com/p/ac2d58666106" target="_blank" rel="external">性能优化工具知识梳理(3) - 调试GPU过度绘制 &amp; GPU呈现模式分析</a><br><a href="http://www.jianshu.com/p/7ac6a2b8d740" target="_blank" rel="external">性能优化工具知识梳理(4) - Hierarchy Viewer</a><br><a href="http://www.jianshu.com/p/fa016c32360f" target="_blank" rel="external">性能优化工具知识梳理(5) - MAT</a><br><a href="http://www.jianshu.com/p/29a539bca730" target="_blank" rel="external">性能优化工具知识梳理(6) - Memory Monitor &amp; Heap Viewer &amp; Allocation Tracker</a><br><a href="http://www.jianshu.com/p/3c055862f353" target="_blank" rel="external">性能优化工具知识梳理(7) - LeakCanary</a><br><a href="http://www.jianshu.com/p/4ebe5d502842" target="_blank" rel="external">性能优化工具知识梳理(8) - Lint</a></p>
+</blockquote>
+<h1 id="一、概述"><a href="#一、概述" class="headerlink" title="一、概述"></a>一、概述</h1><p>使用<code>Systrace</code>需要开发者对于整个渲染的原理有较深的理解，而<code>TraceView</code>则更为直观，你可以通过它来分析在一段时间应用内各个线程的运行情况，它会帮你计算出每个方法的具体耗时，这样我们就可以了解到方法运行的效率，定位到当前性能的瓶颈在哪，从而考虑将一些耗时的操作放在子线程中进行，或者延后执行来优化应用的启动速度和解决卡顿问题。<br>和之前一样，我们分几个部分介绍它：</p>
+<ul>
+<li>获取<code>TraceView</code>的分析报表</li>
+<li>分析报表的格式</li>
+<li>具体案例</li>
+</ul>
+<h1 id="二、获取-trace报表"><a href="#二、获取-trace报表" class="headerlink" title="二、获取*.trace报表"></a>二、获取<code>*.trace</code>报表</h1><ul>
+<li>第一步：点击<code>Android Studio</code>中的<code>Tools/Android/Android Device Monitor</code>，打开调试界面。</li>
+<li>第二步：如下面截图所示，选中要分析的应用包名，点击<code>Start Method Profiling</code>按钮，之后就会开始跟踪：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-3a6b1999c36b8210.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></li>
+<li>第三步：进入应用内进行操作，操作完毕后，再次点击上面的按钮<code>Stop Method Profiling</code>，等待一会，就会在右边的窗口生成分析的报表，将鼠标上移到红框的文件名处，可以看到保存的位置，我们可以把它保存起来以便之后分析跟踪问题：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-40b2fac6954fec4d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></li>
+</ul>
+<h1 id="三、分析-trace报表"><a href="#三、分析-trace报表" class="headerlink" title="三、分析*.trace报表"></a>三、分析<code>*.trace</code>报表</h1><p>获取完报表之后，我们就可以通过它来分析，这个区域分为三个部分：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-8e3c61e581d0cc84.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<ul>
+<li>红色区域：列出了运行的各个线程。</li>
+<li>蓝色区域：线程在一段时间内的运行情况，我们点击有颜色的地方，就可以定位到具体做了哪些操作。</li>
+<li>紫色区域：方法调用的具体情况。</li>
+</ul>
+<p>前面两个区域都比较好理解，我们主要看一下紫色区域的每一列具体的含义：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-a38efe53a2dc5ae4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<p>上面的表格中，一部分单位是百分比，另一部分是<code>ms</code>，要注意区别，除此之外，有两点需要解释一下：</p>
+<ul>
+<li><p><code>Incl</code>和<code>Excl</code>的概念<br>关于<code>Incl</code>和<code>Excl</code>的概念可以用下面这段代码来表示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">public static void inclExcl(Context context) &#123; //这个函数的运行时间为 Incl Real Time</div><div class="line">    //假如这里没有调用任何函数，那么这里的运行时间就是：Excl Real Time</div><div class="line">    writeSomething(context, 1000); //这里的运行时间是：Incl Real Time - Excl Real Time</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p><code>Cpu Time</code>和<code>Real Time</code>的区别<br><code>Real Time</code>表示的是一个函数从开始到运行时候所占用的时间，而<code>CPU Time</code>则表示<code>CPU</code>执行这段函数所耗费的时间。<br>举个例子，假如我们一个函数<code>doSomething()</code>，<code>CPU</code>执行它首先花了<code>time1</code>的时间，之后<code>CPU</code>被分配用去执行别的函数花了<code>time2</code>，执行完之后继续回来执行<code>doSomething()</code>，花了<code>time3</code>的时间把它执行完，那么<code>doSomething()</code>的<code>Real Time</code>就等于<code>time1 + time2 + time3</code>，而<code>Cpu Time</code>则等于<code>time1 + time3</code>。</p>
+</li>
+</ul>
+<p>我们可以通过点击具体的列进行排序，在平时的分析中，我们主要关注一下：</p>
+<ul>
+<li><p><code>CPU Time / Call</code>较高<br>这一列表示函数的<strong>单个执行时间较长</strong>，这里往往是可以优化的点：</p>
+<ul>
+<li>分析该函数的实现方式，能够用其它的方法来实现，从而减少函数的运行时间</li>
+<li>分析该函数所执行的线程，如果可以那么把它放到子线程中执行</li>
+<li>分析该函数所调用的时机，避免在应用启动，或者做动画的过程中执行它，否则会导致启动速度变慢和界面卡顿。</li>
+</ul>
+</li>
+<li><p><code>CPU Time</code>较高，但<code>CPU Time / Call</code>不高<br>这一列表示函数的<strong>单个执行时长不长，但调用的次数很多</strong>，这同样是可以优化的点，需要看一下是否有必要在每个地方都调用它，能否进行延后操作，统计到一个地方执行。</p>
+</li>
+<li><p>和<code>Android</code>相关的某些函数的<code>Real Time</code>：<br>由于我们的界面需要等到<code>onCreate</code>、<code>onResume</code>等函数执行完之后，才会真正的显示出来，因此，我们需要保证它们能够尽快地执行完，也就是它的<code>Incl Real Time</code>尽可能地短：<br>例如下面两点是最基本的：</p>
+<ul>
+<li><code>onCreate</code>：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-347ecd8a7f0a0d7b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></li>
+<li><code>onResume</code>：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-d4f50ca97381560b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></li>
+</ul>
+</li>
+</ul>
+<h1 id="四、具体案例"><a href="#四、具体案例" class="headerlink" title="四、具体案例"></a>四、具体案例</h1><p>我们分析一下在启动过程中，由于布局复杂或者耗时操作导致的问题：<br>首先我们看一下正常的情况：</p>
+<ul>
+<li><code>callActivityOnCreate</code>部分耗时为<code>6.180ms</code><br><img src="http://upload-images.jianshu.io/upload_images/1949836-56672cf6fc93b510.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></li>
+<li><code>callActivityOnResume</code>耗时为<code>1.219ms</code><br><img src="http://upload-images.jianshu.io/upload_images/1949836-5f6fcfc2366b596d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></li>
+</ul>
+<h2 id="4-1-布局层次过于复杂导致的问题"><a href="#4-1-布局层次过于复杂导致的问题" class="headerlink" title="4.1 布局层次过于复杂导致的问题"></a>4.1 布局层次过于复杂导致的问题</h2><p>我们修改<code>Activity</code>的根布局：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">&lt;FrameLayout</div><div class="line">        android:background=&quot;@android:color/black&quot;</div><div class="line">        android:layout_width=&quot;match_parent&quot;</div><div class="line">        android:layout_height=&quot;match_parent&quot;&gt;</div><div class="line">        &lt;FrameLayout</div><div class="line">            android:background=&quot;@android:drawable/screen_background_dark&quot;</div><div class="line">            android:layout_width=&quot;match_parent&quot;</div><div class="line">            android:layout_height=&quot;500dp&quot;&gt;</div><div class="line">            &lt;FrameLayout</div><div class="line">                android:background=&quot;@android:drawable/star_big_off&quot;</div><div class="line">                android:layout_width=&quot;match_parent&quot;</div><div class="line">                android:layout_height=&quot;400dp&quot;&gt;</div><div class="line">                &lt;FrameLayout</div><div class="line">                    android:background=&quot;@android:drawable/bottom_bar&quot;</div><div class="line">                    android:layout_width=&quot;match_parent&quot;</div><div class="line">                    android:layout_height=&quot;300dp&quot;&gt;</div><div class="line">                    &lt;FrameLayout</div><div class="line">                        android:background=&quot;@android:color/holo_blue_bright&quot;</div><div class="line">                        android:layout_width=&quot;match_parent&quot;</div><div class="line">                        android:layout_height=&quot;200dp&quot;&gt;</div><div class="line">                    &lt;/FrameLayout&gt;</div><div class="line">                &lt;/FrameLayout&gt;</div><div class="line">            &lt;/FrameLayout&gt;</div><div class="line">        &lt;/FrameLayout&gt;</div><div class="line">&lt;/FrameLayout&gt;</div></pre></td></tr></table></figure></p>
+<p>再次抓取之后，看一下<code>onCreate</code>的时间，发现耗时增加到<code>17ms</code>：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-a2ccf719b0cfeca0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>之后再点击这个函数，分析里面耗时最长的子方法，可以看到就是由于布局引起的：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-9a7dd8e02563c2bb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h2 id="4-2-在启动过程中进行耗时的操作"><a href="#4-2-在启动过程中进行耗时的操作" class="headerlink" title="4.2 在启动过程中进行耗时的操作"></a>4.2 在启动过程中进行耗时的操作</h2><p>首先把布局恢复成没有问题的状态，然后在<code>onCreate</code>和<code>onResume</code>方法中增加不同的<code>IO</code>操作：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">public class TraceViewActivity extends Activity &#123;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    protected void onCreate(Bundle savedInstanceState) &#123;</div><div class="line">        super.onCreate(savedInstanceState);</div><div class="line">        setContentView(R.layout.activity_trace_view);</div><div class="line">        TraceViewOperation.writeOnActivityOnCreate(this, 1000);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    protected void onResume() &#123;</div><div class="line">        super.onResume();</div><div class="line">        TraceViewOperation.writeOnActivityOnResume(this, 1000);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>其中<code>onCreate</code>在主线程中进行，而<code>onResume</code>里面则另起了一个线程：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">public class TraceViewOperation &#123;</div><div class="line"></div><div class="line">    public static void writeOnActivityOnCreate(Context context, int count) &#123;</div><div class="line">        writeSomething(context, count);</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    public static void writeOnActivityOnResume(final Context context, final int count) &#123;</div><div class="line">        new Thread() &#123;</div><div class="line">            @Override</div><div class="line">            public void run() &#123;</div><div class="line">                super.run();</div><div class="line">                writeSomething(context, count);</div><div class="line">            &#125;</div><div class="line">        &#125;.start();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<ul>
+<li><code>onCreate</code>耗时：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-ec2851ac52e51535.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>和上面类似，点进去看耗时的方法，正是由于我们在前面进行<code>IO</code>操作引起的：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-8bd51807c19ca232.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></li>
+<li><code>onResume</code>耗时：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-9d36dd128b39b9ee.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>可以看到，由于我们是另起了一个线程进行操作，因此，并不会占用它的运行时间。</li>
+</ul>
+<h1 id="五、小结"><a href="#五、小结" class="headerlink" title="五、小结"></a>五、小结</h1><p>通过<code>TraceView</code>，我们可以了解到某些关键函数上的运行时间，正如前面第三点谈到的，根据不同的情况进行分析和优化，将会有效地提高应用的启动速度，避免出现卡顿现象。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/03/23/Android-数据存储/Android-数据存储知识梳理(2)---Android存储目录/" rel="next" title="Android 数据存储知识梳理(2) - Android存储目录">
+                <i class="fa fa-chevron-left"></i> Android 数据存储知识梳理(2) - Android存储目录
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/03/25/性能优化工具/性能优化工具知识梳理(2)---Systrace/" rel="prev" title="性能优化工具知识梳理(2) - Systrace">
+                性能优化工具知识梳理(2) - Systrace <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="zeMao" />
+          <p class="site-author-name" itemprop="name">zeMao</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">104</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">24</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、概述"><span class="nav-number">1.</span> <span class="nav-text">一、概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、获取-trace报表"><span class="nav-number">2.</span> <span class="nav-text">二、获取*.trace报表</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、分析-trace报表"><span class="nav-number">3.</span> <span class="nav-text">三、分析*.trace报表</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四、具体案例"><span class="nav-number">4.</span> <span class="nav-text">四、具体案例</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#4-1-布局层次过于复杂导致的问题"><span class="nav-number">4.1.</span> <span class="nav-text">4.1 布局层次过于复杂导致的问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-2-在启动过程中进行耗时的操作"><span class="nav-number">4.2.</span> <span class="nav-text">4.2 在启动过程中进行耗时的操作</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#五、小结"><span class="nav-number">5.</span> <span class="nav-text">五、小结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zeMao</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

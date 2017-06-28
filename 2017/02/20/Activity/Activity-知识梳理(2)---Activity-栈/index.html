@@ -1,0 +1,782 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="一、AndroidManifest.xml中指定launchMode1.1standard标准模式，每次启动Activity都会创建一个新的Activity实例，并且将其压入任务栈栈顶，而不管这个 Activity 是否已经存在，都会执行onCreate() -&amp;gt;onStart() -&amp;gt; onResume。 1.2 singleTop栈顶复用模式，如果新Activity已经位于栈顶，那">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Activity 知识梳理(2) - Activity 栈">
+<meta property="og:url" content="http://yoursite.com/2017/02/20/Activity/Activity-知识梳理(2)---Activity-栈/index.html">
+<meta property="og:site_name" content="zeMao&#39;s Blog">
+<meta property="og:description" content="一、AndroidManifest.xml中指定launchMode1.1standard标准模式，每次启动Activity都会创建一个新的Activity实例，并且将其压入任务栈栈顶，而不管这个 Activity 是否已经存在，都会执行onCreate() -&amp;gt;onStart() -&amp;gt; onResume。 1.2 singleTop栈顶复用模式，如果新Activity已经位于栈顶，那">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-a05689be2ee8ff2f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-9a83c8086c319341.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-7327154632889136.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-41077a32981958fb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-ee2e7aa7ddf2b3f4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-43ea89fd9e81bfdb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-b4aa0c5e4d7e5110.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-834b2531b5873016.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-9f99fb8f26072fa6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-9a643a4acadaa2d3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-5479b6fd8f7f2d28.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-b6a9005ba3caee7b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-05638cdb357aa318.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2017-06-28T06:47:04.226Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Activity 知识梳理(2) - Activity 栈">
+<meta name="twitter:description" content="一、AndroidManifest.xml中指定launchMode1.1standard标准模式，每次启动Activity都会创建一个新的Activity实例，并且将其压入任务栈栈顶，而不管这个 Activity 是否已经存在，都会执行onCreate() -&amp;gt;onStart() -&amp;gt; onResume。 1.2 singleTop栈顶复用模式，如果新Activity已经位于栈顶，那">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-a05689be2ee8ff2f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/02/20/Activity/Activity-知识梳理(2)---Activity-栈/"/>
+
+
+
+
+
+  <title>Activity 知识梳理(2) - Activity 栈 | zeMao's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">zeMao's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/02/20/Activity/Activity-知识梳理(2)---Activity-栈/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zeMao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="zeMao's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Activity 知识梳理(2) - Activity 栈</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-02-20T22:59:00+08:00">
+                2017-02-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Activity-知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">Activity 知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="一、AndroidManifest-xml中指定launchMode"><a href="#一、AndroidManifest-xml中指定launchMode" class="headerlink" title="一、AndroidManifest.xml中指定launchMode"></a>一、<code>AndroidManifest.xml</code>中指定<code>launchMode</code></h1><h1 id="1-1standard"><a href="#1-1standard" class="headerlink" title="1.1standard"></a>1.1<code>standard</code></h1><p>标准模式，每次启动<code>Activity</code>都会创建一个新的<code>Activity</code>实例，并且将其压入任务栈栈顶，而不管这个 Activity 是否已经存在，都会执行<code>onCreate() -&gt;onStart() -&gt; onResume</code>。</p>
+<h2 id="1-2-singleTop"><a href="#1-2-singleTop" class="headerlink" title="1.2 singleTop"></a>1.2 <code>singleTop</code></h2><p>栈顶复用模式，如果新<code>Activity</code>已经位于栈顶，那么此<code>Activity</code>不会被重新创建，同时<code>Activity</code>的 <code>onNewIntent</code>方法会被回调，如果<code>Activity</code>已经存在但是不再栈顶，那么和<code>standard</code>模式一样。<br>如果<code>Activity</code>当前是<code>onResume</code>状态，那么调用后会执行<code>onPause() -&gt; onNewIntent() -&gt; onResume()</code>。</p>
+<h2 id="1-3-singleTask"><a href="#1-3-singleTask" class="headerlink" title="1.3 singleTask"></a>1.3 <code>singleTask</code></h2><p>栈内复用模式，创建这样的<code>Activity</code>，系统会确认它所需任务栈是否已经创建，否则先创建任务栈，然后放入<code>Activity</code>，<strong>如果栈中已经有一个<code>Activity</code>实例</strong>，那么会做两件事：</p>
+<ul>
+<li>这个<code>Activity</code>会回到栈顶执行<code>onNewIntent</code></li>
+<li>清理在当前<code>Activity</code>上面的所有<code>Activity</code></li>
+</ul>
+<p>上面的<strong>如果栈中已经有一个<code>Activity</code>实例</strong>，这个判断条件的<strong>标准是由<code>android:taskAffinity</code></strong>决定的，下面我们做一个简单的对比：</p>
+<ul>
+<li>第一种情况，不给<code>singleTask</code>的<code>Activity</code>设置<code>taskAffinity</code>，这时默认情况下属于同一个<code>Application</code>的所有<code>Activity</code>具有的<code>taskAffinity</code>是相同的，就是我们在<code>AndroidManifest</code>中指定的<code>packageName</code>：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;activity android:name=&quot;.SingleTaskActivity&quot; android:launchMode=&quot;singleTask&quot;/&gt;</div></pre></td></tr></table></figure>
+<p>这时候我们从<code>MainActivity</code>启动<code>SingleTaskActivity</code>后，任务栈的情况是，<code>MainActivity</code>和 <code>SingleTaskActivity</code>处于同一个<code>Task</code>当中：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-a05689be2ee8ff2f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>我们看到<code>SingleTaskActivity</code>和<code>MainActivity</code>位于同一个栈中，因此<code>singleTask</code>并不是让这个<code>Activity</code>独占一个<code>Task</code>。</p>
+<ul>
+<li>第二种情况，给<code>singleTask</code>的<code>Activity</code>设置<code>affinity</code>：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;activity android:name=&quot;.SingleTaskActivity&quot; android:launchMode=&quot;singleTask&quot; android:taskAffinity=&quot;com.android.singleTask&quot;/&gt;</div></pre></td></tr></table></figure>
+<p>此时进行同样的操作，任务栈的情况变为：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-9a83c8086c319341.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>我们在<code>SingleTaskActivity</code>的界面按下 <code>Home</code>键，再点击图标进入<code>MainActivity</code>，可以看到当前应用有两个栈：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1949836-7327154632889136.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>此时，我们再点击按钮启动<code>SingleTaskActivity</code>，那么会执行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">MainActivity#onPause</div><div class="line">SingleTaskActivity#onNewIntent </div><div class="line">SingleTaskActivity#onRestart </div><div class="line">SingleTaskActivity#onStart </div><div class="line">SingleTaskActivity#onResume</div><div class="line">MainActivity#onStop</div></pre></td></tr></table></figure></p>
+<p>这是由于当启动<code>SingleTaskActivity</code>，系统去寻找该<code>SingleTaskActivity</code>所对应的栈是否存在，而这时候是存在的，也就上面看到<code>TaskRecord[cd9ca5d]</code>，所以它不会创建新的<code>SingleTaskActivity</code>，而是复用这个栈中的<code>Activity</code>，而由于这个<code>Activity</code>又位于栈顶，因此它的表现和<code>SingleTop</code>相同。</p>
+<ul>
+<li>第三种情况，我们试着在第二种的基础上再加大一些难度， 在<code>SingleTaskActivity</code>所在的<code>Task</code>上再加一个 <code>SingleTaskAboveActivity</code>，首先我们从<code>MainAcitivity -&gt; SingleTaskActivity -&gt; SingleTaskAboveActvity</code></li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;activity android:name=&quot;.SingleTaskAboveActivity&quot;/&gt;</div></pre></td></tr></table></figure>
+<p>这一流程过后，栈的结构为，可以看到<code>SingleTaskActivity</code>和<code>SingleTaskAboveActvity</code>位于同一栈中：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1949836-41077a32981958fb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>在<code>SingleTaskAboveActvity</code>界面，按<code>Home</code>退到后台之后重新进入，栈的结构不变，只不过当前可见的是 <code>MainActivity</code>，这时我们再次尝试启动<code>SingleTaskActivity</code>，那么会依次调用：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">MainActivity#onPause</div><div class="line">SingleTaskAboveActivity#onDestroy</div><div class="line">SingleTaskActivity#onNewIntent</div><div class="line">SingleTaskActivity#onRestart</div><div class="line">SingleTaskActivity#onStart</div><div class="line">SingleTaskActivity#onResume</div><div class="line">MainActivity#onStop</div></pre></td></tr></table></figure></p>
+<p>而栈的结构变为如下：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-ee2e7aa7ddf2b3f4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>和第二种情况类似，当启动<code>SingleTaskActivity</code>时，系统去寻找该<code>SingleTaskActivity</code>所对应的栈是否存在，而这时候是存在的，也就上面看到<code>TaskRecord[a3771ca]</code>，所以它不会创建新的<code>SingleTaskActivity</code>，而是复用这个栈中的<code>SingleTaskActivity</code>，但此时<code>SingleTaskActivity</code>并不位于栈顶，在它上面还有一个<code>SingleTaskAboveActivity</code>，因此会把<code>SingleTaskAboveActivity</code>先出栈，再复用原先位于这个栈中的<code>SingleTaskActivity</code>实例。</p>
+<h2 id="1-4-singleInstance"><a href="#1-4-singleInstance" class="headerlink" title="1.4 singleInstance"></a>1.4 <code>singleInstance</code></h2><p>这种模式的<code>Activity</code>只能单独位于一个任务栈内，由于栈内的复用特性，后续请求均不会创建新的<code>Activity</code>，除非这个独特的任务栈被系统销毁了。</p>
+<ul>
+<li>第一种情况，先看最简单的，我们新建一个<code>SingleInstanceActivity</code> </li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;activity android:name=&quot;.SingleInstanceActivity&quot; android:launchMode=&quot;singleInstance&quot;/&gt;</div></pre></td></tr></table></figure>
+<p>我们从<code>MainAcitivity</code>启动它，此时任务栈的情况是，他们位于不同的<code>Task</code>中，符合我们的预期：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1949836-43ea89fd9e81bfdb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<ul>
+<li>第二种情况，此时按<code>Home</code>回到桌面，再重新点图标进入<code>MainActivity</code>，任务栈依然是两个，我们此时再启动<code>SingleInstanceActivity</code>：<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">MainActivity#onPause</div><div class="line">SingleInstanceActivity#onNewIntent </div><div class="line">SingleInstanceActivity#onRestart </div><div class="line">SingleInstanceActivity#onStart </div><div class="line">SingleInstanceActivity#onResume</div><div class="line">MainActivity#onStop</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>和启动在另一个栈中已存在的<code>singleTaskAcitivity</code>的情况是类似的。</p>
+<ul>
+<li>第三种情况，我们再看一下，<code>affinity</code>对于<code>singleInstance</code>会不会有影响呢，我们定义两个<code>affinity</code>相同的 <code>singleInstance</code>：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"> &lt;activity android:name=&quot;.SingleInstanceActivity&quot; android:launchMode=&quot;singleInstance&quot; android:taskAffinity=&quot;com.android.singleInstance&quot;/&gt;</div><div class="line">&lt;activity android:name=&quot;.SingleInstanceActivityAnother&quot; android:launchMode=&quot;singleInstance&quot; android:taskAffinity=&quot;com.android.singleInstance&quot;/&gt;</div></pre></td></tr></table></figure>
+<p>我们先从<code>MainActivity</code>启动<code>SingleInstanceActivity</code>，按<code>Home</code>回到桌面再进入，此时<code>Task</code>的情况和上面相同的，那么这时候我们启动<code>SingleInstanceActivityAnother</code>：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1949836-b4aa0c5e4d7e5110.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="singleInstance_another.png"><br>可以看到，它并没有受到<code>affinity</code>的影响，而是重新起了一个新的栈。</p>
+<h2 id="二、在Intent当中指定启动模式"><a href="#二、在Intent当中指定启动模式" class="headerlink" title="二、在Intent当中指定启动模式"></a>二、在<code>Intent</code>当中指定启动模式</h2><h2 id="2-1-FLAG-ACTIVITY-NEW-TASK"><a href="#2-1-FLAG-ACTIVITY-NEW-TASK" class="headerlink" title="2.1 FLAG_ACTIVITY_NEW_TASK"></a>2.1 <code>FLAG_ACTIVITY_NEW_TASK</code></h2><p>和<code>singleTask</code>行为相同，前面已经详细分析过了，这里需要注意 affinity 的声明。</p>
+<h2 id="2-2-FLAG-ACTIVITY-SINGLE-TOP"><a href="#2-2-FLAG-ACTIVITY-SINGLE-TOP" class="headerlink" title="2.2 FLAG_ACTIVITY_SINGLE_TOP"></a>2.2 <code>FLAG_ACTIVITY_SINGLE_TOP</code></h2><p>和<code>singleTop</code>行为相同，比较简单，就不举例子了。</p>
+<h2 id="2-3-FLAG-ACTIVITY-CLEAR-TASK"><a href="#2-3-FLAG-ACTIVITY-CLEAR-TASK" class="headerlink" title="2.3 FLAG_ACTIVITY_CLEAR_TASK"></a>2.3 <code>FLAG_ACTIVITY_CLEAR_TASK</code></h2><p>和 <code>FLAG_ACTIVITY_NEW_TASK</code> 何用，这个<code>Activity</code>会新起一个栈，原来栈被清空，栈中的<code>Activity</code>也被销毁。</p>
+<h2 id="2-5-FLAG-ACTIVITY-CLEAR-TOP"><a href="#2-5-FLAG-ACTIVITY-CLEAR-TOP" class="headerlink" title="2.5 FLAG_ACTIVITY_CLEAR_TOP"></a>2.5 <code>FLAG_ACTIVITY_CLEAR_TOP</code></h2><p>会清除这个<code>Activity</code>之上所有的<code>Activity</code>，我们来试一下，新建两个新的<code>SecondActivity</code>和<code>ThirdActivity</code>，从<code>Main -&gt; Second -&gt; Third</code>，此时栈的结构是：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-834b2531b5873016.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="clearTop_1.png"><br>此时，我们按如下方式启动<code>SecondActivity</code>：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">public void third(View view) &#123;</div><div class="line">    Intent intent = new Intent(this, SecondActivity.class);</div><div class="line">    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);</div><div class="line">    startActivity(intent);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这之后，栈的结构变为，<code>ThirdAcitivity</code>被出栈了：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1949836-9f99fb8f26072fa6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="clearTop_2.png"></p>
+<h2 id="2-6-FLAG-ACTIVITY-REORDER-TO-FRONT"><a href="#2-6-FLAG-ACTIVITY-REORDER-TO-FRONT" class="headerlink" title="2.6 FLAG_ACTIVITY_REORDER_TO_FRONT"></a>2.6 <code>FLAG_ACTIVITY_REORDER_TO_FRONT</code></h2><p>上面的<code>FLAG_ACTIVITY_CLEAR_TOP</code>是把位于目标<code>Activity</code>之上的<code>Activity</code>都销毁，而则个<code>FLAG</code>则是对栈重新排序，把目标<code>Activity</code>移到最前台，其它的位置不变，我们在前一种的基础上，在<code>ThirdActivity</code>中换一种方式来启动<code>SecondActivity</code>：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">public void third(View view) &#123;</div><div class="line">    Intent intent = new Intent(this, SecondActivity.class);</div><div class="line">    intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);</div><div class="line">    startActivity(intent);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这回，最终栈的结构变为了，可以看到<code>ThirdActivity</code>并没有被出栈：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1949836-9a643a4acadaa2d3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<h2 id="三、AndroidManifest中的属性"><a href="#三、AndroidManifest中的属性" class="headerlink" title="三、AndroidManifest中的属性"></a>三、<code>AndroidManifest</code>中的属性</h2><h2 id="3-1-alwaysRetainTaskState"><a href="#3-1-alwaysRetainTaskState" class="headerlink" title="3.1 alwaysRetainTaskState"></a>3.1 <code>alwaysRetainTaskState</code></h2><p>这个标志只对根<code>Activity</code>有用，默认情况下，当我们的应用在后台一段时间，它会销毁该<code>Task</code>除了根以外的所有<code>Activity</code>，如果我们希望保持这个<code>Task</code>的原有状态，那么给这个<code>Task</code>的根<code>Activity</code>设置这个属性，默认值是<code>false</code>。</p>
+<h2 id="3-2-clearTaskOnLaunch"><a href="#3-2-clearTaskOnLaunch" class="headerlink" title="3.2 clearTaskOnLaunch"></a>3.2 <code>clearTaskOnLaunch</code></h2><p>从桌面启动该<code>Activity</code>的时候会清空该<code>Task</code>除了根<code>Activity</code>外的所有<code>Activity</code>，我们从<code>Main -&gt; Second -&gt; Third</code>，此时栈内有3个<code>Activity</code>，按<code>Home</code>回到桌面后，点图标重新进入，此时<code>Task</code>只剩下根<code>Activity</code> 了：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1949836-5479b6fd8f7f2d28.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<h2 id="3-3-finishOnTaskLaunch"><a href="#3-3-finishOnTaskLaunch" class="headerlink" title="3.3 finishOnTaskLaunch"></a>3.3 <code>finishOnTaskLaunch</code></h2><p>这个和上面类似，但是它对根<code>Activity</code>无效，我们给<code>SecondActivity</code>设置这个属性，先启动到<code>ThirdActivity</code>，这时候栈的结构为：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1949836-b6a9005ba3caee7b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<p>接着，我们按<code>Home</code>回到桌面，点图标重新进入，栈的结构变为下面这样，可以看到<code>SecondActivity</code>没有了：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1949836-05638cdb357aa318.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<h2 id="3-4-noHistory"><a href="#3-4-noHistory" class="headerlink" title="3.4 noHistory"></a>3.4 <code>noHistory</code></h2><p><code>Activity</code>在不可见之后，不保存记录</p>
+<ul>
+<li><p>第一种情况，我们给<code>SecondActivity</code>设置这个属性，接着从<code>Main -&gt; Second -&gt; Third</code>，然后按<code>Back</code>返回，此时的生命周期为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">ThirdActivity#onPause</div><div class="line">MainActivity#onRestart</div><div class="line">MainActivity#onStart</div><div class="line">MainActivity#onResume</div><div class="line">SecondActivity#onDestroy</div><div class="line">ThirdActivity#onStop</div><div class="line">ThirdActivity#onDestroy</div></pre></td></tr></table></figure>
+</li>
+<li><p>第二种情况，如果我们在<code>ThirdActivity</code>时，不是按<code>Back</code>，而是按<code>Home</code>到桌面，会调用：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">ThirdActivity#onPause</div><div class="line">SecondActivity#onDestroy</div><div class="line">ThirdActivity#onStop</div></pre></td></tr></table></figure>
+</li>
+<li><p>第三种情况，我们给根<code>MainAcitivity</code>设置这个属性，启动它后退出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">MainActivity#onCreate</div><div class="line">MainActivity#onStart</div><div class="line">MainActivity#onResume</div><div class="line">MainActivity#onDestory</div></pre></td></tr></table></figure>
+</li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/02/20/Material-Design-控件/Material-Design-控件知识梳理(1)---Android-Design-Support-Library-是什么/" rel="next" title="Material Design 控件知识梳理(1) - Android Design Support Library 是什么">
+                <i class="fa fa-chevron-left"></i> Material Design 控件知识梳理(1) - Android Design Support Library 是什么
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/02/20/Activity/Activity-知识梳理(3)---Activity状态保存和恢复/" rel="prev" title="Activity 知识梳理(3) - Activity状态保存和恢复">
+                Activity 知识梳理(3) - Activity状态保存和恢复 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="zeMao" />
+          <p class="site-author-name" itemprop="name">zeMao</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">104</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">24</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、AndroidManifest-xml中指定launchMode"><span class="nav-number">1.</span> <span class="nav-text">一、AndroidManifest.xml中指定launchMode</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#1-1standard"><span class="nav-number">2.</span> <span class="nav-text">1.1standard</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-2-singleTop"><span class="nav-number">2.1.</span> <span class="nav-text">1.2 singleTop</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-3-singleTask"><span class="nav-number">2.2.</span> <span class="nav-text">1.3 singleTask</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-4-singleInstance"><span class="nav-number">2.3.</span> <span class="nav-text">1.4 singleInstance</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、在Intent当中指定启动模式"><span class="nav-number">2.4.</span> <span class="nav-text">二、在Intent当中指定启动模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-FLAG-ACTIVITY-NEW-TASK"><span class="nav-number">2.5.</span> <span class="nav-text">2.1 FLAG_ACTIVITY_NEW_TASK</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-FLAG-ACTIVITY-SINGLE-TOP"><span class="nav-number">2.6.</span> <span class="nav-text">2.2 FLAG_ACTIVITY_SINGLE_TOP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-FLAG-ACTIVITY-CLEAR-TASK"><span class="nav-number">2.7.</span> <span class="nav-text">2.3 FLAG_ACTIVITY_CLEAR_TASK</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-5-FLAG-ACTIVITY-CLEAR-TOP"><span class="nav-number">2.8.</span> <span class="nav-text">2.5 FLAG_ACTIVITY_CLEAR_TOP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-6-FLAG-ACTIVITY-REORDER-TO-FRONT"><span class="nav-number">2.9.</span> <span class="nav-text">2.6 FLAG_ACTIVITY_REORDER_TO_FRONT</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、AndroidManifest中的属性"><span class="nav-number">2.10.</span> <span class="nav-text">三、AndroidManifest中的属性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-alwaysRetainTaskState"><span class="nav-number">2.11.</span> <span class="nav-text">3.1 alwaysRetainTaskState</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-clearTaskOnLaunch"><span class="nav-number">2.12.</span> <span class="nav-text">3.2 clearTaskOnLaunch</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-3-finishOnTaskLaunch"><span class="nav-number">2.13.</span> <span class="nav-text">3.3 finishOnTaskLaunch</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-4-noHistory"><span class="nav-number">2.14.</span> <span class="nav-text">3.4 noHistory</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zeMao</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

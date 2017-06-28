@@ -1,0 +1,761 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="一、概述Shader称为着色器，通过给Paint设置Shader，我们可以对图像进行渲染，在实际的使用当中，我们一般使用Shader的以下五个子类来实现不同的效果：  BitmapShader LinearGradient SweepGradient RadialGradient ComposeShader  其中第1个用来设置Bitmap的变换，第2~4用来设置颜色的变换，第5个用来组合上面的几">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Canvas&amp;Paint 知识梳理(5) - Paint#setShader">
+<meta property="og:url" content="http://yoursite.com/2017/03/04/Canvas-&-Paint/Canvas&Paint-知识梳理(5)---Paint#setShader/index.html">
+<meta property="og:site_name" content="zeMao&#39;s Blog">
+<meta property="og:description" content="一、概述Shader称为着色器，通过给Paint设置Shader，我们可以对图像进行渲染，在实际的使用当中，我们一般使用Shader的以下五个子类来实现不同的效果：  BitmapShader LinearGradient SweepGradient RadialGradient ComposeShader  其中第1个用来设置Bitmap的变换，第2~4用来设置颜色的变换，第5个用来组合上面的几">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-b6b9d26bc7d91a84.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-2468a7d97f5ba29c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-7fc9a3b00762df18.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-19e29e3dc9c97cfa.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-3382940597e720ae.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-f9ccd83bd3ca112b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-1ca5a5b00e424cd1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-10152525b3f342b1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-f312035f9b19e651.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-c24904d3e8aae172.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-aeda159c7cf3e4c9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-767d7a5b6aa1adcc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2017-06-28T06:47:04.226Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Canvas&amp;Paint 知识梳理(5) - Paint#setShader">
+<meta name="twitter:description" content="一、概述Shader称为着色器，通过给Paint设置Shader，我们可以对图像进行渲染，在实际的使用当中，我们一般使用Shader的以下五个子类来实现不同的效果：  BitmapShader LinearGradient SweepGradient RadialGradient ComposeShader  其中第1个用来设置Bitmap的变换，第2~4用来设置颜色的变换，第5个用来组合上面的几">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-b6b9d26bc7d91a84.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/03/04/Canvas-&-Paint/Canvas&Paint-知识梳理(5)---Paint#setShader/"/>
+
+
+
+
+
+  <title>Canvas&Paint 知识梳理(5) - Paint#setShader | zeMao's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">zeMao's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/03/04/Canvas-&-Paint/Canvas&Paint-知识梳理(5)---Paint#setShader/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zeMao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="zeMao's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Canvas&Paint 知识梳理(5) - Paint#setShader</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-04T23:22:00+08:00">
+                2017-03-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Canvas-Paint-知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">Canvas&Paint 知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="一、概述"><a href="#一、概述" class="headerlink" title="一、概述"></a>一、概述</h1><p><code>Shader</code>称为着色器，通过给<code>Paint</code>设置<code>Shader</code>，我们可以对图像进行渲染，在实际的使用当中，我们一般使用<code>Shader</code>的以下五个子类来实现不同的效果：</p>
+<ul>
+<li><code>BitmapShader</code></li>
+<li><code>LinearGradient</code></li>
+<li><code>SweepGradient</code></li>
+<li><code>RadialGradient</code></li>
+<li><code>ComposeShader</code></li>
+</ul>
+<p>其中第<code>1</code>个用来设置<code>Bitmap</code>的变换，第<code>2~4</code>用来设置颜色的变换，第<code>5</code>个用来组合上面的几个<code>Shader</code>，下面我们一起来看以下各个子类的使用和应用场景。</p>
+<h1 id="二、使用示例"><a href="#二、使用示例" class="headerlink" title="二、使用示例"></a>二、使用示例</h1><h2 id="2-1-BitmapShader"><a href="#2-1-BitmapShader" class="headerlink" title="2.1 BitmapShader"></a>2.1 <code>BitmapShader</code></h2><p><code>BitmapShader</code>是所有五个子类当中唯一一个对<code>Bitmap</code>进行操作的，我们看一下它的构造函数：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">/**</div><div class="line"> * Call this to create a new shader that will draw with a bitmap.</div><div class="line"> *</div><div class="line"> * @param bitmap            The bitmap to use inside the shader</div><div class="line"> * @param tileX             The tiling mode for x to draw the bitmap in.</div><div class="line"> * @param tileY             The tiling mode for y to draw the bitmap in.</div><div class="line"> */</div><div class="line">public BitmapShader(@NonNull Bitmap bitmap, TileMode tileX, TileMode tileY) &#123;</div><div class="line">    mBitmap = bitmap;</div><div class="line">    mTileX = tileX;</div><div class="line">    mTileY = tileY;</div><div class="line">    init(nativeCreate(bitmap, tileX.nativeInt, tileY.nativeInt));</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>第一个参数很好理解，就是需要绘制的<code>Bitmap</code>，我们看一下后面的两个参数，它的取值有：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">public enum TileMode &#123;</div><div class="line">    /**</div><div class="line">     * replicate the edge color if the shader draws outside of its</div><div class="line">     * original bounds</div><div class="line">     */</div><div class="line">    CLAMP   (0),</div><div class="line">    /**</div><div class="line">     * repeat the shader&apos;s image horizontally and vertically</div><div class="line">     */</div><div class="line">    REPEAT  (1),</div><div class="line">    /**</div><div class="line">     * repeat the shader&apos;s image horizontally and vertically, alternating</div><div class="line">     * mirror images so that adjacent images always seam</div><div class="line">     */</div><div class="line">    MIRROR  (2);</div><div class="line"></div><div class="line">    TileMode(int nativeInt) &#123;</div><div class="line">        this.nativeInt = nativeInt;</div><div class="line">    &#125;</div><div class="line">    final int nativeInt;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>需要注意的是，下面几种模式都是建立在绘制的区域要比原来的<code>bimtap</code>大的情况下的。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">the shader draws outside of its original bounds</div></pre></td></tr></table></figure></p>
+<ul>
+<li><code>CLAMP</code>：取<code>bitmap</code>边缘的最后一个像素进行扩展。</li>
+<li><code>REPEAT</code>：水平地重复整张<code>bitmap</code>。</li>
+<li><code>MIRROR</code>：和<code>REPEAT</code>类似，但是每次重复的时候，将<code>bitmap</code>进行翻转。</li>
+</ul>
+<h3 id="2-1-1-CLAMP"><a href="#2-1-1-CLAMP" class="headerlink" title="2.1.1 CLAMP"></a>2.1.1 <code>CLAMP</code></h3><p>首先，我们取一张宽高为<code>200dp * 200dp</code>的图片，我们整个<code>View</code>的宽高为<code>300dp * 300dp</code>，</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1949836-b6b9d26bc7d91a84.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>我们首先采用<code>CLAMP</code>的模式：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">private Bitmap mOriginalBitmap;</div><div class="line">private Paint mPaint;</div><div class="line"></div><div class="line">private void init() &#123;</div><div class="line">    mOriginalBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.shader_pic);</div><div class="line">    mPaint = new Paint();</div><div class="line">&#125;</div><div class="line"></div><div class="line">private void drawBitmapShader(Canvas canvas) &#123;</div><div class="line">    BitmapShader shader = new BitmapShader(mOriginalBitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);</div><div class="line">    mPaint.setShader(shader);</div><div class="line">    canvas.drawRect(0, 0, canvas.getWidth(), canvas.getHeight(), mPaint);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>最终得到的结果为下图，可以看到，由于<code>Paint</code>绘制的宽高要比<code>Bitmap</code>原本的宽高大，因此对于多出的部分，取了边缘最后一个像素的颜色进行重复：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-2468a7d97f5ba29c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>现在有个疑问，因为整个图片的大小为<code>600 * 600</code>，而我们绘制的大小为<code>900 * 900</code>，按前面的说法，对于<code>(600,0) - (899, 600)</code>的区域，取的是<code>(599, 0) - (599, 599)</code>这一列的颜色，而对于<code>(0, 600) - (600, 899)</code>取的是<code>(0, 599) - (599, 599)</code>这一行的颜色，那么<code>(600, 600) - (899, 899)</code>这一区域是怎么取的呢？<br>现在，我们试一下，把最后<code>drawRect</code>的起始点改为<code>(100, 100)</code>：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">canvas.drawRect(100, 100, canvas.getWidth(), canvas.getHeight(), mPaint);</div></pre></td></tr></table></figure></p>
+<p>得到的效果如下图，可以看到，边缘部分被切割掉了。<br><img src="http://upload-images.jianshu.io/upload_images/1949836-7fc9a3b00762df18.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h3 id="2-1-2-REPEAT-MIRROR"><a href="#2-1-2-REPEAT-MIRROR" class="headerlink" title="2.1.2 REPEAT/MIRROR"></a>2.1.2 <code>REPEAT/MIRROR</code></h3><p>对于这两种模式，实现方式和上面类似，我们就不再重复描述了，只给出下面运行的结果：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">BitmapShader shader = new BitmapShader(mOriginalBitmap, Shader.TileMode.REPEAT, Shader.TileMode.REPEAT);</div></pre></td></tr></table></figure></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1949836-19e29e3dc9c97cfa.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">BitmapShader shader = new BitmapShader(mOriginalBitmap, Shader.TileMode.MIRROR, Shader.TileMode.MIRROR);</div></pre></td></tr></table></figure></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1949836-3382940597e720ae.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>得到的结果都是和描述相符的。</p>
+<h3 id="2-1-3-当X轴和Y轴的TileMode不同时"><a href="#2-1-3-当X轴和Y轴的TileMode不同时" class="headerlink" title="2.1.3 当X轴和Y轴的TileMode不同时"></a>2.1.3 当<code>X</code>轴和<code>Y</code>轴的<code>TileMode</code>不同时</h3><p>上面讨论的情况，都是<code>x</code>轴和<code>y</code>轴的<code>TileMode</code>相同的情况，现在，我们来看一下，当两者不同时，会发生什么情况：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">BitmapShader shader = new BitmapShader(mOriginalBitmap, Shader.TileMode.CLAMP, Shader.TileMode.MIRROR);</div></pre></td></tr></table></figure></p>
+<p>最终的结果如下，可以看到，我们是<strong>先按<code>x</code>轴的模式进行处理，然后将<code>x</code>轴处理完毕后的图像再按<code>y</code>轴的模式进行处理</strong>，这也解释了我们前面在<code>2.1.1</code>中留下的疑问。<br><img src="http://upload-images.jianshu.io/upload_images/1949836-f9ccd83bd3ca112b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h2 id="2-2-LinearGradient"><a href="#2-2-LinearGradient" class="headerlink" title="2.2 LinearGradient"></a>2.2 <code>LinearGradient</code></h2><p><code>LinearGradient</code>用来处理线性渐变，同理我们先来看它的构造函数说明，和前面不同，它有两个构造函数，其中一种是另一种的简化版，我们直接来看复杂的一种：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">/** Create a shader that draws a linear gradient along a line.</div><div class="line">    @param x0           The x-coordinate for the start of the gradient line</div><div class="line">    @param y0           The y-coordinate for the start of the gradient line</div><div class="line">    @param x1           The x-coordinate for the end of the gradient line</div><div class="line">    @param y1           The y-coordinate for the end of the gradient line</div><div class="line">    @param  colors      The colors to be distributed along the gradient line</div><div class="line">    @param  positions   May be null. The relative positions [0..1] of</div><div class="line">                        each corresponding color in the colors array. If this is null,</div><div class="line">                        the the colors are distributed evenly along the gradient line.</div><div class="line">    @param  tile        The Shader tiling mode</div><div class="line">*/</div><div class="line">public LinearGradient(float x0, float y0, float x1, float y1, int colors[], float positions[], TileMode tile) &#123;</div></pre></td></tr></table></figure></p>
+<p>下面，我们从几个方面来分析一下这个构造函数中的参数。</p>
+<h3 id="2-2-1-起点坐标和终点坐标"><a href="#2-2-1-起点坐标和终点坐标" class="headerlink" title="2.2.1 起点坐标和终点坐标"></a>2.2.1 起点坐标和终点坐标</h3><p>对于这两个点的坐标我们可以这么理解，起点的颜色就是<code>color[]</code>数组的第一个元素，终点的颜色就是<code>color[]</code>数组的最后一个元素，这两个点的连线决定了线性变化的方向，如果两点连线和<code>x</code>轴的正方向是重合的时候，那么就是水平地变化，当和<code>x</code>轴正方向有度数时，那么这个连线相对于<code>x</code>轴旋转了多少，最后线性变化的图像也就会相对于水平变化的图像旋转了多少，下面我们用两个例子来说明。<br>首先是水平方向的：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">private void drawLinearGradient(Canvas canvas) &#123;</div><div class="line">    LinearGradient gradient = new LinearGradient(0, 0, 100, 0, new int[]&#123; Color.WHITE, Color.BLACK &#125;, null, Shader.TileMode.REPEAT);</div><div class="line">    mPaint.setShader(gradient);</div><div class="line">    canvas.drawRect(0, 0, 900, 900, mPaint);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这时候的图像为：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-1ca5a5b00e424cd1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>下面，我们将终点的<code>y</code>轴坐标下移一点，让起点坐标和终点坐标的连线，与<code>x</code>轴形成一定的角度：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">private void drawLinearGradient(Canvas canvas) &#123;</div><div class="line">    LinearGradient gradient = new LinearGradient(0, 0, 100, 10, new int[]&#123; Color.WHITE, Color.BLACK &#125;, null, Shader.TileMode.REPEAT);</div><div class="line">    mPaint.setShader(gradient);</div><div class="line">    canvas.drawRect(0, 0, 900, 900, mPaint);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这时候的图像为，可以看到，由于此时连线相对于<code>x</code>轴，顺时针旋转了一定的度数，那么最终的图像也相对于上面那种情况顺时针旋转了相应的度数。<br><img src="http://upload-images.jianshu.io/upload_images/1949836-10152525b3f342b1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h3 id="2-2-2-colors和positions"><a href="#2-2-2-colors和positions" class="headerlink" title="2.2.2 colors和positions"></a>2.2.2 <code>colors</code>和<code>positions</code></h3><p>这两个参数很好理解，因为在颜色由起点颜色变到终点颜色的过程中，我们可能还希望中间会经过别的颜色，那么这时候，我们就可以在数组的第一个和最后一个元素当中插入别的元素，这些元素就是中间会经过的颜色，并且当<code>positions</code>不为<code>null</code>的时候，<code>colors</code>的大小要和<code>positions</code>相同。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">private void drawLinearGradient(Canvas canvas) &#123;</div><div class="line">    LinearGradient gradient = new LinearGradient(0, 0, 100, 10, new int[]&#123; Color.WHITE, Color.BLUE, Color.BLACK &#125;, new float[]&#123;0, 0.5f, 1f&#125;, Shader.TileMode.REPEAT);</div><div class="line">    mPaint.setShader(gradient);</div><div class="line">    canvas.drawRect(0, 0, 900, 900, mPaint);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>结果为：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-f312035f9b19e651.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h3 id="2-2-3-TileMode"><a href="#2-2-3-TileMode" class="headerlink" title="2.2.3 TileMode"></a>2.2.3 <code>TileMode</code></h3><p>和<code>BitmapShader</code>不同，此时我们只用指定一个方向的变化，这个方向就是颜色线性变化对应的方向。</p>
+<h3 id="2-2-4-另一个构造函数"><a href="#2-2-4-另一个构造函数" class="headerlink" title="2.2.4 另一个构造函数"></a>2.2.4 另一个构造函数</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">/** Create a shader that draws a linear gradient along a line.</div><div class="line">    @param x0       The x-coordinate for the start of the gradient line</div><div class="line">    @param y0       The y-coordinate for the start of the gradient line</div><div class="line">    @param x1       The x-coordinate for the end of the gradient line</div><div class="line">    @param y1       The y-coordinate for the end of the gradient line</div><div class="line">    @param  color0  The color at the start of the gradient line.</div><div class="line">    @param  color1  The color at the end of the gradient line.</div><div class="line">    @param  tile    The Shader tiling mode</div><div class="line">*/</div><div class="line">public LinearGradient(float x0, float y0, float x1, float y1, int color0, int color1,</div><div class="line">        TileMode tile) &#123;</div><div class="line">    mType = TYPE_COLOR_START_AND_COLOR_END;</div><div class="line">    mX0 = x0;</div><div class="line">    mY0 = y0;</div><div class="line">    mX1 = x1;</div><div class="line">    mY1 = y1;</div><div class="line">    mColor0 = color0;</div><div class="line">    mColor1 = color1;</div><div class="line">    mTileMode = tile;</div><div class="line">    init(nativeCreate2(x0, y0, x1, y1, color0, color1, tile.nativeInt));</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>唯一不同的就是去掉了<code>colors</code>和<code>position</code>数组，变成了<code>color0</code>和<code>color1</code>，那么我们就只能指定起点和终点的颜色了，其它的原理和上面那个构造函数是相同的。</p>
+<h2 id="2-3-SweepGradient"><a href="#2-3-SweepGradient" class="headerlink" title="2.3 SweepGradient"></a>2.3 <code>SweepGradient</code></h2><p>它用来提供类似雷达的效果，同理，我们看一下构造函数：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">/**</div><div class="line"> * A subclass of Shader that draws a sweep gradient around a center point.</div><div class="line"> *</div><div class="line"> * @param cx       The x-coordinate of the center</div><div class="line"> * @param cy       The y-coordinate of the center</div><div class="line"> * @param colors   The colors to be distributed between around the center.</div><div class="line"> *                 There must be at least 2 colors in the array.</div><div class="line"> * @param positions May be NULL. The relative position of</div><div class="line"> *                 each corresponding color in the colors array, beginning</div><div class="line"> *                 with 0 and ending with 1.0. If the values are not</div><div class="line"> *                 monotonic, the drawing may produce unexpected results.</div><div class="line"> *                 If positions is NULL, then the colors are automatically</div><div class="line"> *                 spaced evenly.</div><div class="line"> */</div><div class="line">public SweepGradient(float cx, float cy, int colors[], float positions[])</div></pre></td></tr></table></figure></p>
+<h3 id="2-3-1-中心点坐标-cx-cy"><a href="#2-3-1-中心点坐标-cx-cy" class="headerlink" title="2.3.1 中心点坐标(cx, cy)"></a>2.3.1 中心点坐标<code>(cx, cy)</code></h3><p>对于<code>(cx, cy)</code>中心点的坐标，我们可以把它想象成一个时钟的指针，这个指针开始时指向<code>3</code>点钟方向，它初始的颜色就是起点颜色，那么它会以此为起点，顺时针旋转<code>360</code>度，在旋转的过程中，这个指针的颜色不断变化，当旋转到<code>360</code>度后，指针就变成了终点颜色，在旋转过程中，指针所形成的轨迹就是最终的图像。</p>
+<h3 id="2-3-2-TileMode"><a href="#2-3-2-TileMode" class="headerlink" title="2.3.2 TileMode"></a>2.3.2 <code>TileMode</code></h3><p>需要注意到，它和<code>LinearGradient</code>不同的是，由于指针是无限长的，所以形成的图像在<code>x</code>轴和<code>y</code>轴所拼接成的区域是无限大的，因此也就不存在了<code>TileMode</code>这个参数的必要了。</p>
+<h3 id="2-3-3-colors-和positions"><a href="#2-3-3-colors-和positions" class="headerlink" title="2.3.3 colors[]和positions[]"></a>2.3.3 <code>colors[]</code>和<code>positions[]</code></h3><p>这两个数组的作用和上面<code>LinearGradient</code>的两个数组的作用是相同的，这里就不重复说明了。</p>
+<h3 id="2-3-4-举例"><a href="#2-3-4-举例" class="headerlink" title="2.3.4 举例"></a>2.3.4 举例</h3><p>下面举个简单的例子：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">private void drawSweepGradient(Canvas canvas) &#123;</div><div class="line">    SweepGradient gradient = new SweepGradient(450, 450, Color.WHITE, Color.BLACK);</div><div class="line">    mPaint.setShader(gradient);</div><div class="line">    canvas.drawRect(0, 0, 900, 900, mPaint);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>最后的结果为：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-c24904d3e8aae172.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h3 id="2-3-5-另一个构造函数"><a href="#2-3-5-另一个构造函数" class="headerlink" title="2.3.5 另一个构造函数"></a>2.3.5 另一个构造函数</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">/**</div><div class="line"> * A subclass of Shader that draws a sweep gradient around a center point.</div><div class="line"> *</div><div class="line"> * @param cx       The x-coordinate of the center</div><div class="line"> * @param cy       The y-coordinate of the center</div><div class="line"> * @param color0   The color to use at the start of the sweep</div><div class="line"> * @param color1   The color to use at the end of the sweep</div><div class="line"> */</div><div class="line">public SweepGradient(float cx, float cy, int color0, int color1) &#123;</div><div class="line">    mType = TYPE_COLOR_START_AND_COLOR_END;</div><div class="line">    mCx = cx;</div><div class="line">    mCy = cy;</div><div class="line">    mColor0 = color0;</div><div class="line">    mColor1 = color1;</div><div class="line">    init(nativeCreate2(cx, cy, color0, color1));</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>和前面<code>LinearGradient</code>中讨论的一样，<code>color0</code>和<code>color1</code>就是<code>colors[]</code>和<code>positions[]</code>的简化版本。</p>
+<h2 id="2-4-RadialGradient"><a href="#2-4-RadialGradient" class="headerlink" title="2.4 RadialGradient"></a>2.4 <code>RadialGradient</code></h2><p>它被称为圆形渐变，构造函数如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">/** Create a shader that draws a radial gradient given the center and radius.</div><div class="line">    @param centerX  The x-coordinate of the center of the radius</div><div class="line">    @param centerY  The y-coordinate of the center of the radius</div><div class="line">    @param radius   Must be positive. The radius of the circle for this gradient.</div><div class="line">    @param colors   The colors to be distributed between the center and edge of the circle</div><div class="line">    @param stops    May be &lt;code&gt;null&lt;/code&gt;. Valid values are between &lt;code&gt;0.0f&lt;/code&gt; and</div><div class="line">                    &lt;code&gt;1.0f&lt;/code&gt;. The relative position of each corresponding color in</div><div class="line">                    the colors array. If &lt;code&gt;null&lt;/code&gt;, colors are distributed evenly</div><div class="line">                    between the center and edge of the circle.</div><div class="line">    @param tileMode The Shader tiling mode</div><div class="line">*/</div><div class="line">public RadialGradient(float centerX, float centerY, float radius, @NonNull int colors[], @Nullable float stops[], @NonNull TileMode tileMode)</div></pre></td></tr></table></figure></p>
+<h3 id="2-4-1-原点坐标-centerX-centerY-和半径radius"><a href="#2-4-1-原点坐标-centerX-centerY-和半径radius" class="headerlink" title="2.4.1 原点坐标(centerX, centerY)和半径radius"></a>2.4.1 原点坐标<code>(centerX, centerY)</code>和半径<code>radius</code></h3><p>对于圆形渐变，我们可以这么理解，开始的时候，有一个半径无限小的圆环位于<code>(centerX, centerY)</code>，它的颜色就是起点颜色，之后它开始慢慢变大，直到变为半径是<code>radius</code>为止，在此期间，圆环的颜色慢慢变为终点颜色，在整个变化的过程中，圆环所形成的轨迹就是最终的图像。</p>
+<h3 id="2-4-2-TileMode"><a href="#2-4-2-TileMode" class="headerlink" title="2.4.2 TileMode"></a>2.4.2 <code>TileMode</code></h3><p>由于在这种情况下，图像的大小是有限的，最大就是<code>radius</code>指定的范围，因此对于超出范围的图像，我们需要定义它的行为，但是原理还是和前面讨论的<code>TileMode</code>的三种情况一样的。</p>
+<h3 id="2-4-3-colors-和stops"><a href="#2-4-3-colors-和stops" class="headerlink" title="2.4.3 colors[]和stops[]"></a>2.4.3 <code>colors[]</code>和<code>stops[]</code></h3><p>原理和上面讨论的<code>colors[]</code>和<code>positions[]</code>一样。</p>
+<h3 id="2-4-4-示例"><a href="#2-4-4-示例" class="headerlink" title="2.4.4 示例"></a>2.4.4 示例</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">private void drawRadialGradient(Canvas canvas) &#123;</div><div class="line">    RadialGradient gradient = new RadialGradient(200, 200, 50, Color.BLUE, Color.RED, Shader.TileMode.REPEAT);</div><div class="line">    mPaint.setShader(gradient);</div><div class="line">    canvas.drawRect(0, 0, 900, 900, mPaint);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>最终的结果为：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-aeda159c7cf3e4c9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h2 id="2-5-ComposeShader"><a href="#2-5-ComposeShader" class="headerlink" title="2.5 ComposeShader"></a>2.5 <code>ComposeShader</code></h2><p>上面，我们已经学习了四种<code>Shader</code>的实现方式，但是有时候，我们希望能够将它组合起来，<code>ComposeShader</code>就为我们提供了这种途径，可以组合两种<code>Shader</code>的实现。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">/** Create a new compose shader, given shaders A, B, and a combining mode.</div><div class="line">    When the mode is applied, it will be given the result from shader A as its</div><div class="line">    &quot;dst&quot;, and the result from shader B as its &quot;src&quot;.</div><div class="line">    @param shaderA  The colors from this shader are seen as the &quot;dst&quot; by the mode</div><div class="line">    @param shaderB  The colors from this shader are seen as the &quot;src&quot; by the mode</div><div class="line">    @param mode     The mode that combines the colors from the two shaders. If mode</div><div class="line">                    is null, then SRC_OVER is assumed.</div><div class="line">*/</div><div class="line">public ComposeShader(Shader shaderA, Shader shaderB, Xfermode mode)</div></pre></td></tr></table></figure></p>
+<p>这就涉及到之前我们学过的<code>PorterDuff.Mode</code>，第一个<code>Shader</code>作为<code>DST</code>，而第二个<code>Shader</code>作为<code>SRC</code>，两个组合的结果会根据<code>Mode</code>的不同而发生改变，下面我们用一个简单的例子，来看一下<code>BitmapShader</code>和<code>RadialGradient</code>的组合：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">private void drawComposeShader(Canvas canvas) &#123;</div><div class="line">    BitmapShader bitmapShader = new BitmapShader(mOriginalBitmap, Shader.TileMode.CLAMP, Shader.TileMode.MIRROR);</div><div class="line">    RadialGradient radialGradient = new RadialGradient(300, 300, 300, Color.TRANSPARENT, Color.WHITE, Shader.TileMode.CLAMP);</div><div class="line">    ComposeShader composeShader = new ComposeShader(bitmapShader, radialGradient, PorterDuff.Mode.SRC_OVER);</div><div class="line">    mPaint.setShader(composeShader);</div><div class="line">    canvas.drawCircle(300, 300, 300, mPaint);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>最终的结果为下图，可以看到，由于我们采用了<code>SRC_OVER</code>，因此就会出现朦胧的效果。<br><img src="http://upload-images.jianshu.io/upload_images/1949836-767d7a5b6aa1adcc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/03/03/Canvas-&-Paint/Canvas&Paint-知识梳理(4)---图像合成-Paint#setXfermode/" rel="next" title="Canvas&Paint 知识梳理(4) - 图像合成 Paint#setXfermode">
+                <i class="fa fa-chevron-left"></i> Canvas&Paint 知识梳理(4) - 图像合成 Paint#setXfermode
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/03/05/Canvas-&-Paint/Canvas&Paint-知识梳理(6)---绘制路线-Path-基本用法/" rel="prev" title="Canvas&Paint 知识梳理(6) - 绘制路线 Path 基本用法">
+                Canvas&Paint 知识梳理(6) - 绘制路线 Path 基本用法 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="zeMao" />
+          <p class="site-author-name" itemprop="name">zeMao</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">104</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">24</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、概述"><span class="nav-number">1.</span> <span class="nav-text">一、概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、使用示例"><span class="nav-number">2.</span> <span class="nav-text">二、使用示例</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-BitmapShader"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 BitmapShader</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-1-CLAMP"><span class="nav-number">2.1.1.</span> <span class="nav-text">2.1.1 CLAMP</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-2-REPEAT-MIRROR"><span class="nav-number">2.1.2.</span> <span class="nav-text">2.1.2 REPEAT/MIRROR</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-3-当X轴和Y轴的TileMode不同时"><span class="nav-number">2.1.3.</span> <span class="nav-text">2.1.3 当X轴和Y轴的TileMode不同时</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-LinearGradient"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 LinearGradient</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-1-起点坐标和终点坐标"><span class="nav-number">2.2.1.</span> <span class="nav-text">2.2.1 起点坐标和终点坐标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-2-colors和positions"><span class="nav-number">2.2.2.</span> <span class="nav-text">2.2.2 colors和positions</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-3-TileMode"><span class="nav-number">2.2.3.</span> <span class="nav-text">2.2.3 TileMode</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-4-另一个构造函数"><span class="nav-number">2.2.4.</span> <span class="nav-text">2.2.4 另一个构造函数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-SweepGradient"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 SweepGradient</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-1-中心点坐标-cx-cy"><span class="nav-number">2.3.1.</span> <span class="nav-text">2.3.1 中心点坐标(cx, cy)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-2-TileMode"><span class="nav-number">2.3.2.</span> <span class="nav-text">2.3.2 TileMode</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-3-colors-和positions"><span class="nav-number">2.3.3.</span> <span class="nav-text">2.3.3 colors[]和positions[]</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-4-举例"><span class="nav-number">2.3.4.</span> <span class="nav-text">2.3.4 举例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-5-另一个构造函数"><span class="nav-number">2.3.5.</span> <span class="nav-text">2.3.5 另一个构造函数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-4-RadialGradient"><span class="nav-number">2.4.</span> <span class="nav-text">2.4 RadialGradient</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-1-原点坐标-centerX-centerY-和半径radius"><span class="nav-number">2.4.1.</span> <span class="nav-text">2.4.1 原点坐标(centerX, centerY)和半径radius</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-2-TileMode"><span class="nav-number">2.4.2.</span> <span class="nav-text">2.4.2 TileMode</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-3-colors-和stops"><span class="nav-number">2.4.3.</span> <span class="nav-text">2.4.3 colors[]和stops[]</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-4-示例"><span class="nav-number">2.4.4.</span> <span class="nav-text">2.4.4 示例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-5-ComposeShader"><span class="nav-number">2.5.</span> <span class="nav-text">2.5 ComposeShader</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zeMao</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

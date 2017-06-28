@@ -1,0 +1,729 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="一、概述通过ItemDecoration，可以给RecyclerView或者RecyclerView中的每个Item添加额外的装饰效果，最常用的就是用来为Item之间添加分割线，今天，我们就来一起学习有关的知识：  API DividerItemDecoration解析 自定义ItemDecoration  二、API介绍当我们实现自己的ItemDecoration时，需要继承于ItemDecor">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RecyclerView 知识梳理(4) - ItemDecoration">
+<meta property="og:url" content="http://yoursite.com/2017/04/04/RecyclerView/RecyclerView-知识梳理(4)---ItemDecoration/index.html">
+<meta property="og:site_name" content="zeMao&#39;s Blog">
+<meta property="og:description" content="一、概述通过ItemDecoration，可以给RecyclerView或者RecyclerView中的每个Item添加额外的装饰效果，最常用的就是用来为Item之间添加分割线，今天，我们就来一起学习有关的知识：  API DividerItemDecoration解析 自定义ItemDecoration  二、API介绍当我们实现自己的ItemDecoration时，需要继承于ItemDecor">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-177632791e101088.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-cc11c628c5fb54d5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-2931df927aef7190.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2017-06-28T06:47:04.230Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="RecyclerView 知识梳理(4) - ItemDecoration">
+<meta name="twitter:description" content="一、概述通过ItemDecoration，可以给RecyclerView或者RecyclerView中的每个Item添加额外的装饰效果，最常用的就是用来为Item之间添加分割线，今天，我们就来一起学习有关的知识：  API DividerItemDecoration解析 自定义ItemDecoration  二、API介绍当我们实现自己的ItemDecoration时，需要继承于ItemDecor">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-177632791e101088.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/04/04/RecyclerView/RecyclerView-知识梳理(4)---ItemDecoration/"/>
+
+
+
+
+
+  <title>RecyclerView 知识梳理(4) - ItemDecoration | zeMao's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">zeMao's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/04/04/RecyclerView/RecyclerView-知识梳理(4)---ItemDecoration/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zeMao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="zeMao's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">RecyclerView 知识梳理(4) - ItemDecoration</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-04T18:26:00+08:00">
+                2017-04-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/RecyclerView-知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">RecyclerView 知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="一、概述"><a href="#一、概述" class="headerlink" title="一、概述"></a>一、概述</h1><p>通过<code>ItemDecoration</code>，可以给<code>RecyclerView</code>或者<code>RecyclerView</code>中的每个<code>Item</code>添加额外的装饰效果，最常用的就是用来为<code>Item</code>之间添加分割线，今天，我们就来一起学习有关的知识：</p>
+<ul>
+<li><code>API</code></li>
+<li><code>DividerItemDecoration</code>解析</li>
+<li>自定义<code>ItemDecoration</code></li>
+</ul>
+<h1 id="二、API介绍"><a href="#二、API介绍" class="headerlink" title="二、API介绍"></a>二、<code>API</code>介绍</h1><p>当我们实现自己的<code>ItemDecoration</code>时，需要继承于<code>ItemDecoration</code>，并根据需要实现以下三个方法：</p>
+<h2 id="2-1-public-void-onDraw-Canvas-c-RecyclerView-parent-State-state"><a href="#2-1-public-void-onDraw-Canvas-c-RecyclerView-parent-State-state" class="headerlink" title="2.1 public void onDraw(Canvas c, RecyclerView parent, State state)"></a>2.1 <code>public void onDraw(Canvas c, RecyclerView parent, State state)</code></h2><ul>
+<li><code>canvas</code>：<code>RecyclerView</code>的<code>canvas</code></li>
+<li><code>parent</code>：<code>RecyclerView</code>实例</li>
+<li><code>State</code>：<code>RecyclerView</code>当前的状态，值包括<code>START/LAYOUT/ANIMATION</code>。</li>
+</ul>
+<p>所有在这个方法中的绘制操作，将会在<code>itemViews</code>被绘制之前执行，因此，它会显示在<code>itemView</code>之下。</p>
+<h2 id="2-2-public-void-onDrawOver-Canvas-c-RecyclerView-parent-State-state"><a href="#2-2-public-void-onDrawOver-Canvas-c-RecyclerView-parent-State-state" class="headerlink" title="2.2 public void onDrawOver(Canvas c, RecyclerView parent, State state)"></a>2.2 <code>public void onDrawOver(Canvas c, RecyclerView parent, State state)</code></h2><p>和<code>2.1</code>方法类似，区别在于它绘制在<code>itemViews</code>之上。</p>
+<h2 id="2-3-public-void-getItemOffsets-Rect-outRect-View-view-RecyclerView-parent-State-state"><a href="#2-3-public-void-getItemOffsets-Rect-outRect-View-view-RecyclerView-parent-State-state" class="headerlink" title="2.3 public void getItemOffsets(Rect outRect, View view, RecyclerView parent, State state)"></a>2.3 <code>public void getItemOffsets(Rect outRect, View view, RecyclerView parent, State state)</code></h2><p>通过<code>outRect</code>，可以设置<code>item</code>之间的间隔，间隔区域的大小就是<code>outRect</code>所指定的范围，<code>view</code>就是对应位置的<code>itemView</code>，其它的参数解释和上面相同。</p>
+<h1 id="三、DividerItemDecoration解析"><a href="#三、DividerItemDecoration解析" class="headerlink" title="三、DividerItemDecoration解析"></a>三、<code>DividerItemDecoration</code>解析</h1><h2 id="3-1-使用方法"><a href="#3-1-使用方法" class="headerlink" title="3.1 使用方法"></a>3.1 使用方法</h2><p>上面我们解释了需要重写的方法以及其中参数的含义，下面，我们通过官方自带的<code>DividerItemDecoration</code>，来进一步加深对这些方法的认识。<br><code>DividerItemDecoration</code>是为<code>LinearLayoutManager</code>提供的分割线，在创建它的时候，需要指定<code>ORIENTATION</code>，这个方向应当和<code>LinearLayoutManager</code>的方向相同。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">private void init() &#123;</div><div class="line">    RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rv_content);</div><div class="line">    mTitles = new ArrayList&lt;&gt;();</div><div class="line">    for (int i = 0; i &lt; 20; i++) &#123;</div><div class="line">        mTitles.add(String.valueOf(i));</div><div class="line">    &#125;</div><div class="line">    BaseAdapter baseAdapter = new BaseAdapter(mTitles);</div><div class="line">    recyclerView.setLayoutManager(new LinearLayoutManager(this));</div><div class="line">    recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));</div><div class="line">    recyclerView.setAdapter(baseAdapter);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>最终展示的效果为：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-177632791e101088.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h2 id="3-2-源码解析"><a href="#3-2-源码解析" class="headerlink" title="3.2 源码解析"></a>3.2 源码解析</h2><h3 id="3-2-1-绘制"><a href="#3-2-1-绘制" class="headerlink" title="3.2.1 绘制"></a>3.2.1 绘制</h3><p><code>DividerItemDecoration</code>重写了基类当中的<code>onDraw</code>方法，也就是说这个分割线是在<code>itemView</code>之前绘制的：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">@Override</div><div class="line">public void onDraw(Canvas c, RecyclerView parent, RecyclerView.State state) &#123;</div><div class="line">    if (parent.getLayoutManager() == null) &#123;</div><div class="line">        return;</div><div class="line">    &#125;</div><div class="line">    if (mOrientation == VERTICAL) &#123;</div><div class="line">        drawVertical(c, parent);</div><div class="line">    &#125; else &#123;</div><div class="line">        drawHorizontal(c, parent);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>我们先看纵向排列的<code>RecyclerView</code>分割线：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line">@SuppressLint(&quot;NewApi&quot;)</div><div class="line">private void drawVertical(Canvas canvas, RecyclerView parent) &#123;</div><div class="line">    //首先保存画布</div><div class="line">    canvas.save();</div><div class="line">    final int left;</div><div class="line">    final int right;</div><div class="line">    //确定左右边界的范围，如果RecyclerView不允许子View绘制在Padding内，那么这个范围为去掉Padding后的范围</div><div class="line">    if (parent.getClipToPadding()) &#123;</div><div class="line">        left = parent.getPaddingLeft();</div><div class="line">        right = parent.getWidth() - parent.getPaddingRight();</div><div class="line">        canvas.clipRect(left, parent.getPaddingTop(), right,</div><div class="line">                parent.getHeight() - parent.getPaddingBottom());</div><div class="line">    &#125; else &#123;</div><div class="line">        left = 0;</div><div class="line">        right = parent.getWidth();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    final int childCount = parent.getChildCount();</div><div class="line">    for (int i = 0; i &lt; childCount; i++) &#123;</div><div class="line">        final View child = parent.getChildAt(i);</div><div class="line">        //获得itemView的范围，这个范围包括了margin和offset，它们被保存在mBounds当中</div><div class="line">        parent.getDecoratedBoundsWithMargins(child, mBounds);</div><div class="line">        //需要考虑translationY和translationY</div><div class="line">        final int bottom = mBounds.bottom + Math.round(ViewCompat.getTranslationY(child));</div><div class="line">        //由于是垂直排列的，因此上边界等于下边界减去分割线的高度.</div><div class="line">        final int top = bottom - mDivider.getIntrinsicHeight();</div><div class="line">        //设置divider和范围</div><div class="line">        mDivider.setBounds(left, top, right, bottom);</div><div class="line">        //绘制.</div><div class="line">        mDivider.draw(canvas);</div><div class="line">    &#125;</div><div class="line">    //回复画布.</div><div class="line">    canvas.restore();</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>整个过程分为三步：</p>
+<ul>
+<li>确定子<code>View</code>在<code>RecyclerView</code>中的绘制范围</li>
+<li>确定每个子<code>View</code>的范围</li>
+<li>确定<code>mDivider</code>的绘制范围</li>
+</ul>
+<p>下图就是最终计算的结果：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-cc11c628c5fb54d5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>横向排列的<code>RecyclerView</code>列表和上面的原理是相同的，区别就在于计算<code>mDivider.setBounds</code>的计算：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">//....</div><div class="line">parent.getLayoutManager().getDecoratedBoundsWithMargins(child, mBounds);</div><div class="line">final int right = mBounds.right + Math.round(ViewCompat.getTranslationX(child));</div><div class="line">final int left = right - mDivider.getIntrinsicWidth();</div><div class="line">mDivider.setBounds(left, top, right, bottom);</div><div class="line">//..</div></pre></td></tr></table></figure></p>
+<h3 id="3-2-2-边界处理"><a href="#3-2-2-边界处理" class="headerlink" title="3.2.2 边界处理"></a>3.2.2 边界处理</h3><p>从上面的分析可以知道，如果将<code>divider</code>直接绘制在<code>itemView</code>的范围内，那么由于我们是先绘制<code>divider</code>，再绘制<code>itemView</code>的内容的，那么它就会被覆盖，因此，通过重写<code>getItemOffsets</code>，通过其中的<code>outRect</code>来指定留出的空隙：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">@Override</div><div class="line">public void getItemOffsets(Rect outRect, View view, RecyclerView parent,</div><div class="line">        RecyclerView.State state) &#123;</div><div class="line">    if (mOrientation == VERTICAL) &#123;</div><div class="line">        //如果是纵向排列，那么要在itemView的下方留出一个下边界</div><div class="line">        outRect.set(0, 0, 0, mDivider.getIntrinsicHeight());</div><div class="line">    &#125; else &#123;</div><div class="line">        //如果是横向排列，那么要在itemView的右方留出一个右边界</div><div class="line">        outRect.set(0, 0, mDivider.getIntrinsicWidth(), 0);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h1 id="四、自定义ItemDecoration"><a href="#四、自定义ItemDecoration" class="headerlink" title="四、自定义ItemDecoration"></a>四、自定义<code>ItemDecoration</code></h1><p>下面，我们参考上面的写法，写一个简单的<code>GridLayoutManager</code>的分割线：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div></pre></td><td class="code"><pre><div class="line">public class GridDividerItemDecoration extends RecyclerView.ItemDecoration &#123;</div><div class="line"></div><div class="line">    private static final int[] ATTRS = new int[] &#123; android.R.attr.listDivider &#125;;</div><div class="line">    private Drawable mDivider;</div><div class="line">    private final Rect mBounds = new Rect();</div><div class="line"></div><div class="line">    public GridDividerItemDecoration(Context context) &#123;</div><div class="line">        final TypedArray a = context.obtainStyledAttributes(ATTRS);</div><div class="line">        mDivider = a.getDrawable(0);</div><div class="line">        a.recycle();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void setDrawable(@NonNull Drawable drawable) &#123;</div><div class="line">        mDivider = drawable;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void onDraw(Canvas c, RecyclerView parent, RecyclerView.State state) &#123;</div><div class="line">        drawDivider(c, parent);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) &#123;</div><div class="line">        outRect.set(0, 0, mDivider.getIntrinsicWidth(), mDivider.getIntrinsicHeight());</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private void drawDivider(Canvas canvas, RecyclerView parent) &#123;</div><div class="line">        canvas.save();</div><div class="line">        final int childCount = parent.getChildCount();</div><div class="line">        for (int i = 0; i &lt; childCount; i++) &#123;</div><div class="line">            final View view = parent.getChildAt(i);</div><div class="line">            parent.getDecoratedBoundsWithMargins(view, mBounds);</div><div class="line">            mDivider.setBounds(mBounds.right - mDivider.getIntrinsicWidth(), mBounds.top, mBounds.right, mBounds.bottom);</div><div class="line">            mDivider.draw(canvas);</div><div class="line">            mDivider.setBounds(mBounds.left, mBounds.bottom - mDivider.getIntrinsicHeight(), mBounds.right , mBounds.bottom);</div><div class="line">            mDivider.draw(canvas);</div><div class="line">        &#125;</div><div class="line">        canvas.restore();</div><div class="line">   &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>最终的效果为：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-2931df927aef7190.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>这里我们为了演示方便，没有考虑最后一列或者最后一行没有分割线的情况，这篇文章写的比较好：<a href="http://blog.csdn.net/lmj623565791/article/details/45059587" target="_blank" rel="external">Android RecyclerView 使用完全解析 体验艺术般的控件</a>。</p>
+<h1 id="五、总结"><a href="#五、总结" class="headerlink" title="五、总结"></a>五、总结</h1><p><code>ItemDecoration</code>的使用并不难，大多数情况下就只需要重写<code>onDraw</code>和<code>onDrawOver</code>中的一个；如果需要在<code>Item</code>之间添加间隔，那么要重写<code>getItemOffsets</code>并理解<code>outRect</code>的含义，假如不需要添加间隔，那么不需要重写该方法。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/04/03/RecyclerView/RecyclerView-知识梳理(1)---综述/" rel="next" title="RecyclerView 知识梳理(1) - 综述">
+                <i class="fa fa-chevron-left"></i> RecyclerView 知识梳理(1) - 综述
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/04/05/RecyclerView/RecyclerView-知识梳理(5)---ItemTouchHelper/" rel="prev" title="RecyclerView 知识梳理(5) - ItemTouchHelper">
+                RecyclerView 知识梳理(5) - ItemTouchHelper <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="zeMao" />
+          <p class="site-author-name" itemprop="name">zeMao</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">104</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">24</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、概述"><span class="nav-number">1.</span> <span class="nav-text">一、概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、API介绍"><span class="nav-number">2.</span> <span class="nav-text">二、API介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-public-void-onDraw-Canvas-c-RecyclerView-parent-State-state"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 public void onDraw(Canvas c, RecyclerView parent, State state)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-public-void-onDrawOver-Canvas-c-RecyclerView-parent-State-state"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 public void onDrawOver(Canvas c, RecyclerView parent, State state)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-public-void-getItemOffsets-Rect-outRect-View-view-RecyclerView-parent-State-state"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 public void getItemOffsets(Rect outRect, View view, RecyclerView parent, State state)</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、DividerItemDecoration解析"><span class="nav-number">3.</span> <span class="nav-text">三、DividerItemDecoration解析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-使用方法"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 使用方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-源码解析"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 源码解析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-1-绘制"><span class="nav-number">3.2.1.</span> <span class="nav-text">3.2.1 绘制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-2-边界处理"><span class="nav-number">3.2.2.</span> <span class="nav-text">3.2.2 边界处理</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四、自定义ItemDecoration"><span class="nav-number">4.</span> <span class="nav-text">四、自定义ItemDecoration</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#五、总结"><span class="nav-number">5.</span> <span class="nav-text">五、总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zeMao</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

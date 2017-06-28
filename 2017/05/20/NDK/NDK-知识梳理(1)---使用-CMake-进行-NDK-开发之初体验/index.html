@@ -1,0 +1,792 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="一、前言在Eclipse的时代，我们进行NDK的开发一般需要通过手动执行NDK脚本生成*.so文件，再将.so文件放到对应的目录之后，之后再进行打包。 而如果使用的是Android Studio进行NDK开发，在2.2的版本以后，我们可以不需要手动地运行NDK脚本来生成*.so文件，而是将这一过程作为Gradle构建过程的依赖项，事先编写好编译的脚本文件，然后在build.gradle中指定编译脚">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NDK 知识梳理(1) - 使用 CMake 进行 NDK 开发之初体验">
+<meta property="og:url" content="http://yoursite.com/2017/05/20/NDK/NDK-知识梳理(1)---使用-CMake-进行-NDK-开发之初体验/index.html">
+<meta property="og:site_name" content="zeMao&#39;s Blog">
+<meta property="og:description" content="一、前言在Eclipse的时代，我们进行NDK的开发一般需要通过手动执行NDK脚本生成*.so文件，再将.so文件放到对应的目录之后，之后再进行打包。 而如果使用的是Android Studio进行NDK开发，在2.2的版本以后，我们可以不需要手动地运行NDK脚本来生成*.so文件，而是将这一过程作为Gradle构建过程的依赖项，事先编写好编译的脚本文件，然后在build.gradle中指定编译脚">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-5a6fcf81c5aab4c4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-336344db1cddcc4b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-cc71ba53a09305e1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-044ae7a93fc5ab7f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-754ecfb7e45247f1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-e4b0db6ce91dc30d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-e3b1aaf66b649c43.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-b251196f84cd3712.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-b627f0c196f4e34e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-c8ce7a3f84edfb32.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-6af56d1bb9ed4a97.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-cbf71590540dafb7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2017-06-28T06:47:04.230Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="NDK 知识梳理(1) - 使用 CMake 进行 NDK 开发之初体验">
+<meta name="twitter:description" content="一、前言在Eclipse的时代，我们进行NDK的开发一般需要通过手动执行NDK脚本生成*.so文件，再将.so文件放到对应的目录之后，之后再进行打包。 而如果使用的是Android Studio进行NDK开发，在2.2的版本以后，我们可以不需要手动地运行NDK脚本来生成*.so文件，而是将这一过程作为Gradle构建过程的依赖项，事先编写好编译的脚本文件，然后在build.gradle中指定编译脚">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-5a6fcf81c5aab4c4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/05/20/NDK/NDK-知识梳理(1)---使用-CMake-进行-NDK-开发之初体验/"/>
+
+
+
+
+
+  <title>NDK 知识梳理(1) - 使用 CMake 进行 NDK 开发之初体验 | zeMao's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">zeMao's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/05/20/NDK/NDK-知识梳理(1)---使用-CMake-进行-NDK-开发之初体验/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zeMao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="zeMao's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">NDK 知识梳理(1) - 使用 CMake 进行 NDK 开发之初体验</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-20T23:50:00+08:00">
+                2017-05-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/NDK-知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">NDK 知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="一、前言"><a href="#一、前言" class="headerlink" title="一、前言"></a>一、前言</h1><p>在<code>Eclipse</code>的时代，我们进行<code>NDK</code>的开发一般需要通过手动执行<code>NDK</code>脚本生成<code>*.so</code>文件，再将<code>.so</code>文件放到对应的目录之后，之后再进行打包。</p>
+<p>而如果使用的是<code>Android Studio</code>进行<code>NDK</code>开发，在<code>2.2</code>的版本以后，我们可以不需要手动地运行<code>NDK</code>脚本来生成<code>*.so</code>文件，而是将这一过程作为<code>Gradle</code>构建过程的依赖项，事先编写好编译的脚本文件，然后在<code>build.gradle</code>中指定编译脚本文件的路径就可以一次性完成生成原生库并打包成<code>APK</code>的过程。</p>
+<p>目前这种<code>AS + Gradle</code>的<code>NDK</code>开发方式又可以分为三种：<code>ndk-build</code>、<code>CMake</code>和<code>Experimental Gradle</code>：</p>
+<ul>
+<li><code>ndk-build</code>：和上面谈到的传统方式相比，它们两个的目录结构相同，<code>Gradle</code>脚本其实最终还是依赖于<code>Android.mk</code>文件，对于使用传统方式的项目来说，比较容易过度。</li>
+<li><code>CMake</code>：<code>Gradle</code>脚本依赖的是<code>CMakeLists.txt</code>文件。</li>
+<li><code>Experimental Gradle</code>：需要引入实验性的<code>gradle</code>插件，全部的配置都可以通过<code>build.gradle</code>来完成，不再需要编写<code>Android.mk</code>或者<code>CMakeLists.txt</code>，可能坑比较多，对于旧的项目来说过度困难。</li>
+</ul>
+<p>目前，<code>Android Studio</code>已经将<code>CMake</code>作为默认的<code>NDK</code>实现方式，并且官网上对于<code>NDK</code>的介绍也是基于<code>CMake</code>，声称要永久支持。按照官方的教程使用下来，感觉这种方式有几点好处：</p>
+<ul>
+<li>不需要再去通过<code>javah</code>根据<code>java</code>文件生成头文件，并根据头文件生成的函数声明编写<code>cpp</code>文件</li>
+<li>当在<code>Java</code>文件中定义完<code>native</code>接口，可以在<code>cpp</code>文件中自动生成对应的<code>native</code>函数，所需要做的只是补全函数体中的内容</li>
+<li>不需要手动执行<code>ndk-build</code>命令得到<code>so</code>，再将<code>so</code>拷贝到对应的目录</li>
+<li>在编写<code>cpp</code>文件的过程中，可以有提示了</li>
+<li><code>CMakeLists.txt</code>要比<code>Android.mk</code>更加容易理解</li>
+</ul>
+<p>下面，我们就来介绍一下如何使用<code>CMake</code>进行简单的<code>NDK</code>开发，整个内容主要包括两个方面：</p>
+<ul>
+<li>创建支持<code>C/C++</code>的全新项目</li>
+<li>在现有的项目中添加<code>C/C++</code>代码</li>
+</ul>
+<h1 id="二、创建支持C-C-的全新项目"><a href="#二、创建支持C-C-的全新项目" class="headerlink" title="二、创建支持C/C++的全新项目"></a>二、创建支持<code>C/C++</code>的全新项目</h1><h1 id="2-1-安装组件"><a href="#2-1-安装组件" class="headerlink" title="2.1 安装组件"></a>2.1 安装组件</h1><p>在新建项目之前，我们需要通过<code>SDK Manager</code>安装一些必要的组件：</p>
+<ul>
+<li><code>NDK</code></li>
+<li><code>CMake</code></li>
+<li><code>LLDB</code></li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/1949836-5a6fcf81c5aab4c4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h2 id="2-2-创建工程"><a href="#2-2-创建工程" class="headerlink" title="2.2 创建工程"></a>2.2 创建工程</h2><p>在安装完必要的组件之后，我们创建一个全新的工程，这里需要记得勾选<code>include C++ Support</code>选项：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-336344db1cddcc4b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>接下来一路<code>Next</code>，在最后一步我们会看见如下的几个选项，它们的含义为：</p>
+<ul>
+<li><code>C++ Standard</code>：选择<code>C++</code>的标准，<code>Toolchain Default</code>表示使用默认的<code>CMake</code>配置，这里我们选择默认。</li>
+<li><code>Excptions Support</code>：如果您希望启用对<code>C++</code>异常处理的支持，请选中此复选框。如果启用此复选框，<code>Android Studio</code>会将<code>-fexceptions</code>标志添加到模块级 <code>build.gradle</code>文件的<code>cppFlags</code>中，<code>Gradle</code>会将其传递到<code>CMake</code>。</li>
+<li><code>Runtime Type information Support</code>：如果您希望支持<code>RTTI</code>，请选中此复选框。如果启用此复选框，<code>Android Studio</code>会将<code>-frtti</code>标志添加到模块级 <code>build.gradle</code>文件的<code>cppFlags</code>中，<code>Gradle</code>会将其传递到<code>CMake</code>。</li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/1949836-cc71ba53a09305e1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>在新建工程完毕之后，我们得到的工程的结构如下图所示：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-044ae7a93fc5ab7f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>与传统的工程相比，它有如下几点区别：</p>
+<p><strong>(1) cpp 文件夹</strong></p>
+<p>用于存放<code>C/C++</code>的源文件，在磁盘上对应于<code>app/src/main/cpp</code>文件夹，当新建工程时，它会生成一个<code>native-lib.cpp</code>的事例文件，其内容如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">#include &lt;jni.h&gt;</div><div class="line">#include &lt;string&gt;</div><div class="line"></div><div class="line">extern &quot;C&quot;</div><div class="line">JNIEXPORT jstring JNICALL</div><div class="line">Java_com_demo_lizejun_cmakenewdemo_MainActivity_stringFromJNI(</div><div class="line">        JNIEnv* env,</div><div class="line">        jobject /* this */) &#123;</div><div class="line">    std::string hello = &quot;Hello from C++&quot;;</div><div class="line">    return env-&gt;NewStringUTF(hello.c_str());</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><strong>(2) 增加 CMakeList.txt 脚本</strong></p>
+<p>构建脚本，在磁盘上对应于<code>app/</code>目录下的<code>txt</code>文件，其内容为如下图所示，这里面涉及到的<code>CMake</code>语法包括下面四种，关于<code>CMake</code>的语法，可以查看 <a href="https://cmake.org/cmake/help/latest/manual/cmake-commands.7.html" target="_blank" rel="external">官方的 API 说明</a></p>
+<ul>
+<li><code>cmake_minimum_required</code></li>
+<li><code>add_library</code></li>
+<li><code>find_library</code></li>
+<li><code>target_link_libraries</code></li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div></pre></td><td class="code"><pre><div class="line"># For more information about using CMake with Android Studio, read the</div><div class="line"># documentation: https://d.android.com/studio/projects/add-native-code.html</div><div class="line"></div><div class="line"># Sets the minimum version of CMake required to build the native library.</div><div class="line"></div><div class="line">cmake_minimum_required(VERSION 3.4.1)</div><div class="line"></div><div class="line"># Creates and names a library, sets it as either STATIC</div><div class="line"># or SHARED, and provides the relative paths to its source code.</div><div class="line"># You can define multiple libraries, and CMake builds them for you.</div><div class="line"># Gradle automatically packages shared libraries with your APK.</div><div class="line"></div><div class="line">add_library( # Sets the name of the library.</div><div class="line">             native-lib</div><div class="line"></div><div class="line">             # Sets the library as a shared library.</div><div class="line">             SHARED</div><div class="line"></div><div class="line">             # Provides a relative path to your source file(s).</div><div class="line">             src/main/cpp/native-lib.cpp )</div><div class="line"></div><div class="line"># Searches for a specified prebuilt library and stores the path as a</div><div class="line"># variable. Because CMake includes system libraries in the search path by</div><div class="line"># default, you only need to specify the name of the public NDK library</div><div class="line"># you want to add. CMake verifies that the library exists before</div><div class="line"># completing its build.</div><div class="line"></div><div class="line">find_library( # Sets the name of the path variable.</div><div class="line">              log-lib</div><div class="line"></div><div class="line">              # Specifies the name of the NDK library that</div><div class="line">              # you want CMake to locate.</div><div class="line">              log )</div><div class="line"></div><div class="line"># Specifies libraries CMake should link to your target library. You</div><div class="line"># can link multiple libraries, such as libraries you define in this</div><div class="line"># build script, prebuilt third-party libraries, or system libraries.</div><div class="line"></div><div class="line">target_link_libraries( # Specifies the target library.</div><div class="line">                       native-lib</div><div class="line"></div><div class="line">                       # Links the target library to the log library</div><div class="line">                       # included in the NDK.</div><div class="line">                       $&#123;log-lib&#125; )</div></pre></td></tr></table></figure>
+<p><strong>(3) build.gradle 脚本</strong></p>
+<p>与传统的项目相比，该模块所对应的<code>build.gradle</code>需要在里面指定<code>CMakeList.txt</code>所在的路径，也就是下面<code>externalNativeBuild</code>对应的选项。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div></pre></td><td class="code"><pre><div class="line">apply plugin: &apos;com.android.application&apos;</div><div class="line"></div><div class="line">android &#123;</div><div class="line">    compileSdkVersion 25</div><div class="line">    buildToolsVersion &quot;25.0.3&quot;</div><div class="line">    defaultConfig &#123;</div><div class="line">        applicationId &quot;com.demo.lizejun.cmakenewdemo&quot;</div><div class="line">        minSdkVersion 15</div><div class="line">        targetSdkVersion 25</div><div class="line">        versionCode 1</div><div class="line">        versionName &quot;1.0&quot;</div><div class="line">        testInstrumentationRunner &quot;android.support.test.runner.AndroidJUnitRunner&quot;</div><div class="line">        externalNativeBuild &#123;</div><div class="line">            cmake &#123;</div><div class="line">                cppFlags &quot;&quot;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    buildTypes &#123;</div><div class="line">        release &#123;</div><div class="line">            minifyEnabled false</div><div class="line">            proguardFiles getDefaultProguardFile(&apos;proguard-android.txt&apos;), &apos;proguard-rules.pro&apos;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    externalNativeBuild &#123;</div><div class="line">        cmake &#123;</div><div class="line">            path &quot;CMakeLists.txt&quot;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">dependencies &#123;</div><div class="line">    compile fileTree(dir: &apos;libs&apos;, include: [&apos;*.jar&apos;])</div><div class="line">    androidTestCompile(&apos;com.android.support.test.espresso:espresso-core:2.2.2&apos;, &#123;</div><div class="line">        exclude group: &apos;com.android.support&apos;, module: &apos;support-annotations&apos;</div><div class="line">    &#125;)</div><div class="line">    compile &apos;com.android.support:appcompat-v7:25.3.1&apos;</div><div class="line">    testCompile &apos;junit:junit:4.12&apos;</div><div class="line">    compile &apos;com.android.support.constraint:constraint-layout:1.0.2&apos;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><strong>(4) 打印字符串</strong></p>
+<p>在<code>MainActivity</code>中，我们加载原生库，并调用原生库中的方法获取了一个字符串展示在界面上：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">public class MainActivity extends AppCompatActivity &#123;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    protected void onCreate(Bundle savedInstanceState) &#123;</div><div class="line">        super.onCreate(savedInstanceState);</div><div class="line">        setContentView(R.layout.activity_main);</div><div class="line">        // Example of a call to a native method</div><div class="line">        TextView tv = (TextView) findViewById(R.id.sample_text);</div><div class="line">        tv.setText(stringFromJNI());</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /**</div><div class="line">     * A native method that is implemented by the &apos;native-lib&apos; native library,</div><div class="line">     * which is packaged with this application.</div><div class="line">     */</div><div class="line">    public native String stringFromJNI();</div><div class="line"></div><div class="line">    // Used to load the &apos;native-lib&apos; library on application startup.</div><div class="line">    static &#123;</div><div class="line">        System.loadLibrary(&quot;native-lib&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><strong>(5) 运行结果</strong></p>
+<p>最后，我们运行一下这个工程，会得到下面的结果：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-754ecfb7e45247f1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>通过<code>APK Analyzer</code>工具，我们可以看到在<code>APK</code>当中，增加了<code>libnative-lib.so</code>文件：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-e4b0db6ce91dc30d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h2 id="2-3-原理"><a href="#2-3-原理" class="headerlink" title="2.3 原理"></a>2.3 原理</h2><p>下面，我们来解释一下这一过程：</p>
+<ul>
+<li>首先，在构建时，通过<code>build.gradle</code>中<code>path</code>所指定的路径，找到<code>CMakeList.txt</code>，解析其中的内容。</li>
+<li>按照脚本中的命令，将<code>src/main/cpp/native-lib.cpp</code>编译到共享的对象库中，并将其命名为<code>libnative-lib.so</code>，随后打包到<code>APK</code>中。</li>
+<li>当应用运行时，首先会执行<code>MainActivity</code>的<code>static</code>代码块的内容，使用<code>System.loadLibrary()</code>加载原生库。</li>
+<li>在<code>onCreate()</code>函数中，调用原生库的函数得到字符串并展示。</li>
+</ul>
+<h2 id="2-4-小结"><a href="#2-4-小结" class="headerlink" title="2.4 小结"></a>2.4 小结</h2><p>当通过<code>CMake</code>来对应用程序增加<code>C/C++</code>的支持时，对于应用程序的开发者，只需要关注以下三个方面：</p>
+<ul>
+<li><code>C/C++</code>源文件</li>
+<li><code>CMakeList.txt</code>脚本</li>
+<li>在模块级别的<code>build.gradle</code>中通过<code>externalNativeBuild/cmake</code>进行配置</li>
+</ul>
+<h1 id="三、在现有的项目中添加C-C-代码"><a href="#三、在现有的项目中添加C-C-代码" class="headerlink" title="三、在现有的项目中添加C/C++代码"></a>三、在现有的项目中添加<code>C/C++</code>代码</h1><p>下面，我们演示一下如何在现有的项目中添加对于<code>C/C++</code>代码的支持。</p>
+<p><strong>(1) 创建一个工程</strong></p>
+<p>和第二步不同，这次创建的时候，我们不勾选<code>nclude C++ Support</code>选项，那么会得到下面这个普通的工程：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-e3b1aaf66b649c43.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<p><strong>(2) 定义接口</strong></p>
+<p>这一次，我们将它定义在一个单独的文件当中：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">public class NativeCalculator &#123;</div><div class="line"></div><div class="line">    private static final String SELF_LIB_NAME = &quot;calculator&quot;;</div><div class="line"></div><div class="line">    static &#123;</div><div class="line">        System.loadLibrary(SELF_LIB_NAME);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public native int addition(int a, int b);</div><div class="line"></div><div class="line">    public native int subtraction(int a, int b);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这时候因为没有找到对应的本地方法，因此会有如下的错误提示：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-b251196f84cd3712.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<p><strong>(3) 定义 cpp 文件</strong></p>
+<p>在模块根目录下的<code>src/main/</code>新建一个文件夹<code>cpp</code>，在其中新增一个<code>calculator.cpp</code>文件，这里，我们先只引入头文件：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">#include &lt;jni.h&gt;</div></pre></td></tr></table></figure></p>
+<p><strong>(4) 定义 CMakeLists.txt</strong></p>
+<p>在模块根目录下新建一个<code>CMakeLists.txt</code>文件：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">cmake_minimum_required(VERSION 3.4.1)</div><div class="line"></div><div class="line">add_library(calculator SHARED src/main/cpp/calculator.cpp)</div></pre></td></tr></table></figure></p>
+<p><strong>(5) 在 build.gradle 中进行配置</strong></p>
+<p>之后，我们需要让<code>Gradle</code>脚本确定<code>CMakeLists.txt</code>所在的位置，我们可以在<code>CMakeLists.txt</code>上点击右键，之后选择<code>Link C++ Project with Gradle</code>：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-b627f0c196f4e34e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>那么在该模块下的<code>build.gradle</code>就会新增下面这句：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-c8ce7a3f84edfb32.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>在这步完成之后，我们选择<code>Build -&gt; Clean Project</code>。</p>
+<p><strong>(6) 实现 C++ </strong></p>
+<p>在配置完上面的信息之后，会发现一个神奇的地方，之前我们定义<code>native</code>接口的地方，多出了一个选项，它可以帮助我们直接在对应的<code>C++</code>文件中生成函数的定义：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-6af56d1bb9ed4a97.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>点击<code>Create function</code>之后，我们的<code>calculator.cpp</code>文件变成了下面这样：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">#include &lt;jni.h&gt;</div><div class="line"></div><div class="line">extern &quot;C&quot;</div><div class="line">JNIEXPORT jint JNICALL</div><div class="line">Java_com_demo_lizejun_cmakeolddemo_NativeCalculator_addition(JNIEnv *env, jobject instance, jint a, jint b) &#123;</div><div class="line">    </div><div class="line">&#125;</div><div class="line"></div><div class="line">extern &quot;C&quot;</div><div class="line">JNIEXPORT jint JNICALL</div><div class="line">Java_com_demo_lizejun_cmakeolddemo_NativeCalculator_subtraction(JNIEnv *env, jobject instance,  jint a, jint b) &#123;</div><div class="line">    </div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>下面我们在函数体当中添加实现：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">#include &lt;jni.h&gt;</div><div class="line"></div><div class="line">extern &quot;C&quot;</div><div class="line">JNIEXPORT jint JNICALL</div><div class="line">Java_com_demo_lizejun_cmakeolddemo_NativeCalculator_addition(JNIEnv *env, jobject instance, jint a, jint b) &#123;</div><div class="line">    return a + b;</div><div class="line">&#125;</div><div class="line"></div><div class="line">extern &quot;C&quot;</div><div class="line">JNIEXPORT jint JNICALL</div><div class="line">Java_com_demo_lizejun_cmakeolddemo_NativeCalculator_subtraction(JNIEnv *env, jobject instance,  jint a, jint b) &#123;</div><div class="line">    return a - b;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><strong>(9) 调用本地函数</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">public class MainActivity extends AppCompatActivity &#123;</div><div class="line"></div><div class="line">    private NativeCalculator mNativeCalculator;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    protected void onCreate(Bundle savedInstanceState) &#123;</div><div class="line">        super.onCreate(savedInstanceState);</div><div class="line">        setContentView(R.layout.activity_main);</div><div class="line">        mNativeCalculator = new NativeCalculator();</div><div class="line">        Log.d(&quot;Calculator&quot;, &quot;11 + 12 =&quot; + (mNativeCalculator.addition(11,12)));</div><div class="line">        Log.d(&quot;Calculator&quot;, &quot;11 - 12 =&quot; + (mNativeCalculator.subtraction(11,12)));</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>最终运行的结果为：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-cbf71590540dafb7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h1 id="四、小结"><a href="#四、小结" class="headerlink" title="四、小结"></a>四、小结</h1><p>以上就是使用<code>Android Studio 2.2</code>以上版本，通过<code>CMake</code>来进行<code>NDK</code>开发的一个简单例子，主要是学习一下开发的流程，下一篇文章，要学习一下<code>CMakeLists.txt</code>中的语法。</p>
+<h1 id="五、参考文献"><a href="#五、参考文献" class="headerlink" title="五、参考文献"></a>五、参考文献</h1><p><a href="https://developer.android.google.cn/studio/projects/add-native-code.html" target="_blank" rel="external">(1) 向您的项目添加 C 和 C++ 代码</a><br><a href="http://www.cnblogs.com/tt2015-sz/p/6148723.html" target="_blank" rel="external">(2) NDK笔记(二) - 在Android Studio中使用 ndk-build</a><br><a href="http://blog.csdn.net/xiaoyu_93/article/details/52870395" target="_blank" rel="external">(3) NDK开发 从入门到放弃(一：基本流程入门了解)</a><br><a href="http://blog.csdn.net/xiaoyu_93/article/details/53082088" target="_blank" rel="external">(4) NDK开发 从入门到放弃(七：Android Studio 2.2 CMAKE 高效 NDK 开发)</a><br><a href="https://ph0b.com/new-android-studio-ndk-support/" target="_blank" rel="external">(5) The new NDK support in Android Studio</a><br><a href="https://developer.android.google.cn/ndk/index.html" target="_blank" rel="external">(6) Google NDK 官方文档</a><br><a href="http://www.tuicool.com/articles/Evy2u2u" target="_blank" rel="external">(7) Android Studio 2.2 对 CMake 和 ndk-build 的支持</a><br><a href="http://blog.csdn.net/eastmoon502136/article/details/50759209" target="_blank" rel="external">(8) Android开发学习之路–NDK、JNI之初体验</a><br> <a href="http://blog.csdn.net/yanbober/article/details/45309049" target="_blank" rel="external">(9) NDK- JNI实战教程（一） 在Android Studio运行第一个NDK程序</a><br><a href="https://cmake.org/cmake/help/latest/manual/cmake-commands.7.html#id2" target="_blank" rel="external">(10) cmake-commands</a><br><a href="https://developer.android.google.cn/ndk/guides/cmake.html#variables" target="_blank" rel="external">(11) CMake</a><br><a href="http://wiki.jikexueyuan.com/project/jni-ndk-developer-guide/ndk.html" target="_blank" rel="external">(12) 开发自己的 NDK 程序</a><br><a href="http://blog.csdn.net/a396901990/article/details/51922182" target="_blank" rel="external">(13) NDK开发－Android Studio+gradle-experimental 开发 ndk</a><br><a href="http://www.jianshu.com/p/fa613762f516" target="_blank" rel="external">(14) Android NDK 开发入门指南</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/05/18/Framework-源码解析/Framework-源码解析知识梳理(4)---从源码角度谈谈-Handler-的应用/" rel="next" title="Framework 源码解析知识梳理(4) - 从源码角度谈谈 Handler 的应用">
+                <i class="fa fa-chevron-left"></i> Framework 源码解析知识梳理(4) - 从源码角度谈谈 Handler 的应用
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/05/21/NDK/NDK-知识梳理(2)---使用-CMake-进行-NDK-开发之如何编写-CMakeLists-txt-脚本/" rel="prev" title="NDK 知识梳理(2) - 使用 CMake 进行 NDK 开发之如何编写 CMakeLists.txt 脚本">
+                NDK 知识梳理(2) - 使用 CMake 进行 NDK 开发之如何编写 CMakeLists.txt 脚本 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="zeMao" />
+          <p class="site-author-name" itemprop="name">zeMao</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">104</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">24</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、前言"><span class="nav-number">1.</span> <span class="nav-text">一、前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、创建支持C-C-的全新项目"><span class="nav-number">2.</span> <span class="nav-text">二、创建支持C/C++的全新项目</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-1-安装组件"><span class="nav-number">3.</span> <span class="nav-text">2.1 安装组件</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-创建工程"><span class="nav-number">3.1.</span> <span class="nav-text">2.2 创建工程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-原理"><span class="nav-number">3.2.</span> <span class="nav-text">2.3 原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-4-小结"><span class="nav-number">3.3.</span> <span class="nav-text">2.4 小结</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、在现有的项目中添加C-C-代码"><span class="nav-number">4.</span> <span class="nav-text">三、在现有的项目中添加C/C++代码</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四、小结"><span class="nav-number">5.</span> <span class="nav-text">四、小结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#五、参考文献"><span class="nav-number">6.</span> <span class="nav-text">五、参考文献</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zeMao</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
