@@ -107,7 +107,7 @@
   var CONFIG = {
     root: '/',
     scheme: 'Pisces',
-    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
     fancybox: true,
     motion: true,
     duoshuo: {
@@ -167,7 +167,7 @@
     
   
 
-  <div class="container sidebar-position-left 
+  <div class="container sidebar-position-right 
    page-home 
  ">
     <div class="headband"></div>
@@ -365,8 +365,7 @@
       
         
           
-          一、概述Retrofit之所以能做到如此简洁，最重要的一个原因就是它把网络请求当中复杂的参数设置都封装了起来，对于使用者而言，只需要定义一个interface，并在interface当中定义好请求的参数，Retrofit在构建请求的时候就会帮我们自动配置。除此之外，它还提供了Converter/CallAdapter让使用者进行充分的定制，要理解整个Retrofit的架构，还是应当从一个简单的流程开始，一步步地Debug，这篇文章，我们就以一个最简单的例子，从创建到返回的流程，来看一下整个Retrofit的框架。
-二、整体流程下面是一个使用Retrofit的最简单的例子，我们将通过这个例子，一步步地Debug，看一下整个的过程：12345678910111213141516171819public void simpleExample(View view) &#123;    Retrofit retrofit = new Retrofit            .Builder()            .baseUrl(&quot;https://api.github.com/&q
+          一、概述Retrofit之所以能做到如此简洁，最重要的一个原因就是它把网络请求当中复杂的参数设置都封装了起来，对于使用者而言，只需要定义一个interface，并在interface当中定义好请求的参数，Retrofit在构建请求的时候就会帮我们自动配置。除此之外，它还提供了Converter/Ca
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -518,14 +517,7 @@
       
         
           
-          一、概述前面我们比较关注的是LoaderManager的原理和使用，如果我们只是需要通过LoaderManager来读取ContentProvider封装的数据，那么采用系统已经定义好的CursorLoader就可以了，但是有的时候，我们的数据可能不是用ContentProvider封装的，那么这时候就要学会如何定义自己的Loader。
-二、Loader&lt;D&gt;类对于LoaderManager来说，它所看到的只是一个Loader类，并调用它对应的方法，这些方法分为三类：
-
-状态标志：isXXX
-调用接口：startLoading/stopLoading/reset/cancelLoad/forceLoad/onReset
-调用接口之后的回调：onXXX
-
-1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556575859606162636465666768697071727374757677787980818283848586
+          一、概述前面我们比较关注的是LoaderManager的原理和使用，如果我们只是需要通过LoaderManager来读取ContentProvider封装的数据，那么采用系统已经定义好的CursorLoader就可以了，但是有的时候，我们的数据可能不是用ContentProvider封装的，那么这时
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -679,21 +671,7 @@
           
           一、概述在前面的一篇文章中，我们分析了LoaderManager的实现，里面涉及到了很多的细节问题，我们并不需要刻意地记住每个流程，之所以需要分析，以后在使用的过程中，如果遇到问题了，再去查看相关的源代码就好了。对于Loader框架的理解，我认为掌握以下四个方面的东西就可以了：
 
-对LoaderManager的实现原理有一个大概的印象。
-LoaderManager的三个关键方法initLoader/restartLoader/destroyLoader的使用场景。
-学会自定义Loader来实现数据的异步加载。
-总结一些App开发中常用的场景。
-
-第一点可以参考前面的这篇文章：
-
-Loader框架 - LoaderManager初探
-
-今天这篇，我们将专注于分析第二点：initLoader/restartLoader的区别。
-二、基本概念的区别首先，我们回顾一下，对于init/restart的定义：
-
-initLoader
-
-通过调用这个方法来初始化一个特定ID的Loader，如果当前已经有一个和这个ID关联的Loader，那么并不会去回调onCreateLoader来通知使用者传入一个
+对LoaderMa
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -845,12 +823,7 @@ initLoader
       
         
           
-          一、概述刚开始学习Loader的时候，只是使用CursorLoader把它当作加载封装在ContentProvider中的数据的一种方式，但是如果我们学会了如何取定义自己的Loader，那么将不仅仅局限于读取ContentProvider的数据，在谷歌的蓝图框架中，就有一个分支是介绍如何使用Loader来实现数据的异步读取：
-
-https://github.com/googlesamples/android-architecture/tree/todo-mvp-loaders/
-
-我们现在来学习一下Loader的实现原理，这将帮助我们知道如何自定义自己的Loader来进行异步数据的加载。
-二、Activity和LoaderManager的桥梁 - FragmentHostCallback如果我们把Loader比喻为异步任务的执行者，那么LoaderManager就是这些执行者的管理者，而LoaderManager对于Loader的管理又会依赖于Activity/Fragment的生命周期。在整个系统当中，LoaderManager和Activity/Fragment之间的关系是通过Fr
+          一、概述刚开始学习Loader的时候，只是使用CursorLoader把它当作加载封装在ContentProvider中的数据的一种方式，但是如果我们学会了如何取定义自己的Loader，那么将不仅仅局限于读取ContentProvider的数据，在谷歌的蓝图框架中，就有一个分支是介绍如何使用Load
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1007,13 +980,7 @@ https://github.com/googlesamples/android-architecture/tree/todo-mvp-loaders/
 使用SQLiteOpenHelper来封装数据库。
 多线程的情况下使用SQLiteOpenHelper。
 
-二、使用SQLiteOpenHelper封装数据库2.1 使用SQLiteOpenHelper的原因之所以需要使用SQLiteOpenHelper，而不是调用Context的方法来直接得到SQLiteDatabase，主要是因为它有两个好处：
-
-自动管理创建：当需要对数据库进行操作的时候，不用关心SQLiteOpenHelper所关联的SQLiteDatabase是否创建，SQLiteOpenHelper会帮我们去判断，如果没有创建，那么就先创建该数据库后，再返回给使用者。
-自动管理版本：当需要对数据库进行操作之前，如果发现当前声明的数据库的版本和手机内的数据库版本不同的时候，那么会分别调用onUpgrade和onDowngrade，这样使用者就可以在里面来处理新旧版本的兼容问题。
-
-2.2 SQLiteOpenHelper的APISQLiteOpenHelper的API很少，我们来看一下：
-2.2.1 构造函数123
+二、使用SQLiteOpenHelper封装数据库2.1 使用SQLiteOpenHelper的原因之所以需要使用SQLiteOp
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1166,11 +1133,7 @@ https://github.com/googlesamples/android-architecture/tree/todo-mvp-loaders/
         
           
           一、概述在实际的开发当中，我们经常会涉及到绘制路径，这里我们总结一下Path的常用API。
-二、基本用法对于一个Path来说，它其中有很多的”子路径“，对于每个”子路径“，它又会有两个变量，”源点”和”当前点”，也就是源码当中所描述的：1The Path class encapsulates compound (multiple contour) geometric paths
-2.1 简单连线 - xxxTo下面是Path当中和连线相关的方法：
-12public void moveTo(float x, float y)public void rMoveTo(float dx, float dy)
-每次调用完moveTo/rMoveTo方法，都会生成一条新的子路径，这两者的区别在于：1.新建一条路径，(x, y)作为这个新路径的“源点”的值，在图上不会产生新的连线。2.相对于当前路径的”当前点”的值，移动坐标(dx, dy)，作为新路径的”源点”，在图上不会产生新的连线。
-12public void lineTo(float x, float y)public void rLineT
+二、基本用法对于一个Path来说，它其中有很多的”子路径“，对于每个”子路径“，它又会有两个变量，”源点”和”当前点”，也就是源码当中所描述的：1The Path class encapsulates com
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1328,10 +1291,7 @@ BitmapShader
 LinearGradient
 SweepGradient
 RadialGradient
-ComposeShader
-
-其中第1个用来设置Bitmap的变换，第2~4用来设置颜色的变换，第5个用来组合上面的几个Shader，下面我们一起来看以下各个子类的使用和应用场景。
-二、使用示例2.1 BitmapShaderBitmapShader是所有五个子类当中唯一一个对Bitmap进行操作的，我们看一下它的构造函数：12345678910111213/** * Call this to create a new shader that will draw with a bitmap. * * @param bitmap            The bitmap to use inside the shader * @param tileX             The tiling mode fo
+ComposeSh
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1483,7 +1443,7 @@ ComposeShader
       
         
           
-          一、概述在颜色合成文章中的最后一个小结当中，我们已经见到了PorterDuff.Mode这个枚举类，在本次的图像合成中，我们也需要用到这个类，我们先看一下最终调用的方法为：1234567891011121314151617/** * Set or clear the xfermode object. * &lt;p /&gt; * Pass null to clear any previous xfermode. * As a convenience, the parameter passed is also returned. * * @param xfermode May be null. The xfermode to be installed in the paint * @return         xfermode */public Xfermode setXfermode(Xfermode xfermode) &#123;    long xfermodeNative = 0;    if (xfermode != null)        xfermodeNative
+          一、概述在颜色合成文章中的最后一个小结当中，我们已经见到了PorterDuff.Mode这个枚举类，在本次的图像合成中，我们也需要用到这个类，我们先看一下最终调用的方法为：1234567891011121314151617/** * Set or clear the xfermode object.
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1636,14 +1596,7 @@ ComposeShader
         
           
           一、概述有时候，我们希望对一个图片或一个复杂图形的颜色，进行处理，那么这时候可以采用Paint的setColorFilter方法，一个最常见的例子，就是图片的滤镜，当然，那里面的算法可能更加复杂。
-二、ColorFilter的分类关于ColorFilter，源码中是这么解释的，它可以对Paint所绘制区域的每个像素进行颜色的改变。12345/** * A color filter can be used with a &#123;@link Paint&#125; to modify the color of * each pixel drawn with that paint. This is an abstract class that should * never be used directly. */
-当我们使用ColorFilter的时候，不一样直接使用它，而是使用它的子类：
-
-ColorMatrixColorFilter
-LightingColorFilter
-PoterDuffColorFilter
-
-2.1 ColorMatrixColorFilterColorMat
+二、ColorFilter的分类关于ColorFilter，源码中是这么解释的，它可以对Paint所绘
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1795,7 +1748,7 @@ PoterDuffColorFilter
       
         
           
-          一、和Canvas保存相关的标志在了解Canvas的保存之前，我们先看一下和保存相关的标志的定义，它们定义了保存的类型，这些标志定义在Canvas.java当中，一共有六个标志。12345678910111213141516171819202122232425262728293031323334353637/**     * Restore the current matrix when restore() is called.     */    public static final int MATRIX_SAVE_FLAG = 0x01;    /**     * Restore the current clip when restore() is called.     */    public static final int CLIP_SAVE_FLAG = 0x02;    /**     * The layer requires a per-pixel alpha channel.     */    public static final int HAS_ALPHA_
+          一、和Canvas保存相关的标志在了解Canvas的保存之前，我们先看一下和保存相关的标志的定义，它们定义了保存的类型，这些标志定义在Canvas.java当中，一共有六个标志。1234567891011121314151617181920212223242526272829303132333435
           ...
           <!--noindex-->
           <div class="post-button text-center">

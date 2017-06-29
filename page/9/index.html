@@ -107,7 +107,7 @@
   var CONFIG = {
     root: '/',
     scheme: 'Pisces',
-    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
     fancybox: true,
     motion: true,
     duoshuo: {
@@ -167,7 +167,7 @@
     
   
 
-  <div class="container sidebar-position-left 
+  <div class="container sidebar-position-right 
    page-home 
  ">
     <div class="headband"></div>
@@ -371,13 +371,7 @@
 绘制过程 - Layout
 绘制过程 - Draw
 
-对于绘制的整个分发过程已经有了一个大致的了解，我们可以发现一个规律，无论是测量、布局还是绘制，对于任何一个View/Group来说，它都是一个至上而下的递归事件调用，直到到达整个View树的叶节点为止。下面，我们来分析几个平时常用的方法：
-
-requestLayout
-invalidate
-postInvalidate
-
-二、requestLayoutrequestLayout是在View中定义的，并且在ViewGroup中没有重写该方法，它的注释是这样解释的：在需要刷新View的布局时调用这个函数，它会安排一个布局的传递。我们不应该在布局的过程中（isInLayout()）调用这个函数，如果当前正在布局，那么这一请求有可能在以下时刻被执行：当前布局结束、当前帧被绘制完或者下次布局发生时。12345678910111213141516171819202122232425262728293031323334353637/** * Call this when somet
+对于绘制的整个分发过程已经有了一个大致的了解，我们可以发现一个规律，无论是测量、布局还是绘制，对于任何一个View/Group来说，它都是一个至上而下的递归事件调用，直到到达整个V
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -529,12 +523,7 @@ postInvalidate
       
         
           
-          一、绘制的起点 - performTraversals和测量、布局的过程类似，绘制的起点也是从performTraversals开始的：123456789private void performTraversals() &#123;    ......    final Rect dirty = mDirty;    ......    canvas = mSurface.lockCanvas(dirty);    ......    mView.draw(canvas);    ......&#125;
-二、绘制的关键方法：draw(Canvas canvas) onDraw(Canvas canvas) dispatchDraw()和绘制过程的前两个阶段不同的是，与draw过程相关的函数，不仅有draw、onDraw还有一个dispatchDraw，下面我们分析一下这几个函数在View和ViewGroup中的定义：
-
-View
-
-首先是draw(Canvas)方法，它是public的，我们通过注释可以看到它最多会执行6步操作，分别是：绘制背景、保存canvas，绘制View本身内容
+          一、绘制的起点 - performTraversals和测量、布局的过程类似，绘制的起点也是从performTraversals开始的：123456789private void performTraversals() &#123;    ......    final Rect dirty = m
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -686,13 +675,7 @@ View
       
         
           
-          一、布局的起点 - performTraversals和前面分析测量过程类似，整个布局的起点也是在ViewRootImpl的performTraversals当中：12345private void performTraversals() &#123;    ......    mView.layout(0, 0, mView.getMeasuredWidth(), mView.getMeasuredHeight());    ......&#125;
-可以看到，布局过程会参考前面一步测量的结果，和测量过程的measure和onMeasure方法很像，布局过程也有两个方法layout和onLayout，参考前面的分析，我们先对这两个方法进行介绍：
-1.1 layout和onLayout
-对于View
-
-layout方法是public的，和measure不同的是，它不是final的，也就是说，继承于View的控件可以重写layout方法，但是我们一般不这么做，因为在它的layout方法中又调用了onLayout，所以继承于View的控件一般是通过重写onLayout来实现一些逻辑。
-12
+          一、布局的起点 - performTraversals和前面分析测量过程类似，整个布局的起点也是在ViewRootImpl的performTraversals当中：12345private void performTraversals() &#123;    ......    mView.layo
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -844,12 +827,7 @@ layout方法是public的，和measure不同的是，它不是final的，也就�
       
         
           
-          一、测量过程的信使 - MeasureSpec因为测量是一个从上到下的过程，而在这个过程当中，父容器有必要告诉子View它的一些绘制要求，那么这时候就需要依赖一个信使，来传递这个要求，它就是MeasureSpec.MeasureSpec是一个32位的int类型，我们把它分为高2位和低30位。其中高2位表示mode，它的取值为：
-
-UNSPECIFIED(0) : The parent has not imposed any constraint on the child. It can be whatever size it wants.
-EXACTLY(1) : The parent has determined an exact size for the child. The child is going to be given those bounds regardless of how big it wants to be.
-AT_MOST(2) : The child can be as large as it wants up to the specified size.
-
+          一、测量过程的信使 - MeasureSpec因为测量是一个从上到下的过程，而在这个过程当中，父容器有必要告诉子View它的一些绘制要求，那么这时候就需要依赖一个信使，来传递这个要求，它就是MeasureSpec.MeasureSpec是一个32位的int类型，我们把它分为高2位和低30位。其中高2
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1002,7 +980,7 @@ AT_MOST(2) : The child can be as large as it wants up to the specified size.
         
           
           一、概述在Activity当中，我们一般都会调用setContentView方法来初始化布局。
-二、与ContentView相关的方法在Activity当中，与ContentView相关的函数有下面这几个，我们先看一下它们的注释说明：12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758596061/** * Set the activity content from a layout resource.  The resource will be * inflated, adding all top-level views to the activity. * * @param layoutResID Resource ID to be inflated. * * @see #setContentView(android.view.View) * @see #setContentView(android.view.View, 
+二、与ContentView相关的方法在Activity当中，与ContentView相关的函数有下面这几个，我们先看一下它们的注释说明：123456789101112131415161718192021
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1156,8 +1134,7 @@ AT_MOST(2) : The child can be as large as it wants up to the specified size.
           
           前几天在通过LayoutInflater渲染出子布局，并添加进入父容器的时候，出现了子布局的宽高属性不生效的情况，为此，总结一下和LayoutInflater相关的知识。
 一、获得LayoutInflater在Android当中，如果想要获得LayoutInflater实例，一共有以下3种方法：
-1.1 LayoutInflater inflater = getLayoutInflater();这种在Activity里面使用，它其实是调用了12345678/** * Convenience for calling * &#123;@link android.view.Window#getLayoutInflater&#125;. */@NonNullpublic LayoutInflater getLayoutInflater() &#123;    return getWindow().getLayoutInflater();&#125;
-下面我们再来看一下Window的实现类PhoneWindow.java1234public PhoneWindow(Context context
+1
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1309,8 +1286,7 @@ AT_MOST(2) : The child can be as large as it wants up to the specified size.
       
         
           
-          一、网络请求核心1.1 NetworkVolley与网络请求相关的接口有两个：123456789101112/** * An interface for performing requests. */public interface Network &#123;    /**     * Performs the specified request.     * @param request Request to process     * @return A &#123;@link NetworkResponse&#125; with data and caching metadata; will never be null     * @throws VolleyError on errors     */    public NetworkResponse performRequest(Request&lt;?&gt; request) throws VolleyError;&#125;
-1.2 HttpStack123456789101112131415public inter
+          一、网络请求核心1.1 NetworkVolley与网络请求相关的接口有两个：123456789101112/** * An interface for performing requests. */public interface Network &#123;    /**     * Perfo
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1463,20 +1439,7 @@ AT_MOST(2) : The child can be as large as it wants up to the specified size.
         
           
           一、基础概述RxJava的关键是异步，即使随着程序的逻辑变得复杂，它依然能够保持简洁。
-二、API介绍和原理剖析观察者模式面向的需求是：A对象（观察者）对B对象（被观察者）的某种变化高度敏感，需要在B变化的一瞬间做出反应，观察者采用注册Register或者订阅Subscribe的方式，告诉观察者，我需要你的某某状态，并在它变化的时候通知我，在RxJava当中，Observable是被观察者，Observer就是观察者。
-RxJava有四个基本概念：
-
-Observable：被观察者。
-Observer：观察者。
-Subscribe：订阅。
-Event：事件。
-
-Observable和Observer通过subscribe方法实现订阅关系，Observable可以在需要的时候发出事件来通知Observer。
-RxJava有以下三种事件：
-
-onNext：普通事件。
-onCompleted：RxJava不仅把每个事件单独处理，还会把它们看作一个队列，当不会再有新的onNext事件发出时，需要触发onCompleted事件作为标志。
-onError：onCompleted和有且仅有一个，并且
+二、API介绍和原理剖析观察者模式面向的需求是：A对象（观察者）对B对象（被观察者）的某种变化高度敏感，需要在B变化的一瞬间做出反应，观察者采用注册Register或者订阅Subscribe的方式，告诉观察者，我
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1634,17 +1597,7 @@ Canvas的含义
 如何获得Canvas
 Canvas的变换
 Canvas的绘图
-恢复和保存
 
-二、Canvas的含义涉及到Canvas的主要有以下三个概念：画板、画布和图层，画板包含了多个画布，每个画布中间又可能会包含多个图层，同一层级的元素会叠加在一块，在上一层中间进行展示。
-
-画板画板用来承载画布。
-画布每一个画布就是一个bitmap，所有的图像都是画在bitmap上的。画布有两种：
-View的原始画布，也就是onDraw(Canvas canvas)当中传入的canvas实例。
-人造画布，即通过saveLayer或者new Canvas(Bitmap)这些方法来人为新建一个画布，saveLayer新建一个画布之后，以后所有的draw函数所画的图像都是在这个画布上的，只有在restore、restoreToCount函数以后，才会返回到原始画布上绘制。
-
-
-图层图层
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1799,11 +1752,7 @@ View的原始画布，也就是onDraw(Canvas canvas)当中传入的canvas实例�
           一、概述Flux的特点：
 
 数据是单向的
-App被分为三个部分View：App界面，它根据用户交互创造相应的响应Action。Dispatcher：处理中心，接收各种Action并路由到对应的Store。Store：维护App各个模块的数据状态，他们会根据当前的动作Action处理不同的业务状态，会产生一个change事件来通知View更新状态。
-Action是一个简单的Java对象，包含type和data。
-
-二、ActionType：String类型标示事件类型。Data：Map类型，携带这个动作需要的数据。123Bundler data = new Bundle();data.put(&quot;USER_ID&quot;, id);Action action = new ViewAction(&quot;SHOW_USER&quot;, data);
-三、StoreStore模块包含了App状态和业务逻辑，它能管理各种对象的状态而不是一个。Store必须暴露一个接口来获取App状态，这样View模块就可以访问Store模块来更新UI。Store的职责不是用来从外部获取数据，而是
+App被分为三个部分View：App界面，它根据用户交互创造相应的响应Action。Dispatcher：处理中心，接收各种Action并路由到对应的Store。Store：维护App各个模块的数据状态，他们会根据当前的动作Action处理不同的业务状态，会
           ...
           <!--noindex-->
           <div class="post-button text-center">

@@ -107,7 +107,7 @@
   var CONFIG = {
     root: '/',
     scheme: 'Pisces',
-    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
     fancybox: true,
     motion: true,
     duoshuo: {
@@ -167,7 +167,7 @@
     
   
 
-  <div class="container sidebar-position-left 
+  <div class="container sidebar-position-right 
    page-home 
  ">
     <div class="headband"></div>
@@ -366,24 +366,7 @@
         
           
           一、Executor 框架的调度模型1.1 目的在平时的开发中，我们经常需要将一些耗时的任务放到异步线程当中进行处理，而线程的创建和销毁都是需要耗费资源的，设计Executor框架的目的就是为了在上层能够对这些异步任务进行有效地管理和调度。
-1.2 调度模型我们可以把Executor框架想象成一个公司，开发者所需要完成的任务则是一个订单，那么任务的执行可以分解为下面这个过程：
-
-开发者将订单提交给公司
-公司把订单指派给对应的员工
-公司员工将订单交给工厂
-工厂员工执行订单
-
-订单、公司、公司员工、工厂和工厂员工这几个概念的映射如下图所示：
-Executor框架对于内部线程的调度过程，就可以理解为公司对于员工的管理机制，而这一过程对于开发者是不可见的。
-二、Executor 框架整个Executor的框架主要由三个部分组成：
-
-FutureTask：任务
-ThreadPoolExecutor：常规任务管理者
-ScheduledThreadPoolExecutor：周期任务管理者
-
-下面，我们就分这三个部分来简要介绍一下涉及到的相关类。
-2.1 任务与任务相关的类的继承关系如下图所示：
-当我
+1.2 调度模型我们可以把Executor框架想象成一个公
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -536,18 +519,7 @@ ScheduledThreadPoolExecutor：周期任务管理者
         
           
           一、概述在前面两篇文章当中，我们介绍了synchronized的基本使用和原理，但是在使用synchronized保证数据一致性的同时，我们希望能够让线程之间进行一些交互逻辑，也是我们今天要介绍的等待/通知模型，那么就需要使用到wait/notify。
-二、等待/通知相关方法2.1 方法说明下面，我们先介绍等待/通知机制的相关方法，首先要说明两点：
-
-这些都是Object定义的方法
-调用这些方法的前提条件是：该线程已经获得了Object对象所关联的锁，也就是说它们需要位于synchronized修饰的同步代码块中。
-
-(a) wait() 调用该方法的线程进入等待状态，并释放它所获取的对象锁，只有出现这两种情况之一，它才会从wait方法中返回，否则将会一直处于等待状态：
-
-其它线程通过notify / notifyAll方法通知该线程，并且该线程获取到了对象锁
-线程被中断
-
-(b) wait(long) / wait(long, int)和wait方法相同，差别是增加一种从wait方法返回的情况：等待的时间已经到了，并且获取到了对象锁。
-(c) notify()通知位于等待队列中的第一
+二、等待/通知相关方法2.1 方法说明下面，我
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -700,8 +672,7 @@ ScheduledThreadPoolExecutor：周期任务管理者
         
           
           一、概述SharedPreferences在开发当中常被用作保存一些类似于配置项这类轻量级的数据，它采用键值对的格式，将数据存储在xml文件当中，并保存在data/data/{应用包名}/shared_prefs下：今天我们就来一起研究一下SP的实现原理。
-二、SP 源码解析2.1 获取 SharedPreferences 对象在通过SP进行读写操作时，首先需要获得一个SharedPreferences对象，SharedPreferences是一个接口，它定义了系列读写的接口，其实现类为SharedPreferencesImpl、在实际过程中，我们一般通过Application、Activity、Service的下面这个方法来获取SP对象：1public SharedPreferences getSharedPreferences(String name, int mode)
-来获取SharedPreferences实例，而它们最终都是调用到ContextImpl的getSharedPreferences方法，下面是整个调用的结构：在ContextImpl当中，SharedPrefer
+二、SP 源码解析2.1 获取 Share
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -854,11 +825,7 @@ ScheduledThreadPoolExecutor：周期任务管理者
         
           
           一、前言在 多线程知识梳理(2) - synchronized 基本使用 中，我们介绍了使用重量锁来实现的synchronized。今天，我们就来一起学习一下在JDK 1.6之后，对synchronized所采取的一系列优化措施。
-二、对象头 &amp; Monitor Record在介绍优化方法之前，我们需要介绍两个重要的概念Java对象头和Monitor：
-2.1 对象头在 Java&amp;Android 基础知识梳理(3) - 内存区域 中介绍内存区域的时候，对于一个Java对象所占的内存区域是这么介绍的：在运行过程中，对象头所包含数据的含义不是固定不变的，随着锁状态标志位（下图中红框的范围）的改变，其它字段所表示的含义也不同，以32位的虚拟机为例，下图就是锁状态标志位所对应的数据结构含义：
-2.2 Monitor RecordMonitor是线程私有的数据结构，由于一个线程可能进入多个不同的同步方法，这些方法有可能会关联到不同的Monitor，因此每一个线程都有一个可用的Monitor列表，同时还有一个全局的可用列表，Monitor数据结构包括以下成员变量：
-
-Owner：初
+二、对象头 &amp; Monitor Record在介绍优化方法之
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1011,10 +978,7 @@ Owner：初
         
           
           一、为什么要使用 synchronized使用synchronized的原因在于：它能够确保多个线程在同一时刻，只能有一个线程处于方法或者同步块中，它保证了线程对变量访问的可见性和排他性。
-二、synchronized 原理在JDK 1.6之前，synchronized的实现是基于对象上的监视器，这也被称为重量锁。默认情况下，每一个对象都有一个关联的Monitor，而每个Monitor包含了一个EntryCount计数器，它是synchronized实现可重入的关键。
-在JDK 1.6之后，对锁进行了一系列优化的措施，通过引入自旋锁、适应性自旋锁、锁消除、锁粗化、偏向锁、轻量级锁等技术来减少锁操作的开销。
-这些优化措施最终的目的是减少锁操作的开销，然而它所改变的只是锁的实现方式，但是加锁和解锁这一基本原则是没有改变的。这篇文章主要是介绍synchronized的使用，因此，在后面的介绍中，我们还是按照比较容易理解的重量锁的方式进行分析，在之后的文章中，我们再来谈一下优化后的实现策略。
-2.1 进入同步方法或者代码块当一个线程执行某个对象的同步方法或者代码块时，会先检查这个对象所关联的M
+二、synchronized 原理在JDK 1.6之前，synchronized的实现是基于对象上的监视器，这
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1168,14 +1132,7 @@ Owner：初
           
           一、概述在这一整个关于图片压缩的知识梳理过程中，我们介绍了四种图片格式的基本原理、使用方式、优化方式，相信大家已经对他们有了一个基本的认识。
 那么在实际的开发过程当中，我们应当如何选择合适的图片格式呢？Google提出了它们的建议，我们可以以此为参考，在具体的场景中选择合适的图片格式。
-二、如何选择合适的图片格式对于前面介绍的四种图片格式（VectorDrawable/WebP/PNG/JPG），这几种图片的选择标准可以用下面这幅图来表示，整个选择的优先级为：1VD &gt; WebP &gt; PNG &gt; JPG
-
-如果大家有阅读前面一系列的文章，那么应该会对这些选取的条件有一个基本的认识，下面就来简要解释一下每个判断条件所设置的含义：
-
-Can the image be a VectorDrawable
-
-兼容性问题：App本身需要支持VectorDrawable，对于Android 5.0以上是默认支持的，而对于这5.0以下的应用，则需要引入support包的支持。
-图片本身的问题：VectorDrawable适用于那些小而简单的图片，如果图片很大或者很复杂，那么由于栅格化
+二、如何选择
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1327,16 +1284,7 @@ Can the image be a VectorDrawable
       
         
           
-          一、为什么要使用 VectorDrawable虽然目前已经有很多针对于PNG/JPG的压缩算法，但是这些算法最终的压缩效果仍然是有限的，因此，人们开始尝试寻找一种新的图片格式来替代它们，今天我们所介绍的VectorDrawable就是Android平台上一种新的图片存储格式，它采用了一种矢量图形的思想。
-二、光栅图像（Raster Image）在介绍VectorDrawable之前，我们先简单了解一下最常见的光栅图像。
-光栅图像也叫做位图、点阵图、像素图，它是有一个个小的像素点组成，而每个像素点由通过一系列的颜色通道（RGB）来组合成它的颜色，我们平时谈到的PNG、JPG就是光栅图像的子类。
-当我们在应用中使用这种类型的图片时，会面临如下几个问题：
-
-图片的大小会随着像素个数的增加而线性增大
-图片的压缩率会受到图片中各像素点的自相似性影响，其表现为：当图片中相同颜色的像素点越多，那么压缩率就越高。
-为了适应多种机型的分辨率，我们还需要在APK中内置多种分辨率的图片，这无形中就增加了APK的大小。
-
-三、矢量图形（Vector Image）3.1 矢量图形的基本概念为了解决以上的几个问题
+          一、为什么要使用 VectorDrawable虽然目前已经有很多针对于PNG/JPG的压缩算法，但是这些算法最终的压缩效果仍然是有限的，因此，人们开始尝试寻找一种新的图片格式来替代它们，今天我们所介绍的VectorDrawable就是Android平台上一种新的图片存储格式，它采用了一种矢量图形的思
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1496,20 +1444,7 @@ Can the image be a VectorDrawable
 去除PNG文件中不需要的信息
 
 
-今天，我们就来一起学习一些关于减小PNG文件大小的方法。
-二、减小PNG大小2.1 使用PNG优化工具目前，已经有很多为开发者提供的PNG优化工具，例如：
-
-PNGQuant 
-TinyPNG
-zopfliPNG
-
-这些工具都针对PNG压缩的某一方面进行了优化，我们可以根据需要选择适合的工具。
-2.2 手动减少PNG中的颜色的种类在我们使用工具进行优化之前，可以先进行一些预处理，例如减少图片当中颜色的种类。之所以这么做是因为颜色的种类的个数会直接影响到整个PNG压缩过程的压缩率：
-
-在Filter阶段，减少颜色的种类可以使得临近像素之间的区别变少。
-因此，到了Deflate阶段，就可以得到更多重复的值，那么就会获得更高的压缩率。
-
-减少图片中的颜色的种类意味着有可能导致图片的失真，因此这一过程更多的
+今天，我
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1664,24 +1599,7 @@ zopfliPNG
           一、概述对于PNG这种图像存储格式，它有两个特点：无损压缩和支持透明效果。
 
 由于PNG文件采用LZ77算法的派生算法进行压缩，其结果是获得高的压缩比，不损失数据。它利用特殊的编码方法标记重复出现的数据，因而对图像的颜色没有影响，也不可能产生颜色的损失，这样就可以重复保存而不降低图像质量。
-PNG可以为原图像定义256个透明层次，使得彩色图像的边缘能与任何背景平滑地融合，从而彻底地消除锯齿边缘。这种功能是GIF和JPEG没有的。
-
-今天，我们就来介绍一下PNG的相关知识。
-二、PNG 原理2.1 PNG 文件结构PNG由一个8字节的PNG文件署名域和按照特定结构组织的3个以上的数据块组成，其中数据块分成两种，关键数据块和可选数据块，关键数块为如下四种：
-
-文件头数据块
-调色板数据块
-图像数据块
-图像结束数据块
-
-而每个数据块由以下四个数据域组成：
-
-长度
-数据块类型码
-数据块数据
-循环冗余校验
-
-从上面的构成中，我们可以看到，对于用户可见的部分，真正和展现有关就是图像数据块中的数据块区域，因此，我们就需要注意有没有在别的数据块中引入了不必要的数据，例如下面的右图，在从Photoshop
+PNG可
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1834,21 +1752,7 @@ PNG可以为原图像定义256个透明层次，使得彩色图像的边缘能�
         
           
           一、概述对于移动应用来说，图片的处理一直是一个被广泛讨论的话题，而应用当中的图片来源无非就是两种：本地图片和网络图片。
-本地图片的大小会影响到APK安装包的大小，而网络图片的大小则会涉及到下载时长及流量问题，如何在保证图片显示的质量前提下减小图片的大小也就显得尤为关键，这就涉及到了图片格式的选择以及压缩的问题。
-对于Android平台来说，我们最常用到的就是以下四种图片格式：
-
-PNG
-VectorDrawable
-JPG
-WebP
-
-最近项目组在进行图片资源的整理，偶然看到了 Colt McAnlis 发表的一系列有关图片压缩系列的文章，对以上四种图片格式的内部实现和优化方案都做了简要的概述，因此我打算把这一系列的文章都进行一次完整的翻译和整理，最终达到两个目的：
-
-通过了解每种格式的内部工作原理，来研究如何在特定的情况下有效减小对应图片格式文件的大小
-在平时的开发当中，根据需要选择最合适的图片格式
-
-二、目录PNG图片压缩系列 (1) - PNG 原理图片压缩系列 (2) - 减小 PNG 大小
-JPG[图片压缩系列 (3) - JPG 原理][图片压缩系列 (4) - 减小 JP
+本地图片的大小会影响到APK安装包的大小，而网络图片的大小则会涉及到下载时长及流量问题，如何在保证图片显示的质量前提下减小图片的大小也就显得尤为关键，这就涉及到了图片格式的选择以及
           ...
           <!--noindex-->
           <div class="post-button text-center">

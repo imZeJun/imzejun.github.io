@@ -107,7 +107,7 @@
   var CONFIG = {
     root: '/',
     scheme: 'Pisces',
-    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
     fancybox: true,
     motion: true,
     duoshuo: {
@@ -167,7 +167,7 @@
     
   
 
-  <div class="container sidebar-position-left 
+  <div class="container sidebar-position-right 
    page-home 
  ">
     <div class="headband"></div>
@@ -366,7 +366,7 @@
         
           
           一、概述这篇文章中，让我们从源码的角度看一下AsyncTask的原理，最后会根据原理总结一下使用AsyncTask中需要注意的点。
-二、源码解析在AsyncTask中，有一个线程池 THREAD_POOL_EXECUTOR 和与这个线程池相关联的 Executor，它负责执行我们的任务Runnable：1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950private static final int CPU_COUNT = Runtime.getRuntime().availableProcessors();private static final int CORE_POOL_SIZE = CPU_COUNT + 1;private static final int MAXIMUM_POOL_SIZE = CPU_COUNT * 2 + 1;private static final int KEEP_ALIVE = 1;private static fin
+二、源码解析在AsyncTask中，有一个线程池 THREAD_POOL_EXECUTOR 和与这个线程池相关联的 Executor，它负责执行我们的任务Runnabl
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -518,23 +518,7 @@
       
         
           
-          一、概述学习Activity生命周期，首先我们要明白，学习它的目的不仅在于要知道有哪些生命周期，而是在于明白各回掉函数调用的时机，以便在合适的时机进行正确的操作，如初始化变量、页面展示、数据操作、资源回收等。平时的工作习惯都是，onCreate(xxx)初始化，onResume()注册、拉取数据，onPause()反注册，onDestroy()释放资源，这篇文章总结了一些和关键生命周期相关联的一些要点。
-二、金字塔模型在官方文档中，把Activity的生命周期理解成为一个金字塔模型，它是基于下面两点：
-
-金字塔的每个阶梯表示Activity所处的状态
-各回调函数则是各状态转换过程当中所经过的路径
-
-这个模型中包含了Activity的六种状态：
-
-Created：创建完成
-Started：可见
-Resumed：可见
-Paused：部分可见
-Stopped：不可见
-Destroyed：销毁
-
-在这六种状态当中，只有Resumed、Paused、Stopped这几种状态在用户没有进一步操作时会保持在该状态，而其余的，都会在执行完相应的回调函数后快速跳过。
-三、关键生命周期3.1 protec
+          一、概述学习Activity生命周期，首先我们要明白，学习它的目的不仅在于要知道有哪些生命周期，而是在于明白各回掉函数调用的时机，以便在合适的时机进行正确的操作，如初始化变量、页面展示、数据操作、资源回收等。平时的工作习惯都是，onCreate(xxx)初始化，onResume()注册、拉取数据，o
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -689,19 +673,7 @@ Destroyed：销毁
           一、Parcelable和Serializable对象的序列化是把Java对象转化为字节序列并存储至一个存储媒介（硬盘或者内存）的过程，反序列化则是把字节序列恢复为Java对象的过程，但它们仅处理Java变量而不处理方法。
 序列化的原因：
 
-永久性保存对象，保存对象的字节序列到本地文件中。Serializable
-通过序列化对象在网络中传递对象。Serializable
-通过序列化在进程间传递对象。Parcelable
-
-两种序列化的区别：
-
-Serializable只需要对某个类以及它的属性实现Serializable接口即可，它的缺点是使用了反射，序列化的过程比较慢，这种机制会在序列化的时候创建许多的临时对象，容易引发频繁的gc。
-而Parcelable是Android平台特有的，在使用内存的时候性能更好，但Parcelable不能使用在要将数据存储在磁盘的情况下，因为Parcelable不能很好的保证数据的持续性在外界有变化的情况。
-
-二、序列化在Android平台上的应用2.1 通过intent传递复杂对象intent支持传递的数据类型包括： 
-
-基本类型的数据、及其数组。
-S
+永久性保存对象，保存对象的字节序列到本地文件中。Seria
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -853,10 +825,7 @@ S
       
         
           
-          一、什么是注解注解可以向编译器、虚拟机等解释说明一些事情。举一个最常见的例子，当我们在子类当中覆写父类的aMethod方法时，在子类的aMethod上会用@Override来修饰它，反之，如果我们给子类的bMethod用@Override注解修饰，但是在它的父类当中并没有这个bMethod，那么就会报错。这个@Override就是一种注解，它的作用是告诉编译器它所注解的方法是重写父类的方法，这样编译器就会去检查父类是否存在这个方法。注解是用来描述Java代码的，它既能被编译器解析，也能在运行时被解析。
-二、元注解元注解是描述注解的注解，也是我们编写自定义注解的基础，比如以下代码中我们使用@Target元注解来说明MethodInfo这个注解只能应用于对方法进行注解：1234@Target(ElementType.METHOD)public @interface MethodInfo &#123;    //....&#125;
-下面我们来介绍4种元注解，我们可以发现这四个元注解的定义又借助到了其它的元注解：
-2.1 Documented当一个注解类型被@Documented元注解所描述
+          一、什么是注解注解可以向编译器、虚拟机等解释说明一些事情。举一个最常见的例子，当我们在子类当中覆写父类的aMethod方法时，在子类的aMethod上会用@Override来修饰它，反之，如果我们给子类的bMethod用@Override注解修饰，但是在它的父类当中并没有这个bMethod，那么就会
           ...
           <!--noindex-->
           <div class="post-button text-center">

@@ -107,7 +107,7 @@
   var CONFIG = {
     root: '/',
     scheme: 'Pisces',
-    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
     fancybox: true,
     motion: true,
     duoshuo: {
@@ -167,7 +167,7 @@
     
   
 
-  <div class="container sidebar-position-left 
+  <div class="container sidebar-position-right 
    page-home 
  ">
     <div class="headband"></div>
@@ -366,9 +366,7 @@
         
           
           一、前言在 Framework 源码解析知识梳理(5) - startService 源码分析 中，我们分析了Service启动的内部实现原理，今天，我们趁热打铁，看一下Android中的四大组件中另一个组件ContentProvider。
-二、源码解析在分析之前，先上一张整个的流程图，大家在后面绕晕了以后，可以参考这张图进行对照：
-2.1 ContentResolver 获取过程在使用ContentProvider来进行数据的增删改查时，第一步就是要通过getContentResolver()，获得一个ContentResolver对象，该方法实际上调用了基类中的mBase变量，也就是ContextImpl中的getContentResolver()方法，并返回它其中的mContentResolver变量。123456//ContextImpl.java@Overridepublic ContentResolver getContentResolver() &#123;    return mContentResolver;&#125;
-而该mContentResolver是在Con
+二、源码解析在分析之前，先上一张整个的流程图，大家在后面绕
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -520,11 +518,7 @@
       
         
           
-          一、前言最近在看关于插件化的知识，遇到了如何实现Service插件化的问题，因此，先学习一下Service内部的实现原理，这里面会涉及到应用进程和ActivityManagerService的通信，建议大家先阅读一下之前的这篇文章 Framework 源码解析知识梳理(1) - 应用进程与 AMS 的通信实现，整个Service的启动过程离不开和AMS的通信，从整个宏观上来看，它的模型如下，是不是和我们之前分析的通信过程一模一样：
-二、源码分析当我们在Activity/Service/Application中，通过下面这个方法启动Service时：1public ComponentName startService(Intent service)
-与之前分析过的很多源码类似，最终会调用到ContextImpl的同名方法当中，而该方法又会调用内部的startServiceCommon(Intent, UserHandle)：在该方法中，主要做了两件事：
-
-校验Intent的合法性，对于Android 5.0以后，我们要求Intent中需要制定Package和Component中至少一个，
+          一、前言最近在看关于插件化的知识，遇到了如何实现Service插件化的问题，因此，先学习一下Service内部的实现原理，这里面会涉及到应用进程和ActivityManagerService的通信，建议大家先阅读一下之前的这篇文章 Framework 源码解析知识梳理(1) - 应用进程与 AMS 
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -682,17 +676,7 @@ Activity的动态注册
 类的动态加载
 资源的动态加载
 
-如果大家有阅读过前面一系列的文章，那么对于如何解决前两个问题应该可以有一个大概的思路了。不清楚的可以重点看一下 插件化知识梳理(6) - Small 源码分析之 Hook 原理 和 插件化知识梳理(8) - 类的动态加载源码分析。今天这篇，我就来先了解一下在Android当中资源是如何加载的。
-二、示例为了让大家有一个直观的认识，我们先不讲源码，而是来看一个简单的示例，该示例演示了如何以插件的形式加载外部资源。
-2.1 编译插件这里，我们需要将所需要的插件资源放在一个.apk文件中，因此，我们创建一个新的Phone &amp; Tablet Module：在其中放入三个资源文件：
-
-drawable
-
-string
-1&lt;string name=&quot;resource_str&quot;&gt;Plug Resources String&lt;/string&gt;
-
-color
-1&lt;color name=&quot;resource_col
+如果大家有阅读过前面一系列的文章，那么对于如何解决前两个问题应该可以有一个大概的思路了。不清楚的可以重点看一下 插件化知识梳理(6) - Small 源码分析之 Hook
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -845,8 +829,7 @@ color
         
           
           一、前言在 插件化知识梳理(7) - 类的动态加载入门 中，我们通过一个例子来演示了如何通过PathClassLoader和DexClassLoader实现类的动态加载。今天这篇文章，我们一起来对这个类加载内部的实现源码进行一次简单的走读。源码的地址为 地址 ，友情提示，需要翻墙。
-二、源码解析整个加载过程设计到的类，如下图所示：
-2.1 BaseDexClassLoader从上面的图中，我们可以看到DexClassLoader和PathClassLoader，都是BaseDexClassLoader的子类，而当我们调用以上两个类的构造方法时，其实都是调用了super()方法，也就是BaseDexClassLoader的构造方法，它支持传入一下四个参数：12345678public BaseDexClassLoader(String dexPath, File optimizedDirectory,        String librarySearchPath, ClassLoader parent) &#123;    super(parent);    this.pathList
+二、源码解析整个
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -999,26 +982,7 @@ color
         
           
           一、前言在 插件化知识梳理(6) - Small 源码分析之 Hook 原理 这一章的学习完成之后，下一步我们将进入插件化加载的精髓，动态加载类的学习，在此之前，我们需要先准备一些关于类加载的知识。
-Android当中，支持动态加载的两种方式为：DexClassLoader和PathClassLoader。这两者之间的区别为：
-
-DexClassLoader
-可以加载jar、apk、dex
-支持从SD卡目录加载。
-
-
-PathClassLoader
-在许多文章中都有提到，在Dalvik虚拟机上，只能加载已经安装到系统中的Apk文件，也就是/data/app目录下的apk文件。之所以有这个限制是因为PathClassLoader会去读取data/dalvik-cache目录下经过优化后的dex文件，如果文件不存在，那么就会报错。由于手边没有机器，所以没有版本验证。
-而在ART虚拟机上，通过源码当中的注释，可以发现是支持的。
-
-
-
-二、具体实例实例的工程目录结构为：
-
-app：宿主模块
-library：插件模块
-libraryinterface：插件接口模块
-
-其中，app和library
+Android当中，支持动态加载的两种方式为：DexClassLoader和PathClassLoa
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1171,9 +1135,7 @@ libraryinterface：插件接口模块
         
           
           一、前言至此，花了四天时间、五篇文章，学习了如何使用Small框架来实现插件化。但是，对于我来说，一开始的目标就不是满足于仅仅知道如何用，而是希望通过这一框架作为平台，学习插件化中所用到的知识。
-对于许多插件化的开源框架而言，一个比较核心的部分就是Hook的实现，所谓Hook，简单地来说就是在应用侧启动A.Activity，但是在AMS看来却是启动的B.Activity，之后AMS通知应用侧后，我们再重新替换成A.Activity。
-在阅读这篇文章之前，大家可以先看一下之前的这篇文章 Framework 源码解析知识梳理(1) - 应用进程与 AMS 的通信实现 ，Small其实就是通过替换这一双向通信过程中的关键类，对调用方法中传递的参数进行替换，来实现Hook机制。
-二、源码分析Hook的过程是Small预初始化的第一步，就是我们前面在自定义的Application构造方法中所进行的操作：1234567public class SmallApp extends Application &#123;    public SmallApp() &#123;        Small.p
+对于许多插件化的开源框架而言，一个比较核心的部分就是Hook的实现，所谓Hook，简单地来说就是在应用侧
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1325,15 +1287,7 @@ libraryinterface：插件接口模块
       
         
           
-          一、前言在前面的例子当中，我们都是把插件预置在Apk当中一起安装的，如 插件化知识梳理(4) - Small 框架之如何实现插件更新 所示，我们初始时候会将代表插件的so文件放置在jniLibs/armeabi目录下。那么如果我们将不是很重要的插件放在服务器上，当应用启动之后判断需要该插件，然后再从服务器上下载，将能够有效减小初始时候安装包的体积。
-下面，我们就来演示一下如何从外部加载插件。
-二、示例加载插件部分的源码位于Bundle.java中：可以看到，加载插件有两种方式，它们是根据Small.isLoadFromAssets来区分：
-
-如果该标志位为真，那么读取/data/data/{host_pkg_name}/small_base/下的插件，并且包名和插件的对应关系为：pkg_name -&gt; {pkg_name}.apk 
-如果该标志位为假，那么读取nativeLibraryDir目录下的so，并且包名和插件的对应关系为：pkg_name -&gt; lib{pkg_name}.so，也就是我们之前一直演示的方式。
-
-通过这段源码，那么如何实现加载外部插件就有思路了：
-
+          一、前言在前面的例子当中，我们都是把插件预置在Apk当中一起安装的，如 插件化知识梳理(4) - Small 框架之如何实现插件更新 所示，我们初始时候会将代表插件的so文件放置在jniLibs/armeabi目录下。那么如果我们将不是很重要的插件放在服务器上，当应用启动之后判断需要该插件，然后再从
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1488,19 +1442,7 @@ libraryinterface：插件接口模块
           一、前言通过前面三节：
 插件化知识梳理(1) - Small 框架之如何引入应用插件插件化知识梳理(2) - Small 框架之如何引入公共库插件插件化知识梳理(3) - Small 框架之宿主分身
 相信大家已经对Small的使用有了一个基本的认识，今天讲解另一个比较重要的知识点，插件更新。
-二、示例原始的工程包括两个部分：
-
-宿主模块 - app
-应用插件模块 - app.upgrade
-原始路由文件 - bundle.json
-
-如果要进行插件更新，那么我们需要：
-
-新的路由文件 - bundle.json，通过该文件，我们获取需要更新的插件的包名以及获取插件的路径。
-新的插件文件
-
-Github地址为：SmallUpdate
-2.1 准备原始的工程这里的步骤和 插件化知识梳理(1) - Small 框架之如何引入应用插件 相同，就是新建一个宿主模块app和一个应用插件模块app.upgrade，从宿主模块中可以跳转到应用插件模块的Activity，该Activity的布局如下：1234567891011121314&lt;?xml version=&quot;1.0&quot; 
+二、示
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1653,19 +1595,7 @@ Github地址为：SmallUpdate
         
           
           一、前言在 插件化知识梳理(1) - Small 框架之如何引入应用插件，插件化知识梳理(2) - Small 框架之如何引入公共库插件 前两篇文章中，我们介绍了如何通过Small框架来实现应用插件及公共库插件，今天，我再来介绍一个新的知识点 - 宿主分身。
-与应用插件和公共库插件不同，宿主分身会作为宿主的一部分，被编译到宿主当中，因此它不能被独立更新，但是它提供了一些插件所不具备的功能：
-
-插件模块可以自由访问其中的代码和资源
-预留特定的资源、代码和AndroidManifest.xml声明，让系统可以正常识别
-预留稳定的资源、代码、第三方库，减少插件体积
-
-正如前面介绍的，应用插件通过app.xxx，公共库插件通过lib.xxx的命名方式，让Small进行识别。而宿主分身则需要以app+xxxx的方式来命名。
-除了以上介绍的可选情况，有一些代码是必须要放入到宿主分身中的：
-
-AndroidManifest.xml的声明
-所有权限，例如引入网络权限、读取存储等
-包含了某些特殊权限的Activity，如process，configChanges等
-任何的provider/receive
+与应用插件和公共库插件不同，宿主分身会作
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1818,32 +1748,7 @@ AndroidManifest.xml的声明
         
           
           一、前言在 插件化知识梳理(1) - Small 框架之如何引入应用插件 中，我们简要地介绍了如何使用Small框架来通过插件实现一个Activity的跳转，也就是app.main，这里的app.main我们称为应用插件，除了应用插件外，还有一种称为公共库插件。
-对于这两种插件的职责，Small官方建议的基本原则为
-
-
-公共库插件
-把各个 第三方库拆出来做成lib插件模块，包括统计、地图、网络、图片等库。
-把老项目积累的业务公共代码utils分离出来封装成一个lib.utils插件
-把基础的样式、主题分离出来封装成一个lib.style插件
-
-
-
-
-应用插件
-把业务模块拆成app模块，他们可以依赖lib模块，显示调用lib中的各个API
-相对独立的业务模块先拆，先放一个插件里
-如果都不好拆，先把全部业务做成一个app.main主插件
-
-
-
-
-总结下来就是：
-
-应用插件模块相互之间不直接引用，但是可以引用公共库插件模块
-公共库插件模块不应当相互引用，也不应当引用应用插件模块
-一个公共库插件模块可以被多个应用插件模块引用
-
-在项目当中，许多个模块有可能用到一些共有的东西，例如图片加载、网络
+对于这两种插件的职责，Small官方
           ...
           <!--noindex-->
           <div class="post-button text-center">

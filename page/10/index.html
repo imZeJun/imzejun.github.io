@@ -107,7 +107,7 @@
   var CONFIG = {
     root: '/',
     scheme: 'Pisces',
-    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
     fancybox: true,
     motion: true,
     duoshuo: {
@@ -167,7 +167,7 @@
     
   
 
-  <div class="container sidebar-position-left 
+  <div class="container sidebar-position-right 
    page-home 
  ">
     <div class="headband"></div>
@@ -377,16 +377,7 @@ Dagger2相对于其它框架的优点：
 错误可追踪。
 易于调试。
 
-Dagger2的缺点：
 
-缺少灵活性。
-没有动态机制。
-
-二、Dagger2的注解Dagger2的注解主要有以下七类：
-
-@Inject：这个注解有两个作用：在目标类中标记成员变量告诉Dagger这个类型的变量需要一个实例对象；标记依赖类中的构造方法，告诉Dagger我可以提供这种类型的依赖实例。
-@Component：用来标记接口或者抽象类，也被称为注入器，是@Inject和@Module的桥梁，所有的Component都可以通过它的modules知道它所提供的依赖范围，一个Componet可以依赖一个或多个Component，并拿到被依赖Component暴露出来的实例，Componenet的dependencies属性就是确定依赖关系的实现。
-@Module：用来标记类，一般类名以Mo
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -540,13 +531,7 @@ Dagger2的缺点：
           
           第三章 Java内存模型3.1 Java内存模型的基础
 通信在共享内存的模型里，通过写-读内存中的公共状态进行隐式通信；在消息传递的并发模型里，线程之间必须通过发送消息来进行显示的通信。
-同步在共享内存并发模型里，同步是显示进行的，程序员必须显示指定某个方法或者某段代码需要在线程之间互斥执行；在消息传递的并发模型里，由于消息的发送必须在接收之前，因此同步是隐式进行的。
-
-在Java中，所有实例域、静态域和数组元素都存储在堆内存中，堆内存在线程之间共享；局部变量、方法定义参数和异常处理器参数不会在线程之间共享。从抽象角度来看，JMM定义了线程和主内存之间的抽象关系：线程之间的共享变量存储在主内存中，每个线程都有一个私有的本地内存，本地内存涵盖了缓存、写缓冲区、寄存器以及其它的硬件和编译器优化。JMM通过控制主内存与每个线程的本地内存之间的交互，来为Java程序员提供内存可见性保证。
-重排序指编译器和处理器为了优化程序性能而对指令序列进行重新排序的一种手段：
-
-编译器优化的重排序：编译器在不改变单线程程序语义的前提下，重新安排语句的执行顺序。
-处理器的指令级并行的重排序：如果不存在数据依赖
+同步在共享内存并发模型里，同步是显示进行的，程序员必须显示指定某个方法或者某段代码需要在线程之间互斥执行；在消息
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -699,8 +684,7 @@ Dagger2的缺点：
         
           
           一、概述在前一篇文章中，我们对于Fragment的事务和生命周期有了直观的理解，这篇文章我们来分析一下Fragment状态的保存和恢复。
-二、状态保存有了分析Activity的经验，我们看一下Activity中和Fragment状态保存相关的代码：123456protected void onSaveInstanceState(Bundle outState) &#123;           Parcelable p = mFragments.saveAllState();        if (p != null) &#123;                outState.putParcelable(FRAGMENTS_TAG, p);    &#125;    &#125;
-前面已经分析过，mFragments只是一个代理，真正执行的代码还是在FragmentManager中，这个方法返回值是FragmentManagerState：12345678910111213Parcelable saveAllState() &#123;    //先执行完之前所有剩余的操作。   
+二、状态保存有了分析Activity的经验，我们看一下Activity中和Fragment状态保存相关的代码：123456protected void onSav
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -853,7 +837,7 @@ Dagger2的缺点：
         
           
           一、概述本文中的所有示例均来自RxJava2这个大神的仓库，这两篇文章主要是对示例当中的用法进行一个记录，方便以后进行查询。
-二、详细示例2.1 SimpleExampleActivity这是一个最简单的例子，被订阅者发射了两个数据（Cricket、Football），并且有一个订阅者，发生订阅时，会先回调onSubscribe(Disposable d)，发射数据后，回调onNext(String value)方法，最后回调onComplete()。12345678910111213141516171819202122232425262728293031323334353637383940414243private void doSomeWork() &#123;    getObservable()             //被订阅者在子线程进行操作.            .subscribeOn(Schedulers.io())             //订阅者在主线程处理结果.            .observeOn(AndroidSchedulers.mainThr
+二、详细示例2.1 SimpleExampleActivity这是一个最简单的例子，被订阅者发射了两个数据（Cricket、Football），并且有一个订阅者，发生订阅时，
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1005,9 +989,7 @@ Dagger2的缺点：
       
         
           
-          一、概述官方是从3.0开始引入Fragment的，在文档中有对于其使用的详细介绍，可以看出来，在它刚出现时大家对于它是十分推崇的。然而随着使用Fragment开发的项目越来越多，在一些复杂场景下逐渐暴露出了它的一些问题，对于是否继续使用Fragment大家也有不同的看法。目前在项目中也有大量之前留下来的使用 Fragment的代码， monkey有时会跑出一些莫名奇妙的问题，在这里我们对于使用Fragment的好坏先不做评价，而是看看它内部整个的实现过程，学习它的思想，在以后出现问题的时候也方便排查，同时大家可以根据自己的需求来决定是否使用Fragment。
-二、Fragment事务的执行过程在操作Fragment时，第一件是就是通过Activity的getFragmentManger()方法得到一个FragmentManager对象：1Fragment manager = getFragmentManager();
-我们看一下Activity.java中的这个方法：1234567891011final FragmentController mFragments = FragmentC
+          一、概述官方是从3.0开始引入Fragment的，在文档中有对于其使用的详细介绍，可以看出来，在它刚出现时大家对于它是十分推崇的。然而随着使用Fragment开发的项目越来越多，在一些复杂场景下逐渐暴露出了它的一些问题，对于是否继续使用Fragment大家也有不同的看法。目前在项目中也有大量之前留下
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1162,8 +1144,7 @@ Dagger2的缺点：
           一、概述在开发过程中，不可避免地会遇到Activity被回收的场景， Activity被回收有两种情况：主动和被动。
 
 当Activity是被主动回收时，例如按下了Back键，那么这时候是无法恢复的，因为系统认为你已经不再需要它了。
-在被动回收的情况下，虽然这个Activity的实例已经被销毁了，但是系统在新建一个Activity实例的时候，会带上先前被回收Activity的信息，这些信息是被存储在Bundle的键值对，这里面有些是系统帮我们读写的，例如Activity当中View的状态，这部分的信息并不需要我们担心。（为了系统能帮我们恢复状态，必须要为每个View都指定一个id），如果我们希望保存更多临时的信息，而这些信息又没有必要写入到持久化的存储当中，这时候我们应该重写onSaveInstanceState方法，在该回调当中会传入一个Bundle对象，只需要把保存的信息放到里面，之后再在onRestoreInstanceState和onCreate方法中把它读取出来就可以了，这里面有两点需要注意的：
-onRestoreInstance只有在Bundle不为空时才会回调，而在onC
+在被动回收的情况下，虽然这个Activity的实例已经被销毁了，但
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1315,12 +1296,7 @@ onRestoreInstance只有在Bundle不为空时才会回调，而在onC
       
         
           
-          一、AndroidManifest.xml中指定launchMode1.1standard标准模式，每次启动Activity都会创建一个新的Activity实例，并且将其压入任务栈栈顶，而不管这个 Activity 是否已经存在，都会执行onCreate() -&gt;onStart() -&gt; onResume。
-1.2 singleTop栈顶复用模式，如果新Activity已经位于栈顶，那么此Activity不会被重新创建，同时Activity的 onNewIntent方法会被回调，如果Activity已经存在但是不再栈顶，那么和standard模式一样。如果Activity当前是onResume状态，那么调用后会执行onPause() -&gt; onNewIntent() -&gt; onResume()。
-1.3 singleTask栈内复用模式，创建这样的Activity，系统会确认它所需任务栈是否已经创建，否则先创建任务栈，然后放入Activity，如果栈中已经有一个Activity实例，那么会做两件事：
-
-这个Activity会回到栈顶执行onNewIntent
-清
+          一、AndroidManifest.xml中指定launchMode1.1standard标准模式，每次启动Activity都会创建一个新的Activity实例，并且将其压入任务栈栈顶，而不管这个 Activity 是否已经存在，都会执行onCreate() -&gt;onStart() -&gt;
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1473,7 +1449,7 @@ onRestoreInstance只有在Bundle不为空时才会回调，而在onC
         
           
           
-Material Design 控件知识梳理(1) - Android Design Support Library 是什么Material Design 控件知识梳理(2) - AppBarLayout &amp; CollapsingToolbarLayoutMaterial Design 控件知识梳理(3) - BottomSheet &amp;&amp; BottomSheetDialog &amp;&amp; BottomSheetDialogFragmentMaterial Design 控件知识梳理(4) - FloatingActionButtonMaterial Design 控件知识梳理(5) - DrawerLayout &amp;&amp; NavigationViewMaterial Design 控件知识梳理(6) - SnackbarMaterial Design 控件知识梳理(7) - BottomNavigationBarMaterial Design 控件知识梳理(8) - TabLayoutMaterial Design 控件知识梳理(9) - 
+Material Design 控件知识梳理(1) - Android Design Support Library 是什么Material Design 控件知识梳理(2) - AppBarLayout &amp; CollapsingToolbarLayoutMaterial Design 控
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1626,7 +1602,7 @@ Material Design 控件知识梳理(1) - Android Design Support Library 是什么
         
           
           一、概述AsyncQueryHandler方便了我们对ContentProvider进行增、删、改、查，此外，我们通过学习它的原理可以更好地理解HandlerThread，学习如何在项目中使用它。
-二、源码AsyncQueryHandler中的关键是mWorkerThreadHandler，它在其handleMessage中进行操作，因为它在构造时传入的Looper所关联的Thread并不是主线程，因此所有在handleMessage中的操作都是异步的，这个变量的初始化时在其构造函数中：12345678910111213141516public AsyncQueryHandler(ContentResolver cr) &#123;        super();        mResolver = new WeakReference&lt;ContentResolver&gt;(cr);        synchronized (AsyncQueryHandler.class) &#123;                if (sLooper == null) &#123;   
+二、源码AsyncQueryHandler中的关键是mWorkerThreadHandler，它在其h
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1778,9 +1754,7 @@ Material Design 控件知识梳理(1) - Android Design Support Library 是什么
       
         
           
-          #一、概述刚开始接触HandlerThread是在看AsyncQueryHandler源码的时候，第一次眼看到HandlerThread这个名字，就在想这到底是个Handler还是个Thread，后来看了源码才发现它其实就是一个Thread，只不过可以通过它的getLooper返回的Looper作为Handler构造函数的参数，那么这个新建Handler所有message的执行都是在这个对应的Thread当中的，关于在项目当中如何用好HandlerThread，AsyncQueryHandler无疑是一个最好的例子。
-二、源码HandlerThread的代码很少，我们一点点看：123int mPriority; //线程的优先级int mTid = -1; //线程对应的pid，结束时为-1。Looper mLooper; //对应的looper
-再看一下run方法：1234567891011121314&lt;!-- HandlerThread.java --&gt;@Overridepublic  void run() &#123;        mTid = Process.my
+          #一、概述刚开始接触HandlerThread是在看AsyncQueryHandler源码的时候，第一次眼看到HandlerThread这个名字，就在想这到底是个Handler还是个Thread，后来看了源码才发现它其实就是一个Thread，只不过可以通过它的getLooper返回的Looper作为
           ...
           <!--noindex-->
           <div class="post-button text-center">

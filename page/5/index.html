@@ -107,7 +107,7 @@
   var CONFIG = {
     root: '/',
     scheme: 'Pisces',
-    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
     fancybox: true,
     motion: true,
     duoshuo: {
@@ -167,7 +167,7 @@
     
   
 
-  <div class="container sidebar-position-left 
+  <div class="container sidebar-position-right 
    page-home 
  ">
     <div class="headband"></div>
@@ -366,7 +366,7 @@
         
           
           一、概述在 转场动画理论篇 中，我们介绍了Content Transition的基本理论，今天，我们来一起学习Content Transition使用当中的细节问题。
-二、基本使用2.1 启动Activity方式如果我们希望在Activity切换的时候加上Content Transition动画，那么需要使用下面的启动方式：12345678910private void startTargetActivity(int position) &#123;    if (position == 0) &#123;        List&lt;Pair&gt; pairs = new ArrayList&lt;&gt;();        //1.得到ActivityOptionsCompact对象        ActivityOptionsCompat compat = ActivityOptionsCompat.makeSceneTransitionAnimation(mActivity, pairs.toArray(new android.support.v4.util.Pair[p
+二、基本使用2.1 启动Activity方式如果我们希望在Activity切换的时候加上Content Transition动画，那
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -518,14 +518,7 @@
       
         
           
-          一、概述在Android 5.0当中，Google基于Android 4.4中的Transition框架引入了转场动画，设计转场动画的目的，在于让Activity之间或者Fragment之间的切换更加自然，其根本原因在于界面间切换时的动画不再是以Activity或者Fragment的整个布局作为切换时动画的执行单元，而是将动画的执行单元细分到了View。目前提供的转场动画分为两种：
-
-Content Transition：用于两个界面之间非共享的View。
-Shared Element Transition：用于两个界面之间需要共享的View。
-
-二、什么是Transition2.1 Transition的基本概念在学习Content Transition之前，我们先对转场动画所依赖的Transition框架做一个简要的介绍，这个框架是围绕着两个概念Scene（场景）和Transition（变换）来建立的，在后面我们会多次提到它：
-
-场景（Scene）：表示UI所对应的状态，一般来说，会有两个场景：起点场景和终点场景，在这两个场景当中，UI有可能会有不同的状态。在上图当中，SceneA
+          一、概述在Android 5.0当中，Google基于Android 4.4中的Transition框架引入了转场动画，设计转场动画的目的，在于让Activity之间或者Fragment之间的切换更加自然，其根本原因在于界面间切换时的动画不再是以Activity或者Fragment的整个布局作为切换
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -681,15 +674,6 @@ Shared Element Transition：用于两个界面之间需要共享的View。
 
 API解析
 实战
-采用默认动画
-自定义侧滑删除动画
-
-
-
-二、API分析对于Item的手势操作分为两种：侧滑和拖动，如果需要支持这两种，那么需要给ItemTouchHelper传入一个ItemTouchHelper.Callback的子类，并把ItemTouchHelper和RecyclerView关联起来，下面，我们先来介绍一下ItemTouchHelper.Callback个回调方法的含义：
-控制相关
-public boolean isLongPressDragEnabled()是否可以通过长按来触发拖动操作，默认返回true，如果返回false，那么可以通过startDrag(ViewHolder)方法来触发某个特定Item的拖动的机制。
-public boolean isItemViewSwipeE
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -845,16 +829,7 @@ public boolean isItemViewSwipeE
 
 API
 DividerItemDecoration解析
-自定义ItemDecoration
-
-二、API介绍当我们实现自己的ItemDecoration时，需要继承于ItemDecoration，并根据需要实现以下三个方法：
-2.1 public void onDraw(Canvas c, RecyclerView parent, State state)
-canvas：RecyclerView的canvas
-parent：RecyclerView实例
-State：RecyclerView当前的状态，值包括START/LAYOUT/ANIMATION。
-
-所有在这个方法中的绘制操作，将会在itemViews被绘制之前执行，因此，它会显示在itemView之下。
-2.2 public void onDrawOver(Canvas c, RecyclerView parent,
+自定义ItemDecorat
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1014,26 +989,7 @@ State：RecyclerView当前的状态，值包括START/LAYOUT/ANIMATION。
 
 
 布局：LayoutManager
-使用：RecyclerView - LayoutManager
-进阶：自定义
-
-
-动画：ItemAnimator 
-使用
-进阶：RecyclerViewItemAnimators
-
-
-装饰：ItemDecorator
-使用：RecyclerView - ItemDecoration
-
-
-手势：ItemTouchHelper
-使用：RecyclerView - ItemTouchHelper
-
-
-
-要理解整个RecyclerView的思想，有一个视频是一定要看的：RecyclerView ins and outs - Google I/O 2016。今天，我们就通过这个视频，把上面所学到的东西串联起来。
-二、为什么要使用RecyclerViewRecyclerView诞生的目的就是为了替代ListView，我们先总结一下在使用ListView
+使用：RecyclerView - LayoutM
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1185,18 +1141,7 @@ State：RecyclerView当前的状态，值包括START/LAYOUT/ANIMATION。
       
         
           
-          一、概述在前面的学习中，我们已经对Adapter有了大概的了解，在整个RecyclerView的体系当中，Adapter负责提供View，而LayoutManager负责决定它们在RecyclerView中摆放的位置以及在窗口中不可见之后的回收策略。今天，我们来一起看一下LayoutManager的相关知识。
-二、LayoutManager的使用通过重写LayoutManager，我们可以得到各式各样的布局。官方提供了以下三种LayoutManager：
-
-LinearLayoutManager
-GirdLayoutManager
-StaggeredGridLayoutManager
-
-下面，我们就来一起学习它们的使用方式。
-2.1 线性布局：LinearLayoutManager使用这个LinearLayoutManager时，所有的Item都是线性排列的，我们可以指定以下两点。
-2.1.1 纵向/横向排列
-纵向排列：LinearLayoutManager.OrientationHelper.VERTICAL：
-横向排列：LinearLayoutManager.Orientation
+          一、概述在前面的学习中，我们已经对Adapter有了大概的了解，在整个RecyclerView的体系当中，Adapter负责提供View，而LayoutManager负责决定它们在RecyclerView中摆放的位置以及在窗口中不可见之后的回收策略。今天，我们来一起看一下LayoutManager的
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1349,8 +1294,7 @@ StaggeredGridLayoutManager
         
           
           一、概述当我们使用RecyclerView时，第一件事就是要继承于RecyclerView.Adapter，实现其中的抽象方法，来处理数据的展示逻辑，今天，我们就来介绍一下Adapter中的相关方法。
-二、基础用法我们从一个简单的线性列表布局开始，介绍RecyclerView.Adapter的基础用法。首先，需要导入远程依赖包：1compile&apos;com.android.support:recyclerview-v7:25.3.1&apos;
-接着，继承于RecyclerView.Adapter来实现自定义的NormalAdapter：123456789101112131415161718192021222324252627282930313233343536373839public class NormalAdapter extends RecyclerView.Adapter&lt;NormalAdapter.NormalViewHolder&gt; &#123;    private List&lt;String&gt; mTitles = new ArrayList&l
+二、基础用法我们从一个简单的线性列表布局开始，介绍RecyclerView.Adapter的基础用
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1502,8 +1446,7 @@ StaggeredGridLayoutManager
       
         
           
-          一、概述在上一篇文章中，我们通过源码的角度了解FragmentPagerAdapter和FragmentStatePagerAdapter的原理。这其实是为我们分析数据更新问题做一个铺垫。在实际的开发当中，我们在ViewPager中嵌套的Fragment中并不是固定不变的，需要动态地添加和删除，下面我们就从几个大家经常会遇到的问题入手，然后分析问题的原因，最后我们尝试总结一种比较好的数据更新方式。
-二、使用FragmentPagerAdapter2.1 一段有问题的代码123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263public class DemoActivity extends AppCompatActivity &#123;    private static final int INCREASE = 4;    private FPAdapter mFPAdapter;    private L
+          一、概述在上一篇文章中，我们通过源码的角度了解FragmentPagerAdapter和FragmentStatePagerAdapter的原理。这其实是为我们分析数据更新问题做一个铺垫。在实际的开发当中，我们在ViewPager中嵌套的Fragment中并不是固定不变的，需要动态地添加和删除，下面
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1660,8 +1603,7 @@ StaggeredGridLayoutManager
 对于主页中的每个子页面，用Fragment包裹起来，然后通过ViewPager来实现页面之间的切换。
 广告轮播图。
 
-其中对于第一种情况，我们常常会使用到两个PagerAdapter的实现类，也就是FragmentStatePagerAdapter和FragmentPagerAdapter，今天，我们就来学习一下它们的使用方法，并进行对比。
-二、FragmentPagerAdapter2.1 使用在我们的例子中，我们定义了一个Acitivity，它的布局中包含有一个ViewPager。初始时候我们会给mFragments列表中新建4个Fragment实例，然后把它传给继承于FragmentPagerAdapter的适配器，LogcatFragment就是用来打印Fragment的生命周期：1234567891011121314151617181920212223242526272829303132private void initFPAFragments() &#123;    mFragments = new 
+其中对于第一种情况，我们常常会使用到两个PagerAdapter的实现类，也就是FragmentStateP
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1814,13 +1756,7 @@ StaggeredGridLayoutManager
         
           
           
-性能优化工具知识梳理(1) - TraceView性能优化工具知识梳理(2) - Systrace性能优化工具知识梳理(3) - 调试GPU过度绘制 &amp; GPU呈现模式分析性能优化工具知识梳理(4) - Hierarchy Viewer性能优化工具知识梳理(5) - MAT性能优化工具知识梳理(6) - Memory Monitor &amp; Heap Viewer &amp; Allocation Tracker性能优化工具知识梳理(7) - LeakCanary性能优化工具知识梳理(8) - Lint
-
-一、概述Lint是Android Studio中提供的代码分析工具，它能够检查出代码当中存在的问题，定义该问题的严重程度，并给出相应的解决方案，这样我们就可以快速地定位和修复问题。整个lint检查的架构如下图所示：
-从图中来看它包含以下几个组件：
-
-App Source Files：对应于我们工程当中的源文件，包括Java代码、XML文件、Icons图片、ProGuard configuration files。
-lint.xml：定义了需要检查的问题，以及该问题对应的
+性能优化工具知识梳理(1) - TraceView性能优化工具知识梳理(2) - Systrace性能优化工具知识梳理(3) - 调试GPU过度绘制 &amp; GPU呈现模式分析性能优化工具知识梳理(4) - Hierarchy Viewer性能优化工具知识梳理(5) - MAT性能优化工具知识
           ...
           <!--noindex-->
           <div class="post-button text-center">

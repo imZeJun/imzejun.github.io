@@ -107,7 +107,7 @@
   var CONFIG = {
     root: '/',
     scheme: 'Pisces',
-    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
     fancybox: true,
     motion: true,
     duoshuo: {
@@ -167,7 +167,7 @@
     
   
 
-  <div class="container sidebar-position-left 
+  <div class="container sidebar-position-right 
    page-home 
  ">
     <div class="headband"></div>
@@ -367,17 +367,7 @@
           
           一、WebP是什么WebP、VectorDrawable、PNG、JPG一起构成了Android中四种图片的存储格式，在学习这篇文章之前，最好能看一下下面的视频和文章，这样能对WebP有一个大概的了解：
 
-图片存储格式的对比 Image Compression For Android Developers 
-WebP的概念和优缺点  WebP 探寻之路
-
-下面是上文对于WebP的概述，今天这篇文章，我们就一起来看如何在App中使用WebP。
-
-WebP是一种支持有损压缩和无损压缩的图片文件格式，派生自图像编码格式VP8。根据Google的测试，无损压缩后的WebP比PNG文件少了45％的文件大小，即使这些PNG文件经过其他压缩工具压缩之后，WebP还是可以减少28％的文件大小。
-
-二、兼容性问题和VectorDrawable类似，WebP也存在兼容性的问题：
-
-在Android 4.0以前，默认是不支持*.webp，这时候如果图片源是*.webp，那么就需要导入外部的依赖，将*.webp转换成二进制流，再进行展示。
-在Android 4.0+到Android 4.2.1之间，只支持完全
+图片存储格式的对比 Image Compression For Android Develop
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -531,17 +521,7 @@ WebP是一种支持有损压缩和无损压缩的图片文件格式，派生自�
           
           一、Vector优点VectorDrawable主要有两个优点：屏幕自适应和体积小。
 
-如果我们使用的是普通的png或者jpg图片，那么为了能让图片在不同分辨率的机型上能够很好地展现，通常会在各个drawable文件夹下放置不同分辨率大小的图片文件，而VectorDrawable则不需要，仅仅只使用一套资源，就能够适应任何分辨率的手机。
-对于某些图片，VectorDrawable素材的大小要比png和jpg小很多。
-
-二、SVG和Vector的基本概念下面，我们先介绍一下SVG和VectorDrawable的基本概念：
-
-SVG：它并不是Android平台特有的概念，它的全称为可缩放矢量图形，简单的来说，就是用于描述二维矢量图形的图形格式，更加详细的解释可以参考：SVG - 百度百科。
-VectorDrawable：它是Android当中的SVG实现，它并不支持SVG的全部语法，只是支持部分有必要的部分。
-
-三、获取VectorDrawable俗话说的好，巧妇难为无米炊，这一节我们就来介绍一下如何获得一个VectorDrawable，一般获取的方式有以下三种方式：
-
-先获取SVG素材，
+如果我们使用的是普通的png或者jpg图片，那么为了能让图片在不同分辨率的机型上能够很好地展现，通常会在各个drawable文件夹下放置不同分辨率大小的图片文件，而VectorDrawable则不需要，仅仅只使用
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -694,7 +674,7 @@ VectorDrawable：它是Android当中的SVG实现，它并不支持SVG的全部�
         
           
           
-Material Design 控件知识梳理(1) - Android Design Support Library 是什么Material Design 控件知识梳理(2) - AppBarLayout &amp; CollapsingToolbarLayoutMaterial Design 控件知识梳理(3) - BottomSheet &amp;&amp; BottomSheetDialog &amp;&amp; BottomSheetDialogFragmentMaterial Design 控件知识梳理(4) - FloatingActionButtonMaterial Design 控件知识梳理(5) - DrawerLayout &amp;&amp; NavigationViewMaterial Design 控件知识梳理(6) - SnackbarMaterial Design 控件知识梳理(7) - BottomNavigationBarMaterial Design 控件知识梳理(8) - TabLayoutMaterial Design 控件知识梳理(9) - 
+Material Design 控件知识梳理(1) - Android Design Support Library 是什么Material Design 控件知识梳理(2) - AppBarLayout &amp; CollapsingToolbarLayoutMaterial Design 控
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -847,7 +827,7 @@ Material Design 控件知识梳理(1) - Android Design Support Library 是什么
         
           
           
-Material Design 控件知识梳理(1) - Android Design Support Library 是什么Material Design 控件知识梳理(2) - AppBarLayout &amp; CollapsingToolbarLayoutMaterial Design 控件知识梳理(3) - BottomSheet &amp;&amp; BottomSheetDialog &amp;&amp; BottomSheetDialogFragmentMaterial Design 控件知识梳理(4) - FloatingActionButtonMaterial Design 控件知识梳理(5) - DrawerLayout &amp;&amp; NavigationViewMaterial Design 控件知识梳理(6) - SnackbarMaterial Design 控件知识梳理(7) - BottomNavigationBarMaterial Design 控件知识梳理(8) - TabLayoutMaterial Design 控件知识梳理(9) - 
+Material Design 控件知识梳理(1) - Android Design Support Library 是什么Material Design 控件知识梳理(2) - AppBarLayout &amp; CollapsingToolbarLayoutMaterial Design 控
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1000,7 +980,7 @@ Material Design 控件知识梳理(1) - Android Design Support Library 是什么
         
           
           
-Material Design 控件知识梳理(1) - Android Design Support Library 是什么Material Design 控件知识梳理(2) - AppBarLayout &amp; CollapsingToolbarLayoutMaterial Design 控件知识梳理(3) - BottomSheet &amp;&amp; BottomSheetDialog &amp;&amp; BottomSheetDialogFragmentMaterial Design 控件知识梳理(4) - FloatingActionButtonMaterial Design 控件知识梳理(5) - DrawerLayout &amp;&amp; NavigationViewMaterial Design 控件知识梳理(6) - SnackbarMaterial Design 控件知识梳理(7) - BottomNavigationBarMaterial Design 控件知识梳理(8) - TabLayoutMaterial Design 控件知识梳理(9) - 
+Material Design 控件知识梳理(1) - Android Design Support Library 是什么Material Design 控件知识梳理(2) - AppBarLayout &amp; CollapsingToolbarLayoutMaterial Design 控
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1153,7 +1133,7 @@ Material Design 控件知识梳理(1) - Android Design Support Library 是什么
         
           
           
-Material Design 控件知识梳理(1) - Android Design Support Library 是什么Material Design 控件知识梳理(2) - AppBarLayout &amp; CollapsingToolbarLayoutMaterial Design 控件知识梳理(3) - BottomSheet &amp;&amp; BottomSheetDialog &amp;&amp; BottomSheetDialogFragmentMaterial Design 控件知识梳理(4) - FloatingActionButtonMaterial Design 控件知识梳理(5) - DrawerLayout &amp;&amp; NavigationViewMaterial Design 控件知识梳理(6) - SnackbarMaterial Design 控件知识梳理(7) - BottomNavigationBarMaterial Design 控件知识梳理(8) - TabLayoutMaterial Design 控件知识梳理(9) - 
+Material Design 控件知识梳理(1) - Android Design Support Library 是什么Material Design 控件知识梳理(2) - AppBarLayout &amp; CollapsingToolbarLayoutMaterial Design 控
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1306,7 +1286,7 @@ Material Design 控件知识梳理(1) - Android Design Support Library 是什么
         
           
           
-Material Design 控件知识梳理(1) - Android Design Support Library 是什么Material Design 控件知识梳理(2) - AppBarLayout &amp; CollapsingToolbarLayoutMaterial Design 控件知识梳理(3) - BottomSheet &amp;&amp; BottomSheetDialog &amp;&amp; BottomSheetDialogFragmentMaterial Design 控件知识梳理(4) - FloatingActionButtonMaterial Design 控件知识梳理(5) - DrawerLayout &amp;&amp; NavigationViewMaterial Design 控件知识梳理(6) - SnackbarMaterial Design 控件知识梳理(7) - BottomNavigationBarMaterial Design 控件知识梳理(8) - TabLayoutMaterial Design 控件知识梳理(9) - 
+Material Design 控件知识梳理(1) - Android Design Support Library 是什么Material Design 控件知识梳理(2) - AppBarLayout &amp; CollapsingToolbarLayoutMaterial Design 控
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1459,7 +1439,7 @@ Material Design 控件知识梳理(1) - Android Design Support Library 是什么
         
           
           
-Material Design 控件知识梳理(1) - Android Design Support Library 是什么Material Design 控件知识梳理(2) - AppBarLayout &amp; CollapsingToolbarLayoutMaterial Design 控件知识梳理(3) - BottomSheet &amp;&amp; BottomSheetDialog &amp;&amp; BottomSheetDialogFragmentMaterial Design 控件知识梳理(4) - FloatingActionButtonMaterial Design 控件知识梳理(5) - DrawerLayout &amp;&amp; NavigationViewMaterial Design 控件知识梳理(6) - SnackbarMaterial Design 控件知识梳理(7) - BottomNavigationBarMaterial Design 控件知识梳理(8) - TabLayoutMaterial Design 控件知识梳理(9) - 
+Material Design 控件知识梳理(1) - Android Design Support Library 是什么Material Design 控件知识梳理(2) - AppBarLayout &amp; CollapsingToolbarLayoutMaterial Design 控
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1612,7 +1592,7 @@ Material Design 控件知识梳理(1) - Android Design Support Library 是什么
         
           
           
-Material Design 控件知识梳理(1) - Android Design Support Library 是什么Material Design 控件知识梳理(2) - AppBarLayout &amp; CollapsingToolbarLayoutMaterial Design 控件知识梳理(3) - BottomSheet &amp;&amp; BottomSheetDialog &amp;&amp; BottomSheetDialogFragmentMaterial Design 控件知识梳理(4) - FloatingActionButtonMaterial Design 控件知识梳理(5) - DrawerLayout &amp;&amp; NavigationViewMaterial Design 控件知识梳理(6) - SnackbarMaterial Design 控件知识梳理(7) - BottomNavigationBarMaterial Design 控件知识梳理(8) - TabLayoutMaterial Design 控件知识梳理(9) - 
+Material Design 控件知识梳理(1) - Android Design Support Library 是什么Material Design 控件知识梳理(2) - AppBarLayout &amp; CollapsingToolbarLayoutMaterial Design 控
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1765,7 +1745,7 @@ Material Design 控件知识梳理(1) - Android Design Support Library 是什么
         
           
           
-Material Design 控件知识梳理(1) - Android Design Support Library 是什么Material Design 控件知识梳理(2) - AppBarLayout &amp; CollapsingToolbarLayoutMaterial Design 控件知识梳理(3) - BottomSheet &amp;&amp; BottomSheetDialog &amp;&amp; BottomSheetDialogFragmentMaterial Design 控件知识梳理(4) - FloatingActionButtonMaterial Design 控件知识梳理(5) - DrawerLayout &amp;&amp; NavigationViewMaterial Design 控件知识梳理(6) - SnackbarMaterial Design 控件知识梳理(7) - BottomNavigationBarMaterial Design 控件知识梳理(8) - TabLayoutMaterial Design 控件知识梳理(9) - 
+Material Design 控件知识梳理(1) - Android Design Support Library 是什么Material Design 控件知识梳理(2) - AppBarLayout &amp; CollapsingToolbarLayoutMaterial Design 控
           ...
           <!--noindex-->
           <div class="post-button text-center">

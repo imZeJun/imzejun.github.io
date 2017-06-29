@@ -107,7 +107,7 @@
   var CONFIG = {
     root: '/',
     scheme: 'Pisces',
-    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
     fancybox: true,
     motion: true,
     duoshuo: {
@@ -167,7 +167,7 @@
     
   
 
-  <div class="container sidebar-position-left 
+  <div class="container sidebar-position-right 
    page-home 
  ">
     <div class="headband"></div>
@@ -366,26 +366,7 @@
         
           
           一、概述虚拟机的类加载机制定义：把描述类的数据从Class文件（一串二进制的字节流）加载到内存，并对数据进行校验、转换解析和初始化，最终形成被虚拟机直接使用的Java类型。
-在Java语言里，类型的加载、连接和初始化过程都是在程序运行期间完成的，Java里天生可以动态扩展的语言特性就是依赖运行期动态加载和动态连接这个特点实现的。
-用户可以通过Java预定义的和自定义类加载器，让一个本地的应用程序可以在运行时从网络或其他地方加载一个二进制流作为程序代码的一部分。
-二、类加载的时机2.1 类加载包含那些阶段类从被加载到虚拟机内存中开始，到卸载出内存，所经过的生命周期有：
-
-1.加载
-2.验证
-3.准备
-4.解析
-5.初始化
-6.使用
-7.卸载
-
-其中2-4统称为连接，上面的过程有几个需要注意的点：
-
-加载、验证、准备、初始化、卸载这五个阶段按顺序按部就班地开始，在一个阶段执行的过程中有可能调用、激活另外一个阶段。
-解析阶段有可能在初始化之后开始，这是为了支持Java语言的运行时绑定。
-
-2.2 类加载触发的时机有且仅有下面五种情况必须立即对类进行初始化：
-
-第一种：遇到new/getsta
+在Java语言里，类型的加载、连接和初始化过程都是在程序运行期间完成的，Java里天生可以动态扩展的语言特性就是依赖运行期动态
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -545,14 +526,7 @@
 
 在分析内存区域的时候，我们把Java运行时数据区分为两个部分：
 
-程序计数器、虚拟机栈、本地方法栈：每个栈帧中分配多少内存在类结构确定下来就已知，因此这些区域的内存分配和回收具备确定性，方法结束或线程结束时，内存就跟着被回收了。
-Java堆、方法区：由于一个接口中的多个实现类需要的内存可能不一样，一个方法中的多个分支需要的内存也不一样，只有在程序处于运行期间才能知道会创建哪些对象，因此这些区域的内存分配和回收是动态的。
-
-二、如何判断哪些是“存活”的实例2.1 引用的分类引用的定义：如果reference类型的数据中存储的数值代表的另外一块内存的起始地址，就称这块内存代表引用。引用的分类：
-
-强引用（Object a = new Object()）：只要强引用存在，垃圾回收器永远不会回收掉被引用的对象。
-软引用（SoftReference）：有用但并非必须，在系统将要发生OOM异常之前，将会把这些对象列进回收范围中进行第二次回收。
-弱引用（WeakReference）：非必须对象，被弱引用的对象只能生存到下
+程序计数器、虚拟机栈、本地方法栈：每个栈帧中分配多少内存在类结构确定下来就已知，因此这些区域的内存分配和回收具备确定性，方法结束或线程结束时，内存就跟着被
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -710,11 +684,7 @@ Java堆、方法区：由于一个接口中的多个实现类需要的内存可�
 所有线程共享的数据区
 
 二、线程隔离的数据区2.1 程序计数器
-概念程序计数器是当前线程所执行的字节码的行号指示器。字节码解释器工作时会通过改变这个计数器的指来取下一条需要执行的字节码指令。如果线程正在执行的是Java方法，那么计数器记录的是正在执行的虚拟机字节码指令的地址；如果正在执行的是Native方法，那这个计数器则为空。此内存区域是唯一一个在Java虚拟机规范中没有规定任何OOM情况的区域。
-为什么需要线程隔离由于Java虚拟机的多线程是通过线程轮流切换并分配处理器执行时间的方式来实现的，因此，为了线程切换后能恢复到正确的执行位置，每条线程都需要有一个独立的程序计数器。
-
-2.2 Java虚拟机栈
-概念虚拟机栈描述的是Java方法执行的内存模型，每个方法在执行的同时会创建一个栈帧，用于存储局部变量表、操作数栈、动态链接、方法出口等信息。局部变量表：存放了编译
+概念程序计数
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -874,13 +844,7 @@ Bitmap是什么
 Bitmap.Options
 简要分析Bitmap所占内存
 
-二、什么是Bitmap官方的说法是：Bitmap是对位图的抽象。形象地来说，我们在手机屏幕上所看到的图片就是由一个个像素点拼接而成的，每个像素点的都是用不同数量的二进制位来表示，而Bitmap就是用来保存这些二进制位。
-三、Bitmap占用内存分析3.1 屏幕密度的相关概念前面我们说到，Bitmap的最终目的是为了在屏幕上显示图片，所以首先我们需要了解关于屏幕密度的相关知识：
-
-像素px：如果我们近距离地看手机屏幕，就可以发现它有一个个小点，每一个小点就表示一个像素，我们通常称它为px。
-屏幕分辨率：指的是屏幕的上的像素总和，例如常说的某某手机屏幕分辨率为1920 * 1080，也就是说它的高有1920px，宽为1080px，像素点总和就是1920 * 1080px。
-屏幕尺寸：指的是屏幕的对象线长度，这里的长度不是用px为单位，而是用英寸为单位的，它和我们平时说的米、厘米是一个概念。
-ppi：英文名为p
+二、什么是Bitmap官方的说法是：Bitmap是对位图的抽象。形象地来说，我们在手机屏幕上所看到的图片就是由一个个
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1036,22 +1000,7 @@ ppi：英文名为p
 二、scaleType的分类首先，我们简单介绍一下scaleType的分类：
 2.1 通过Matrix设置这种情况下，对应的模式只有一种：
 
-ScaleType.MATRIX
-
-最终，在这种情况下，我们可以同setImageMatrix(Matrix matrix)来改变。
-2.2 填充类型这一类属性的特点就是通过拉伸或者压缩图片，使得原图片中所有元素都能够展现，并且至少填满控件x,y轴的其中一个。一共有四类：
-
-ScaleType.FIX_XY：不考虑原图的比例，拉伸或者压缩使得它等于控件的宽高。
-
-下面三种都会维持原图的比例，使得它们的x,y都小于等于控件的宽高，只是最终的图形放的位置不同。
-
-ScaleType.FIT_START：放置在左上角。
-ScaleType.FIT_CENTER：放置在中间。
-ScaleType.FIT_END：放置在右下角。
-
-2.3 中心重合类型下面的三种类型都会使得控件的中心和图片中心重合：
-
-ScaleType.CENT
+ScaleType.MATRI
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1204,10 +1153,7 @@ ScaleType.CENT
         
           
           一、概述前面说的都是如何使用Glide提供的接口来展示图片资源，今天这篇，我们来讲一下如何改变Glide的配置。
-二、定义GlideModule2.1 步骤首先，我们需要一个实现了GlideModule接口的类，重写其中的方法来改变Glide的配置，然后让Glide在构造实例的过程中，读取这个类中的配置信息。
-
-第一步：实现GlideModule接口
-123456789101112public class CustomGlideModule implements GlideModule &#123;    @Override    public void applyOptions(Context context, GlideBuilder builder) &#123;        //通过builder.setXXX进行配置.    &#125;    @Override    public void registerComponents(Context context, Glide glide) &#123;        //通过glide.register进行配置.    &
+二、定义GlideModule2.1 步骤首先，我们需要一个实现了GlideModule接口的类，重写其中的方法来改变Glide的配置，然后让Glide在构造实例的过程中，读取这个类中的
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1360,12 +1306,7 @@ ScaleType.CENT
         
           
           一、概述在之前基础用法的文章中，我们介绍了使用crossFade来进行placeHolder和要加载的图片之间渐进渐出的动画，今天，我们来介绍一个更加高级的用法 - animate()。
-animate有以下两个重载方法，我们可以给它指定一个R.anim下的动画资源文件，或者传入一个实现了ViewPropertyAnimation.Animator接口的实例，来自定义自己的动画。
-
-public DrawableRequestBuilder&lt;ModelType&gt; animate(int animationId)
-public DrawableRequestBuilder&lt;ModelType&gt; animate(ViewPropertyAnimation.Animator animator)
-
-二、示例2.1 在xml中定义动画在xml中使用自定的动画很简单，首先，我们在R.anim文件夹下定义一个动画资源文件，R.anim.glide_animate1234567891011121314&lt;?xml version=&quot;1.0&quot; encodi
+animate有以下两个重载方法，我们可以给它指定一个R.anim下的动画资源文件，或者传入一个实现了ViewP
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1518,7 +1459,7 @@ public DrawableRequestBuilder&lt;ModelType&gt; animate(ViewPropertyAnimation.Ani
         
           
           一、概述有时候，当我们去服务器请求图片资源成功之后，希望先对它进行一些处理，例如缩放、旋转、蒙灰等，然后再把处理后的图片展示在控件上，这时候就可以用上Glide提供的transform()方法，简单来说，transform()的作用就是改变原始资源在客户端上最终的展现结果。
-二、示例2.1 采用BitmapTransformation进行变换首先，transform(xxx)接收的参数类型有两种，一种是BitmapTransformation，另一种是Transformtion&lt;GifBitmapWrapper&gt;，下面是它们的定义，在平时的使用过程中，如果我们的资源为静态图片，而不是Gif或者Media，那么通过继承BitmapTransformation来实现自己的变换就可以了。12345678910//接收BitmapTransformation作为参数.public DrawableRequestBuilder&lt;ModelType&gt; transform(BitmapTransformation... transformations) &#123;    r
+二、示例2.1 采用Bi
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1670,13 +1611,7 @@ public DrawableRequestBuilder&lt;ModelType&gt; animate(ViewPropertyAnimation.Ani
       
         
           
-          一、概述首先，我们回顾一下Glide的基本用法，我们的最后一步都是调用into(ImageView imageView)，通过断点，我们可以看到正是这一步触发了图片的请求：这个ImageView最终会通过buildTarget方法，封装在GlideDrawableImageViewTarget当中，然后调用GenericRequestBuilder#into方法发起请求，Glide一直跟踪这个Target，并在获得图片资源之后，通知Target来更新它内部持有的ImageView的引用。这个过程就好像是我们平时请求网络时，会传入一个Callback，等到异步的操作执行完毕后，通过Callback传回请求的资源来更新UI。通过源码，可以看到和Target相关的类有：
-
-Target
-BaseTarget
-SimpleTarget：AppWidgetTarget、PreloadTatget、NotificationTarget
-ViewTarget
-ImageViewTarget：GlideDrawableImageViewTarget、BitmapImageViewTarget、Draw
+          一、概述首先，我们回顾一下Glide的基本用法，我们的最后一步都是调用into(ImageView imageView)，通过断点，我们可以看到正是这一步触发了图片的请求：这个ImageView最终会通过buildTarget方法，封装在GlideDrawableImageViewTarget当中，
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1832,9 +1767,7 @@ ImageViewTarget：GlideDrawableImageViewTarget、BitmapImageViewTarget、Draw
 
 https://futurestud.io/tutorials/glide-getting-started
 
-为了区分，我们这篇只介绍一些基本用法，掌握这些基本就可以在项目中使用Glide了，而关于如何自定义Target/Glide Module等高级的用法，之后再进行讨论。
-二、导入依赖包&amp;加载网络静态图片在使用前，首先需要在build.gradle中引入：12345dependencies &#123;    //....    compile &apos;com.github.bumptech.glide:glide:3.7.0&apos;    //...&#125;
-下面是Glide加载一张网络静态图片最基本的用法：1234Glide.with(this)　//传入关联的Context，如果是Activity/Fragment，那么它会根据组件当前的状态来控制请求。.load(&quot;http://i.imgur.com/DvpvklR.png&quot;) //需要加载的图片，大多数情况下
+为了区分，我们这篇只介绍一些基本用法，掌握这些基本就可以在项目中使用Glide了，而关于如何自定义Target/Gl
           ...
           <!--noindex-->
           <div class="post-button text-center">
