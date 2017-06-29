@@ -5,7 +5,7 @@
   
 
 
-<html class="theme-next mist use-motion" lang="zh-Hans">
+<html class="theme-next pisces use-motion" lang="zh-Hans">
 <head>
   <meta charset="UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -106,8 +106,8 @@
   var NexT = window.NexT || {};
   var CONFIG = {
     root: '/',
-    scheme: 'Mist',
-    sidebar: {"position":"left","display":"hide","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
     fancybox: true,
     motion: true,
     duoshuo: {
@@ -263,12 +263,12 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/03/插件化/插件化知识梳理(2)---Small-框架之如何引入公共库插件/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/03/设计模式/设计模式知识梳理(1)---设计模式概述/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="zeMao">
       <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/images/avatar.jpg">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -282,7 +282,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/06/03/插件化/插件化知识梳理(2)---Small-框架之如何引入公共库插件/" itemprop="url">插件化知识梳理(2) - Small 框架之如何引入公共库插件</a></h1>
+                <a class="post-title-link" href="/2017/06/03/设计模式/设计模式知识梳理(1)---设计模式概述/" itemprop="url">设计模式知识梳理(1) - 设计模式概述</a></h1>
         
 
         <div class="post-meta">
@@ -317,8 +317,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/插件化知识梳理/" itemprop="url" rel="index">
-                    <span itemprop="name">插件化知识梳理</span>
+                  <a href="/categories/设计模式知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">设计模式知识梳理</span>
                   </a>
                 </span>
 
@@ -334,7 +334,7 @@
 
           
           
-             <span id="/2017/06/03/插件化/插件化知识梳理(2)---Small-框架之如何引入公共库插件/" class="leancloud_visitors" data-flag-title="插件化知识梳理(2) - Small 框架之如何引入公共库插件">
+             <span id="/2017/06/03/设计模式/设计模式知识梳理(1)---设计模式概述/" class="leancloud_visitors" data-flag-title="设计模式知识梳理(1) - 设计模式概述">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -365,11 +365,22 @@
       
         
           
-          一、前言在 插件化知识梳理(1) - Small 框架之如何引入应用插件 中，我们简要地介绍了如何使用Small框架来通过插件实现一个Activity的跳转，也就是app.main，这里的app.ma
+          一、概述去年时候看过&lt;&lt;Head First 设计模式&gt;&gt;这本书，也记了一些用例和笔记，下面是当时各模式对应的笔记，现在看起来也都忘的差不多了，就把以前的笔记当作是一个目录，打算花半个到一个月的时间，好好地总结一下每个设计模式。
+二、各设计模式详解2.1 策略模式定义了算族，分别封装起来，让它们之间可以互相替换，此模式让算法的变化独立于使用算法的客户。
+2.2 观察者模式2.3 装饰者模式
+装饰者对象和被装饰者对象具有同样的超类型。
+你可以用一个或多个装饰者包装一个对象。
+既然装饰者和被装饰对象具有同样的超类型，所以在任何需要原始对象（被包装的场合），可以用装饰过的对象代替它。
+装饰者可以在所委托被装饰者的行为之前与/或之后，加上自己的行为，以达到特定的目的。
+对象可以在任何时候被装饰，所以可以在运行时动态地、不限量地用你喜欢的装饰者来装饰对象。
+
+2.4 简单工厂简单工厂其实并不是一个设计模式，反而比较像是一种编程习惯。
+2.5 工厂方法模式定义了一个创建对象的接口，但由子类决定要实例化的类是哪一个，工厂方法让类把实例化推迟到子类。
+2.6 抽象工厂模式提供一
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017/06/03/插件化/插件化知识梳理(2)---Small-框架之如何引入公共库插件/#more" rel="contents">
+            <a class="btn" href="/2017/06/03/设计模式/设计模式知识梳理(1)---设计模式概述/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -420,7 +431,7 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="zeMao">
       <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/images/avatar.jpg">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -518,7 +529,13 @@
         
           
           一、前言上个星期，公司里有一个小的讲座，对插件化进行了简单的介绍，因此决定开始研究一下这方面的知识。
-在网上查了一些相关的资料，发现了Small这个开源的插件化框架，因此打算从它入手，通过它的内部实现
+在网上查了一些相关的资料，发现了Small这个开源的插件化框架，因此打算从它入手，通过它的内部实现，学习一下插件化的相关原理。这篇文章是个开篇，先从一个简单的例子开始，把环境给搭建好。先给大家分享一些这几天查阅的资料，如果大家有比较好的文章也可以留言或者私信我：
+Android博客周刊专题之＃插件化开发＃
+Small Github 官网Small IssuesSmall 快速入门
+Android Small 源码分析 (一) 启动流程Android Small 源码分析 (二) 插件加载过程
+ Android Small 插件化框架源码分析
+ Android Small 插件化框架 – 启动插件 Activity 源码解析(上)Android Small 插件化框架 – 启动插件 Activity 源码解析(下)Android Small 插件化框架 – Android 应用类加载机制Android Small 插件化框架 – 类加载实现解析
+二、基本示例2.1 简要介绍对于Small
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -573,7 +590,7 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="zeMao">
       <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/images/avatar.jpg">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -670,7 +687,9 @@
       
         
           
-          一、前言在 Retrofit 知识梳理(1) - 流程分析 中，我们对于Retrofit的流程进行了简单的分析，大家谈到Retrofit的时候，往往也会提到动态代理，今天这篇文章，我们就来一起研究一下
+          一、前言在 Retrofit 知识梳理(1) - 流程分析 中，我们对于Retrofit的流程进行了简单的分析，大家谈到Retrofit的时候，往往也会提到动态代理，今天这篇文章，我们就来一起研究一下这一过程的内部实现。
+二、内部实现涉及到动态代理的部分为下面这两句：1234//1.返回代理对象GitHubService service = retrofit.create(GitHubService.class);//2.调用该代理对象的接口方法Call&lt;ResponseBody&gt; call = service.listRepos(&quot;octocat&quot;);
+2.1 生成代理对象第一步的目的就是通过Retrofit的create方法，根据GithubService这个接口所声明的方法来得到一个代理对象：12345678910111213141516171819202122@SuppressWarnings(&quot;unchecked&quot;) // Single-interface proxy creation guarded by paramete
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -725,7 +744,7 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="zeMao">
       <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/images/avatar.jpg">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -822,7 +841,14 @@
       
         
           
-          一、前言在前一篇文章 NDK 知识梳理(1) - 使用 CMake 进行 NDK 开发之初体验 中，我们一起学习了如何在Android Studio中使用CMake来进行NDK开发，而编写CMakeL
+          一、前言在前一篇文章 NDK 知识梳理(1) - 使用 CMake 进行 NDK 开发之初体验 中，我们一起学习了如何在Android Studio中使用CMake来进行NDK开发，而编写CMakeLists.txt构建脚本是其中一个重要的环节，今天我们就来一起学习CMakeLists.txt的一些应用，介绍它在下面三种场景的用法：
+
+从原生代码构建一个原生库
+添加Android NDK的API
+引入第三方so
+
+二、从原生代码构建一个原生库2.1 指定 CMake 最低版本cmake_minimum_required用于指定CMake的最低版本信息，不加入会收到警告。1cmake_minimum_required(VERSION 3.4.1)
+2.2 从原生代码构建一个原生库add_library()用于指示CMake从原生代码构建一个原生库，通俗地说，就是从.cpp经过编译得到.so文件。正如我们在 NDK 知识梳理(1) - 使用 CMake 进行 NDK 开发之初体验 中看到的那样，我们通过add_library让CMake根据native-lib.cpp源文件构建一个名为na
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -877,7 +903,7 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="zeMao">
       <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/images/avatar.jpg">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -975,7 +1001,12 @@
         
           
           一、前言在Eclipse的时代，我们进行NDK的开发一般需要通过手动执行NDK脚本生成*.so文件，再将.so文件放到对应的目录之后，之后再进行打包。
-而如果使用的是Android Studio进行N
+而如果使用的是Android Studio进行NDK开发，在2.2的版本以后，我们可以不需要手动地运行NDK脚本来生成*.so文件，而是将这一过程作为Gradle构建过程的依赖项，事先编写好编译的脚本文件，然后在build.gradle中指定编译脚本文件的路径就可以一次性完成生成原生库并打包成APK的过程。
+目前这种AS + Gradle的NDK开发方式又可以分为三种：ndk-build、CMake和Experimental Gradle：
+
+ndk-build：和上面谈到的传统方式相比，它们两个的目录结构相同，Gradle脚本其实最终还是依赖于Android.mk文件，对于使用传统方式的项目来说，比较容易过度。
+CMake：Gradle脚本依赖的是CMakeLists.txt文件。
+Experimental Gradle：需要引入实验性的gradle插件，全部的配置都可以通过build.gradle来完成，不再需要编写Android.
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1030,7 +1061,7 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="zeMao">
       <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/images/avatar.jpg">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -1127,7 +1158,8 @@
       
         
           
-          一、前言其实，这篇文章本来应该叫做”Handler源码解析”的，但是想想写Handler源码的文章太多了，还是缓一缓，先写些不一样的，今天，我们从源码的角度来总结一下应用Handler的一些场景的原理
+          一、前言其实，这篇文章本来应该叫做”Handler源码解析”的，但是想想写Handler源码的文章太多了，还是缓一缓，先写些不一样的，今天，我们从源码的角度来总结一下应用Handler的一些场景的原理。
+二、Handler 的应用2.1 线程间的通信在平时的开发当中，Handler最常见的用法就是用于线程之间的通信，特别是当我们在子线程中去处理耗时的任务，当任务完成之后，我们希望将结果发送到主线程中进行处理，那么就会使用到Handler，基本的思想如下图所示：当我们在子线程中通过Handler放入在主线程中的循环队列时，那么主线程就会收到消息，之后，我们就可以在主线程中进行后续的处理，例如下面这样：1234567891011121314151617181920212223242526272829public class MainActivity extends AppCompatActivity &#123;    private Handler mHandler = new Handler() &#123;        @Override        public void ha
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1182,7 +1214,7 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="zeMao">
       <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/images/avatar.jpg">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -1279,7 +1311,15 @@
       
         
           
-          一、前言在 Framework 源码解析知识梳理(1) - 应用进程与 AMS 的通信实现 和 Framework 源码解析知识梳理(2) - 应用进程与 WMS 的通信实现 这两篇文章中，我们介绍了
+          一、前言在 Framework 源码解析知识梳理(1) - 应用进程与 AMS 的通信实现 和 Framework 源码解析知识梳理(2) - 应用进程与 WMS 的通信实现 这两篇文章中，我们介绍了应用进程与AMS以及WMS之间的通信实现，但是逻辑还是比较绕的，为了方便大家更好地理解，我们介绍一下大家见得比较多的应用进程间通信的实现。
+二、例子说起应用进程之间的通信，相信大家都不陌生，应用进程之间通信最常用的方式就是AIDL，下面，我们先演示一个AIDL的简单例子，接下来，我们再分析它的内部实现。
+2.1 服务端2.1.1 编写 AIDL 文件第一件事，就是服务端需要声明自己可以为客户端提供什么功能，而这一声明则需要通过一个.aidl文件来实现，我们先简要介绍介绍一下AIDL文件：
+
+AIDL文件的后缀为*.aidl
+对于AIDL默认支持的数据类型，是不需要导入包的，这些默认的数据类型包括：
+基本数据类型：byte/short/int/long/float/double/boolean/char
+String/CharSequence
+List&lt;T&gt;：其中T必须是AIDL
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1334,7 +1374,7 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="zeMao">
       <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/images/avatar.jpg">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -1431,7 +1471,15 @@
       
         
           
-          一、前言在 Framework 源码解析知识梳理(1) - 应用进程与 AMS 的通信实现 这篇文章中，我们分析了应用进程和AMS之间的通信实现，我们今天讨论一下应用进程和WindowManagerS
+          一、前言在 Framework 源码解析知识梳理(1) - 应用进程与 AMS 的通信实现 这篇文章中，我们分析了应用进程和AMS之间的通信实现，我们今天讨论一下应用进程和WindowManagerService之间的通信实现。
+在之前的分析中，我们分两个部分来介绍了应用进程与AMS之间的通信：
+
+应用进程发送消息到AMS进程
+AMS发送消息到应用进程
+
+现在，我们也按照一样的讨论，分为这两个方向来介绍应用进程与WMS之间的通信实现，整个通信的过程会涉及到下面的这些类，其中加粗的线就是整个通信实现的调用路径。
+二、WindowManagerImpl &amp; WindowManagerGlobal在AMS的讨论中，我们以在应用进程中启动Activity为例子进行了介绍，今天，我们选取另一个大家很常见的例子：Activity启动之后，是如何将界面添加到屏幕上的。
+2.1 WindowManagerImpl在 View 绘制体系知识梳理(2) - setContentView 源码解析 这篇文章中，我们介绍了DecorView的相关知识，它就对应于我们需要添加到屏幕上的View的根节点，
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1486,7 +1534,7 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="zeMao">
       <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/images/avatar.jpg">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -1584,7 +1632,17 @@
         
           
           一、前言我们在许多和Framework解析相关的文章中，都会看到ActivityManagerService这个类，但是在上层的应用开发中，却很少直接会使用到他。
-那么我们为什么要学习它的呢，一个最直
+那么我们为什么要学习它的呢，一个最直接的好处就是它是我们理解应用程序启动过程的基础，只有把和ActivityManagerService以及和它相关的类的关系都理解透了，我们才能理清应用程序启动的过程。
+今天这篇文章，我们就来对ActivityManagerService与应用进程之间的通信方式做一个简单的总结，这里我们根据进程之间的通信方向，分为两个部分来讨论：
+
+从应用程序进程到管理者进程
+(a) IActivityManager(b) ActivityManagerNative(c) ActivityManagerProxy(d) ActivityManagerService
+
+从管理者进程到应用程序进程
+(a) IApplicationThread(b) ApplicationThreadNative(c) ApplicationThreadProxy(d) ApplicationThread
+
+
+二、从应用程序进程
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1639,7 +1697,7 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="zeMao">
       <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/images/avatar.jpg">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -1736,7 +1794,13 @@
       
         
           
-          一、ThreadPoolExecutor 简介1.1 优点在 多线程知识梳理(5) - 线程池四部曲之 Executor 框架 中，我们对Executor框架以及它的调度模型进行了简要的介绍，其中用于
+          一、ThreadPoolExecutor 简介1.1 优点在 多线程知识梳理(5) - 线程池四部曲之 Executor 框架 中，我们对Executor框架以及它的调度模型进行了简要的介绍，其中用于对线程进行调度和管理的线程池是整个框架的核心，通过线程池我们可以：
+
+重复利用已经创建的线程降低线程创建和销毁造成的消耗。
+当任务到达时，任务可以不需要等到线程创建就能够立即执行，提高响应速度。
+利用线程池对线程进行统一分配、调优和监控，提供线程的可管理性。
+
+1.2 处理流程在JDK包中，ThreadPoolExecutor就是线程池的具体实现，在阅读源码之前，我们先对它的处理流程进行简要介绍，当我们通过execute/submit方法提交一个任务到线程池后，会经过以下的处理流程：1) 如果当前运行的线程小于 corePoolSize，则创建新线程来执行任务。2) 如果运行的线程等于或多于 corePoolSize，则将任务加入到等待队列中。3) 如果无法将任务加入到等待队列，则继续创建新的线程来执行任务。4) 如果创建新线程使得当前运行的线程超过maximumPoolSize，任务将被
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1814,7 +1878,7 @@
       <section class="site-overview sidebar-panel sidebar-panel-active">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
-               src="/images/avatar.gif"
+               src="/images/avatar.jpg"
                alt="zeMao" />
           <p class="site-author-name" itemprop="name">zeMao</p>
            
@@ -1857,6 +1921,32 @@
         
 
         
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              Links
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.jianshu.com/u/37baa8a86582" title="我的简书" target="_blank">我的简书</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://github.com/imZeJun" title="GitHub" target="_blank">GitHub</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.heqiangfly.com/" title="寒江蓑笠" target="_blank">寒江蓑笠</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://johnnyshieh.me/" title="Johnny Shieh" target="_blank">Johnny Shieh</a>
+                </li>
+              
+            </ul>
+          </div>
         
 
         
@@ -1909,7 +1999,7 @@
 <div class="theme-info">
   主题 -
   <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
-    NexT.Mist
+    NexT.Pisces
   </a>
 </div>
 
@@ -1988,6 +2078,13 @@
 
   
   
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
 
   
     <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
