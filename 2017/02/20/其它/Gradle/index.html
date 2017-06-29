@@ -1,0 +1,987 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="一、统一管理依赖版本1.1 在根目录下，新建config.gradle文件12345678910111213141516171819ext &amp;#123;    android = [            compileSdkVersion: 23,            buildToolsVersion: &amp;quot;23.0.3&amp;quot;,            applicationId">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Gradle">
+<meta property="og:url" content="http://yoursite.com/2017/02/20/其它/Gradle/index.html">
+<meta property="og:site_name" content="泽毛的博客">
+<meta property="og:description" content="一、统一管理依赖版本1.1 在根目录下，新建config.gradle文件12345678910111213141516171819ext &amp;#123;    android = [            compileSdkVersion: 23,            buildToolsVersion: &amp;quot;23.0.3&amp;quot;,            applicationId">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-a1aa8635f689f527.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-2845695076cbd1a7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-61688bffb5000d3f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-7b6b2ca32994cc69.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-45686469a80385a6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-dc4456a9e09bb3d1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-34ec9100c3d8e536.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-216b12a96ed813c9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-d044465fbabe92a8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-4dd8447145078936.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2017-06-29T06:51:51.754Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Gradle">
+<meta name="twitter:description" content="一、统一管理依赖版本1.1 在根目录下，新建config.gradle文件12345678910111213141516171819ext &amp;#123;    android = [            compileSdkVersion: 23,            buildToolsVersion: &amp;quot;23.0.3&amp;quot;,            applicationId">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-a1aa8635f689f527.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/02/20/其它/Gradle/"/>
+
+
+
+
+
+  <title>Gradle | 泽毛的博客</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?c276429c3a148ef2fa47d755199a64c2";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">泽毛的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">但愿每次回忆，对生活都不感到负疚</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/02/20/其它/Gradle/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="泽毛">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="泽毛的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Gradle</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-02-20T20:55:00+08:00">
+                2017-02-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/其它/" itemprop="url" rel="index">
+                    <span itemprop="name">其它</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a class="cloud-tie-join-count" href="/2017/02/20/其它/Gradle/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count join-count" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2017/02/20/其它/Gradle/" class="leancloud_visitors" data-flag-title="Gradle">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">热度 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+                 <span>°C</span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="一、统一管理依赖版本"><a href="#一、统一管理依赖版本" class="headerlink" title="一、统一管理依赖版本"></a>一、统一管理依赖版本</h1><h2 id="1-1-在根目录下，新建config-gradle文件"><a href="#1-1-在根目录下，新建config-gradle文件" class="headerlink" title="1.1 在根目录下，新建config.gradle文件"></a>1.1 在根目录下，新建<code>config.gradle</code>文件</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">ext &#123;</div><div class="line"></div><div class="line">    android = [</div><div class="line">            compileSdkVersion: 23,</div><div class="line">            buildToolsVersion: &quot;23.0.3&quot;,</div><div class="line">            applicationId: &quot;com.example.lizejun.repogradle&quot;,</div><div class="line">            minSdkVersion: 14,</div><div class="line">            targetSdkVersion: 23,</div><div class="line">            versionCode: 1,</div><div class="line">            versionName: &quot;1.0&quot;,</div><div class="line">            testInstrumentationRunner: &quot;android.support.test.runner.AndroidJUnitRunner&quot;</div><div class="line">    ]</div><div class="line"></div><div class="line">    dependencies = [</div><div class="line">            &quot;support-v4&quot;  : &apos;com.android.support:support-v4:23.2.0&apos;,</div><div class="line">            &quot;support-v7&quot;  : &apos;com.android.support:appcompat-v7:23.2.0&apos;</div><div class="line">    ]</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><code>android</code>用来管理<code>SDK</code>版本、版本号等，<code>dependencies</code>用来管理依赖库的版本，它们都是一个数组，用逗号来分割，数组的每个元素都是<code>key:value</code>的格式。</p>
+<h2 id="1-2-在根目录下的build-gradle，新增："><a href="#1-2-在根目录下的build-gradle，新增：" class="headerlink" title="1.2 在根目录下的build.gradle，新增："></a>1.2 在根目录下的<code>build.gradle</code>，新增：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">apply from: &quot;config.gradle&quot;</div></pre></td></tr></table></figure>
+<h2 id="1-3-在根目录下的各个Module或者Library中的build-gradle文件中，引用对应的key："><a href="#1-3-在根目录下的各个Module或者Library中的build-gradle文件中，引用对应的key：" class="headerlink" title="1.3 在根目录下的各个Module或者Library中的build.gradle文件中，引用对应的key："></a>1.3 在根目录下的各个<code>Module</code>或者<code>Library</code>中的<code>build.gradle</code>文件中，引用对应的<code>key</code>：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">android &#123;</div><div class="line">    compileSdkVersion rootProject.ext.android.compileSdkVersion</div><div class="line">    buildToolsVersion rootProject.ext.android.buildToolsVersion</div><div class="line">    defaultConfig &#123;</div><div class="line">        applicationId rootProject.ext.android.applicationId</div><div class="line">        minSdkVersion rootProject.ext.android.minSdkVersion</div><div class="line">        targetSdkVersion rootProject.ext.android.targetSdkVersion</div><div class="line">        versionCode rootProject.ext.android.versionCode</div><div class="line">        versionName rootProject.ext.android.versionName</div><div class="line">        testInstrumentationRunner rootProject.ext.android.testInstrumentationRunner</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">dependencies &#123;</div><div class="line">    compile rootProject.ext.dependencies[&quot;support-v7&quot;]</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="二、查看依赖关系"><a href="#二、查看依赖关系" class="headerlink" title="二、查看依赖关系"></a>二、查看依赖关系</h1><h2 id="2-1-工具查看"><a href="#2-1-工具查看" class="headerlink" title="2.1 工具查看"></a>2.1 工具查看</h2><p>依赖树的查看可以通过<code>Android Studio</code>的插件<code>Gradle View</code>来查看：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-a1aa8635f689f527.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Gradle View.png"><br>重启之后，点击<code>View -&gt; Tool Windows -&gt; Gradle View</code>，之后会在最下方生成一个窗口，我们通过这个窗口就可以看到对应项目的依赖关系：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-2845695076cbd1a7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Gradle View Result.png"></p>
+<h2 id="2-2-命令查看"><a href="#2-2-命令查看" class="headerlink" title="2.2 命令查看"></a>2.2 命令查看</h2><p>除此之外，我们也可以使用以下的命令：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./gradlew -q app:dependencies</div></pre></td></tr></table></figure></p>
+<p>同样可以获得类似的结果：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-61688bffb5000d3f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="命令.png"><br>注意上图，如果标记了<code>(*)</code>，那么表示这个依赖被忽略了，这是因为其他顶级依赖中也依赖了这个传递的依赖，<code>Gradle</code>会自动分析下载最合适的依赖。</p>
+<h1 id="三、标识符"><a href="#三、标识符" class="headerlink" title="三、标识符"></a>三、标识符</h1><p>由于多个顶级依赖当中，可能包含了相同的子依赖，但是它们的版本不同，这时候为了选择合适的版本，那么就需要使用一些必要的操作符来管理子依赖。</p>
+<h2 id="3-1-Transitive"><a href="#3-1-Transitive" class="headerlink" title="3.1 Transitive"></a>3.1 <code>Transitive</code></h2><p>默认为<code>true</code>，表示<code>gradle</code>自动添加子依赖项，形成一个多层树形结构；设置为<code>false</code>，则需要手动添加每个依赖项。</p>
+<h3 id="3-1-1-统一指定Transitive"><a href="#3-1-1-统一指定Transitive" class="headerlink" title="3.1.1 统一指定Transitive"></a>3.1.1 统一指定<code>Transitive</code></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">configurations.all &#123;</div><div class="line">    transitive = false</div><div class="line">&#125;</div><div class="line"></div><div class="line">dependencies &#123;</div><div class="line">    compile rootProject.ext.dependencies[&quot;support-v7&quot;]</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>最终得到的结果是，可以看到前面的子依赖项都没有了：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-7b6b2ca32994cc69.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="2017-02-09 15:27:38屏幕截图.png"></p>
+<h3 id="3-1-2-单独指定Transitive"><a href="#3-1-2-单独指定Transitive" class="headerlink" title="3.1.2 单独指定Transitive"></a>3.1.2 单独指定<code>Transitive</code></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">dependencies &#123;</div><div class="line">    compile (&apos;com.android.support:appcompat-v7:23.2.0&apos;) &#123;</div><div class="line">        transitive = false</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="3-2-Force"><a href="#3-2-Force" class="headerlink" title="3.2 Force"></a>3.2 <code>Force</code></h2><p>用来表示强制设置某个模块的版本：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">configurations.all &#123;</div><div class="line">    resolutionStrategy &#123;</div><div class="line">        force &apos;com.android.support:support-v4:23.1.0&apos;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>之后打印，发现其依赖的包版本变成了<code>23.1.0</code>：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-45686469a80385a6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Force.png"></p>
+<h2 id="3-3-exclude"><a href="#3-3-exclude" class="headerlink" title="3.3 exclude"></a>3.3 <code>exclude</code></h2><p>该标识符用来设置不编译指定的模块</p>
+<h3 id="3-3-1-全局配置某个模块"><a href="#3-3-1-全局配置某个模块" class="headerlink" title="3.3.1 全局配置某个模块"></a>3.3.1 全局配置某个模块</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">configurations &#123;</div><div class="line">    all *.exclude group : &apos;com.android.support&apos;, module: &apos;support-v4&apos;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>此时的依赖关系为：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-dc4456a9e09bb3d1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="2017-02-09 15:54:02屏幕截图.png"><br>当然，<code>exclude</code>后的参数有<code>group</code>和<code>module</code>，可以分别单独使用，会排除所有匹配项。</p>
+<h3 id="3-3-2-单独给某个模块exclude"><a href="#3-3-2-单独给某个模块exclude" class="headerlink" title="3.3.2 单独给某个模块exclude"></a>3.3.2 单独给某个模块<code>exclude</code></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">compile (&apos;com.android.support:appcompat-v7:23.2.0&apos;) &#123;</div><div class="line">    exclude group : &apos;com.android.support&apos;, module: &apos;support-v4&apos;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>也会和上面获得相同的结果</p>
+<h1 id="四、版本冲突"><a href="#四、版本冲突" class="headerlink" title="四、版本冲突"></a>四、版本冲突</h1><h2 id="4-1-相同配置下的版本冲突"><a href="#4-1-相同配置下的版本冲突" class="headerlink" title="4.1 相同配置下的版本冲突"></a>4.1 相同配置下的版本冲突</h2><p>同一配置下，某个模块的不同版本同时被依赖时，默认使用最新版，<code>Gradle</code>同步时不会报错。</p>
+<h1 id="五、Gradle详解"><a href="#五、Gradle详解" class="headerlink" title="五、Gradle详解"></a>五、<code>Gradle</code>详解</h1><p>基本配置：<code>AS</code>中的<code>Android</code>项目通常至少包含两个<code>build.gradle</code>，一个是<code>Project</code>范围的，另一个是<code>Module</code>范围的，由于一个<code>Project</code>可以有多个<code>Module</code>，所以每个<code>Module</code>下都会对应一个<code>build.gradle</code>。</p>
+<h2 id="5-1-Project下的build-gradle"><a href="#5-1-Project下的build-gradle" class="headerlink" title="5.1 Project下的build.gradle"></a>5.1 <code>Project</code>下的<code>build.gradle</code></h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">// Top-level build file where you can add configuration options common to all sub-projects/modules.</div><div class="line">apply from: &quot;config.gradle&quot;</div><div class="line"></div><div class="line">buildscript &#123;</div><div class="line">    repositories &#123;</div><div class="line">        jcenter()</div><div class="line">    &#125;</div><div class="line">    dependencies &#123;</div><div class="line">        classpath &apos;com.android.tools.build:gradle:1.3.1&apos;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">allprojects &#123;</div><div class="line">    repositories &#123;</div><div class="line">        jcenter()</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">task clean(type: Delete) &#123;</div><div class="line">    delete rootProject.buildDir</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li><code>buildscript</code>下的<code>repositories</code>是<code>gradle</code>脚本自身需要的资源，</li>
+<li><code>allprojects</code>下的<code>repositories</code>是项目所有模块需要的资源。</li>
+</ul>
+<h2 id="5-2-模块的build-gradle"><a href="#5-2-模块的build-gradle" class="headerlink" title="5.2 模块的build.gradle"></a>5.2 模块的<code>build.gradle</code></h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line">//声明插件,表明这是一个Android程序;如果是库,那么应当是com.android.library</div><div class="line">apply plugin: &apos;com.android.application&apos;</div><div class="line">//Android构建过程需要配置的参数</div><div class="line">android &#123;</div><div class="line">    //编译版本</div><div class="line">    compileSdkVersion rootProject.ext.android.compileSdkVersion</div><div class="line">    //buildTool版本</div><div class="line">    buildToolsVersion rootProject.ext.android.buildToolsVersion</div><div class="line">    //默认配置,同时应用到debug和release版本上</div><div class="line">    defaultConfig &#123;</div><div class="line">        applicationId rootProject.ext.android.applicationId</div><div class="line">        minSdkVersion rootProject.ext.android.minSdkVersion</div><div class="line">        targetSdkVersion rootProject.ext.android.targetSdkVersion</div><div class="line">        versionCode rootProject.ext.android.versionCode</div><div class="line">        versionName rootProject.ext.android.versionName</div><div class="line">        testInstrumentationRunner rootProject.ext.android.testInstrumentationRunner</div><div class="line">    &#125;</div><div class="line">    //配置debug和release版本的一些参数,例如混淆,签名配置等</div><div class="line">    buildTypes &#123;</div><div class="line">        //release版本</div><div class="line">        release &#123;</div><div class="line">            minifyEnabled false //是否开启混淆</div><div class="line">            proguardFiles getDefaultProguardFile(&apos;proguard-android.txt&apos;), &apos;proguard-rules.pro&apos; //混淆文件位置</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">dependencies &#123;</div><div class="line">    compile fileTree(dir: &apos;libs&apos;, include: [&apos;*.jar&apos;])</div><div class="line">    compile rootProject.ext.dependencies[&quot;support-v7&quot;]</div><div class="line">    androidTestCompile(&apos;com.android.support.test.espresso:espresso-core:2.2.2&apos;, &#123;</div><div class="line">        exclude group: &apos;com.android.support&apos;, module: &apos;support-annotations&apos;</div><div class="line">    &#125;)</div><div class="line">    testCompile &apos;junit:junit:4.12&apos;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>下面对<code>Android</code>构建过程中需要配置的参数做一些解释：</p>
+<ul>
+<li><code>compileSdkVersion</code>：告诉<code>gradle</code>用那个<code>Android SDK</code>的版本编译你的应用，修改它不会改变运行时的行为，因为它不会被包含进入最终的<code>APK</code>中；因此，推荐使用最新的<code>SDK</code>编译；如果使用<code>Suppport Library</code>，那么<code>compileSdkVersion</code>必须要大于等于它的大版本号。</li>
+<li><code>minSdkVersion</code>：应用最低可运行的要求；它必须要大于等于你所依赖的库的<code>minSdkVersion</code>；</li>
+<li><code>targetSdkVersion</code>：<code>Android</code>提供向前兼容的重要依据。（<code>targetSdkVersion is the main way Android provides forward compatibility</code>）<br>因为随着<code>Android</code>系统的升级，某个<code>api</code>或者模块的行为有可能发生改变，但是为了保证老<code>APK</code>的行为和以前兼容，只要<code>APK</code>的<code>targetSdkVersion</code>不变，那么即使这个<code>APK</code>安装在新的<code>Android</code>系统上，那么行为还是保持老的系统上的行为。<br>系统在调用某个<code>api</code>或者模块的时候，会先检查调用的<code>APK</code>的<code>targetSdkVersion</code>，来决定执行什么行为。</li>
+</ul>
+<p><code>minSdkVersion</code>和<code>targetSdkVersion</code>最终会被包含进入最终的<code>APK</code>文件中，如果你查看生成的<code>AndroidManifest.xml</code>，那么会发现：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;uses-sdk android:targetSdkVersion=&quot;23&quot; android:minSdkVersion=&quot;7&quot; /&gt;</div></pre></td></tr></table></figure></p>
+<p>所以，我们一般遵循的规则是：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">minSdkVersion (lowest possible) &lt;= targetSdkVersion == compileSdkVersion (latest SDK)</div></pre></td></tr></table></figure></p>
+<h2 id="5-3-gradle相关文件"><a href="#5-3-gradle相关文件" class="headerlink" title="5.3 gradle相关文件"></a>5.3 <code>gradle</code>相关文件</h2><ul>
+<li><code>gradle.properties</code><br>配置文件，可以定义一些常量供<code>build.gradle</code>使用，比如可以配置签名相关信息，例如<code>keystore</code>位置、密码、<code>keyalias</code>等。</li>
+<li><p><code>settings.gradle</code><br>用来配置多模块的，如果你的项目有两个模块<code>Browser</code>和<code>ScannerSDK</code>，那么就需要：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">include &apos;:Browser&apos;</div><div class="line">include &apos;:ScannerSDK&apos;</div><div class="line">project(&apos;:ScannerSDK&apos;).projectDir = new File(settingsDir, &apos;./ScannerSDK/&apos;)</div></pre></td></tr></table></figure>
+</li>
+<li><p><code>gradle</code>文件夹<br>里面有两个文件，<code>gradle-wrapper.jar</code>和<code>gradle-wrapper.properties</code>，后者当中指定了<code>gradle</code>的版本。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">distributionUrl=https\://services.gradle.org/distributions/gradle-2.8-all.zip</div></pre></td></tr></table></figure>
+</li>
+<li><p><code>gradlew</code>和<code>gradlew.bat</code><br>分别是<code>Linux</code>和<code>windows</code>下的批处理文件，它们的作用是根据<code>gradle-wrapper.properties</code>文件中的<code>distributionUrl</code>下载对应的<code>gradle</code>版本，这样即使环境没有安装<code>gradle</code>也可以编译。</p>
+</li>
+</ul>
+<h2 id="5-4-gradle仓库"><a href="#5-4-gradle仓库" class="headerlink" title="5.4 gradle仓库"></a>5.4 <code>gradle</code>仓库</h2><p><code>gradle</code>有三种仓库：<code>maven/ivy/flat本地</code>。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">maven&#123;</div><div class="line">    url  &quot;...&quot;</div><div class="line">&#125;</div><div class="line">ivy&#123;</div><div class="line">    url  &quot;...&quot;</div><div class="line">&#125;</div><div class="line">flatDir&#123;</div><div class="line">    dirs &apos;xxx&apos;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>有些仓库取了别名：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">repositories&#123;</div><div class="line">    mavenCentral()</div><div class="line">    jcenter()</div><div class="line">    mavenLocal()</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="5-5-gradle任务"><a href="#5-5-gradle任务" class="headerlink" title="5.5 gradle任务"></a>5.5 <code>gradle</code>任务</h2><p>通过以下指令，可以看到支持的任务：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./gradlew tasks</div></pre></td></tr></table></figure></p>
+<ul>
+<li><img src="http://upload-images.jianshu.io/upload_images/1949836-34ec9100c3d8e536.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Task1.png"></li>
+<li><img src="http://upload-images.jianshu.io/upload_images/1949836-216b12a96ed813c9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Task2.png"></li>
+</ul>
+<h1 id="六、常见问题"><a href="#六、常见问题" class="headerlink" title="六、常见问题"></a>六、常见问题</h1><h2 id="6-1-导入本地Jar包"><a href="#6-1-导入本地Jar包" class="headerlink" title="6.1 导入本地Jar包"></a>6.1 导入本地<code>Jar</code>包</h2><p>导入单个<code>jar</code>文件：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">compile files(&apos;libs/xxx.jar&apos;)</div></pre></td></tr></table></figure></p>
+<p>导入<code>libs</code>的多个<code>jar</code>文件：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">compile fileTree(dir: &apos;libs&apos;, include: [&apos;*.jar&apos;])</div></pre></td></tr></table></figure></p>
+<h2 id="6-2-导入maven库"><a href="#6-2-导入maven库" class="headerlink" title="6.2 导入maven库"></a>6.2 导入<code>maven</code>库</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">compile &apos;groupId:artifactId:version&apos;</div></pre></td></tr></table></figure>
+<h2 id="6-3-导入Project"><a href="#6-3-导入Project" class="headerlink" title="6.3 导入Project"></a>6.3 导入<code>Project</code></h2><p>在导入之前，需要在<code>settings.gradle</code>中把模块包含进来，例如前面的<code>ScannerSDK</code>模块：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">compile project(&apos;:ScannerSDK&apos;)</div></pre></td></tr></table></figure></p>
+<h2 id="6-4-声明第三方maven库"><a href="#6-4-声明第三方maven库" class="headerlink" title="6.4 声明第三方maven库"></a>6.4 声明第三方<code>maven</code>库</h2><p>如果项目中需要的一些库文件不再中央仓库中，而是在某个特定地址里，那么就需要在<code>Project</code>中的<code>build.gradle</code>中的<code>allprojects</code>结点下或者直接配到某个模块中：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">allprojects &#123;</div><div class="line">    repositories &#123;</div><div class="line">        maven &#123;</div><div class="line">            url &apos;地址&apos;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="6-5-依赖第三方aar"><a href="#6-5-依赖第三方aar" class="headerlink" title="6.5 依赖第三方aar"></a>6.5 依赖第三方<code>aar</code></h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">compile &apos;com.aaa.xxx:core:1.0.1@aar&apos;</div></pre></td></tr></table></figure>
+<h2 id="6-6-将库导出为aar"><a href="#6-6-将库导出为aar" class="headerlink" title="6.6 将库导出为aar"></a>6.6 将库导出为<code>aar</code></h2><p>首先，你的项目必须是一个库项目，之后在<code>build.gradle</code>中进行配置：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">apply plugin : &apos;com.android.library&apos;</div></pre></td></tr></table></figure></p>
+<p>之后，进入到该项目中，执行<code>gradle</code>命令：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./gradlew assembleRelease</div></pre></td></tr></table></figure></p>
+<p>生成的<code>aar</code>放在<code>/build/output/aar</code>文件当中</p>
+<h2 id="6-7-引用本地aar"><a href="#6-7-引用本地aar" class="headerlink" title="6.7 引用本地aar"></a>6.7 引用本地<code>aar</code></h2><p>首先，将<code>aar</code>文件拷贝到对应目录下，然后在该模块的<code>build.gradle</code>中声明<code>flat</code>仓库：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">repositories&#123;</div><div class="line">   flatDir&#123;</div><div class="line">      dirs &apos;以build.gradle为根目录的相对路径&apos;</div><div class="line">   &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>之后，在<code>dependencies</code>结点下依赖该<code>aar</code>模块：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">dependencies&#123;</div><div class="line">    compile (name:&apos;xxx&apos;,ext:&apos;aar&apos;)</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h1 id="七、多版本打包"><a href="#七、多版本打包" class="headerlink" title="七、多版本打包"></a>七、多版本打包</h1><p>在此之前，我们先了解几个基本的概念：</p>
+<ul>
+<li><code>buildTypes</code>：<strong>构建类型</strong>，<code>Android Studio</code>的<code>Gradle</code>组件默认提供了<code>debug</code>和<code>release</code>两个默认配置，这里主要用于是否需要混淆，是否调试。</li>
+<li><code>productFlavors</code>：<strong>产品渠道</strong>，在实际发布中，根据不同渠道，可能需要使用不同的包名，甚至是不同的代码。</li>
+<li><code>buildVaiants</code>：每个<code>buildTypes</code>和<code>productFlavors</code>组成一个<code>buildvariant</code>。</li>
+</ul>
+<p>以上我们讨论的<code>buildTypes</code>和<code>productFlavors</code>可以通过每个<code>Module</code>中的<code>build.gradle</code>的<code>android</code>标签来配置。</p>
+<p>下面，我们先看一下不同的<code>productFlavors</code>，分别用来支持读取不同的文件和替换不同的字符串。</p>
+<h2 id="7-1-引用不同的代码"><a href="#7-1-引用不同的代码" class="headerlink" title="7.1 引用不同的代码"></a>7.1 引用不同的代码</h2><p>我们首先在<code>app/src</code>目录下新建两个目录，分别对应两个<code>Flavor</code>，再在其中建立相同名字的文件<code>Constant.java</code>，对里面的某个常量赋予不同的值。<br><img src="http://upload-images.jianshu.io/upload_images/1949836-d044465fbabe92a8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Flavor.png"></p>
+<ul>
+<li><code>constantFlavor1</code>：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">package com.example.lizejun.repogradle;</div><div class="line"></div><div class="line">public class Constant &#123;</div><div class="line">    public static final String NAME = &quot;flavor1&quot;;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li><code>constantFlavor2</code>：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">package com.example.lizejun.repogradle;</div><div class="line"></div><div class="line">public class Constant &#123;</div><div class="line">    public static final String NAME = &quot;flavor2&quot;;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>我们的<code>app</code>下的<code>build.gradle</code>中的<code>android</code>标签下添加如下几行代码，让两个<code>Flavor</code>分别引用不同的<code>Constant</code>文件：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">sourceSets &#123;</div><div class="line">    constantFlavor1 &#123;</div><div class="line">        java.srcDirs =  [&apos;src/constantFlavor1&apos;, &apos;src/constantFlavor1/java&apos;, &apos;src/constantFlavor1/java/&apos;]</div><div class="line">    &#125;</div><div class="line">    constantFlavor2 &#123;</div><div class="line">        java.srcDirs =  [&apos;src/constantFlavor2&apos;, &apos;src/constantFlavor2/java&apos;, &apos;src/constantFlavor2/java/&apos;]</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">productFlavors &#123;</div><div class="line">    constantFlavor1 &#123;&#125;</div><div class="line">    constantFlavor2 &#123;&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>之后我们进行打包，可以得到以下不同安装包，这两个<code>apk</code>如果在其中引用的了<code>NAME</code>，那么它会得到不同的值：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1949836-4dd8447145078936.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="2017-02-10 16:15:51屏幕截图.png"></p>
+<h2 id="7-2-自定义buildConfig类"><a href="#7-2-自定义buildConfig类" class="headerlink" title="7.2 自定义buildConfig类"></a>7.2 自定义<code>buildConfig</code>类</h2><p>如果我们只需要定义一些简单的值，那么我们可以用<code>buildConfig</code>类：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">productFlavors &#123;</div><div class="line">    constantFlavor1 &#123;</div><div class="line">        buildConfigField &quot;boolean&quot;, &quot;BOOLEAN_VALUE&quot;, &quot;true&quot;</div><div class="line">    &#125;</div><div class="line">    constantFlavor2 &#123;</div><div class="line">        buildConfigField &quot;boolean&quot;, &quot;BOOLEAN_VALUE&quot;, &quot;false&quot;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="7-3-占位符"><a href="#7-3-占位符" class="headerlink" title="7.3 占位符"></a>7.3 占位符</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">productFlavors &#123;</div><div class="line">    constantFlavor1 &#123;</div><div class="line">        buildConfigField &quot;boolean&quot;, &quot;BOOLEAN_VALUE&quot;, &quot;true&quot;</div><div class="line">        manifestPlaceholders = [label:&quot;constantFlavor1&quot;]</div><div class="line">    &#125;</div><div class="line">    constantFlavor2 &#123;</div><div class="line">        buildConfigField &quot;boolean&quot;, &quot;BOOLEAN_VALUE&quot;, &quot;false&quot;</div><div class="line">        manifestPlaceholders = [label:&quot;constantFlavor2&quot;]</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>之后，我们再在<code>AndroidManifest.xml</code>中引用它：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">android:label=&quot;$&#123;label&#125;&quot;</div></pre></td></tr></table></figure></p>
+<h2 id="7-4-签名配置"><a href="#7-4-签名配置" class="headerlink" title="7.4 签名配置"></a>7.4 签名配置</h2><p>首先是在<code>android</code>标签下，我们使用<code>signingConfigs</code>来配置不同的签名类型<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">signingConfigs &#123;</div><div class="line">    eng &#123;</div><div class="line">        keyAlias &apos;androiddebugkey&apos;</div><div class="line">        keyPassword &apos;android&apos;</div><div class="line">        storeFile file(&apos;debug.keystore&apos;)</div><div class="line">        storePassword &apos;android&apos;</div><div class="line">    &#125;</div><div class="line">    prd &#123;</div><div class="line">        keyAlias &apos;androiddebugkey&apos;</div><div class="line">        keyPassword &apos;android&apos;</div><div class="line">        storeFile file(&apos;debug.keystore&apos;)</div><div class="line">        storePassword &apos;android&apos;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>之后，再在<code>buildTypes</code>的各个分支中引用对应的签名配置：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">buildTypes &#123;</div><div class="line">    debug &#123;</div><div class="line">        minifyEnabled false</div><div class="line">        proguardFiles getDefaultProguardFile(&apos;proguard-android.txt&apos;), &apos;proguard-rules.pro&apos;</div><div class="line">        signingConfig signingConfigs.eng</div><div class="line">    &#125;</div><div class="line">    release &#123;</div><div class="line">        minifyEnabled false</div><div class="line">        proguardFiles getDefaultProguardFile(&apos;proguard-android.txt&apos;), &apos;proguard-rules.pro&apos;</div><div class="line">        signingConfig signingConfigs.prd</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="7-5-依赖"><a href="#7-5-依赖" class="headerlink" title="7.5 依赖"></a>7.5 依赖</h2><p>有时候，我们需要在不同的<code>buildTypes</code>下，引用不同的依赖，例如内存泄露的检测工具，我们希望在<code>debug</code>版本时检查内存泄露，并在发生时在桌面上生成图标，但是在<code>release</code>版本上我们并不希望这么做，这时候我们可以这么写：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">debugCompile &apos;com.squareup.leakcanary:leakcanary-android:1.5&apos;</div><div class="line">releaseCompile &apos;com.squareup.leakcanary:leakcanary-android-no-op:1.5&apos;</div></pre></td></tr></table></figure></p>
+<p>这样，<code>release</code>版本就不会在桌面生成内存泄露的图标。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/02/20/View-事件传递体系/View-事件传递体系知识梳理(2)---嵌套滑动/" rel="next" title="View 事件传递体系知识梳理(2) - 嵌套滑动">
+                <i class="fa fa-chevron-left"></i> View 事件传递体系知识梳理(2) - 嵌套滑动
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/02/20/Android-异步任务/Android-异步任务知识梳理(1)---AsyncTask-源码解析/" rel="prev" title="Android 异步任务知识梳理(1) - AsyncTask 解析">
+                Android 异步任务知识梳理(1) - AsyncTask 解析 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="cloud-tie-wrapper" class="cloud-tie-wrapper"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="泽毛" />
+          <p class="site-author-name" itemprop="name">泽毛</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">109</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">26</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              Links
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.jianshu.com/u/37baa8a86582" title="我的简书" target="_blank">我的简书</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://github.com/imZeJun" title="GitHub" target="_blank">GitHub</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.heqiangfly.com/" title="寒江蓑笠" target="_blank">寒江蓑笠</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://johnnyshieh.me/" title="Johnny Shieh" target="_blank">Johnny Shieh</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、统一管理依赖版本"><span class="nav-number">1.</span> <span class="nav-text">一、统一管理依赖版本</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-1-在根目录下，新建config-gradle文件"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 在根目录下，新建config.gradle文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-2-在根目录下的build-gradle，新增："><span class="nav-number">1.2.</span> <span class="nav-text">1.2 在根目录下的build.gradle，新增：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-3-在根目录下的各个Module或者Library中的build-gradle文件中，引用对应的key："><span class="nav-number">1.3.</span> <span class="nav-text">1.3 在根目录下的各个Module或者Library中的build.gradle文件中，引用对应的key：</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、查看依赖关系"><span class="nav-number">2.</span> <span class="nav-text">二、查看依赖关系</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-工具查看"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 工具查看</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-命令查看"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 命令查看</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、标识符"><span class="nav-number">3.</span> <span class="nav-text">三、标识符</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-Transitive"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 Transitive</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-1-统一指定Transitive"><span class="nav-number">3.1.1.</span> <span class="nav-text">3.1.1 统一指定Transitive</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-2-单独指定Transitive"><span class="nav-number">3.1.2.</span> <span class="nav-text">3.1.2 单独指定Transitive</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-Force"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 Force</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-3-exclude"><span class="nav-number">3.3.</span> <span class="nav-text">3.3 exclude</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-1-全局配置某个模块"><span class="nav-number">3.3.1.</span> <span class="nav-text">3.3.1 全局配置某个模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-2-单独给某个模块exclude"><span class="nav-number">3.3.2.</span> <span class="nav-text">3.3.2 单独给某个模块exclude</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四、版本冲突"><span class="nav-number">4.</span> <span class="nav-text">四、版本冲突</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#4-1-相同配置下的版本冲突"><span class="nav-number">4.1.</span> <span class="nav-text">4.1 相同配置下的版本冲突</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#五、Gradle详解"><span class="nav-number">5.</span> <span class="nav-text">五、Gradle详解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#5-1-Project下的build-gradle"><span class="nav-number">5.1.</span> <span class="nav-text">5.1 Project下的build.gradle</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-2-模块的build-gradle"><span class="nav-number">5.2.</span> <span class="nav-text">5.2 模块的build.gradle</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-3-gradle相关文件"><span class="nav-number">5.3.</span> <span class="nav-text">5.3 gradle相关文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-4-gradle仓库"><span class="nav-number">5.4.</span> <span class="nav-text">5.4 gradle仓库</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-5-gradle任务"><span class="nav-number">5.5.</span> <span class="nav-text">5.5 gradle任务</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#六、常见问题"><span class="nav-number">6.</span> <span class="nav-text">六、常见问题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#6-1-导入本地Jar包"><span class="nav-number">6.1.</span> <span class="nav-text">6.1 导入本地Jar包</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-2-导入maven库"><span class="nav-number">6.2.</span> <span class="nav-text">6.2 导入maven库</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-3-导入Project"><span class="nav-number">6.3.</span> <span class="nav-text">6.3 导入Project</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-4-声明第三方maven库"><span class="nav-number">6.4.</span> <span class="nav-text">6.4 声明第三方maven库</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-5-依赖第三方aar"><span class="nav-number">6.5.</span> <span class="nav-text">6.5 依赖第三方aar</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-6-将库导出为aar"><span class="nav-number">6.6.</span> <span class="nav-text">6.6 将库导出为aar</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-7-引用本地aar"><span class="nav-number">6.7.</span> <span class="nav-text">6.7 引用本地aar</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#七、多版本打包"><span class="nav-number">7.</span> <span class="nav-text">七、多版本打包</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#7-1-引用不同的代码"><span class="nav-number">7.1.</span> <span class="nav-text">7.1 引用不同的代码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-2-自定义buildConfig类"><span class="nav-number">7.2.</span> <span class="nav-text">7.2 自定义buildConfig类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-3-占位符"><span class="nav-number">7.3.</span> <span class="nav-text">7.3 占位符</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-4-签名配置"><span class="nav-number">7.4.</span> <span class="nav-text">7.4 签名配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-5-依赖"><span class="nav-number">7.5.</span> <span class="nav-text">7.5 依赖</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">泽毛</span>
+</div>
+
+<div class="powered-by">
+<i class=""></i><span id="busuanzi_container_site_uv">
+  访客 - <span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+<div class="powered-by">
+<i class=""></i><span id="busuanzi_container_site_pv">
+  访问量 - <span id="busuanzi_value_site_pv"></span>
+</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+    <script>
+      var cloudTieConfig = {
+        url: document.location.href, 
+        sourceId: "",
+        productKey: "b50a597e2fb84d35a6766074670f1d15",
+        target: "cloud-tie-wrapper"
+      };
+    </script>
+    <script src="https://img1.ws.126.net/f2e/tie/yun/sdk/loader.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("4ko7Mbc92NvXMivUJ2jBW88P-gzGzoHsz", "ccjGamRX2s1CSuhjsOVy2a6N");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

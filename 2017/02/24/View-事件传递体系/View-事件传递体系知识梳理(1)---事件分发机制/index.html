@@ -1,0 +1,946 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="一、事件分发概述1.1 事件分发的关键方法对于ViewGroup来说，与事件分发相关的方法包括：123public boolean dispatchTouchEvent(MotionEvent event)public boolean onInterceptTouchEvent(MotionEvent event)public boolean onTouchEvent(MotionEvent ev">
+<meta property="og:type" content="article">
+<meta property="og:title" content="View 事件传递体系知识梳理(1) - 事件分发机制">
+<meta property="og:url" content="http://yoursite.com/2017/02/24/View-事件传递体系/View-事件传递体系知识梳理(1)---事件分发机制/index.html">
+<meta property="og:site_name" content="泽毛的博客">
+<meta property="og:description" content="一、事件分发概述1.1 事件分发的关键方法对于ViewGroup来说，与事件分发相关的方法包括：123public boolean dispatchTouchEvent(MotionEvent event)public boolean onInterceptTouchEvent(MotionEvent event)public boolean onTouchEvent(MotionEvent ev">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-5aa0f204f71f2af9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-49201a2b9bb34384.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-6f369a8250b6bfa9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-62c28937ce7123e2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-d5564afa92f90e7c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-523fb64c416a5d3c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-65a074a2c92bc1a5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-a9d60f989d834de4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-4c7bac940fceed25.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-5ed3a745b23b19fe.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2017-06-29T06:58:30.306Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="View 事件传递体系知识梳理(1) - 事件分发机制">
+<meta name="twitter:description" content="一、事件分发概述1.1 事件分发的关键方法对于ViewGroup来说，与事件分发相关的方法包括：123public boolean dispatchTouchEvent(MotionEvent event)public boolean onInterceptTouchEvent(MotionEvent event)public boolean onTouchEvent(MotionEvent ev">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-5aa0f204f71f2af9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/02/24/View-事件传递体系/View-事件传递体系知识梳理(1)---事件分发机制/"/>
+
+
+
+
+
+  <title>View 事件传递体系知识梳理(1) - 事件分发机制 | 泽毛的博客</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?c276429c3a148ef2fa47d755199a64c2";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">泽毛的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">但愿每次回忆，对生活都不感到负疚</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/02/24/View-事件传递体系/View-事件传递体系知识梳理(1)---事件分发机制/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="泽毛">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="泽毛的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">View 事件传递体系知识梳理(1) - 事件分发机制</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-02-24T18:29:00+08:00">
+                2017-02-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/View-事件传递体系知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">View 事件传递体系知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a class="cloud-tie-join-count" href="/2017/02/24/View-事件传递体系/View-事件传递体系知识梳理(1)---事件分发机制/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count join-count" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2017/02/24/View-事件传递体系/View-事件传递体系知识梳理(1)---事件分发机制/" class="leancloud_visitors" data-flag-title="View 事件传递体系知识梳理(1) - 事件分发机制">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">热度 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+                 <span>°C</span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="一、事件分发概述"><a href="#一、事件分发概述" class="headerlink" title="一、事件分发概述"></a>一、事件分发概述</h1><h2 id="1-1-事件分发的关键方法"><a href="#1-1-事件分发的关键方法" class="headerlink" title="1.1 事件分发的关键方法"></a>1.1 事件分发的关键方法</h2><p>对于<code>ViewGroup</code>来说，与事件分发相关的方法包括：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">public boolean dispatchTouchEvent(MotionEvent event)</div><div class="line">public boolean onInterceptTouchEvent(MotionEvent event)</div><div class="line">public boolean onTouchEvent(MotionEvent event)</div></pre></td></tr></table></figure></p>
+<p>对于<code>View</code>来说，与事件分发相关的方法包括：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">public boolean dispatchTouchEvent(MotionEvent event)</div><div class="line">public boolean onTouchEvent(MotionEvent event)</div></pre></td></tr></table></figure></p>
+<h2 id="1-2-Down分发的理解"><a href="#1-2-Down分发的理解" class="headerlink" title="1.2 Down分发的理解"></a>1.2 <code>Down</code>分发的理解</h2><p>对于<code>Down</code>分发的过程，网上看了很多的例子和图，但是都没能好好理解，最后还是自己总结了一种方案，这个方案的核心就是<strong>染色</strong>：</p>
+<ul>
+<li>初始的时候<code>View</code>树上每个节点都是白色的。</li>
+<li>从<strong>子节点的角度</strong>来看，当它被父节点调用<code>dispatchTouchEvent</code>时，在返回之前都会有一个返回值，如果这个返回值为真，那么它自己就会变成红色。</li>
+<li>从<strong>父节点的角度</strong>来看，当它给子节点调用<code>dispatchTouchEvent</code>时，它<strong>既是在尝试给子节点进行染色，也是在尝试给自己着色</strong>，当某个子节点的<code>dispatchTouchEvent</code>方法返回时，取该子节点的颜色对自己进行着色；如果遍历完它所有的子节点，它仍然没有变成红色，那么调用它自己的<code>onTouchEvent</code>，如果返回<code>true</code>，那么把自己染成红色。</li>
+<li>对于一个<code>ViewGroup/View</code>来说，有可能染色成功只包括两种途径：子节点的<code>dispatchTouchEvent</code>返回时，取子节点的颜色对自己着色；通过自己的<code>onTouchEvent</code>方法来着色。并且，只有前一种途径不成功时才会用后一种途径。</li>
+<li><strong>只要节点变成了红色，那么就不需要再尝试对自己进行染色了</strong>，也就是上面那条说的：利用子节点的<code>dispatchTouchEvent</code>来染色或者通过自己的<code>onTouch</code>来染色，它会直接返回。</li>
+</ul>
+<p>从伪代码来看：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">public Color color = white;</div><div class="line"></div><div class="line">public boolean dispatchTouchEvent(MotionEvent event) &#123;</div><div class="line">　int childCount = getChildCount;</div><div class="line">    for (i = childCount - 1; i &gt;= 0; i--) &#123;</div><div class="line">        View child = getChildAt(i);</div><div class="line">        boolean result = child.dispatchTouchEvent(event);</div><div class="line">        if (result) &#123;</div><div class="line">             color = RED;</div><div class="line">             return true;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    boolean touchRes = onTouchEvent(event);</div><div class="line">    if (touchRes) &#123;</div><div class="line">        color = RED;</div><div class="line">    &#125;</div><div class="line">    return touchRes;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>在<code>Down</code>事件分发完后，我们可以发现这么个现象。</p>
+<ul>
+<li>假如一个节点是红色的，那么它最多只可能有一个红色的子节点。</li>
+<li>假如一个节点是红色的，那么必然会有一条唯一的路径，该路径会通过该红色节点连接到根节点。</li>
+<li>假如一个节点是白色的，那么它所有的后代节点都一定是白色的。</li>
+</ul>
+<h2 id="1-3-Down分发的特点"><a href="#1-3-Down分发的特点" class="headerlink" title="1.3 Down分发的特点"></a>1.3 <code>Down</code>分发的特点</h2><p>对于一个<strong>没有重写以上关键方法并且位于<code>View</code>树上</strong>的<code>ViewGroup/View</code>来说，它<code>Down</code>事件的分发具有以下几个特点：</p>
+<h3 id="1-3-1-dispatchTouchEvent"><a href="#1-3-1-dispatchTouchEvent" class="headerlink" title="1.3.1 dispatchTouchEvent"></a>1.3.1 <code>dispatchTouchEvent</code></h3><ul>
+<li><code>dispatchTouchEvent</code>是否被回调，由它的<strong>父容器决定</strong>的。</li>
+<li>假如是它不是叶节点，当它的<code>dispatchTouchEvent</code>被调用时，它会先<strong>逆序依次</strong>调用下一级子节点的<code>dispatchTouchEvent</code>方法。</li>
+<li>如果在以上遍历中间有任何一个子节点的<code>dispatchTouchEvent</code>返回了<code>true</code>，那么不会继续调用剩余未遍历子节点的<code>dispatchTouchEvent</code>，并且它自身的<code>onTouchEvent</code>不会被回调。</li>
+</ul>
+<h3 id="1-3-2-onInterceptTouchEvent"><a href="#1-3-2-onInterceptTouchEvent" class="headerlink" title="1.3.2 onInterceptTouchEvent"></a>1.3.2 <code>onInterceptTouchEvent</code></h3><p>只有<code>ViewGroup</code>才有，它是否被回调取决于<code>dispatchTouchEvent</code>是否被回调。</p>
+<h3 id="1-3-3onTouchEvent"><a href="#1-3-3onTouchEvent" class="headerlink" title="1.3.3onTouchEvent"></a>1.3.3<code>onTouchEvent</code></h3><p><code>onTouchEvent</code>是<strong>由自己回调的</strong>，是否被回调，必须同时满足以下两个条件：</p>
+<ul>
+<li><code>dispatchTouchEvent</code>被回调。</li>
+<li>满足以下两种情况之一：<ul>
+<li>它是整个<code>View</code>树的叶节点</li>
+<li>它拥有子节点，但是它所有子节点的<code>dispatchTouchEvent</code>都返回<code>false</code>。</li>
+</ul>
+</li>
+</ul>
+<h2 id="1-4-Move-Up分发"><a href="#1-4-Move-Up分发" class="headerlink" title="1.4 Move/Up分发"></a>1.4 <code>Move/Up</code>分发</h2><p>在<code>Move/Up</code>事件分发的时候，其实就是根据之前着色的结果来往下传递事件，它的传递只需要遵循下面的原则：<strong>只会分发给红色的节点，遇到白色的节点就停止往下分发</strong>。</p>
+<h2 id="1-5-简单举例"><a href="#1-5-简单举例" class="headerlink" title="1.5 简单举例"></a>1.5 简单举例</h2><p>我们举一个简单的例子：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-5aa0f204f71f2af9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<ul>
+<li>前提条件：<code>ViewGroup1</code>返回<code>true</code>。</li>
+<li>过程：<code>Root</code>调用<code>ViewGroup1</code>的<code>dispatchTouchEvent</code>，而<code>ViewGroup1</code>此时是白色，因此它继续调用它的子节点，也就是<code>View21</code>的<code>dispatchTouchEvent</code>，但是<code>View21</code>没有子节点，因此它调用自己的<code>onTouchEvent</code>，它的<code>dispatchTouchEvent</code>方法返回，而此时，<code>ViewGroup2</code>所有的子节点都遍历完了，它依然没有变成红色，因此它调用自己的<code>onTouchEvent</code>，由于该方法返回<code>false</code>，因此它也返回了，并且在返回时依然是白色。接下来<code>Root</code>取<code>ViewGroup2</code>的颜色对自己着色，着色完成之后发现自己仍然是白色，那么它就继续调用有可能使自己染色成功的方法，<code>ViewGroup1</code>的<code>dispatchTouchEvent</code>，由于它的<code>dispatchTouchEvent</code>返回<code>true</code>，因此它会把自己染成红色，由于它已经变成红色了，那么它也没有权利对子节点进行染色，因此它的<code>dispatchTouchEvent</code>返回，<code>Root</code>收到返回值时，取<code>ViewGroup1</code>的颜色对自己进行着色，结果它发现自己是红色了，那么<code>Root</code>也不会调用任何可能对自己染色的方法，而是直接返回了。</li>
+<li>结果：<code>ROOT</code>和<code>ViewGroup1</code>变为红色节点。</li>
+</ul>
+<h1 id="二、示例"><a href="#二、示例" class="headerlink" title="二、示例"></a>二、示例</h1><p>只要理解了上面的思想，其实各种情况都可以对应到，下面的例子只是为了让大家能够证明自己的想法是否正确罢了，所以就不过多解释了：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</div><div class="line">&lt;com.example.lizejun.repoviews.LogFrameLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;</div><div class="line">    xmlns:tools=&quot;http://schemas.android.com/tools&quot;</div><div class="line">    android:tag=&quot;ViewGroup$Root&quot;</div><div class="line">    android:orientation=&quot;vertical&quot;</div><div class="line">    android:layout_width=&quot;match_parent&quot;</div><div class="line">    android:layout_height=&quot;match_parent&quot;</div><div class="line">    tools:context=&quot;com.example.lizejun.repoviews.MainActivity&quot;&gt;</div><div class="line">    </div><div class="line">    &lt;com.example.lizejun.repoviews.LogFrameLayout</div><div class="line">        android:tag=&quot;ViewGroup1&quot;</div><div class="line">        android:layout_width=&quot;match_parent&quot;</div><div class="line">        android:layout_height=&quot;match_parent&quot;&gt;</div><div class="line">        </div><div class="line">        &lt;com.example.lizejun.repoviews.LogTextView</div><div class="line">            android:tag=&quot;ViewGroup1$View1&quot;</div><div class="line">            android:layout_width=&quot;match_parent&quot;</div><div class="line">            android:layout_height=&quot;match_parent&quot; /&gt;</div><div class="line">        &lt;com.example.lizejun.repoviews.LogTextView</div><div class="line">            android:tag=&quot;ViewGroup1$View2&quot;</div><div class="line">            android:layout_width=&quot;match_parent&quot;</div><div class="line">            android:layout_height=&quot;match_parent&quot; /&gt;</div><div class="line">        </div><div class="line">    &lt;/com.example.lizejun.repoviews.LogFrameLayout&gt;</div><div class="line">    </div><div class="line">    &lt;com.example.lizejun.repoviews.LogFrameLayout</div><div class="line">        android:tag=&quot;ViewGroup2&quot;</div><div class="line">        android:layout_width=&quot;match_parent&quot;</div><div class="line">        android:layout_height=&quot;match_parent&quot;&gt;</div><div class="line">        </div><div class="line">        &lt;com.example.lizejun.repoviews.LogTextView</div><div class="line">            android:tag=&quot;ViewGroup2$View&quot;</div><div class="line">            android:layout_width=&quot;match_parent&quot;</div><div class="line">            android:layout_height=&quot;match_parent&quot;/&gt;</div><div class="line">        </div><div class="line">    &lt;/com.example.lizejun.repoviews.LogFrameLayout&gt;</div><div class="line">&lt;/com.example.lizejun.repoviews.LogFrameLayout&gt;</div></pre></td></tr></table></figure></p>
+<h2 id="2-1-不改变任何函数的返回值"><a href="#2-1-不改变任何函数的返回值" class="headerlink" title="2.1 不改变任何函数的返回值"></a>2.1 不改变任何函数的返回值</h2><p><img src="http://upload-images.jianshu.io/upload_images/1949836-49201a2b9bb34384.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h2 id="2-2-ViewGroup2的dispatchTouchEvent返回false"><a href="#2-2-ViewGroup2的dispatchTouchEvent返回false" class="headerlink" title="2.2 ViewGroup2的dispatchTouchEvent返回false"></a>2.2 <code>ViewGroup2</code>的<code>dispatchTouchEvent</code>返回<code>false</code></h2><p><img src="http://upload-images.jianshu.io/upload_images/1949836-6f369a8250b6bfa9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h2 id="2-3-ViewGroup2的dispatchTouchEvent返回true"><a href="#2-3-ViewGroup2的dispatchTouchEvent返回true" class="headerlink" title="2.3 ViewGroup2的dispatchTouchEvent返回true"></a>2.3 <code>ViewGroup2</code>的<code>dispatchTouchEvent</code>返回<code>true</code></h2><p><img src="http://upload-images.jianshu.io/upload_images/1949836-62c28937ce7123e2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h2 id="2-4-ViewGroup1下的孩子节点View2返回了false"><a href="#2-4-ViewGroup1下的孩子节点View2返回了false" class="headerlink" title="2.4 ViewGroup1下的孩子节点View2返回了false"></a>2.4 <code>ViewGroup1</code>下的孩子节点<code>View2</code>返回了<code>false</code></h2><p><img src="http://upload-images.jianshu.io/upload_images/1949836-d5564afa92f90e7c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h2 id="2-5-ViewGroup1下的孩子节点View2返回了true"><a href="#2-5-ViewGroup1下的孩子节点View2返回了true" class="headerlink" title="2.5 ViewGroup1下的孩子节点View2返回了true"></a>2.5 <code>ViewGroup1</code>下的孩子节点<code>View2</code>返回了<code>true</code></h2><p><img src="http://upload-images.jianshu.io/upload_images/1949836-523fb64c416a5d3c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h2 id="2-6-ViewGroup2的onTouchEvent返回了false"><a href="#2-6-ViewGroup2的onTouchEvent返回了false" class="headerlink" title="2.6 ViewGroup2的onTouchEvent返回了false"></a>2.6 <code>ViewGroup2</code>的<code>onTouchEvent</code>返回了<code>false</code></h2><p><img src="http://upload-images.jianshu.io/upload_images/1949836-65a074a2c92bc1a5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h2 id="2-7-ViewGroup2的onTouchEvent返回了true"><a href="#2-7-ViewGroup2的onTouchEvent返回了true" class="headerlink" title="2.7 ViewGroup2的onTouchEvent返回了true"></a>2.7 <code>ViewGroup2</code>的<code>onTouchEvent</code>返回了<code>true</code></h2><p><img src="http://upload-images.jianshu.io/upload_images/1949836-a9d60f989d834de4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h2 id="2-8-ViewGroup1下的孩子节点View2返回了false"><a href="#2-8-ViewGroup1下的孩子节点View2返回了false" class="headerlink" title="2.8 ViewGroup1下的孩子节点View2返回了false"></a>2.8 <code>ViewGroup1</code>下的孩子节点<code>View2</code>返回了<code>false</code></h2><p><img src="http://upload-images.jianshu.io/upload_images/1949836-4c7bac940fceed25.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h2 id="2-9-ViewGroup1下的孩子节点View2返回了true"><a href="#2-9-ViewGroup1下的孩子节点View2返回了true" class="headerlink" title="2.9 ViewGroup1下的孩子节点View2返回了true"></a>2.9 <code>ViewGroup1</code>下的孩子节点<code>View2</code>返回了<code>true</code></h2><p><img src="http://upload-images.jianshu.io/upload_images/1949836-5ed3a745b23b19fe.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/02/23/View-绘制体系/View-绘制体系知识梳理(2)---setContentView-源码解析/" rel="next" title="View 绘制体系知识梳理(2) - setContentView 源码解析">
+                <i class="fa fa-chevron-left"></i> View 绘制体系知识梳理(2) - setContentView 源码解析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/02/25/View-绘制体系/View-绘制体系知识梳理(3)---绘制流程之-Measure-详解/" rel="prev" title="View 绘制体系知识梳理(3) - 绘制流程之 Measure 详解">
+                View 绘制体系知识梳理(3) - 绘制流程之 Measure 详解 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="cloud-tie-wrapper" class="cloud-tie-wrapper"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="泽毛" />
+          <p class="site-author-name" itemprop="name">泽毛</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">109</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">26</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              Links
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.jianshu.com/u/37baa8a86582" title="我的简书" target="_blank">我的简书</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://github.com/imZeJun" title="GitHub" target="_blank">GitHub</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.heqiangfly.com/" title="寒江蓑笠" target="_blank">寒江蓑笠</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://johnnyshieh.me/" title="Johnny Shieh" target="_blank">Johnny Shieh</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、事件分发概述"><span class="nav-number">1.</span> <span class="nav-text">一、事件分发概述</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-1-事件分发的关键方法"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 事件分发的关键方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-2-Down分发的理解"><span class="nav-number">1.2.</span> <span class="nav-text">1.2 Down分发的理解</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-3-Down分发的特点"><span class="nav-number">1.3.</span> <span class="nav-text">1.3 Down分发的特点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-1-dispatchTouchEvent"><span class="nav-number">1.3.1.</span> <span class="nav-text">1.3.1 dispatchTouchEvent</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-2-onInterceptTouchEvent"><span class="nav-number">1.3.2.</span> <span class="nav-text">1.3.2 onInterceptTouchEvent</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-3onTouchEvent"><span class="nav-number">1.3.3.</span> <span class="nav-text">1.3.3onTouchEvent</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-4-Move-Up分发"><span class="nav-number">1.4.</span> <span class="nav-text">1.4 Move/Up分发</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-5-简单举例"><span class="nav-number">1.5.</span> <span class="nav-text">1.5 简单举例</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、示例"><span class="nav-number">2.</span> <span class="nav-text">二、示例</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-不改变任何函数的返回值"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 不改变任何函数的返回值</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-ViewGroup2的dispatchTouchEvent返回false"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 ViewGroup2的dispatchTouchEvent返回false</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-ViewGroup2的dispatchTouchEvent返回true"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 ViewGroup2的dispatchTouchEvent返回true</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-4-ViewGroup1下的孩子节点View2返回了false"><span class="nav-number">2.4.</span> <span class="nav-text">2.4 ViewGroup1下的孩子节点View2返回了false</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-5-ViewGroup1下的孩子节点View2返回了true"><span class="nav-number">2.5.</span> <span class="nav-text">2.5 ViewGroup1下的孩子节点View2返回了true</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-6-ViewGroup2的onTouchEvent返回了false"><span class="nav-number">2.6.</span> <span class="nav-text">2.6 ViewGroup2的onTouchEvent返回了false</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-7-ViewGroup2的onTouchEvent返回了true"><span class="nav-number">2.7.</span> <span class="nav-text">2.7 ViewGroup2的onTouchEvent返回了true</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-8-ViewGroup1下的孩子节点View2返回了false"><span class="nav-number">2.8.</span> <span class="nav-text">2.8 ViewGroup1下的孩子节点View2返回了false</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-9-ViewGroup1下的孩子节点View2返回了true"><span class="nav-number">2.9.</span> <span class="nav-text">2.9 ViewGroup1下的孩子节点View2返回了true</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">泽毛</span>
+</div>
+
+<div class="powered-by">
+<i class=""></i><span id="busuanzi_container_site_uv">
+  访客 - <span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+<div class="powered-by">
+<i class=""></i><span id="busuanzi_container_site_pv">
+  访问量 - <span id="busuanzi_value_site_pv"></span>
+</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+    <script>
+      var cloudTieConfig = {
+        url: document.location.href, 
+        sourceId: "",
+        productKey: "b50a597e2fb84d35a6766074670f1d15",
+        target: "cloud-tie-wrapper"
+      };
+    </script>
+    <script src="https://img1.ws.126.net/f2e/tie/yun/sdk/loader.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("4ko7Mbc92NvXMivUJ2jBW88P-gzGzoHsz", "ccjGamRX2s1CSuhjsOVy2a6N");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

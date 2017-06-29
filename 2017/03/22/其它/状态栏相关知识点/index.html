@@ -1,0 +1,953 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="一、概述关于状态栏的讨论很多，我们今天从需求的角度来看一下对于状态栏的知识点：  不显示状态栏(4.4) 通过Window 通过DecorView   显示状态栏 静态设置状态栏透明(4.4)：windowTranslucentStatus，需要解决重叠问题 手动设置padding fitsSystemWindows   设置状态栏颜色(5.0)： colorPrimaryDark，style中指">
+<meta property="og:type" content="article">
+<meta property="og:title" content="状态栏相关知识点">
+<meta property="og:url" content="http://yoursite.com/2017/03/22/其它/状态栏相关知识点/index.html">
+<meta property="og:site_name" content="泽毛的博客">
+<meta property="og:description" content="一、概述关于状态栏的讨论很多，我们今天从需求的角度来看一下对于状态栏的知识点：  不显示状态栏(4.4) 通过Window 通过DecorView   显示状态栏 静态设置状态栏透明(4.4)：windowTranslucentStatus，需要解决重叠问题 手动设置padding fitsSystemWindows   设置状态栏颜色(5.0)： colorPrimaryDark，style中指">
+<meta property="og:updated_time" content="2017-06-29T06:52:57.658Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="状态栏相关知识点">
+<meta name="twitter:description" content="一、概述关于状态栏的讨论很多，我们今天从需求的角度来看一下对于状态栏的知识点：  不显示状态栏(4.4) 通过Window 通过DecorView   显示状态栏 静态设置状态栏透明(4.4)：windowTranslucentStatus，需要解决重叠问题 手动设置padding fitsSystemWindows   设置状态栏颜色(5.0)： colorPrimaryDark，style中指">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/03/22/其它/状态栏相关知识点/"/>
+
+
+
+
+
+  <title>状态栏相关知识点 | 泽毛的博客</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?c276429c3a148ef2fa47d755199a64c2";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">泽毛的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">但愿每次回忆，对生活都不感到负疚</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/03/22/其它/状态栏相关知识点/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="泽毛">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="泽毛的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">状态栏相关知识点</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-22T21:15:00+08:00">
+                2017-03-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/其它/" itemprop="url" rel="index">
+                    <span itemprop="name">其它</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a class="cloud-tie-join-count" href="/2017/03/22/其它/状态栏相关知识点/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count join-count" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2017/03/22/其它/状态栏相关知识点/" class="leancloud_visitors" data-flag-title="状态栏相关知识点">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">热度 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+                 <span>°C</span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="一、概述"><a href="#一、概述" class="headerlink" title="一、概述"></a>一、概述</h1><p>关于状态栏的讨论很多，我们今天从需求的角度来看一下对于状态栏的知识点：</p>
+<ul>
+<li>不显示状态栏<code>(4.4)</code><ul>
+<li>通过<code>Window</code></li>
+<li>通过<code>DecorView</code></li>
+</ul>
+</li>
+<li>显示状态栏<ul>
+<li>静态设置状态栏透明<code>(4.4)</code>：<code>windowTranslucentStatus</code>，需要解决重叠问题<ul>
+<li>手动设置<code>padding</code></li>
+<li><code>fitsSystemWindows</code></li>
+</ul>
+</li>
+<li>设置状态栏颜色<code>(5.0)</code>：<ul>
+<li><code>colorPrimaryDark</code>，<code>style</code>中指定。</li>
+<li><code>setStatusBarColor</code>，动态设定。</li>
+</ul>
+</li>
+<li>设置状态栏和根布局的层级关系<code>(4.4)</code>：<ul>
+<li><code>SYSTEM_UI_FLAG_VISIBLE</code>：状态栏不覆盖根布局</li>
+<li><code>SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN</code>：状态栏覆盖根布局</li>
+</ul>
+</li>
+<li>动态设置状态栏透明<code>(5.0)</code></li>
+</ul>
+</li>
+<li>改变状态栏图标颜色<ul>
+<li>官方做法<code>(6.0)</code></li>
+<li>魅族/小米做法</li>
+</ul>
+</li>
+</ul>
+<h1 id="二、不显示状态栏"><a href="#二、不显示状态栏" class="headerlink" title="二、不显示状态栏"></a>二、不显示状态栏</h1><p>不显示状态栏一般用于屏幕可显示区域较小的时候，并且要求可见面积较大的情况，例如视频、横屏等，而不显示状态栏的方法有两种，下面我们分别介绍一下：</p>
+<h2 id="2-1-通过Activity所属的Window"><a href="#2-1-通过Activity所属的Window" class="headerlink" title="2.1 通过Activity所属的Window"></a>2.1 通过<code>Activity</code>所属的<code>Window</code></h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">public static void setStatusBarVisibleByWindow(Activity activity, boolean visible) &#123;</div><div class="line">    Window window = activity.getWindow();</div><div class="line">    if (window != null) &#123;</div><div class="line">        WindowManager.LayoutParams winParams = window.getAttributes();</div><div class="line">        final int bits = WindowManager.LayoutParams.FLAG_FULLSCREEN;</div><div class="line">        if (visible) &#123;</div><div class="line">            winParams.flags &amp;= ~bits;</div><div class="line">        &#125; else &#123;</div><div class="line">            winParams.flags |= bits;</div><div class="line">        &#125;</div><div class="line">        window.setAttributes(winParams);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="2-2-通过DecorView"><a href="#2-2-通过DecorView" class="headerlink" title="2.2 通过DecorView"></a>2.2 通过<code>DecorView</code></h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">public static void setStatusBarVisibleByDecorView(Activity activity, boolean visible) &#123;</div><div class="line">    Window window = activity.getWindow();</div><div class="line">    if (window != null) &#123;</div><div class="line">        if (visible) &#123;</div><div class="line">            window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);</div><div class="line">        &#125; else &#123;</div><div class="line">            window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>##2.3 小结<br>这两种方法不可以混合使用，也就是说，不能通过其中一种方法将状态栏隐藏，又利用另一种方法将它显示出来。</p>
+<h1 id="三、显示状态栏"><a href="#三、显示状态栏" class="headerlink" title="三、显示状态栏"></a>三、显示状态栏</h1><p>在显示状态栏的情况下，我们将需求分为以下三类：</p>
+<h2 id="3-1-设置状态栏为透明"><a href="#3-1-设置状态栏为透明" class="headerlink" title="3.1 设置状态栏为透明"></a>3.1 设置状态栏为透明</h2><p><strong>要求安卓版本大于4.4</strong>。<br>我们可以在<code>style</code>中指定，然后设置给<code>Activity</code>或者<code>Application</code>：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&lt;style name=&quot;AppTheme&quot; parent=&quot;Theme.AppCompat.Light.NoActionBar&quot;&gt;</div><div class="line">    &lt;item name=&quot;android:windowTranslucentStatus&quot;&gt;true&lt;/item&gt;</div><div class="line">&lt;/style&gt;</div></pre></td></tr></table></figure></p>
+<p>当然，也可以通过代码来指定：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">public static void setStatusBarTransparent(Activity activity) &#123;</div><div class="line">    Window window = activity.getWindow();</div><div class="line">    if (window != null) &#123;</div><div class="line">        WindowManager.LayoutParams winParams = window.getAttributes();</div><div class="line">        final int bits = WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;</div><div class="line">        winParams.flags |= bits;</div><div class="line">        window.setAttributes(winParams);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><strong>解决状态栏透明时和根布局重叠的问题</strong><br>这两种方法是<strong>等效</strong>的，但是它们都存在一个问题，根布局会和状态栏重叠，这时候就有两种解决办法：</p>
+<h3 id="3-1-1-在布局中加上和状态栏高度相同的padding"><a href="#3-1-1-在布局中加上和状态栏高度相同的padding" class="headerlink" title="3.1.1 在布局中加上和状态栏高度相同的padding"></a>3.1.1 在布局中加上和状态栏高度相同的<code>padding</code></h3><p>这种方法有一点不好，就是我们需要事先知道状态栏的高度是多少，或者动态地获取，并动态设置<code>padding</code>。</p>
+<h3 id="3-1-2-fitsSystemWindows"><a href="#3-1-2-fitsSystemWindows" class="headerlink" title="3.1.2 fitsSystemWindows"></a>3.1.2 <code>fitsSystemWindows</code></h3><p>为了解决上面的情况，我们可以通过<code>fitsSystemWindows</code>属性让系统自动根据状态栏的高度来给我们的布局留下足够的空间。</p>
+<ul>
+<li>在根布局的<code>xml</code>中配置<code>android:fitsSystemWindows</code>属性：<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;LinearLayout android:fitsSystemWindows=&quot;true&quot;&gt;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="3-1-3-小结"><a href="#3-1-3-小结" class="headerlink" title="3.1.3 小结"></a>3.1.3 小结</h3><p>需要注意，使用上面的方法来试状态栏透明，需要在<code>Activity</code>的<code>onCreate</code>之前设置，如果在之后设置，那么可能会出现意料之外的结果，如果想要在代码当中设置状态栏透明，那么建议采用<code>3.2</code>和<code>3.3</code>的结合版本，也就是<strong>改变状态栏颜色为透明 + 改变布局</strong>，我们分析完下面的两种之后，再看一下怎么在代码中设置。</p>
+<h2 id="3-2-改变状态栏的颜色"><a href="#3-2-改变状态栏的颜色" class="headerlink" title="3.2 改变状态栏的颜色"></a>3.2 改变状态栏的颜色</h2><p>在状态栏不透明的情况下，我们可以通过下面的方法来改变状态栏的颜色，<strong>要求<code>Android</code>版本大于<code>5.0</code></strong>：</p>
+<h3 id="3-2-1-通过style设置"><a href="#3-2-1-通过style设置" class="headerlink" title="3.2.1 通过style设置"></a>3.2.1 通过<code>style</code>设置</h3><p>其中<code>colorPrimaryDark</code>就是指定的状态栏颜色<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&lt;style name=&quot;AppTheme&quot; parent=&quot;Theme.AppCompat.Light.NoActionBar&quot;&gt;</div><div class="line">    &lt;!-- Customize your theme here. --&gt;</div><div class="line">    &lt;item name=&quot;colorPrimary&quot;&gt;@color/colorPrimary&lt;/item&gt;</div><div class="line">    &lt;item name=&quot;colorPrimaryDark&quot;&gt;@android:color/holo_green_light&lt;/item&gt;</div><div class="line">    &lt;item name=&quot;colorAccent&quot;&gt;@color/colorAccent&lt;/item&gt;</div><div class="line">&lt;/style&gt;</div></pre></td></tr></table></figure></p>
+<p>这里有一点：如果我们设置了上面的属性，并且设置了<code>windowTranslucentStatus</code>，即使不将<code>fitSystemWindow</code>设为<code>true</code>，也不会使状态栏和根布局重叠。</p>
+<h3 id="3-2-2-通过代码动态设置"><a href="#3-2-2-通过代码动态设置" class="headerlink" title="3.2.2 通过代码动态设置"></a>3.2.2 通过代码动态设置</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">public static void setStatusBarColor(Activity activity, int colorId) &#123;</div><div class="line">    if (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.LOLLIPOP) &#123;</div><div class="line">        Window window = activity.getWindow();</div><div class="line">        if (window != null) &#123;</div><div class="line">            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);</div><div class="line">            window.setStatusBarColor(activity.getResources().getColor(colorId));</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="3-2-3-小结"><a href="#3-2-3-小结" class="headerlink" title="3.2.3 小结"></a>3.2.3 小结</h3><p>由于上面讨论的两种方法都只能在<code>5.0</code>以上实现，因此如果我们希望在<code>5.0</code>以下动态改变状态栏的颜色，那么就只能通过<code>3.1</code>中的方法，把状态栏设置为透明，然后在布局中添加一个和状态栏高度相同的背景，通过动态改变这个背景的颜色，来实现状态栏颜色的改变。</p>
+<h2 id="3-3-改变状态栏和根布局的关系"><a href="#3-3-改变状态栏和根布局的关系" class="headerlink" title="3.3 改变状态栏和根布局的关系"></a>3.3 改变状态栏和根布局的关系</h2><p>其实在上面的两种方法中，我们也间接地改变了状态栏和根布局的关系，当然，我们也可以单纯改变布局关系，而不对状态栏作出任何改变：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">public static void setStatusBarOverlay(Activity activity, boolean overlay) &#123;</div><div class="line">    Window window = activity.getWindow();</div><div class="line">    if (window != null) &#123;</div><div class="line">        if (overlay) &#123;</div><div class="line">            window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);</div><div class="line">        &#125; else &#123;</div><div class="line">            window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="3-4-动态设置状态栏透明"><a href="#3-4-动态设置状态栏透明" class="headerlink" title="3.4 动态设置状态栏透明"></a>3.4 动态设置状态栏透明</h2><p>由于这种方式结合了<code>3.2</code>和<code>3.3</code>，因此要求版本要大于<code>5.0</code>：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">public static void setStatusBarTransparentDynamic(Activity activity, boolean overlay) &#123;</div><div class="line">    if (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.LOLLIPOP) &#123;</div><div class="line">        Window window = activity.getWindow();</div><div class="line">        if (window != null) &#123;</div><div class="line">            window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);</div><div class="line">            if (!overlay) &#123;</div><div class="line">                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);</div><div class="line">            &#125;</div><div class="line">            window.setStatusBarColor(Color.TRANSPARENT);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="四、改变状态栏图标颜色"><a href="#四、改变状态栏图标颜色" class="headerlink" title="四、改变状态栏图标颜色"></a>四、改变状态栏图标颜色</h1><h2 id="4-1-官方标准做法"><a href="#4-1-官方标准做法" class="headerlink" title="4.1 官方标准做法"></a>4.1 官方标准做法</h2><p>这种方法要求<code>Android</code>的<code>API</code>大于<code>6.0</code>：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">public static void setStatusBarItemColor(Activity activity, boolean dark) &#123;</div><div class="line">    if (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.M) &#123;</div><div class="line">        Window window = activity.getWindow();</div><div class="line">        if (window != null) &#123;</div><div class="line">            final int bits = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;</div><div class="line">            int currentBits = window.getDecorView().getSystemUiVisibility();</div><div class="line">            if (dark) &#123;</div><div class="line">                currentBits |= bits;</div><div class="line">            &#125; else &#123;</div><div class="line">                currentBits &amp;= ~bits;</div><div class="line">            &#125;</div><div class="line">            window.getDecorView().setSystemUiVisibility(currentBits);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="4-2-其它厂商做法"><a href="#4-2-其它厂商做法" class="headerlink" title="4.2 其它厂商做法"></a>4.2 其它厂商做法</h2><ul>
+<li><a href="http://dev.xiaomi.com/doc/p=4769/index.html" target="_blank" rel="external">小米</a></li>
+<li><a href="http://open-wiki.flyme.cn/index.php?title=%E7%8A%B6%E6%80%81%E6%A0%8F%E5%8F%98%E8%89%B2" target="_blank" rel="external">魅族</a></li>
+</ul>
+<h1 id="五、小结"><a href="#五、小结" class="headerlink" title="五、小结"></a>五、小结</h1><h2 id="5-1"><a href="#5-1" class="headerlink" title="5.1"></a>5.1</h2><p>总结下来，在显示状态栏的情况下，适配范围最广的是下面这种方法：</p>
+<ul>
+<li>通过<code>DecorView</code>设置成透明并且重叠的模式（如<code>3.4</code>）</li>
+<li>在根布局中添加一个布局，这个布局的高度等于状态栏的高度，这样我们就可以通过控制它的高度和颜色来实现多种组合。</li>
+<li>如果想要改变图标的颜色，就只能在<code>6.0</code>或者厂商的方法。</li>
+</ul>
+<h2 id="5-2"><a href="#5-2" class="headerlink" title="5.2"></a>5.2</h2><p>对于状态栏的操作主要是两种：一种是对<code>DecorView</code>操作，另一种是对<code>window</code>操作，使用的时候对除了设置状态栏颜色外的操作一定要保持统一，一定不要同时进行这两种方法来进行相反的操作。举个例子，如果采用了<code>3.1</code>中的对<code>window</code>进行操作使得状态栏透明，并通过<code>fitSystemWindows</code>改变布局，那么就不要再采用<code>3.3</code>中<code>DecorView.setSystemUiVisibility()</code>的方式来改变布局的结构，最好是成对地出现，否则会使得布局出现意料之外的情况。</p>
+<h2 id="5-3"><a href="#5-3" class="headerlink" title="5.3"></a>5.3</h2><p>最后附上代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div></pre></td><td class="code"><pre><div class="line">public class StatusBarUtils &#123;</div><div class="line"></div><div class="line">    public static void setStatusBarVisibleByWindow(Activity activity, boolean visible) &#123;</div><div class="line">        Window window = activity.getWindow();</div><div class="line">        if (window != null) &#123;</div><div class="line">            WindowManager.LayoutParams winParams = window.getAttributes();</div><div class="line">            final int bits = WindowManager.LayoutParams.FLAG_FULLSCREEN;</div><div class="line">            if (visible) &#123;</div><div class="line">                winParams.flags &amp;= ~bits;</div><div class="line">            &#125; else &#123;</div><div class="line">                winParams.flags |= bits;</div><div class="line">            &#125;</div><div class="line">            window.setAttributes(winParams);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void setStatusBarVisibleByDecorView(Activity activity, boolean visible) &#123;</div><div class="line">        Window window = activity.getWindow();</div><div class="line">        if (window != null) &#123;</div><div class="line">            if (visible) &#123;</div><div class="line">                window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);</div><div class="line">            &#125; else &#123;</div><div class="line">                window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void setStatusBarTransparent(Activity activity) &#123;</div><div class="line">        Window window = activity.getWindow();</div><div class="line">        if (window != null) &#123;</div><div class="line">            WindowManager.LayoutParams winParams = window.getAttributes();</div><div class="line">            final int bits = WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;</div><div class="line">            winParams.flags |= bits;</div><div class="line">            window.setAttributes(winParams);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void setStatusBarTransparentDynamic(Activity activity, boolean overlay, boolean transparent) &#123;</div><div class="line">        if (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.LOLLIPOP) &#123;</div><div class="line">            Window window = activity.getWindow();</div><div class="line">            if (window != null) &#123;</div><div class="line">                if (transparent) &#123;</div><div class="line">                    window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);</div><div class="line">                    if (!overlay) &#123;</div><div class="line">                        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);</div><div class="line">                    &#125;</div><div class="line">                    window.setStatusBarColor(Color.TRANSPARENT);</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void setStatusBarBackgroundColor(Activity activity, int colorId) &#123;</div><div class="line">        if (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.LOLLIPOP) &#123;</div><div class="line">            Window window = activity.getWindow();</div><div class="line">            if (window != null) &#123;</div><div class="line">                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);</div><div class="line">                window.setStatusBarColor(activity.getResources().getColor(colorId));</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void setStatusBarOverlay(Activity activity, boolean overlay) &#123;</div><div class="line">        Window window = activity.getWindow();</div><div class="line">        if (window != null) &#123;</div><div class="line">            if (overlay) &#123;</div><div class="line">                window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);</div><div class="line">            &#125; else &#123;</div><div class="line">                window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void setStatusBarItemColor(Activity activity, boolean dark) &#123;</div><div class="line">        if (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.M) &#123;</div><div class="line">            Window window = activity.getWindow();</div><div class="line">            if (window != null) &#123;</div><div class="line">                final int bits = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;</div><div class="line">                int currentBits = window.getDecorView().getSystemUiVisibility();</div><div class="line">                if (dark) &#123;</div><div class="line">                    currentBits |= bits;</div><div class="line">                &#125; else &#123;</div><div class="line">                    currentBits &amp;= ~bits;</div><div class="line">                &#125;</div><div class="line">                window.getDecorView().setSystemUiVisibility(currentBits);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/03/22/图片基础/图片基础知识梳理(3)---Bitmap&BitmapFactory-解析/" rel="next" title="图片基础知识梳理(3) - Bitmap&BitmapFactory 解析">
+                <i class="fa fa-chevron-left"></i> 图片基础知识梳理(3) - Bitmap&BitmapFactory 解析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/03/23/Android-数据存储/Android-数据存储知识梳理(2)---Android存储目录/" rel="prev" title="Android 数据存储知识梳理(2) - Android存储目录">
+                Android 数据存储知识梳理(2) - Android存储目录 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="cloud-tie-wrapper" class="cloud-tie-wrapper"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="泽毛" />
+          <p class="site-author-name" itemprop="name">泽毛</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">109</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">26</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              Links
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.jianshu.com/u/37baa8a86582" title="我的简书" target="_blank">我的简书</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://github.com/imZeJun" title="GitHub" target="_blank">GitHub</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.heqiangfly.com/" title="寒江蓑笠" target="_blank">寒江蓑笠</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://johnnyshieh.me/" title="Johnny Shieh" target="_blank">Johnny Shieh</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、概述"><span class="nav-number">1.</span> <span class="nav-text">一、概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、不显示状态栏"><span class="nav-number">2.</span> <span class="nav-text">二、不显示状态栏</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-通过Activity所属的Window"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 通过Activity所属的Window</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-通过DecorView"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 通过DecorView</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、显示状态栏"><span class="nav-number">3.</span> <span class="nav-text">三、显示状态栏</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-设置状态栏为透明"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 设置状态栏为透明</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-1-在布局中加上和状态栏高度相同的padding"><span class="nav-number">3.1.1.</span> <span class="nav-text">3.1.1 在布局中加上和状态栏高度相同的padding</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-2-fitsSystemWindows"><span class="nav-number">3.1.2.</span> <span class="nav-text">3.1.2 fitsSystemWindows</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-3-小结"><span class="nav-number">3.1.3.</span> <span class="nav-text">3.1.3 小结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-改变状态栏的颜色"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 改变状态栏的颜色</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-1-通过style设置"><span class="nav-number">3.2.1.</span> <span class="nav-text">3.2.1 通过style设置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-2-通过代码动态设置"><span class="nav-number">3.2.2.</span> <span class="nav-text">3.2.2 通过代码动态设置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-3-小结"><span class="nav-number">3.2.3.</span> <span class="nav-text">3.2.3 小结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-3-改变状态栏和根布局的关系"><span class="nav-number">3.3.</span> <span class="nav-text">3.3 改变状态栏和根布局的关系</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-4-动态设置状态栏透明"><span class="nav-number">3.4.</span> <span class="nav-text">3.4 动态设置状态栏透明</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四、改变状态栏图标颜色"><span class="nav-number">4.</span> <span class="nav-text">四、改变状态栏图标颜色</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#4-1-官方标准做法"><span class="nav-number">4.1.</span> <span class="nav-text">4.1 官方标准做法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-2-其它厂商做法"><span class="nav-number">4.2.</span> <span class="nav-text">4.2 其它厂商做法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#五、小结"><span class="nav-number">5.</span> <span class="nav-text">五、小结</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#5-1"><span class="nav-number">5.1.</span> <span class="nav-text">5.1</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-2"><span class="nav-number">5.2.</span> <span class="nav-text">5.2</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-3"><span class="nav-number">5.3.</span> <span class="nav-text">5.3</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">泽毛</span>
+</div>
+
+<div class="powered-by">
+<i class=""></i><span id="busuanzi_container_site_uv">
+  访客 - <span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+<div class="powered-by">
+<i class=""></i><span id="busuanzi_container_site_pv">
+  访问量 - <span id="busuanzi_value_site_pv"></span>
+</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+    <script>
+      var cloudTieConfig = {
+        url: document.location.href, 
+        sourceId: "",
+        productKey: "b50a597e2fb84d35a6766074670f1d15",
+        target: "cloud-tie-wrapper"
+      };
+    </script>
+    <script src="https://img1.ws.126.net/f2e/tie/yun/sdk/loader.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("4ko7Mbc92NvXMivUJ2jBW88P-gzGzoHsz", "ccjGamRX2s1CSuhjsOVy2a6N");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
