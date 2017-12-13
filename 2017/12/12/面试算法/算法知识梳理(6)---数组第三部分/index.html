@@ -1,0 +1,952 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="一、概要本文介绍了有关数组的算法第三部分的Java代码实现，所有代码均可通过 在线编译器 直接运行，算法目录：  在递增排序的数组中，查找指定数字出现的个数 查找数组中只出现一次的两个数字 在递增排序的数组中，查找和为s的两个数 输入一个正数s，打印出所有和为s的连续正数序列 数组当中的最大最小值  二、代码实现2.1 在递增排序的数组中，查找指定数字出现的个数问题描述在递增排序的数组中，查找指定">
+<meta property="og:type" content="article">
+<meta property="og:title" content="算法知识梳理(6) - 数组第三部分">
+<meta property="og:url" content="http://yoursite.com/2017/12/12/面试算法/算法知识梳理(6)---数组第三部分/index.html">
+<meta property="og:site_name" content="泽毛的博客">
+<meta property="og:description" content="一、概要本文介绍了有关数组的算法第三部分的Java代码实现，所有代码均可通过 在线编译器 直接运行，算法目录：  在递增排序的数组中，查找指定数字出现的个数 查找数组中只出现一次的两个数字 在递增排序的数组中，查找和为s的两个数 输入一个正数s，打印出所有和为s的连续正数序列 数组当中的最大最小值  二、代码实现2.1 在递增排序的数组中，查找指定数字出现的个数问题描述在递增排序的数组中，查找指定">
+<meta property="og:updated_time" content="2017-12-13T04:59:34.064Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="算法知识梳理(6) - 数组第三部分">
+<meta name="twitter:description" content="一、概要本文介绍了有关数组的算法第三部分的Java代码实现，所有代码均可通过 在线编译器 直接运行，算法目录：  在递增排序的数组中，查找指定数字出现的个数 查找数组中只出现一次的两个数字 在递增排序的数组中，查找和为s的两个数 输入一个正数s，打印出所有和为s的连续正数序列 数组当中的最大最小值  二、代码实现2.1 在递增排序的数组中，查找指定数字出现的个数问题描述在递增排序的数组中，查找指定">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: 'bd2f9b0f6cf360a4093517d22678efec',
+      indexName: 'Blog',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/12/12/面试算法/算法知识梳理(6)---数组第三部分/"/>
+
+
+
+
+
+  <title>算法知识梳理(6) - 数组第三部分 | 泽毛的博客</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?c276429c3a148ef2fa47d755199a64c2";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">泽毛的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">但愿每次回忆，对生活都不感到负疚</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            目录
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-friend">
+          <a href="/friend/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            小伙伴
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/12/面试算法/算法知识梳理(6)---数组第三部分/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="泽毛">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="泽毛的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">算法知识梳理(6) - 数组第三部分</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-12T00:08:00+08:00">
+                2017-12-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/算法知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">算法知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a class="cloud-tie-join-count" href="/2017/12/12/面试算法/算法知识梳理(6)---数组第三部分/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count join-count" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2017/12/12/面试算法/算法知识梳理(6)---数组第三部分/" class="leancloud_visitors" data-flag-title="算法知识梳理(6) - 数组第三部分">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">热度 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+                 <span>°C</span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="一、概要"><a href="#一、概要" class="headerlink" title="一、概要"></a>一、概要</h1><p>本文介绍了有关数组的算法第三部分的<code>Java</code>代码实现，所有代码均可通过 <a href="http://tool.lu/coderunner/" target="_blank" rel="external">在线编译器</a> 直接运行，算法目录：</p>
+<ul>
+<li>在递增排序的数组中，查找指定数字出现的个数</li>
+<li>查找数组中只出现一次的两个数字</li>
+<li>在递增排序的数组中，查找和为<code>s</code>的两个数</li>
+<li>输入一个正数<code>s</code>，打印出所有和为<code>s</code>的连续正数序列</li>
+<li>数组当中的最大最小值</li>
+</ul>
+<h1 id="二、代码实现"><a href="#二、代码实现" class="headerlink" title="二、代码实现"></a>二、代码实现</h1><h2 id="2-1-在递增排序的数组中，查找指定数字出现的个数"><a href="#2-1-在递增排序的数组中，查找指定数字出现的个数" class="headerlink" title="2.1 在递增排序的数组中，查找指定数字出现的个数"></a>2.1 在递增排序的数组中，查找指定数字出现的个数</h2><h3 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h3><p>在递增排序的数组中，查找指定数字出现的个数</p>
+<h3 id="解决思路"><a href="#解决思路" class="headerlink" title="解决思路"></a>解决思路</h3><p>这个问题的关键信息是输入数组是 <strong>递增排序</strong> 的，指定数字必然是连在一起的，因此，我们只需要找到该数字第一次和最后一次出现的下标位置，那么就可以得到该数字出现的数字。</p>
+<p>对于递增排序的数组，最常见的方法就是使用 <strong>二分查找</strong>，以查找数字第一次出现的位置为例，也就是下面的<code>getFirstK</code>函数：</p>
+<ul>
+<li>如果只有一个元素，那么判断该元素是否是指定数字即可</li>
+<li>如果只有两个元素，那么先判断前面的元素，如果不相等再判断后面的元素</li>
+<li>如果大于两个元素，那么取中点位置的元素，如果该元素比需要查找的数字小，那么就说明需要查找的元素在其右侧，否则就说明它在查找元素的左侧（有可能包含该中点位置元素）。</li>
+</ul>
+<p><code>getLastK</code>也是同理。</p>
+<h3 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Untitled</span> </span>&#123;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">getFirstK</span><span class="params">(<span class="keyword">int</span> p[], <span class="keyword">int</span> num, <span class="keyword">int</span> startIndex, <span class="keyword">int</span> endIndex)</span> </span>&#123;</div><div class="line">		<span class="keyword">if</span> (endIndex == startIndex) &#123;</div><div class="line">			<span class="keyword">return</span> p[startIndex] == num ? startIndex : -<span class="number">1</span>;</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">if</span> (endIndex-startIndex == <span class="number">1</span>) &#123;</div><div class="line">			<span class="keyword">if</span> (p[startIndex] == num) &#123;</div><div class="line">			    <span class="keyword">return</span> startIndex;</div><div class="line">			&#125; <span class="keyword">else</span> <span class="keyword">if</span> (p[endIndex] == num) &#123;</div><div class="line">			    <span class="keyword">return</span> endIndex;</div><div class="line">			&#125; <span class="keyword">else</span> &#123;</div><div class="line">			    <span class="keyword">return</span> -<span class="number">1</span>;</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">int</span> midOffset = (endIndex-startIndex) &gt;&gt; <span class="number">1</span>;</div><div class="line">		<span class="comment">//如果中间的元素比寻找的小，那么说明其在中间元素的右侧。</span></div><div class="line">		<span class="keyword">if</span> (p[startIndex+midOffset] &lt; num) &#123;</div><div class="line">			<span class="keyword">return</span> getFirstK(p, num, startIndex+midOffset+<span class="number">1</span>, endIndex);</div><div class="line">		&#125; <span class="keyword">else</span> &#123;</div><div class="line">			<span class="keyword">return</span> getFirstK(p, num, startIndex, startIndex+midOffset);</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">getLastK</span><span class="params">(<span class="keyword">int</span> p[], <span class="keyword">int</span> num, <span class="keyword">int</span> startIndex, <span class="keyword">int</span> endIndex)</span> </span>&#123;</div><div class="line">		<span class="keyword">if</span> (endIndex == startIndex) &#123;</div><div class="line">			<span class="keyword">return</span> p[startIndex] == num ? startIndex : -<span class="number">1</span>;</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">if</span> (endIndex-startIndex == <span class="number">1</span>) &#123;</div><div class="line">			<span class="keyword">if</span> (p[endIndex] == num) &#123;</div><div class="line">			    <span class="keyword">return</span> endIndex;</div><div class="line">			&#125; <span class="keyword">else</span> <span class="keyword">if</span> (p[startIndex] == num) &#123;</div><div class="line">			    <span class="keyword">return</span> startIndex;</div><div class="line">			&#125; <span class="keyword">else</span> &#123;</div><div class="line">			    <span class="keyword">return</span> -<span class="number">1</span>;</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">int</span> midOffset = (endIndex-startIndex) &gt;&gt; <span class="number">1</span>;</div><div class="line">		<span class="keyword">if</span> (p[startIndex+midOffset] &lt;= num) &#123;</div><div class="line">			<span class="keyword">return</span> getLastK(p, num, startIndex+midOffset, endIndex);</div><div class="line">		&#125; <span class="keyword">else</span> &#123;</div><div class="line">			<span class="comment">//如果中间的元素比寻找的大，那么说明其在中间元素的左侧。</span></div><div class="line">			<span class="keyword">return</span> getLastK(p, num, startIndex, startIndex+midOffset-<span class="number">1</span>);</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">getNumberAppearTimes</span><span class="params">(<span class="keyword">int</span> p[], <span class="keyword">int</span> num, <span class="keyword">int</span> len)</span> </span>&#123;</div><div class="line">		<span class="keyword">int</span> firstK = getFirstK(p, <span class="number">6</span>, <span class="number">0</span>, len-<span class="number">1</span>);</div><div class="line">		<span class="keyword">int</span> lastK = getLastK(p, <span class="number">6</span>, <span class="number">0</span>, len-<span class="number">1</span>);</div><div class="line">		<span class="keyword">if</span> (firstK &gt;= <span class="number">0</span> &amp;&amp; lastK &gt;= <span class="number">0</span>) &#123;</div><div class="line">			System.out.println(<span class="string">"firstK="</span> + firstK + <span class="string">",lastK="</span> + lastK);</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> lastK-firstK+<span class="number">1</span>;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">		<span class="keyword">int</span> p[] = &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">6</span>, <span class="number">6</span>, <span class="number">6</span>, <span class="number">9</span>&#125;;</div><div class="line">		<span class="keyword">int</span> result = getNumberAppearTimes(p, <span class="number">6</span>, <span class="number">7</span>);</div><div class="line">	    System.out.println(<span class="string">"appear="</span> + result);</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="运行结果"><a href="#运行结果" class="headerlink" title="运行结果"></a>运行结果</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; firstK=<span class="number">3</span>,lastK=<span class="number">5</span></div><div class="line">&gt;&gt; appear=<span class="number">3</span></div></pre></td></tr></table></figure>
+<h2 id="2-2-查找数组中只出现一次的两个数字"><a href="#2-2-查找数组中只出现一次的两个数字" class="headerlink" title="2.2 查找数组中只出现一次的两个数字"></a>2.2 查找数组中只出现一次的两个数字</h2><h3 id="问题描述-1"><a href="#问题描述-1" class="headerlink" title="问题描述"></a>问题描述</h3><p>一个整型数组里除了两个数字之外，其他的数字都出现了两次，请写程序找出这两个只出现一次的数字。</p>
+<h3 id="解决思路-1"><a href="#解决思路-1" class="headerlink" title="解决思路"></a>解决思路</h3><p>首先，让我们再复习一下异或的特点：两个相同的数异或的结果为<code>0</code>，且异或满足交换律和结合律。</p>
+<p>对于题目中的假设，假如这两个只出现了一次的数为<code>a</code>和<code>b</code>：</p>
+<ul>
+<li>第一步：对整型数组中的所有数进行异或，那么得到的结果就是<code>a^b</code>的值。</li>
+<li>第二步：将<code>a</code>和<code>b</code>分到两个不同的子数组当中，再分别对这两个数组进行异或，那么就可以得到<code>a</code>和<code>b</code>了，而划分的依据就是根据第一步的结果，找出<code>a^b</code>中为<code>1</code>的一位。<h3 id="代码实现-1"><a href="#代码实现-1" class="headerlink" title="代码实现"></a>代码实现</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Untitled</span> </span>&#123;</div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">getTwoAppearOnce</span><span class="params">(<span class="keyword">int</span> p[], <span class="keyword">int</span> len)</span> </span>&#123;</div><div class="line">	    <span class="keyword">int</span> excluX = <span class="number">0</span>;</div><div class="line">		<span class="keyword">int</span> excluY = <span class="number">0</span>;</div><div class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;len; i++) &#123;</div><div class="line">		   excluX ^= p[i];</div><div class="line">		&#125;</div><div class="line">		System.out.println(<span class="string">"全部异或结果="</span> + excluX);</div><div class="line">		<span class="keyword">if</span> (excluX != <span class="number">0</span>) &#123;</div><div class="line">			<span class="comment">//确定两个出现唯一的元素，有一位一个为1，另一个为0。</span></div><div class="line">			<span class="keyword">int</span> diffBit = excluX^(excluX&amp;(excluX-<span class="number">1</span>));</div><div class="line">			System.out.println(<span class="string">"不相同的位="</span> + diffBit);</div><div class="line">			excluX = <span class="number">0</span>;</div><div class="line">			<span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;len; i++) &#123;</div><div class="line">				<span class="comment">//根据上面求出的位，分成两组，分别进行异或操作。</span></div><div class="line">				<span class="keyword">if</span> ((p[i] &amp; diffBit) == <span class="number">0</span>) &#123;</div><div class="line">					excluX ^= p[i];</div><div class="line">				&#125; <span class="keyword">else</span> &#123;</div><div class="line">					excluY ^= p[i];</div><div class="line">				&#125;</div><div class="line">			&#125;</div><div class="line">			System.out.println(<span class="string">"第一个元素="</span> + excluX + <span class="string">",第二个元素="</span> + excluY);</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">		<span class="keyword">int</span> p[] = &#123;<span class="number">1</span>,<span class="number">3</span>,<span class="number">3</span>,<span class="number">5</span>,<span class="number">7</span>,<span class="number">7</span>&#125;;</div><div class="line">		getTwoAppearOnce(p, p.length);</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="运行结果-1"><a href="#运行结果-1" class="headerlink" title="运行结果"></a>运行结果</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; 全部异或结果=<span class="number">4</span></div><div class="line">&gt;&gt; 不相同的位=<span class="number">4</span></div><div class="line">&gt;&gt; 第一个元素=<span class="number">1</span>,第二个元素=<span class="number">5</span></div></pre></td></tr></table></figure>
+<h2 id="2-3-在递增排序的数组中，查找和为-s-的两个数"><a href="#2-3-在递增排序的数组中，查找和为-s-的两个数" class="headerlink" title="2.3 在递增排序的数组中，查找和为 s 的两个数"></a>2.3 在递增排序的数组中，查找和为 s 的两个数</h2><h3 id="问题描述-2"><a href="#问题描述-2" class="headerlink" title="问题描述"></a>问题描述</h3><p>在递增排序的数组中，查找和为<code>s</code>的两个数</p>
+<h3 id="解决思路-2"><a href="#解决思路-2" class="headerlink" title="解决思路"></a>解决思路</h3><p>由于原数组是 <strong>递增排序</strong> 的，因此我们可以定义两个指针<code>first</code>和<code>last</code>，分别指向数组的首元素和尾元素，如果当前的和小于<code>sum</code>，那么说明需要放入一个更大的元素，就可以将首指针前移，如果小于<code>sum</code>，那么就将尾指针后移。</p>
+<p>这里有一点需要注意，对于<code>first</code>和<code>last</code>已经移动过的位置，可以 <strong>确定其所在的元素</strong> 一定不是符合条件的两个数之一，因此，<code>first</code>不需要前移，<code>last</code>也不需要后移。</p>
+<h3 id="实现代码"><a href="#实现代码" class="headerlink" title="实现代码"></a>实现代码</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Untitled</span> </span>&#123;</div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">findTwoNumberIsSumN</span><span class="params">(<span class="keyword">int</span> p[], <span class="keyword">int</span> len, <span class="keyword">int</span> sum)</span> </span>&#123;</div><div class="line">	    <span class="keyword">int</span> first = <span class="number">0</span>;</div><div class="line">		<span class="keyword">int</span> last = len-<span class="number">1</span>;</div><div class="line">		<span class="keyword">while</span>(first &lt;= last) &#123;</div><div class="line">			<span class="keyword">int</span> temp = p[first]+p[last];</div><div class="line">			<span class="keyword">if</span> (temp == sum) &#123;</div><div class="line">			    System.out.println(<span class="string">"p[first]="</span> + p[first] + <span class="string">",p[last]="</span> + p[last]);</div><div class="line">				<span class="keyword">break</span>;</div><div class="line">			&#125; <span class="keyword">else</span> <span class="keyword">if</span> (temp &lt; sum) &#123;</div><div class="line">			    first++;</div><div class="line">			&#125; <span class="keyword">else</span> &#123;</div><div class="line">				last--;</div><div class="line">			&#125;</div><div class="line">		&#125;	</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">		<span class="keyword">int</span> p[] = &#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">4</span>,<span class="number">7</span>,<span class="number">11</span>,<span class="number">15</span>&#125;;</div><div class="line">		findTwoNumberIsSumN(p, p.length, <span class="number">15</span>);</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="运行结果-2"><a href="#运行结果-2" class="headerlink" title="运行结果"></a>运行结果</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">p[first]=<span class="number">4</span>,p[last]=<span class="number">11</span></div></pre></td></tr></table></figure>
+<h2 id="2-4-输入一个正数-s，打印出所有和为-s-的连续正数序列"><a href="#2-4-输入一个正数-s，打印出所有和为-s-的连续正数序列" class="headerlink" title="2.4 输入一个正数 s，打印出所有和为 s 的连续正数序列"></a>2.4 输入一个正数 s，打印出所有和为 s 的连续正数序列</h2><h3 id="实现代码-1"><a href="#实现代码-1" class="headerlink" title="实现代码"></a>实现代码</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Untitled</span> </span>&#123;</div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">getSerialNumberSumN</span><span class="params">(<span class="keyword">int</span> sum)</span> </span>&#123;</div><div class="line">		<span class="keyword">int</span> startNum = <span class="number">1</span>;</div><div class="line">		<span class="keyword">int</span> endNum = <span class="number">2</span>;</div><div class="line">		<span class="keyword">int</span> curSum = startNum+endNum;</div><div class="line">		<span class="keyword">int</span> max = (<span class="number">1</span>+sum) &gt;&gt; <span class="number">1</span>;</div><div class="line">		<span class="keyword">while</span> (startNum &lt; max) &#123;</div><div class="line">			<span class="keyword">if</span> (curSum == sum) &#123;</div><div class="line">				System.out.println(<span class="string">"["</span> + startNum + <span class="string">"..."</span> + endNum + <span class="string">"]"</span>);</div><div class="line">			&#125; </div><div class="line">			<span class="comment">//如果当前的和大于要求的值，那么就移动首元素，使得数组的范围变小。</span></div><div class="line">			<span class="keyword">while</span> (curSum &gt; sum &amp;&amp; startNum &lt; max) &#123;</div><div class="line">				<span class="comment">//注意要先减再移位。</span></div><div class="line">				curSum = curSum-startNum;</div><div class="line">				startNum++;</div><div class="line">				<span class="keyword">if</span> (curSum == sum) &#123;</div><div class="line">					System.out.println(<span class="string">"["</span> + startNum + <span class="string">"..."</span> + endNum + <span class="string">"]"</span>);</div><div class="line">				&#125; </div><div class="line">			&#125;</div><div class="line">			<span class="comment">//移动尾元素，使得数组的范围变大，注意要先移位之后再加。</span></div><div class="line">			endNum++;</div><div class="line">			curSum = curSum+endNum;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">		getSerialNumberSumN(<span class="number">15</span>);</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="运行结果-3"><a href="#运行结果-3" class="headerlink" title="运行结果"></a>运行结果</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; [<span class="number">1</span>...<span class="number">5</span>]</div><div class="line">&gt;&gt; [<span class="number">4</span>...<span class="number">6</span>]</div><div class="line">&gt;&gt; [<span class="number">7</span>...<span class="number">8</span>]</div></pre></td></tr></table></figure>
+<h2 id="2-5-数组当中的最大最小值"><a href="#2-5-数组当中的最大最小值" class="headerlink" title="2.5 数组当中的最大最小值"></a>2.5 数组当中的最大最小值</h2><h3 id="实现代码-2"><a href="#实现代码-2" class="headerlink" title="实现代码"></a>实现代码</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Untitled</span> </span>&#123;</div><div class="line">	</div><div class="line">	<span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">ValueHolder</span> </span>&#123;</div><div class="line">	    <span class="keyword">public</span> <span class="keyword">int</span> maxNum;</div><div class="line">		<span class="keyword">public</span> <span class="keyword">int</span> minNum;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">static</span> ValueHolder <span class="title">getMaxMinNumber</span><span class="params">(<span class="keyword">int</span> p[], <span class="keyword">int</span> startIndex, <span class="keyword">int</span> endIndex)</span> </span>&#123;</div><div class="line">		ValueHolder value = <span class="keyword">new</span> ValueHolder();</div><div class="line">		<span class="keyword">if</span> (startIndex == endIndex) &#123;</div><div class="line">			value.maxNum = p[startIndex];</div><div class="line">			value.minNum = p[endIndex];</div><div class="line">			<span class="keyword">return</span> value;</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">int</span> midOffset = (endIndex-startIndex) &gt;&gt; <span class="number">1</span>;</div><div class="line">		ValueHolder l = getMaxMinNumber(p, startIndex, startIndex+midOffset);</div><div class="line">		ValueHolder r = getMaxMinNumber(p, startIndex+midOffset+<span class="number">1</span>, endIndex);</div><div class="line">		<span class="keyword">if</span> (l.maxNum &gt;= r.maxNum) &#123;</div><div class="line">			value.maxNum = l.maxNum;</div><div class="line">		&#125; <span class="keyword">else</span> &#123;</div><div class="line">			value.maxNum = r.maxNum;</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">if</span> (l.minNum &lt; r.minNum) &#123;</div><div class="line">			value.minNum = l.minNum;</div><div class="line">		&#125; <span class="keyword">else</span> &#123;</div><div class="line">			value.minNum = r.minNum;</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> value;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">		<span class="keyword">int</span> p[] = &#123;<span class="number">1</span>,<span class="number">45</span>,<span class="number">23</span>,<span class="number">3</span>,<span class="number">6</span>,<span class="number">2</span>,<span class="number">7</span>,<span class="number">234</span>,<span class="number">56</span>&#125;;</div><div class="line">		ValueHolder v = getMaxMinNumber(p, <span class="number">0</span>, p.length-<span class="number">1</span>);</div><div class="line">		System.out.println(<span class="string">"max="</span> + v.maxNum + <span class="string">",min="</span> + v.minNum);</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="运行结果-4"><a href="#运行结果-4" class="headerlink" title="运行结果"></a>运行结果</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; max=<span class="number">234</span>,min=<span class="number">1</span></div></pre></td></tr></table></figure>
+<hr>
+<h1 id="更多文章，欢迎访问我的-Android-知识梳理系列："><a href="#更多文章，欢迎访问我的-Android-知识梳理系列：" class="headerlink" title="更多文章，欢迎访问我的 Android 知识梳理系列："></a>更多文章，欢迎访问我的 <strong>Android</strong> 知识梳理系列：</h1><ul>
+<li><strong>Android</strong> 知识梳理目录：<a href="http://www.jianshu.com/p/fd82d18994ce" target="_blank" rel="external">http://www.jianshu.com/p/fd82d18994ce</a></li>
+<li><strong>Android</strong> 面试文档分享：<a href="http://www.jianshu.com/p/8456fe6b27c4" target="_blank" rel="external">http://www.jianshu.com/p/8456fe6b27c4</a></li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/12/11/面试算法/算法知识梳理(5)---数组第二部分/" rel="next" title="算法知识梳理(5) - 数组第二部分">
+                <i class="fa fa-chevron-left"></i> 算法知识梳理(5) - 数组第二部分
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/12/12/面试算法/算法知识梳理(7)---数组第四部分/" rel="prev" title="算法知识梳理(7) - 数组第四部分">
+                算法知识梳理(7) - 数组第四部分 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="cloud-tie-wrapper" class="cloud-tie-wrapper"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="泽毛" />
+          <p class="site-author-name" itemprop="name">泽毛</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">117</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">27</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              Links
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.jianshu.com/u/37baa8a86582" title="我的简书" target="_blank">我的简书</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://github.com/imZeJun" title="GitHub" target="_blank">GitHub</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.heqiangfly.com/" title="寒江蓑笠" target="_blank">寒江蓑笠</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://johnnyshieh.me/" title="Johnny Shieh" target="_blank">Johnny Shieh</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、概要"><span class="nav-number">1.</span> <span class="nav-text">一、概要</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、代码实现"><span class="nav-number">2.</span> <span class="nav-text">二、代码实现</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-在递增排序的数组中，查找指定数字出现的个数"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 在递增排序的数组中，查找指定数字出现的个数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#问题描述"><span class="nav-number">2.1.1.</span> <span class="nav-text">问题描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#解决思路"><span class="nav-number">2.1.2.</span> <span class="nav-text">解决思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#代码实现"><span class="nav-number">2.1.3.</span> <span class="nav-text">代码实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#运行结果"><span class="nav-number">2.1.4.</span> <span class="nav-text">运行结果</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-查找数组中只出现一次的两个数字"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 查找数组中只出现一次的两个数字</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#问题描述-1"><span class="nav-number">2.2.1.</span> <span class="nav-text">问题描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#解决思路-1"><span class="nav-number">2.2.2.</span> <span class="nav-text">解决思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#代码实现-1"><span class="nav-number">2.2.3.</span> <span class="nav-text">代码实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#运行结果-1"><span class="nav-number">2.2.4.</span> <span class="nav-text">运行结果</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-在递增排序的数组中，查找和为-s-的两个数"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 在递增排序的数组中，查找和为 s 的两个数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#问题描述-2"><span class="nav-number">2.3.1.</span> <span class="nav-text">问题描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#解决思路-2"><span class="nav-number">2.3.2.</span> <span class="nav-text">解决思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实现代码"><span class="nav-number">2.3.3.</span> <span class="nav-text">实现代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#运行结果-2"><span class="nav-number">2.3.4.</span> <span class="nav-text">运行结果</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-4-输入一个正数-s，打印出所有和为-s-的连续正数序列"><span class="nav-number">2.4.</span> <span class="nav-text">2.4 输入一个正数 s，打印出所有和为 s 的连续正数序列</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#实现代码-1"><span class="nav-number">2.4.1.</span> <span class="nav-text">实现代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#运行结果-3"><span class="nav-number">2.4.2.</span> <span class="nav-text">运行结果</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-5-数组当中的最大最小值"><span class="nav-number">2.5.</span> <span class="nav-text">2.5 数组当中的最大最小值</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#实现代码-2"><span class="nav-number">2.5.1.</span> <span class="nav-text">实现代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#运行结果-4"><span class="nav-number">2.5.2.</span> <span class="nav-text">运行结果</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#更多文章，欢迎访问我的-Android-知识梳理系列："><span class="nav-number">3.</span> <span class="nav-text">更多文章，欢迎访问我的 Android 知识梳理系列：</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">泽毛</span>
+</div>
+
+<div class="powered-by">
+<i class=""></i><span id="busuanzi_container_site_uv">
+  访客 - <span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+<div class="powered-by">
+<i class=""></i><span id="busuanzi_container_site_pv">
+  访问量 - <span id="busuanzi_value_site_pv"></span>
+</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+    <script>
+      var cloudTieConfig = {
+        url: document.location.href, 
+        sourceId: "",
+        productKey: "b50a597e2fb84d35a6766074670f1d15",
+        target: "cloud-tie-wrapper"
+      };
+    </script>
+    <script src="https://img1.ws.126.net/f2e/tie/yun/sdk/loader.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("4ko7Mbc92NvXMivUJ2jBW88P-gzGzoHsz", "ccjGamRX2s1CSuhjsOVy2a6N");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

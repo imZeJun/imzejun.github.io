@@ -1,0 +1,971 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="一、概要本文介绍了有关字符串的算法第一部分的Java代码实现，所有代码均可通过 在线编译器 直接运行，算法目录：  替换字符串中的空格 输入一个字符串，打印出该字符串的所有排列 第一个只出现一次的字符 翻转句子 计算字符串之间的最短距离  二、代码实现2.1 替换字符串中的空格问题描述实现一个函数，将字符串p中的所有空格都替换成为指定的字符串r。 解决思路 遍历原始的字符串p，统计原先字符串中空格">
+<meta property="og:type" content="article">
+<meta property="og:title" content="算法知识梳理(2) - 字符串算法第一部分">
+<meta property="og:url" content="http://yoursite.com/2017/11/05/面试算法/算法知识梳理(2)---字符串算法第一部分/index.html">
+<meta property="og:site_name" content="泽毛的博客">
+<meta property="og:description" content="一、概要本文介绍了有关字符串的算法第一部分的Java代码实现，所有代码均可通过 在线编译器 直接运行，算法目录：  替换字符串中的空格 输入一个字符串，打印出该字符串的所有排列 第一个只出现一次的字符 翻转句子 计算字符串之间的最短距离  二、代码实现2.1 替换字符串中的空格问题描述实现一个函数，将字符串p中的所有空格都替换成为指定的字符串r。 解决思路 遍历原始的字符串p，统计原先字符串中空格">
+<meta property="og:updated_time" content="2017-12-13T04:59:05.384Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="算法知识梳理(2) - 字符串算法第一部分">
+<meta name="twitter:description" content="一、概要本文介绍了有关字符串的算法第一部分的Java代码实现，所有代码均可通过 在线编译器 直接运行，算法目录：  替换字符串中的空格 输入一个字符串，打印出该字符串的所有排列 第一个只出现一次的字符 翻转句子 计算字符串之间的最短距离  二、代码实现2.1 替换字符串中的空格问题描述实现一个函数，将字符串p中的所有空格都替换成为指定的字符串r。 解决思路 遍历原始的字符串p，统计原先字符串中空格">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: 'bd2f9b0f6cf360a4093517d22678efec',
+      indexName: 'Blog',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/11/05/面试算法/算法知识梳理(2)---字符串算法第一部分/"/>
+
+
+
+
+
+  <title>算法知识梳理(2) - 字符串算法第一部分 | 泽毛的博客</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?c276429c3a148ef2fa47d755199a64c2";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">泽毛的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">但愿每次回忆，对生活都不感到负疚</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            目录
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-friend">
+          <a href="/friend/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            小伙伴
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/11/05/面试算法/算法知识梳理(2)---字符串算法第一部分/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="泽毛">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="泽毛的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">算法知识梳理(2) - 字符串算法第一部分</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-05T21:33:00+08:00">
+                2017-11-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/算法知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">算法知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a class="cloud-tie-join-count" href="/2017/11/05/面试算法/算法知识梳理(2)---字符串算法第一部分/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count join-count" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2017/11/05/面试算法/算法知识梳理(2)---字符串算法第一部分/" class="leancloud_visitors" data-flag-title="算法知识梳理(2) - 字符串算法第一部分">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">热度 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+                 <span>°C</span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="一、概要"><a href="#一、概要" class="headerlink" title="一、概要"></a>一、概要</h1><p>本文介绍了有关字符串的算法第一部分的<code>Java</code>代码实现，所有代码均可通过 <a href="http://tool.lu/coderunner/" target="_blank" rel="external">在线编译器</a> 直接运行，算法目录：</p>
+<ul>
+<li>替换字符串中的空格</li>
+<li>输入一个字符串，打印出该字符串的所有排列</li>
+<li>第一个只出现一次的字符</li>
+<li>翻转句子</li>
+<li>计算字符串之间的最短距离</li>
+</ul>
+<h1 id="二、代码实现"><a href="#二、代码实现" class="headerlink" title="二、代码实现"></a>二、代码实现</h1><h2 id="2-1-替换字符串中的空格"><a href="#2-1-替换字符串中的空格" class="headerlink" title="2.1 替换字符串中的空格"></a>2.1 替换字符串中的空格</h2><h3 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h3><p>实现一个函数，将字符串<code>p</code>中的所有空格都替换成为指定的字符串<code>r</code>。</p>
+<h3 id="解决思路"><a href="#解决思路" class="headerlink" title="解决思路"></a>解决思路</h3><ul>
+<li>遍历原始的字符串<code>p</code>，统计原先字符串中空格的个数<code>spaceNum</code>。</li>
+<li>创建一个新的数组<code>n</code>，用于存放替换后的字符串。由于原先字符串中空格也占了一个位置，因此新数组<code>n</code>的长度为<code>p.len + (r.len - 1) * spaceNum</code>。</li>
+<li>对于<code>p</code> <strong>从后往前遍历</strong>，如果 <strong>遇到了空格</strong>，那么就将需要替换的字符串<code>r</code>中的字符 <strong>从后往前</strong> 填入<code>n</code>数组中；如果 <strong>遇到了非空格</strong>，那么就将<code>p</code>中的字符填入<code>n</code>数组中。<h3 id="实现代码"><a href="#实现代码" class="headerlink" title="实现代码"></a>实现代码</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Untitled</span> </span>&#123;</div><div class="line">	</div><div class="line">	<span class="keyword">static</span> <span class="keyword">char</span>[] replaceSpace(<span class="keyword">char</span> p[], <span class="keyword">char</span> r[], <span class="keyword">int</span> pLen, <span class="keyword">int</span> rLen)&#123;</div><div class="line">		<span class="keyword">int</span> spaceNum = <span class="number">0</span>;</div><div class="line">		<span class="keyword">int</span> i;</div><div class="line">		<span class="keyword">for</span>(i = <span class="number">0</span>; i &lt; pLen; i++)&#123;</div><div class="line">			<span class="keyword">if</span>(p[i] == <span class="string">' '</span>)</div><div class="line">				spaceNum += (rLen-<span class="number">1</span>);</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">int</span> nLen = pLen+spaceNum;</div><div class="line">		<span class="keyword">char</span> n[] = <span class="keyword">new</span> <span class="keyword">char</span>[nLen+<span class="number">1</span>];</div><div class="line">		i = nLen-<span class="number">1</span>;</div><div class="line">		<span class="keyword">int</span> j = pLen-<span class="number">1</span>;</div><div class="line">		<span class="keyword">while</span>(i &gt;= <span class="number">0</span> &amp;&amp; j &gt;= <span class="number">0</span>)&#123;</div><div class="line">			<span class="keyword">if</span> (p[j] == <span class="string">' '</span>) &#123;</div><div class="line">				<span class="keyword">for</span> (<span class="keyword">int</span> k = rLen-<span class="number">1</span>; k &gt;= <span class="number">0</span>; k--)</div><div class="line">					n[i--] = r[k];</div><div class="line">			&#125; <span class="keyword">else</span> &#123;</div><div class="line">				n[i--] = p[j];</div><div class="line">			&#125;</div><div class="line">			j--;</div><div class="line">		&#125;</div><div class="line">		n[nLen] = <span class="number">0</span>;</div><div class="line">		<span class="keyword">return</span> n;</div><div class="line">	&#125; </div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">		<span class="keyword">char</span>[] source = <span class="string">"I am sentence with space"</span>.toCharArray();</div><div class="line">		<span class="keyword">char</span>[] replace = <span class="string">"%20"</span>.toCharArray();</div><div class="line">		<span class="keyword">char</span>[] result = replaceSpace(source, replace, source.length, replace.length);</div><div class="line">		System.out.println(result);</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="运行结果"><a href="#运行结果" class="headerlink" title="运行结果"></a>运行结果</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; I%<span class="number">20</span>am%<span class="number">20</span>sentence%<span class="number">20</span>with%<span class="number">20</span>space</div></pre></td></tr></table></figure>
+<h2 id="2-2-输入一个字符串，打印出该字符串的所有排列"><a href="#2-2-输入一个字符串，打印出该字符串的所有排列" class="headerlink" title="2.2 输入一个字符串，打印出该字符串的所有排列"></a>2.2 输入一个字符串，打印出该字符串的所有排列</h2><h3 id="问题描述-1"><a href="#问题描述-1" class="headerlink" title="问题描述"></a>问题描述</h3><p>输入一个字符串，打印出该字符串中字符的所有排列。例如输入字符串<code>abc</code>，则输出由字符<code>a</code>、<code>b</code>、<code>c</code>所能排列出来的所有字符串<code>abc</code>、<code>acb</code>、<code>bac</code>、<code>bca</code>、<code>cab</code>和<code>cba</code>。</p>
+<h3 id="解决思路-1"><a href="#解决思路-1" class="headerlink" title="解决思路"></a>解决思路</h3><p>这是一个 <strong>递归问题</strong>，求一个长度为<code>n</code>的字符串的全排列的方法为：</p>
+<ul>
+<li><code>n[0..n.len-1]</code>全排列的计算方法为：将<code>n[0]</code>位置的字符分别和<code>n[1..n.len-1]</code>的每一个字符串交换，<code>n[0]</code>和交换后的<code>n[1..n.len - 1]</code>的全排列进行组合。我们将字符串<code>{s}</code>的全排列表示为<code>{s}</code>，那么对于<code>abc</code>来说，其全排列<code>{abc}</code>，就等于是<code>a + {bc}</code>、<code>b + {ac}</code>，<code>c + {ba}</code>。</li>
+<li>以此类推，<code>n[1..n.len - 1]</code>的全排列，则是将<code>n[1]</code>分别和<code>n[2..n.len - 1]</code>的每一个字符串交换，再求出交换后的<code>n[2..len - 1]</code>的全排列，递归结束的条件为<code>n[i..n.len - 1]</code>只有一个字符，例如，<code>bc</code>的全排列为<code>b + {c}</code>、<code>c + {b}</code>，而<code>{c}</code>和<code>{b}</code>的全排列只有一种，因此递归结束，这时候就可以打印出结果。<h3 id="实现代码-1"><a href="#实现代码-1" class="headerlink" title="实现代码"></a>实现代码</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Untitled</span> </span>&#123;</div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">permutationStr</span><span class="params">(<span class="keyword">char</span> p[], <span class="keyword">int</span> depth, <span class="keyword">int</span> length)</span></span>&#123;</div><div class="line">		<span class="keyword">if</span> (depth == length) &#123;</div><div class="line">			System.out.println(p);</div><div class="line">			<span class="keyword">return</span>;</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">char</span> c;</div><div class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> i = depth; i &lt; length; i++)&#123;</div><div class="line">			c = p[depth]; p[depth] = p[i]; p[i] = c;</div><div class="line">			permutationStr(p, depth+<span class="number">1</span>, length);</div><div class="line">			c = p[depth]; p[depth] = p[i]; p[i] = c;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">		<span class="keyword">char</span>[] source = <span class="string">"abc"</span>.toCharArray();</div><div class="line">		permutationStr(source, <span class="number">0</span>, source.length);</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="运行结果-1"><a href="#运行结果-1" class="headerlink" title="运行结果"></a>运行结果</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; abc</div><div class="line">&gt;&gt; acb</div><div class="line">&gt;&gt; bac</div><div class="line">&gt;&gt; bca</div><div class="line">&gt;&gt; cba</div><div class="line">&gt;&gt; cab</div></pre></td></tr></table></figure>
+<h2 id="2-3-第一个只出现一次的字符"><a href="#2-3-第一个只出现一次的字符" class="headerlink" title="2.3 第一个只出现一次的字符"></a>2.3 第一个只出现一次的字符</h2><h3 id="问题描述-2"><a href="#问题描述-2" class="headerlink" title="问题描述"></a>问题描述</h3><p>在字符串中找出第一个只出现一次的字符。如输入<code>abaccdeff</code>，则输出<code>b</code>，要求时间复杂度为<code>O(n)</code>。</p>
+<h3 id="解决思路-2"><a href="#解决思路-2" class="headerlink" title="解决思路"></a>解决思路</h3><p>这里需要采用 <strong>以空间换时间</strong> 的思想，也就是创建一个足够大的数组<code>c</code>，这里为<code>256</code>，然后对原始的数组<code>p</code>进行两次遍历：</p>
+<ul>
+<li>第一次 <strong>从头开始</strong> 遍历<code>p</code>，以<code>p</code>的值作为数组<code>c</code>的下标，并将<code>c</code>中对应位置的值加<code>1</code>，也就是说<code>c[Integer.valueOf(i)]</code>的值表示的是字符<code>i</code>在<code>p</code>中出现的次数。这和<code>HashMap</code>的原理有些类似，只不过是将查找的<code>key</code>值直接简化成为了<code>value</code>的整型值。</li>
+<li>第二次 <strong>从头开始</strong> 遍历<code>p</code>，查找数组<code>c</code>对应位置该值是否为<code>1</code>，如果为<code>1</code>，那么就表示它是第一次只出现一次的字符。</li>
+</ul>
+<h3 id="实现代码-2"><a href="#实现代码-2" class="headerlink" title="实现代码"></a>实现代码</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Untitled</span> </span>&#123;</div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">static</span> <span class="keyword">char</span> <span class="title">firstNotRepeat</span><span class="params">(<span class="keyword">char</span> p[], <span class="keyword">int</span> len)</span></span>&#123;</div><div class="line">		<span class="keyword">if</span> (len == <span class="number">1</span>) </div><div class="line">			<span class="keyword">return</span> p[<span class="number">0</span>];</div><div class="line">		<span class="keyword">int</span> c[] = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">256</span>];</div><div class="line">		<span class="keyword">int</span> i;</div><div class="line">		<span class="keyword">char</span> r = p[<span class="number">0</span>];</div><div class="line">		<span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">256</span>; i++)</div><div class="line">			c[i] = <span class="number">0</span>;</div><div class="line">		<span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; len; i++)</div><div class="line">			c[p[i]] += <span class="number">1</span>;</div><div class="line">		<span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; len; i++) &#123;</div><div class="line">			<span class="keyword">if</span> (c[p[i]] == <span class="number">1</span>) &#123;</div><div class="line">				r = p[i];</div><div class="line">				<span class="keyword">break</span>;</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> r;</div><div class="line">	&#125; </div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">		<span class="keyword">char</span>[] source = <span class="string">"abaccdeff"</span>.toCharArray();</div><div class="line">		<span class="keyword">char</span> c = firstNotRepeat(source, source.length);</div><div class="line">		System.out.println(c);</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="运行结果-2"><a href="#运行结果-2" class="headerlink" title="运行结果"></a>运行结果</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; b</div></pre></td></tr></table></figure>
+<h2 id="2-4-翻转句子"><a href="#2-4-翻转句子" class="headerlink" title="2.4 翻转句子"></a>2.4 翻转句子</h2><h3 id="问题描述-3"><a href="#问题描述-3" class="headerlink" title="问题描述"></a>问题描述</h3><p>翻转句子中单词的顺序，但单词内字符的顺序不变，句子中单词以空格符隔开。例如<code>I am a original string</code>翻转后的结果为<code>string original a am I</code>。</p>
+<h3 id="解决思路-3"><a href="#解决思路-3" class="headerlink" title="解决思路"></a>解决思路</h3><p>实现过程分为两步：</p>
+<ul>
+<li>第一步，将整个句子中的所有字符都翻转</li>
+<li>第二步，遍历翻转后的句子，对于句子内的每一个单词，将其字符再翻转一次，就能保证单词内字符的顺序不变。翻转单词的时候，通过<code>pStart</code>和<code>pEnd</code>记录每次遇到单词的起止下标，并使用子方法<code>reverseSub</code>对单词中的字符进行翻转。</li>
+</ul>
+<h3 id="实现代码-3"><a href="#实现代码-3" class="headerlink" title="实现代码"></a>实现代码</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Untitled</span> </span>&#123;</div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">reverseSub</span><span class="params">(<span class="keyword">char</span> p[], <span class="keyword">int</span> start, <span class="keyword">int</span> end)</span></span>&#123;</div><div class="line">		<span class="keyword">char</span> c;</div><div class="line">		<span class="keyword">int</span> i = start;</div><div class="line">		<span class="keyword">int</span> j = end;</div><div class="line">		<span class="keyword">while</span>(i &lt; j)&#123;</div><div class="line">			c = p[i]; p[i] = p[j]; p[j] = c;</div><div class="line">			i++; j--;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">reverseSentence</span><span class="params">(<span class="keyword">char</span> p[], <span class="keyword">int</span> length)</span></span>&#123;</div><div class="line">		<span class="comment">//首先翻转整个具体的所有字符。</span></div><div class="line">		reverseSub(p, <span class="number">0</span>, length-<span class="number">1</span>);</div><div class="line">		<span class="keyword">int</span> pStart = <span class="number">0</span>;</div><div class="line">		<span class="keyword">int</span> pEnd = <span class="number">0</span>;</div><div class="line">		<span class="comment">//从头开始遍历，寻找句子中的单词，pStart和pEnd分别表示单词的起止下标。</span></div><div class="line">		<span class="keyword">while</span>(pStart &lt; length &amp;&amp; pEnd &lt; length)&#123;</div><div class="line">			<span class="keyword">if</span>(p[pStart] == <span class="string">' '</span>)&#123;</div><div class="line">				pStart++;</div><div class="line">				pEnd++;</div><div class="line">			&#125; <span class="keyword">else</span> <span class="keyword">if</span> (p[pEnd] == <span class="string">' '</span> || p[pEnd] == <span class="string">'\0'</span>) &#123;</div><div class="line">				<span class="comment">//翻转单词中的字符。</span></div><div class="line">				reverseSub(p, pStart, --pEnd);</div><div class="line">				pStart = ++pEnd;</div><div class="line">			&#125; <span class="keyword">else</span> &#123;</div><div class="line">				pEnd++;</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">	&#125; </div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">		<span class="keyword">char</span>[] source = <span class="string">"I am a original string"</span>.toCharArray();</div><div class="line">		System.out.println(source);</div><div class="line">		reverseSentence(source, source.length);</div><div class="line">		System.out.println(source);</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>运行结果为：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; string original a am I</div></pre></td></tr></table></figure></p>
+<h2 id="2-5-计算字符串之间的最短距离"><a href="#2-5-计算字符串之间的最短距离" class="headerlink" title="2.5 计算字符串之间的最短距离"></a>2.5 计算字符串之间的最短距离</h2><h3 id="问题描述-4"><a href="#问题描述-4" class="headerlink" title="问题描述"></a>问题描述</h3><p>假设我们有两个字符串<code>A</code>和<code>B</code>，那么如果想要将字符串<code>A</code>通过以下三种操作变换成<code>B</code>：删除、新增和修改，操作步骤的次数就称为 <strong>字符串 A 和 B 之间的距离</strong>。</p>
+<p>现在给定两个字符串，求这两个字符串之间的最短距离。</p>
+<h3 id="解决思路-4"><a href="#解决思路-4" class="headerlink" title="解决思路"></a>解决思路</h3><p>首先，我们需要先明确一个前提条件：如果<code>A</code>的长度为<code>0</code>，那么<code>A</code>和<code>B</code>之间的距离就为<code>B</code>的长度，反之对于<code>B</code>也如此。</p>
+<p>下面，我们在来看普通的情况，假如<code>A[0]</code>和<code>B[0]</code>相同，那么<code>A</code>和<code>B</code>之间的距离就为<code>A[1..A.len-1]</code>和<code>B[1..B.len-1]</code>之间的距离；假如<code>A[0]</code>和<code>B[0]</code>不相同，那么想要让<code>A</code>和<code>B</code>相同，执行的操作有以下几种：</p>
+<ul>
+<li>删除<code>A</code>的第一个字符，然后计算<code>A[1..A.len-1]</code>和<code>B[0..B.len-1]</code>的距离</li>
+<li>删除<code>B</code>的第一个字符，然后计算<code>A[0..A.len-1]</code>和<code>B[1..B.len-1]</code>的距离</li>
+<li>修改<code>A</code>的第一个字符为<code>B</code>的第一个字符，然后计算<code>A[1..A.len-1]</code>和<code>B[1..B.len-1]</code>的距离</li>
+<li>修改<code>B</code>的第一个字符为<code>A</code>的第一个字符，然后计算<code>A[1..A.len-1]</code>和<code>B[1..B.len-1]</code>的距离</li>
+<li>增加<code>A</code>的第一个字符到<code>B</code>第一个字符之前，然后计算<code>A[1..A.len-1]</code>和<code>B[0...B.len-1]</code>的距离</li>
+<li>增加<code>B</code>的第一个字符到<code>A</code>第一个字符之前，然后计算<code>A[0...A,len-1]</code>和<code>B[1..B.len-1]</code>的距离</li>
+</ul>
+<p>对于以上这六种情况，其实最终都可以归纳为 <strong>经过一次操作，再加上剩下部分的操作次数</strong>，那么我们的接下来的工作就是 <strong>求出剩下部分的操作部分的最小值</strong>。对于上面的任意一种情况，经过划分后<code>A</code>和<code>B</code>的长度都会减少，那么最终必然会达到我们在一开始谈到的 <strong>前提条件</strong>：如果<code>A</code>的长度为<code>0</code>，那么<code>A</code>和<code>B</code>之间的距离就为<code>B</code>的长度，反之对于<code>B</code>也如此。</p>
+<h3 id="实现代码-4"><a href="#实现代码-4" class="headerlink" title="实现代码"></a>实现代码</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Untitled</span> </span>&#123;</div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">minValue</span><span class="params">(<span class="keyword">int</span> t1, <span class="keyword">int</span> t2, <span class="keyword">int</span> t3)</span></span>&#123;</div><div class="line">		<span class="keyword">if</span> (t1 &lt; t2) &#123;</div><div class="line">			<span class="keyword">return</span> t1 &lt; t3 ? t1 : t3;</div><div class="line">		&#125; <span class="keyword">else</span> &#123;</div><div class="line">			<span class="keyword">return</span> t2 &lt; t3 ? t2 : t3;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">calStringDis</span><span class="params">(<span class="keyword">char</span> p1[], <span class="keyword">char</span> p2[], <span class="keyword">int</span> p1Start, <span class="keyword">int</span> p2Start, <span class="keyword">int</span> p1Len, <span class="keyword">int</span> p2Len)</span></span>&#123;</div><div class="line">		<span class="keyword">if</span> (p1Len == <span class="number">0</span>) &#123;</div><div class="line">			<span class="keyword">if</span> (p2Len == <span class="number">0</span>)</div><div class="line">				<span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">			<span class="keyword">else</span></div><div class="line">				<span class="keyword">return</span> p2Len;</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">if</span> (p2Len == <span class="number">0</span>) &#123;</div><div class="line">			<span class="keyword">if</span> (p1Len == <span class="number">0</span>)</div><div class="line">				<span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">			<span class="keyword">else</span></div><div class="line">				<span class="keyword">return</span> p1Len;</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">if</span> (p1[p1Start] == p2[p2Start])</div><div class="line">			<span class="comment">//A和B的第一个字符相同。</span></div><div class="line">			<span class="keyword">return</span> calStringDis(p1, p2, p1Start+<span class="number">1</span>, p2Start+<span class="number">1</span>, p1Len-<span class="number">1</span>, p2Len-<span class="number">1</span>);</div><div class="line">		<span class="keyword">else</span> &#123;</div><div class="line">			<span class="comment">//(1) 删除B的第一个字符，或者将B的第一个字符放到A之前。</span></div><div class="line">			<span class="keyword">int</span> t1 = calStringDis(p1, p2, p1Start, p2Start+<span class="number">1</span>, p1Len, p2Len-<span class="number">1</span>);</div><div class="line">			<span class="comment">//(2) 删除A的第一个字符，或者将A的第一个字符放到B之前。</span></div><div class="line">			<span class="keyword">int</span> t2 = calStringDis(p1, p2, p1Start+<span class="number">1</span>, p2Start, p1Len-<span class="number">1</span>, p2Len);</div><div class="line">			<span class="comment">//(3) 修改A的第一个字符为B的第一个字符，或者修改B的第一个字符为A的第一个字符。</span></div><div class="line">			<span class="keyword">int</span> t3 = calStringDis(p1, p2, p1Start+<span class="number">1</span>, p2Start+<span class="number">1</span>, p1Len-<span class="number">1</span>, p2Len-<span class="number">1</span>);</div><div class="line">			<span class="comment">//计算以上三种情况的最小值，再加上这次操作的次数。</span></div><div class="line">			<span class="keyword">return</span> minValue(t1, t2, t3) + <span class="number">1</span>;</div><div class="line">		&#125;</div><div class="line">	&#125; </div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">		<span class="keyword">char</span>[] source = <span class="string">"abcde"</span>.toCharArray();</div><div class="line">		<span class="keyword">char</span>[] other = <span class="string">"bcd"</span>.toCharArray();</div><div class="line">		System.out.println(<span class="string">""</span> + calStringDis(source, other, <span class="number">0</span>, <span class="number">0</span>, source.length, other.length));</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="运行结果-3"><a href="#运行结果-3" class="headerlink" title="运行结果"></a>运行结果</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; <span class="number">2</span></div></pre></td></tr></table></figure>
+<hr>
+<h1 id="更多文章，欢迎访问我的-Android-知识梳理系列："><a href="#更多文章，欢迎访问我的-Android-知识梳理系列：" class="headerlink" title="更多文章，欢迎访问我的 Android 知识梳理系列："></a>更多文章，欢迎访问我的 <strong>Android</strong> 知识梳理系列：</h1><ul>
+<li><strong>Android</strong> 知识梳理目录：<a href="http://www.jianshu.com/p/fd82d18994ce" target="_blank" rel="external">http://www.jianshu.com/p/fd82d18994ce</a></li>
+<li>个人主页：<a href="http://lizejun.cn" target="_blank" rel="external">http://lizejun.cn</a></li>
+<li>个人知识总结目录：<a href="http://lizejun.cn/categories/" target="_blank" rel="external">http://lizejun.cn/categories/</a></li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/11/04/面试算法/算法知识梳理(1)---排序算法/" rel="next" title="算法知识梳理(1) - 排序算法">
+                <i class="fa fa-chevron-left"></i> 算法知识梳理(1) - 排序算法
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/11/06/面试算法/算法知识梳理(3)---字符串算法第二部分/" rel="prev" title="算法知识梳理(3) - 字符串算法第二部分">
+                算法知识梳理(3) - 字符串算法第二部分 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="cloud-tie-wrapper" class="cloud-tie-wrapper"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="泽毛" />
+          <p class="site-author-name" itemprop="name">泽毛</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">117</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">27</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              Links
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.jianshu.com/u/37baa8a86582" title="我的简书" target="_blank">我的简书</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://github.com/imZeJun" title="GitHub" target="_blank">GitHub</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.heqiangfly.com/" title="寒江蓑笠" target="_blank">寒江蓑笠</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://johnnyshieh.me/" title="Johnny Shieh" target="_blank">Johnny Shieh</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、概要"><span class="nav-number">1.</span> <span class="nav-text">一、概要</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、代码实现"><span class="nav-number">2.</span> <span class="nav-text">二、代码实现</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-替换字符串中的空格"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 替换字符串中的空格</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#问题描述"><span class="nav-number">2.1.1.</span> <span class="nav-text">问题描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#解决思路"><span class="nav-number">2.1.2.</span> <span class="nav-text">解决思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实现代码"><span class="nav-number">2.1.3.</span> <span class="nav-text">实现代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#运行结果"><span class="nav-number">2.1.4.</span> <span class="nav-text">运行结果</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-输入一个字符串，打印出该字符串的所有排列"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 输入一个字符串，打印出该字符串的所有排列</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#问题描述-1"><span class="nav-number">2.2.1.</span> <span class="nav-text">问题描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#解决思路-1"><span class="nav-number">2.2.2.</span> <span class="nav-text">解决思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实现代码-1"><span class="nav-number">2.2.3.</span> <span class="nav-text">实现代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#运行结果-1"><span class="nav-number">2.2.4.</span> <span class="nav-text">运行结果</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-第一个只出现一次的字符"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 第一个只出现一次的字符</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#问题描述-2"><span class="nav-number">2.3.1.</span> <span class="nav-text">问题描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#解决思路-2"><span class="nav-number">2.3.2.</span> <span class="nav-text">解决思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实现代码-2"><span class="nav-number">2.3.3.</span> <span class="nav-text">实现代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#运行结果-2"><span class="nav-number">2.3.4.</span> <span class="nav-text">运行结果</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-4-翻转句子"><span class="nav-number">2.4.</span> <span class="nav-text">2.4 翻转句子</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#问题描述-3"><span class="nav-number">2.4.1.</span> <span class="nav-text">问题描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#解决思路-3"><span class="nav-number">2.4.2.</span> <span class="nav-text">解决思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实现代码-3"><span class="nav-number">2.4.3.</span> <span class="nav-text">实现代码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-5-计算字符串之间的最短距离"><span class="nav-number">2.5.</span> <span class="nav-text">2.5 计算字符串之间的最短距离</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#问题描述-4"><span class="nav-number">2.5.1.</span> <span class="nav-text">问题描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#解决思路-4"><span class="nav-number">2.5.2.</span> <span class="nav-text">解决思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实现代码-4"><span class="nav-number">2.5.3.</span> <span class="nav-text">实现代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#运行结果-3"><span class="nav-number">2.5.4.</span> <span class="nav-text">运行结果</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#更多文章，欢迎访问我的-Android-知识梳理系列："><span class="nav-number">3.</span> <span class="nav-text">更多文章，欢迎访问我的 Android 知识梳理系列：</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">泽毛</span>
+</div>
+
+<div class="powered-by">
+<i class=""></i><span id="busuanzi_container_site_uv">
+  访客 - <span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+<div class="powered-by">
+<i class=""></i><span id="busuanzi_container_site_pv">
+  访问量 - <span id="busuanzi_value_site_pv"></span>
+</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+    <script>
+      var cloudTieConfig = {
+        url: document.location.href, 
+        sourceId: "",
+        productKey: "b50a597e2fb84d35a6766074670f1d15",
+        target: "cloud-tie-wrapper"
+      };
+    </script>
+    <script src="https://img1.ws.126.net/f2e/tie/yun/sdk/loader.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("4ko7Mbc92NvXMivUJ2jBW88P-gzGzoHsz", "ccjGamRX2s1CSuhjsOVy2a6N");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

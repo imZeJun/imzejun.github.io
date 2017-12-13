@@ -1,0 +1,927 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="一、概要本文介绍了有关数组的算法第四部分的Java代码实现，所有代码均可通过 在线编译器 直接运行，算法目录：  求数组当中的最长递增子序列（求数组当中的最长递减子序列） 区间重合判断 一个整数数组，长度为n，将其分为m份，使各份的和相等，求m的最大值  二、代码实现2.1 求数组当中的最长递增子序列代码实现123456789101112131415161718192021222324252627">
+<meta property="og:type" content="article">
+<meta property="og:title" content="算法知识梳理(7) - 数组第四部分">
+<meta property="og:url" content="http://yoursite.com/2017/12/12/面试算法/算法知识梳理(7)---数组第四部分/index.html">
+<meta property="og:site_name" content="泽毛的博客">
+<meta property="og:description" content="一、概要本文介绍了有关数组的算法第四部分的Java代码实现，所有代码均可通过 在线编译器 直接运行，算法目录：  求数组当中的最长递增子序列（求数组当中的最长递减子序列） 区间重合判断 一个整数数组，长度为n，将其分为m份，使各份的和相等，求m的最大值  二、代码实现2.1 求数组当中的最长递增子序列代码实现123456789101112131415161718192021222324252627">
+<meta property="og:updated_time" content="2017-12-13T04:59:51.232Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="算法知识梳理(7) - 数组第四部分">
+<meta name="twitter:description" content="一、概要本文介绍了有关数组的算法第四部分的Java代码实现，所有代码均可通过 在线编译器 直接运行，算法目录：  求数组当中的最长递增子序列（求数组当中的最长递减子序列） 区间重合判断 一个整数数组，长度为n，将其分为m份，使各份的和相等，求m的最大值  二、代码实现2.1 求数组当中的最长递增子序列代码实现123456789101112131415161718192021222324252627">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: 'bd2f9b0f6cf360a4093517d22678efec',
+      indexName: 'Blog',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/12/12/面试算法/算法知识梳理(7)---数组第四部分/"/>
+
+
+
+
+
+  <title>算法知识梳理(7) - 数组第四部分 | 泽毛的博客</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?c276429c3a148ef2fa47d755199a64c2";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">泽毛的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">但愿每次回忆，对生活都不感到负疚</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            目录
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-friend">
+          <a href="/friend/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            小伙伴
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/12/面试算法/算法知识梳理(7)---数组第四部分/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="泽毛">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="泽毛的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">算法知识梳理(7) - 数组第四部分</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-12T23:10:00+08:00">
+                2017-12-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/算法知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">算法知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a class="cloud-tie-join-count" href="/2017/12/12/面试算法/算法知识梳理(7)---数组第四部分/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count join-count" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2017/12/12/面试算法/算法知识梳理(7)---数组第四部分/" class="leancloud_visitors" data-flag-title="算法知识梳理(7) - 数组第四部分">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">热度 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+                 <span>°C</span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="一、概要"><a href="#一、概要" class="headerlink" title="一、概要"></a>一、概要</h1><p>本文介绍了有关数组的算法第四部分的<code>Java</code>代码实现，所有代码均可通过 <a href="http://tool.lu/coderunner/" target="_blank" rel="external">在线编译器</a> 直接运行，算法目录：</p>
+<ul>
+<li>求数组当中的最长递增子序列（求数组当中的最长递减子序列）</li>
+<li>区间重合判断</li>
+<li>一个整数数组，长度为<code>n</code>，将其分为<code>m</code>份，使各份的和相等，求<code>m</code>的最大值</li>
+</ul>
+<h1 id="二、代码实现"><a href="#二、代码实现" class="headerlink" title="二、代码实现"></a>二、代码实现</h1><h2 id="2-1-求数组当中的最长递增子序列"><a href="#2-1-求数组当中的最长递增子序列" class="headerlink" title="2.1 求数组当中的最长递增子序列"></a>2.1 求数组当中的最长递增子序列</h2><h3 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Untitled</span> </span>&#123;</div><div class="line">	</div><div class="line">	<span class="comment">//查找最长递增子序列。</span></div><div class="line">	<span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">searchMaxIncSubArray</span><span class="params">(<span class="keyword">int</span> p[], <span class="keyword">int</span> length)</span> </span>&#123;</div><div class="line">		<span class="comment">//maxValue[i]表示长度为i的递增子序列的最大元素的最小值。</span></div><div class="line">		<span class="keyword">int</span>[] maxValue = <span class="keyword">new</span> <span class="keyword">int</span>[length+<span class="number">1</span>];</div><div class="line">		maxValue[<span class="number">1</span>] = p[<span class="number">0</span>];</div><div class="line">		<span class="keyword">int</span> k=<span class="number">1</span>;</div><div class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">1</span>; i&lt;length; i++) &#123;</div><div class="line">			<span class="keyword">if</span> (p[i] &gt; maxValue[k]) &#123;</div><div class="line">				k++;</div><div class="line">				maxValue[k] = p[i];</div><div class="line">			&#125; <span class="keyword">else</span> <span class="keyword">if</span> (p[i] == maxValue[k]) &#123; <span class="comment">//如果p[i]和maxValue[k]，那么越过。</span></div><div class="line">				<span class="keyword">continue</span>;</div><div class="line">			&#125; <span class="keyword">else</span> &#123; <span class="comment">//如果p[i]小于maxValue[k]。</span></div><div class="line">				<span class="keyword">if</span> (p[i] &lt; maxValue[<span class="number">1</span>]) &#123;</div><div class="line">					maxValue[<span class="number">1</span>] = p[i];</div><div class="line">					<span class="keyword">continue</span>;</div><div class="line">				&#125;</div><div class="line">				<span class="keyword">int</span> first = <span class="number">1</span>;</div><div class="line">				<span class="keyword">int</span> last = k;</div><div class="line">				<span class="comment">//二分查找：目的是在maxValue数组中找到大于p[i]的第一个元素，如果它大于p[i]，那么就替换它。</span></div><div class="line">				<span class="keyword">while</span> (first &lt; last) &#123;</div><div class="line">					<span class="keyword">int</span> mid = (last-first) &gt;&gt; <span class="number">1</span>;</div><div class="line">					<span class="keyword">if</span> (maxValue[first+mid] &lt; p[i]) &#123;</div><div class="line">						first=first+mid+<span class="number">1</span>;</div><div class="line">					&#125; <span class="keyword">else</span> <span class="keyword">if</span> (maxValue[first+mid] &gt; p[i]) &#123;</div><div class="line">						last=first+mid;</div><div class="line">					&#125; <span class="keyword">else</span> &#123;</div><div class="line">						first=first+mid+<span class="number">1</span>;</div><div class="line">					&#125;</div><div class="line">				&#125;</div><div class="line">				<span class="comment">//进行替换。</span></div><div class="line">				<span class="keyword">if</span> (p[i] &lt; maxValue[first]) &#123;</div><div class="line">					p[i] = maxValue[first];</div><div class="line">				&#125;</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">		System.out.println(<span class="string">"k="</span> + k);</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">		<span class="keyword">int</span>[] p = &#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">31</span>,<span class="number">4</span>,<span class="number">20</span>,-<span class="number">7</span>,<span class="number">8</span>&#125;;</div><div class="line">		searchMaxIncSubArray(p, p.length);</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="运行结果"><a href="#运行结果" class="headerlink" title="运行结果"></a>运行结果</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; k=<span class="number">3</span></div></pre></td></tr></table></figure>
+<h2 id="2-2-区间重合判断"><a href="#2-2-区间重合判断" class="headerlink" title="2.2 区间重合判断"></a>2.2 区间重合判断</h2><h3 id="代码实现-1"><a href="#代码实现-1" class="headerlink" title="代码实现"></a>代码实现</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Untitled</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Area</span> </span>&#123;</div><div class="line"></div><div class="line">        <span class="keyword">int</span> start;</div><div class="line">        <span class="keyword">int</span> end;</div><div class="line"></div><div class="line">        Area(<span class="keyword">int</span> start, <span class="keyword">int</span> end) &#123;</div><div class="line">            <span class="keyword">this</span>.start = start;</div><div class="line">            <span class="keyword">this</span>.end = end;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">//首先对区间进行排序，按照start进行递增排序。</span></div><div class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">sortArea</span><span class="params">(Area areas[], <span class="keyword">int</span> start, <span class="keyword">int</span> end)</span> </span>&#123;</div><div class="line">        <span class="keyword">if</span> (start==end) &#123;</div><div class="line">            <span class="keyword">return</span>;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">int</span> mid = start;</div><div class="line">        Area midValue = areas[start];</div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i=start+<span class="number">1</span>; i&lt;=end; i++) &#123;</div><div class="line">            Area data = areas[i];</div><div class="line">            <span class="keyword">if</span> (data.start &lt; midValue.start) &#123;</div><div class="line">                mid++;</div><div class="line">                areas[i] = areas[mid];</div><div class="line">                areas[mid] = data;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        Area temp = areas[mid];</div><div class="line">        areas[mid] = areas[start];</div><div class="line">        areas[start] = temp;</div><div class="line">        <span class="keyword">if</span> (mid &gt; start) &#123;</div><div class="line">            sortArea(areas, start, mid-<span class="number">1</span>);</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">if</span> (mid &lt; end) &#123;</div><div class="line">            sortArea(areas, mid+<span class="number">1</span>, end);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">	</div><div class="line">	<span class="comment">//合并区间，使得两个区间之间互不重合。</span></div><div class="line">	<span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">mergeArea</span><span class="params">(Area areas[], <span class="keyword">int</span> len)</span> </span>&#123;</div><div class="line">		<span class="keyword">int</span> lastIndex = <span class="number">0</span>;</div><div class="line">		Area lastArea = areas[<span class="number">0</span>];</div><div class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">1</span>; i&lt;len; i++) &#123;</div><div class="line">			Area cur = areas[i];</div><div class="line">			<span class="keyword">if</span> (cur.start &lt;= lastArea.end) &#123;</div><div class="line">				<span class="keyword">if</span> (cur.end &gt; lastArea.end) &#123;</div><div class="line">					lastArea.end = cur.end;</div><div class="line">					areas[lastIndex] = lastArea;</div><div class="line">				&#125;</div><div class="line">			&#125; <span class="keyword">else</span> &#123;</div><div class="line">				lastArea = cur;</div><div class="line">				lastIndex++;</div><div class="line">				areas[lastIndex] = lastArea;</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> lastIndex+<span class="number">1</span>;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="comment">//通过二分查找，确定目标区间是否在其范围之内。</span></div><div class="line">	<span class="function"><span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">searchArea</span><span class="params">(Area areas[], <span class="keyword">int</span> areasLen, Area target)</span> </span>&#123;</div><div class="line">		<span class="keyword">int</span> startIndex = <span class="number">0</span>;</div><div class="line">		<span class="keyword">int</span> endIndex = areasLen-<span class="number">1</span>;</div><div class="line">		<span class="keyword">while</span> (startIndex &lt;= endIndex) &#123;</div><div class="line">			<span class="keyword">int</span> mid = (startIndex+endIndex) &gt;&gt; <span class="number">1</span>;</div><div class="line">			Area midValue = areas[mid];</div><div class="line">			<span class="keyword">if</span> (target.start &lt; midValue.start) &#123;</div><div class="line">				<span class="keyword">if</span> (target.end &gt; midValue.end) &#123;</div><div class="line">					<span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">				&#125; <span class="keyword">else</span> &#123;</div><div class="line">					endIndex=mid-<span class="number">1</span>;</div><div class="line">				&#125;</div><div class="line">			&#125; <span class="keyword">else</span> <span class="keyword">if</span> (target.start &gt;= midValue.start &amp;&amp; target.start &lt;= midValue.end) &#123;</div><div class="line">				<span class="keyword">if</span> (target.end &lt;= midValue.end) &#123;</div><div class="line">					<span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">				&#125; <span class="keyword">else</span> &#123;</div><div class="line">					<span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">				&#125;</div><div class="line">			&#125; <span class="keyword">else</span> &#123;</div><div class="line">				startIndex = mid+<span class="number">1</span>;</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">	&#125;</div><div class="line">    </div><div class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">printArea</span><span class="params">(Area areas[], <span class="keyword">int</span> len)</span> </span>&#123;</div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;len; i++) &#123;</div><div class="line">            Area area = areas[i];</div><div class="line">            System.out.println(<span class="string">"start="</span> + area.start + <span class="string">",end="</span> + area.end);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">	</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">        Area areas[] = <span class="keyword">new</span> Area[] &#123;</div><div class="line">                <span class="keyword">new</span> Area(<span class="number">1</span>, <span class="number">3</span>),</div><div class="line">                <span class="keyword">new</span> Area(<span class="number">5</span>, <span class="number">9</span>),</div><div class="line">                <span class="keyword">new</span> Area(<span class="number">2</span>, <span class="number">4</span>),</div><div class="line">                <span class="keyword">new</span> Area(<span class="number">10</span>, <span class="number">11</span>),</div><div class="line">        &#125;;</div><div class="line">        sortArea(areas, <span class="number">0</span>, areas.length-<span class="number">1</span>);</div><div class="line">		System.out.println(<span class="string">"- 排序结果 -"</span>);</div><div class="line">		printArea(areas, areas.length);</div><div class="line">		<span class="keyword">int</span> mergeLen = mergeArea(areas, areas.length);</div><div class="line">		System.out.println(<span class="string">"- 合并结果 -"</span>);</div><div class="line">		printArea(areas, mergeLen);</div><div class="line">		Area target = <span class="keyword">new</span> Area(<span class="number">3</span>, <span class="number">4</span>);</div><div class="line">		System.out.println(<span class="string">"处于区间内="</span> + searchArea(areas, mergeLen, target));</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="运行结果-1"><a href="#运行结果-1" class="headerlink" title="运行结果"></a>运行结果</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; - 排序结果 -</div><div class="line">&gt;&gt; start=<span class="number">1</span>,end=<span class="number">3</span></div><div class="line">&gt;&gt; start=<span class="number">2</span>,end=<span class="number">4</span></div><div class="line">&gt;&gt; start=<span class="number">5</span>,end=<span class="number">9</span></div><div class="line">&gt;&gt; start=<span class="number">10</span>,end=<span class="number">11</span></div><div class="line">&gt;&gt; - 合并结果 -</div><div class="line">&gt;&gt; start=<span class="number">1</span>,end=<span class="number">4</span></div><div class="line">&gt;&gt; start=<span class="number">5</span>,end=<span class="number">9</span></div><div class="line">&gt;&gt; start=<span class="number">10</span>,end=<span class="number">11</span></div><div class="line">&gt;&gt; 处于区间内=<span class="keyword">true</span></div></pre></td></tr></table></figure>
+<h2 id="2-3-一个整数数组，长度为-n，将其分为-m-份，使各份的和相等，求-m-的最大值"><a href="#2-3-一个整数数组，长度为-n，将其分为-m-份，使各份的和相等，求-m-的最大值" class="headerlink" title="2.3 一个整数数组，长度为 n，将其分为 m 份，使各份的和相等，求 m 的最大值"></a>2.3 一个整数数组，长度为 n，将其分为 m 份，使各份的和相等，求 m 的最大值</h2><h3 id="代码实现-2"><a href="#代码实现-2" class="headerlink" title="代码实现"></a>代码实现</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Untitled</span> </span>&#123;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">static</span> Boolean <span class="title">testGroup</span><span class="params">(<span class="keyword">int</span> p[], <span class="keyword">int</span> aux[], <span class="keyword">int</span> pLen, <span class="keyword">int</span> groupLen, <span class="keyword">int</span> curSum, <span class="keyword">int</span> groupSum, <span class="keyword">int</span> groupID)</span></span>&#123;</div><div class="line">		<span class="keyword">if</span> (curSum &lt; <span class="number">0</span>)</div><div class="line">			<span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">		<span class="keyword">if</span> (curSum == <span class="number">0</span>)&#123;</div><div class="line">			groupID++;</div><div class="line">			curSum = groupSum;</div><div class="line">			<span class="keyword">if</span> (groupID == groupLen+<span class="number">1</span>) &#123;</div><div class="line">				<span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;pLen; i++)&#123;</div><div class="line">			<span class="keyword">if</span> (aux[i] != <span class="number">0</span>) &#123;</div><div class="line">				<span class="keyword">continue</span>;</div><div class="line">			&#125;</div><div class="line">			aux[i] = groupID;</div><div class="line">			<span class="keyword">if</span> (testGroup(p, aux, pLen, groupLen, curSum-p[i], groupSum, groupID)) &#123;</div><div class="line">				<span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">			&#125;</div><div class="line">			aux[i] = <span class="number">0</span>;</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">	&#125;</div><div class="line"></div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">maxGroup</span><span class="params">(<span class="keyword">int</span> p[], <span class="keyword">int</span> len)</span> </span>&#123;</div><div class="line">		<span class="keyword">int</span> aux[] = <span class="keyword">new</span> <span class="keyword">int</span>[len];</div><div class="line">		<span class="keyword">int</span> sum = <span class="number">0</span>;</div><div class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;len; i++) &#123;</div><div class="line">			aux[i] = <span class="number">0</span>;</div><div class="line">			sum += p[i];</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> m=len; m&gt;=<span class="number">2</span>; m--) &#123;</div><div class="line">			<span class="keyword">if</span> (sum%m != <span class="number">0</span>) &#123;</div><div class="line">				<span class="keyword">continue</span>;</div><div class="line">			&#125;</div><div class="line">			<span class="keyword">if</span> (testGroup(p, aux, len, m, sum/m, sum/m, <span class="number">1</span>)) &#123;</div><div class="line">				System.out.println(<span class="string">"m="</span> + m);</div><div class="line">				<span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;len; i++) &#123;</div><div class="line">					System.out.println(<span class="string">"aux["</span> + i + <span class="string">"]="</span> + aux[i]);</div><div class="line">				&#125;</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">		<span class="keyword">int</span> a[] = &#123;<span class="number">3</span>,<span class="number">2</span>,<span class="number">4</span>,<span class="number">3</span>,<span class="number">6</span>&#125;;</div><div class="line">		maxGroup(a, a.length);</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="运行结果-2"><a href="#运行结果-2" class="headerlink" title="运行结果"></a>运行结果</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; m=<span class="number">3</span></div><div class="line">&gt;&gt; aux[<span class="number">0</span>]=<span class="number">1</span></div><div class="line">&gt;&gt; aux[<span class="number">1</span>]=<span class="number">2</span></div><div class="line">&gt;&gt; aux[<span class="number">2</span>]=<span class="number">2</span></div><div class="line">&gt;&gt; aux[<span class="number">3</span>]=<span class="number">1</span></div><div class="line">&gt;&gt; aux[<span class="number">4</span>]=<span class="number">3</span></div></pre></td></tr></table></figure>
+<hr>
+<h1 id="更多文章，欢迎访问我的-Android-知识梳理系列："><a href="#更多文章，欢迎访问我的-Android-知识梳理系列：" class="headerlink" title="更多文章，欢迎访问我的 Android 知识梳理系列："></a>更多文章，欢迎访问我的 <strong>Android</strong> 知识梳理系列：</h1><ul>
+<li><strong>Android</strong> 知识梳理目录：<a href="http://www.jianshu.com/p/fd82d18994ce" target="_blank" rel="external">http://www.jianshu.com/p/fd82d18994ce</a></li>
+<li><strong>Android</strong> 面试文档分享：<a href="http://www.jianshu.com/p/8456fe6b27c4" target="_blank" rel="external">http://www.jianshu.com/p/8456fe6b27c4</a></li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/12/12/面试算法/算法知识梳理(6)---数组第三部分/" rel="next" title="算法知识梳理(6) - 数组第三部分">
+                <i class="fa fa-chevron-left"></i> 算法知识梳理(6) - 数组第三部分
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/12/12/面试算法/算法知识梳理(8)---二分查找算法及其变型/" rel="prev" title="算法知识梳理(8) - 二分查找算法及其变型">
+                算法知识梳理(8) - 二分查找算法及其变型 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="cloud-tie-wrapper" class="cloud-tie-wrapper"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="泽毛" />
+          <p class="site-author-name" itemprop="name">泽毛</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">117</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">27</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              Links
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.jianshu.com/u/37baa8a86582" title="我的简书" target="_blank">我的简书</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://github.com/imZeJun" title="GitHub" target="_blank">GitHub</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.heqiangfly.com/" title="寒江蓑笠" target="_blank">寒江蓑笠</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://johnnyshieh.me/" title="Johnny Shieh" target="_blank">Johnny Shieh</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、概要"><span class="nav-number">1.</span> <span class="nav-text">一、概要</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、代码实现"><span class="nav-number">2.</span> <span class="nav-text">二、代码实现</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-求数组当中的最长递增子序列"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 求数组当中的最长递增子序列</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#代码实现"><span class="nav-number">2.1.1.</span> <span class="nav-text">代码实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#运行结果"><span class="nav-number">2.1.2.</span> <span class="nav-text">运行结果</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-区间重合判断"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 区间重合判断</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#代码实现-1"><span class="nav-number">2.2.1.</span> <span class="nav-text">代码实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#运行结果-1"><span class="nav-number">2.2.2.</span> <span class="nav-text">运行结果</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-一个整数数组，长度为-n，将其分为-m-份，使各份的和相等，求-m-的最大值"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 一个整数数组，长度为 n，将其分为 m 份，使各份的和相等，求 m 的最大值</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#代码实现-2"><span class="nav-number">2.3.1.</span> <span class="nav-text">代码实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#运行结果-2"><span class="nav-number">2.3.2.</span> <span class="nav-text">运行结果</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#更多文章，欢迎访问我的-Android-知识梳理系列："><span class="nav-number">3.</span> <span class="nav-text">更多文章，欢迎访问我的 Android 知识梳理系列：</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">泽毛</span>
+</div>
+
+<div class="powered-by">
+<i class=""></i><span id="busuanzi_container_site_uv">
+  访客 - <span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+<div class="powered-by">
+<i class=""></i><span id="busuanzi_container_site_pv">
+  访问量 - <span id="busuanzi_value_site_pv"></span>
+</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+    <script>
+      var cloudTieConfig = {
+        url: document.location.href, 
+        sourceId: "",
+        productKey: "b50a597e2fb84d35a6766074670f1d15",
+        target: "cloud-tie-wrapper"
+      };
+    </script>
+    <script src="https://img1.ws.126.net/f2e/tie/yun/sdk/loader.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("4ko7Mbc92NvXMivUJ2jBW88P-gzGzoHsz", "ccjGamRX2s1CSuhjsOVy2a6N");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
