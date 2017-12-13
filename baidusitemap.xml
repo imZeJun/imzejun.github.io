@@ -240,17 +240,17 @@
 
     
   <url>
-    <loc>http://yoursite.com/2017/02/20/%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86(1)---Dagger2/</loc>
+    <loc>http://yoursite.com/2017/06/01/Retrofit/Retrofit-%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86(2)---Retrofit-%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86%E5%86%85%E9%83%A8%E5%AE%9E%E7%8E%B0/</loc>
     <lastmod>2017-06-28T06:47:04.230Z</lastmod>
     <data>
         <display>
-        <title>架构设计知识梳理(1) - Dagger2</title>
-        <pubTime>2017-02-20T15:59:00.000Z</pubTime>
+        <title>Retrofit 知识梳理(2) - Retrofit 动态代理内部实现</title>
+        <pubTime>2017-06-01T13:13:00.000Z</pubTime>
         
          
            
              
-              <breadCrumb title="架构设计知识梳理" url="http://yoursite.com/categories/%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86/"/>
+              <breadCrumb title="Retrofit 知识梳理" url="http://yoursite.com/categories/Retrofit-%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86/"/>
           
         </display>
     </data>
@@ -269,6 +269,42 @@
            
              
               <breadCrumb title="设计模式知识梳理" url="http://yoursite.com/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://yoursite.com/2017/02/20/%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86(1)---Dagger2/</loc>
+    <lastmod>2017-06-28T06:47:04.230Z</lastmod>
+    <data>
+        <display>
+        <title>架构设计知识梳理(1) - Dagger2</title>
+        <pubTime>2017-02-20T15:59:00.000Z</pubTime>
+        
+         
+           
+             
+              <breadCrumb title="架构设计知识梳理" url="http://yoursite.com/categories/%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://yoursite.com/2017/02/21/%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86(2)---Flux/</loc>
+    <lastmod>2017-06-28T06:47:04.230Z</lastmod>
+    <data>
+        <display>
+        <title>架构设计知识梳理(2) - Flux</title>
+        <pubTime>2017-02-20T16:11:00.000Z</pubTime>
+        
+         
+           
+             
+              <breadCrumb title="架构设计知识梳理" url="http://yoursite.com/categories/%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86/"/>
           
         </display>
     </data>
@@ -312,66 +348,12 @@
 
     
   <url>
-    <loc>http://yoursite.com/2017/06/09/%E6%8F%92%E4%BB%B6%E5%8C%96/%E6%8F%92%E4%BB%B6%E5%8C%96%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86(7)---%E7%B1%BB%E7%9A%84%E5%8A%A8%E6%80%81%E5%8A%A0%E8%BD%BD%E5%85%A5%E9%97%A8/</loc>
-    <lastmod>2017-06-28T06:47:04.230Z</lastmod>
-    <data>
-        <display>
-        <title>插件化知识梳理(7) - 类的动态加载入门</title>
-        <pubTime>2017-06-09T15:18:00.000Z</pubTime>
-        
-         
-           
-             
-              <breadCrumb title="插件化知识梳理" url="http://yoursite.com/categories/%E6%8F%92%E4%BB%B6%E5%8C%96%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
     <loc>http://yoursite.com/2017/06/07/%E6%8F%92%E4%BB%B6%E5%8C%96/%E6%8F%92%E4%BB%B6%E5%8C%96%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86(6)---Small-%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B9%8B-Hook-%E5%8E%9F%E7%90%86/</loc>
     <lastmod>2017-06-28T06:47:04.230Z</lastmod>
     <data>
         <display>
         <title>插件化知识梳理(6) - Small 源码分析之 Hook 原理</title>
         <pubTime>2017-06-07T13:12:00.000Z</pubTime>
-        
-         
-           
-             
-              <breadCrumb title="插件化知识梳理" url="http://yoursite.com/categories/%E6%8F%92%E4%BB%B6%E5%8C%96%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://yoursite.com/2017/06/06/%E6%8F%92%E4%BB%B6%E5%8C%96/%E6%8F%92%E4%BB%B6%E5%8C%96%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86(5)---Small-%E6%A1%86%E6%9E%B6%E4%B9%8B%E5%A6%82%E4%BD%95%E4%B8%8D%E5%B0%86%E6%8F%92%E4%BB%B6%E6%89%93%E5%8C%85%E5%88%B0%E5%AE%BF%E4%B8%BB%E4%B8%AD/</loc>
-    <lastmod>2017-06-28T06:47:04.230Z</lastmod>
-    <data>
-        <display>
-        <title>插件化知识梳理(5) - Small 框架之如何不将插件打包到宿主中</title>
-        <pubTime>2017-06-06T04:38:00.000Z</pubTime>
-        
-         
-           
-             
-              <breadCrumb title="插件化知识梳理" url="http://yoursite.com/categories/%E6%8F%92%E4%BB%B6%E5%8C%96%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://yoursite.com/2017/06/05/%E6%8F%92%E4%BB%B6%E5%8C%96/%E6%8F%92%E4%BB%B6%E5%8C%96%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86(4)---Small-%E6%A1%86%E6%9E%B6%E4%B9%8B%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E6%8F%92%E4%BB%B6%E6%9B%B4%E6%96%B0/</loc>
-    <lastmod>2017-06-28T06:47:04.230Z</lastmod>
-    <data>
-        <display>
-        <title>插件化知识梳理(4) - Small 框架之如何实现插件更新</title>
-        <pubTime>2017-06-05T14:50:00.000Z</pubTime>
         
          
            
@@ -402,17 +384,17 @@
 
     
   <url>
-    <loc>http://yoursite.com/2017/05/07/%E5%A4%9A%E7%BA%BF%E7%A8%8B/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86(5)---%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%9B%9B%E9%83%A8%E6%9B%B2%E4%B9%8B-Executor-%E6%A1%86%E6%9E%B6/</loc>
+    <loc>http://yoursite.com/2017/06/09/%E6%8F%92%E4%BB%B6%E5%8C%96/%E6%8F%92%E4%BB%B6%E5%8C%96%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86(7)---%E7%B1%BB%E7%9A%84%E5%8A%A8%E6%80%81%E5%8A%A0%E8%BD%BD%E5%85%A5%E9%97%A8/</loc>
     <lastmod>2017-06-28T06:47:04.230Z</lastmod>
     <data>
         <display>
-        <title>多线程知识梳理(5) - 线程池四部曲之 Executor 框架</title>
-        <pubTime>2017-05-06T16:12:00.000Z</pubTime>
+        <title>插件化知识梳理(7) - 类的动态加载入门</title>
+        <pubTime>2017-06-09T15:18:00.000Z</pubTime>
         
          
            
              
-              <breadCrumb title="多线程知识梳理" url="http://yoursite.com/categories/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86/"/>
+              <breadCrumb title="插件化知识梳理" url="http://yoursite.com/categories/%E6%8F%92%E4%BB%B6%E5%8C%96%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86/"/>
           
         </display>
     </data>
@@ -426,6 +408,24 @@
         <display>
         <title>多线程知识梳理(1) - 并发编程的艺术笔记</title>
         <pubTime>2017-02-20T15:57:00.000Z</pubTime>
+        
+         
+           
+             
+              <breadCrumb title="多线程知识梳理" url="http://yoursite.com/categories/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://yoursite.com/2017/05/07/%E5%A4%9A%E7%BA%BF%E7%A8%8B/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86(5)---%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%9B%9B%E9%83%A8%E6%9B%B2%E4%B9%8B-Executor-%E6%A1%86%E6%9E%B6/</loc>
+    <lastmod>2017-06-28T06:47:04.230Z</lastmod>
+    <data>
+        <display>
+        <title>多线程知识梳理(5) - 线程池四部曲之 Executor 框架</title>
+        <pubTime>2017-05-06T16:12:00.000Z</pubTime>
         
          
            
@@ -528,24 +528,6 @@
 
     
   <url>
-    <loc>http://yoursite.com/2017/03/14/%E5%9B%BE%E7%89%87%E5%9F%BA%E7%A1%80/%E5%9B%BE%E7%89%87%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86(1)---ImageView-%E7%9A%84-ScaleType-%E5%B1%9E%E6%80%A7%E8%A7%A3%E6%9E%90/</loc>
-    <lastmod>2017-06-28T06:47:04.230Z</lastmod>
-    <data>
-        <display>
-        <title>图片基础知识梳理(1) - ImageView 的 ScaleType 属性解析</title>
-        <pubTime>2017-03-14T12:03:00.000Z</pubTime>
-        
-         
-           
-             
-              <breadCrumb title="图片基础知识梳理" url="http://yoursite.com/categories/%E5%9B%BE%E7%89%87%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
     <loc>http://yoursite.com/2017/04/27/%E5%9B%BE%E7%89%87%E5%8E%8B%E7%BC%A9/%E5%9B%BE%E7%89%87%E5%8E%8B%E7%BC%A9%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86(9)---%E9%80%89%E6%8B%A9%E5%90%88%E9%80%82%E7%9A%84%E5%9B%BE%E7%89%87%E6%A0%BC%E5%BC%8F/</loc>
     <lastmod>2017-06-28T06:47:04.230Z</lastmod>
     <data>
@@ -564,17 +546,17 @@
 
     
   <url>
-    <loc>http://yoursite.com/2017/04/21/%E5%9B%BE%E7%89%87%E5%8E%8B%E7%BC%A9/%E5%9B%BE%E7%89%87%E5%8E%8B%E7%BC%A9%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86(8)---WebP-%E4%BD%BF%E7%94%A8%E8%AF%A6%E8%A7%A3/</loc>
+    <loc>http://yoursite.com/2017/03/14/%E5%9B%BE%E7%89%87%E5%9F%BA%E7%A1%80/%E5%9B%BE%E7%89%87%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86(1)---ImageView-%E7%9A%84-ScaleType-%E5%B1%9E%E6%80%A7%E8%A7%A3%E6%9E%90/</loc>
     <lastmod>2017-06-28T06:47:04.230Z</lastmod>
     <data>
         <display>
-        <title>图片压缩知识梳理(8) - WebP 使用详解</title>
-        <pubTime>2017-04-21T14:01:00.000Z</pubTime>
+        <title>图片基础知识梳理(1) - ImageView 的 ScaleType 属性解析</title>
+        <pubTime>2017-03-14T12:03:00.000Z</pubTime>
         
          
            
              
-              <breadCrumb title="图片压缩知识梳理" url="http://yoursite.com/categories/%E5%9B%BE%E7%89%87%E5%8E%8B%E7%BC%A9%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86/"/>
+              <breadCrumb title="图片基础知识梳理" url="http://yoursite.com/categories/%E5%9B%BE%E7%89%87%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86/"/>
           
         </display>
     </data>
@@ -588,6 +570,24 @@
         <display>
         <title>图片压缩知识梳理(6) - VectorDrawable 及 AnimatedVectorDrawable 使用详解</title>
         <pubTime>2017-04-19T13:22:00.000Z</pubTime>
+        
+         
+           
+             
+              <breadCrumb title="图片压缩知识梳理" url="http://yoursite.com/categories/%E5%9B%BE%E7%89%87%E5%8E%8B%E7%BC%A9%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://yoursite.com/2017/04/21/%E5%9B%BE%E7%89%87%E5%8E%8B%E7%BC%A9/%E5%9B%BE%E7%89%87%E5%8E%8B%E7%BC%A9%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86(8)---WebP-%E4%BD%BF%E7%94%A8%E8%AF%A6%E8%A7%A3/</loc>
+    <lastmod>2017-06-28T06:47:04.230Z</lastmod>
+    <data>
+        <display>
+        <title>图片压缩知识梳理(8) - WebP 使用详解</title>
+        <pubTime>2017-04-21T14:01:00.000Z</pubTime>
         
          
            
@@ -654,12 +654,12 @@
 
     
   <url>
-    <loc>http://yoursite.com/2017/04/07/%E5%8A%A8%E7%94%BB%E4%BD%93%E7%B3%BB/%E5%8A%A8%E7%94%BB%E4%BD%93%E7%B3%BB%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86(1)---%E8%BD%AC%E5%9C%BA%E5%8A%A8%E7%94%BB-ContentTransition-%E7%90%86%E8%AE%BA%E7%AF%87/</loc>
+    <loc>http://yoursite.com/2017/04/08/%E5%8A%A8%E7%94%BB%E4%BD%93%E7%B3%BB/%E5%8A%A8%E7%94%BB%E4%BD%93%E7%B3%BB%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86(2)---%E8%BD%AC%E5%9C%BA%E5%8A%A8%E7%94%BB-ContentTransition-%E5%AE%9E%E8%B7%B5%E7%AF%87/</loc>
     <lastmod>2017-06-28T06:47:04.230Z</lastmod>
     <data>
         <display>
-        <title>动画体系知识梳理(1) - 转场动画 ContentTransition 理论篇</title>
-        <pubTime>2017-04-07T06:52:00.000Z</pubTime>
+        <title>动画体系知识梳理(2) - 转场动画 ContentTransition 实践篇</title>
+        <pubTime>2017-04-08T03:57:00.000Z</pubTime>
         
          
            
@@ -690,12 +690,12 @@
 
     
   <url>
-    <loc>http://yoursite.com/2017/04/08/%E5%8A%A8%E7%94%BB%E4%BD%93%E7%B3%BB/%E5%8A%A8%E7%94%BB%E4%BD%93%E7%B3%BB%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86(2)---%E8%BD%AC%E5%9C%BA%E5%8A%A8%E7%94%BB-ContentTransition-%E5%AE%9E%E8%B7%B5%E7%AF%87/</loc>
+    <loc>http://yoursite.com/2017/04/07/%E5%8A%A8%E7%94%BB%E4%BD%93%E7%B3%BB/%E5%8A%A8%E7%94%BB%E4%BD%93%E7%B3%BB%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86(1)---%E8%BD%AC%E5%9C%BA%E5%8A%A8%E7%94%BB-ContentTransition-%E7%90%86%E8%AE%BA%E7%AF%87/</loc>
     <lastmod>2017-06-28T06:47:04.230Z</lastmod>
     <data>
         <display>
-        <title>动画体系知识梳理(2) - 转场动画 ContentTransition 实践篇</title>
-        <pubTime>2017-04-08T03:57:00.000Z</pubTime>
+        <title>动画体系知识梳理(1) - 转场动画 ContentTransition 理论篇</title>
+        <pubTime>2017-04-07T06:52:00.000Z</pubTime>
         
          
            
@@ -708,12 +708,12 @@
 
     
   <url>
-    <loc>http://yoursite.com/2017/06/03/%E6%8F%92%E4%BB%B6%E5%8C%96/%E6%8F%92%E4%BB%B6%E5%8C%96%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86(3)---Small-%E6%A1%86%E6%9E%B6%E4%B9%8B%E5%AE%BF%E4%B8%BB%E5%88%86%E8%BA%AB/</loc>
+    <loc>http://yoursite.com/2017/06/05/%E6%8F%92%E4%BB%B6%E5%8C%96/%E6%8F%92%E4%BB%B6%E5%8C%96%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86(4)---Small-%E6%A1%86%E6%9E%B6%E4%B9%8B%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E6%8F%92%E4%BB%B6%E6%9B%B4%E6%96%B0/</loc>
     <lastmod>2017-06-28T06:47:04.230Z</lastmod>
     <data>
         <display>
-        <title>插件化知识梳理(3) - Small 框架之宿主分身</title>
-        <pubTime>2017-06-03T14:44:00.000Z</pubTime>
+        <title>插件化知识梳理(4) - Small 框架之如何实现插件更新</title>
+        <pubTime>2017-06-05T14:50:00.000Z</pubTime>
         
          
            
@@ -726,30 +726,12 @@
 
     
   <url>
-    <loc>http://yoursite.com/2017/06/03/%E6%8F%92%E4%BB%B6%E5%8C%96/%E6%8F%92%E4%BB%B6%E5%8C%96%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86(2)---Small-%E6%A1%86%E6%9E%B6%E4%B9%8B%E5%A6%82%E4%BD%95%E5%BC%95%E5%85%A5%E5%85%AC%E5%85%B1%E5%BA%93%E6%8F%92%E4%BB%B6/</loc>
+    <loc>http://yoursite.com/2017/06/06/%E6%8F%92%E4%BB%B6%E5%8C%96/%E6%8F%92%E4%BB%B6%E5%8C%96%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86(5)---Small-%E6%A1%86%E6%9E%B6%E4%B9%8B%E5%A6%82%E4%BD%95%E4%B8%8D%E5%B0%86%E6%8F%92%E4%BB%B6%E6%89%93%E5%8C%85%E5%88%B0%E5%AE%BF%E4%B8%BB%E4%B8%AD/</loc>
     <lastmod>2017-06-28T06:47:04.230Z</lastmod>
     <data>
         <display>
-        <title>插件化知识梳理(2) - Small 框架之如何引入公共库插件</title>
-        <pubTime>2017-06-03T10:28:00.000Z</pubTime>
-        
-         
-           
-             
-              <breadCrumb title="插件化知识梳理" url="http://yoursite.com/categories/%E6%8F%92%E4%BB%B6%E5%8C%96%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://yoursite.com/2017/06/03/%E6%8F%92%E4%BB%B6%E5%8C%96/%E6%8F%92%E4%BB%B6%E5%8C%96%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86(1)---Small-%E6%A1%86%E6%9E%B6%E4%B9%8B%E5%A6%82%E4%BD%95%E5%BC%95%E5%85%A5%E5%BA%94%E7%94%A8%E6%8F%92%E4%BB%B6/</loc>
-    <lastmod>2017-06-28T06:47:04.230Z</lastmod>
-    <data>
-        <display>
-        <title>插件化知识梳理(1) - Small 框架之如何引入应用插件</title>
-        <pubTime>2017-06-03T02:10:00.000Z</pubTime>
+        <title>插件化知识梳理(5) - Small 框架之如何不将插件打包到宿主中</title>
+        <pubTime>2017-06-06T04:38:00.000Z</pubTime>
         
          
            
@@ -780,17 +762,17 @@
 
     
   <url>
-    <loc>http://yoursite.com/2017/02/28/View-%E7%BB%98%E5%88%B6%E4%BD%93%E7%B3%BB/View-%E7%BB%98%E5%88%B6%E4%BD%93%E7%B3%BB%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86(6)---%E7%BB%98%E5%88%B6%E8%BF%87%E7%A8%8B%E4%B9%8B-requestLayout-%E5%92%8C-invalidate-%E8%AF%A6%E8%A7%A3/</loc>
+    <loc>http://yoursite.com/2017/06/03/%E6%8F%92%E4%BB%B6%E5%8C%96/%E6%8F%92%E4%BB%B6%E5%8C%96%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86(3)---Small-%E6%A1%86%E6%9E%B6%E4%B9%8B%E5%AE%BF%E4%B8%BB%E5%88%86%E8%BA%AB/</loc>
     <lastmod>2017-06-28T06:47:04.230Z</lastmod>
     <data>
         <display>
-        <title>View 绘制体系知识梳理(6) - 绘制过程之 requestLayout 和 invalidate 详解</title>
-        <pubTime>2017-02-28T13:06:00.000Z</pubTime>
+        <title>插件化知识梳理(3) - Small 框架之宿主分身</title>
+        <pubTime>2017-06-03T14:44:00.000Z</pubTime>
         
          
            
              
-              <breadCrumb title="View 绘制体系知识梳理" url="http://yoursite.com/categories/View-%E7%BB%98%E5%88%B6%E4%BD%93%E7%B3%BB%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86/"/>
+              <breadCrumb title="插件化知识梳理" url="http://yoursite.com/categories/%E6%8F%92%E4%BB%B6%E5%8C%96%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86/"/>
           
         </display>
     </data>
@@ -809,6 +791,24 @@
            
              
               <breadCrumb title="Material Design 控件知识梳理" url="http://yoursite.com/categories/Material-Design-%E6%8E%A7%E4%BB%B6%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://yoursite.com/2017/02/28/View-%E7%BB%98%E5%88%B6%E4%BD%93%E7%B3%BB/View-%E7%BB%98%E5%88%B6%E4%BD%93%E7%B3%BB%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86(6)---%E7%BB%98%E5%88%B6%E8%BF%87%E7%A8%8B%E4%B9%8B-requestLayout-%E5%92%8C-invalidate-%E8%AF%A6%E8%A7%A3/</loc>
+    <lastmod>2017-06-28T06:47:04.230Z</lastmod>
+    <data>
+        <display>
+        <title>View 绘制体系知识梳理(6) - 绘制过程之 requestLayout 和 invalidate 详解</title>
+        <pubTime>2017-02-28T13:06:00.000Z</pubTime>
+        
+         
+           
+             
+              <breadCrumb title="View 绘制体系知识梳理" url="http://yoursite.com/categories/View-%E7%BB%98%E5%88%B6%E4%BD%93%E7%B3%BB%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86/"/>
           
         </display>
     </data>
@@ -924,12 +924,12 @@
 
     
   <url>
-    <loc>http://yoursite.com/2017/04/04/RecyclerView/RecyclerView-%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86(4)---ItemDecoration/</loc>
+    <loc>http://yoursite.com/2017/04/05/RecyclerView/RecyclerView-%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86(5)---ItemTouchHelper/</loc>
     <lastmod>2017-06-28T06:47:04.230Z</lastmod>
     <data>
         <display>
-        <title>RecyclerView 知识梳理(4) - ItemDecoration</title>
-        <pubTime>2017-04-04T10:26:00.000Z</pubTime>
+        <title>RecyclerView 知识梳理(5) - ItemTouchHelper</title>
+        <pubTime>2017-04-05T15:17:00.000Z</pubTime>
         
          
            
@@ -942,12 +942,12 @@
 
     
   <url>
-    <loc>http://yoursite.com/2017/04/05/RecyclerView/RecyclerView-%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86(5)---ItemTouchHelper/</loc>
+    <loc>http://yoursite.com/2017/04/04/RecyclerView/RecyclerView-%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86(4)---ItemDecoration/</loc>
     <lastmod>2017-06-28T06:47:04.230Z</lastmod>
     <data>
         <display>
-        <title>RecyclerView 知识梳理(5) - ItemTouchHelper</title>
-        <pubTime>2017-04-05T15:17:00.000Z</pubTime>
+        <title>RecyclerView 知识梳理(4) - ItemDecoration</title>
+        <pubTime>2017-04-04T10:26:00.000Z</pubTime>
         
          
            
@@ -978,12 +978,12 @@
 
     
   <url>
-    <loc>http://yoursite.com/2017/06/01/Retrofit/Retrofit-%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86(2)---Retrofit-%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86%E5%86%85%E9%83%A8%E5%AE%9E%E7%8E%B0/</loc>
+    <loc>http://yoursite.com/2017/03/09/Retrofit/Retrofit-%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86(1)---%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90/</loc>
     <lastmod>2017-06-28T06:47:04.230Z</lastmod>
     <data>
         <display>
-        <title>Retrofit 知识梳理(2) - Retrofit 动态代理内部实现</title>
-        <pubTime>2017-06-01T13:13:00.000Z</pubTime>
+        <title>Retrofit 知识梳理(1) - 流程分析</title>
+        <pubTime>2017-03-09T12:10:00.000Z</pubTime>
         
          
            
@@ -1014,17 +1014,17 @@
 
     
   <url>
-    <loc>http://yoursite.com/2017/03/09/Retrofit/Retrofit-%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86(1)---%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90/</loc>
+    <loc>http://yoursite.com/2017/06/03/%E6%8F%92%E4%BB%B6%E5%8C%96/%E6%8F%92%E4%BB%B6%E5%8C%96%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86(2)---Small-%E6%A1%86%E6%9E%B6%E4%B9%8B%E5%A6%82%E4%BD%95%E5%BC%95%E5%85%A5%E5%85%AC%E5%85%B1%E5%BA%93%E6%8F%92%E4%BB%B6/</loc>
     <lastmod>2017-06-28T06:47:04.230Z</lastmod>
     <data>
         <display>
-        <title>Retrofit 知识梳理(1) - 流程分析</title>
-        <pubTime>2017-03-09T12:10:00.000Z</pubTime>
+        <title>插件化知识梳理(2) - Small 框架之如何引入公共库插件</title>
+        <pubTime>2017-06-03T10:28:00.000Z</pubTime>
         
          
            
              
-              <breadCrumb title="Retrofit 知识梳理" url="http://yoursite.com/categories/Retrofit-%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86/"/>
+              <breadCrumb title="插件化知识梳理" url="http://yoursite.com/categories/%E6%8F%92%E4%BB%B6%E5%8C%96%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86/"/>
           
         </display>
     </data>
@@ -1032,17 +1032,17 @@
 
     
   <url>
-    <loc>http://yoursite.com/2017/02/21/%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86(2)---Flux/</loc>
+    <loc>http://yoursite.com/2017/06/03/%E6%8F%92%E4%BB%B6%E5%8C%96/%E6%8F%92%E4%BB%B6%E5%8C%96%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86(1)---Small-%E6%A1%86%E6%9E%B6%E4%B9%8B%E5%A6%82%E4%BD%95%E5%BC%95%E5%85%A5%E5%BA%94%E7%94%A8%E6%8F%92%E4%BB%B6/</loc>
     <lastmod>2017-06-28T06:47:04.230Z</lastmod>
     <data>
         <display>
-        <title>架构设计知识梳理(2) - Flux</title>
-        <pubTime>2017-02-20T16:11:00.000Z</pubTime>
+        <title>插件化知识梳理(1) - Small 框架之如何引入应用插件</title>
+        <pubTime>2017-06-03T02:10:00.000Z</pubTime>
         
          
            
              
-              <breadCrumb title="架构设计知识梳理" url="http://yoursite.com/categories/%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86/"/>
+              <breadCrumb title="插件化知识梳理" url="http://yoursite.com/categories/%E6%8F%92%E4%BB%B6%E5%8C%96%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86/"/>
           
         </display>
     </data>
@@ -1176,12 +1176,12 @@
 
     
   <url>
-    <loc>http://yoursite.com/2017/04/14/Material-Design-%E6%8E%A7%E4%BB%B6/Material-Design-%E6%8E%A7%E4%BB%B6%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86(6)---Snackbar/</loc>
+    <loc>http://yoursite.com/2017/04/14/Material-Design-%E6%8E%A7%E4%BB%B6/Material-Design-%E6%8E%A7%E4%BB%B6%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86(5)---DrawerLayout-&&-NavigationView/</loc>
     <lastmod>2017-06-28T06:47:04.226Z</lastmod>
     <data>
         <display>
-        <title>Material Design 控件知识梳理(6) - Snackbar</title>
-        <pubTime>2017-04-14T15:52:00.000Z</pubTime>
+        <title>Material Design 控件知识梳理(5) - DrawerLayout && NavigationView</title>
+        <pubTime>2017-04-14T12:38:00.000Z</pubTime>
         
          
            
@@ -1194,12 +1194,12 @@
 
     
   <url>
-    <loc>http://yoursite.com/2017/04/14/Material-Design-%E6%8E%A7%E4%BB%B6/Material-Design-%E6%8E%A7%E4%BB%B6%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86(5)---DrawerLayout-&&-NavigationView/</loc>
+    <loc>http://yoursite.com/2017/04/14/Material-Design-%E6%8E%A7%E4%BB%B6/Material-Design-%E6%8E%A7%E4%BB%B6%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86(6)---Snackbar/</loc>
     <lastmod>2017-06-28T06:47:04.226Z</lastmod>
     <data>
         <display>
-        <title>Material Design 控件知识梳理(5) - DrawerLayout && NavigationView</title>
-        <pubTime>2017-04-14T12:38:00.000Z</pubTime>
+        <title>Material Design 控件知识梳理(6) - Snackbar</title>
+        <pubTime>2017-04-14T15:52:00.000Z</pubTime>
         
          
            
@@ -1248,12 +1248,12 @@
 
     
   <url>
-    <loc>http://yoursite.com/2017/04/10/Material-Design-%E6%8E%A7%E4%BB%B6/Material-Design-%E6%8E%A7%E4%BB%B6%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86(2)---AppBarLayout-&-CollapsingToolbarLayout/</loc>
+    <loc>http://yoursite.com/2017/02/20/Material-Design-%E6%8E%A7%E4%BB%B6/Material-Design-%E6%8E%A7%E4%BB%B6%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86(1)---Android-Design-Support-Library-%E6%98%AF%E4%BB%80%E4%B9%88/</loc>
     <lastmod>2017-06-28T06:47:04.226Z</lastmod>
     <data>
         <display>
-        <title>Material Design 控件知识梳理(2) - AppBarLayout & CollapsingToolbarLayout</title>
-        <pubTime>2017-04-10T14:14:00.000Z</pubTime>
+        <title>Material Design 控件知识梳理(1) - Android Design Support Library 是什么</title>
+        <pubTime>2017-02-20T14:14:00.000Z</pubTime>
         
          
            
@@ -1266,12 +1266,12 @@
 
     
   <url>
-    <loc>http://yoursite.com/2017/02/20/Material-Design-%E6%8E%A7%E4%BB%B6/Material-Design-%E6%8E%A7%E4%BB%B6%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86(1)---Android-Design-Support-Library-%E6%98%AF%E4%BB%80%E4%B9%88/</loc>
+    <loc>http://yoursite.com/2017/04/10/Material-Design-%E6%8E%A7%E4%BB%B6/Material-Design-%E6%8E%A7%E4%BB%B6%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86(2)---AppBarLayout-&-CollapsingToolbarLayout/</loc>
     <lastmod>2017-06-28T06:47:04.226Z</lastmod>
     <data>
         <display>
-        <title>Material Design 控件知识梳理(1) - Android Design Support Library 是什么</title>
-        <pubTime>2017-02-20T14:14:00.000Z</pubTime>
+        <title>Material Design 控件知识梳理(2) - AppBarLayout & CollapsingToolbarLayout</title>
+        <pubTime>2017-04-10T14:14:00.000Z</pubTime>
         
          
            
@@ -1608,24 +1608,6 @@
 
     
   <url>
-    <loc>http://yoursite.com/2017/05/13/Framework-%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/Framework-%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86(1)---%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F%E4%B8%8E-AMS-%E7%9A%84%E9%80%9A%E4%BF%A1%E5%AE%9E%E7%8E%B0/</loc>
-    <lastmod>2017-06-28T06:47:04.226Z</lastmod>
-    <data>
-        <display>
-        <title>Framework 源码解析知识梳理(1) - 应用进程与 AMS 的通信实现</title>
-        <pubTime>2017-05-13T04:36:00.000Z</pubTime>
-        
-         
-           
-             
-              <breadCrumb title="Framework 源码解析知识梳理" url="http://yoursite.com/categories/Framework-%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
     <loc>http://yoursite.com/2017/05/14/Framework-%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/Framework-%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86(2)---%E5%BA%94%E7%94%A8%E8%BF%9B%E7%A8%8B%E4%B8%8E-WMS-%E7%9A%84%E9%80%9A%E4%BF%A1%E5%AE%9E%E7%8E%B0/</loc>
     <lastmod>2017-06-28T06:47:04.226Z</lastmod>
     <data>
@@ -1644,17 +1626,17 @@
 
     
   <url>
-    <loc>http://yoursite.com/2017/03/31/Fragment/Fragment-%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86(3)---FragmentPagerAdapter-%E5%92%8C-FragmentStatePagerAdapter-%E7%9A%84%E6%95%B0/</loc>
+    <loc>http://yoursite.com/2017/05/13/Framework-%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/Framework-%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86(1)---%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F%E4%B8%8E-AMS-%E7%9A%84%E9%80%9A%E4%BF%A1%E5%AE%9E%E7%8E%B0/</loc>
     <lastmod>2017-06-28T06:47:04.226Z</lastmod>
     <data>
         <display>
-        <title>Fragment 知识梳理(3) - FragmentPagerAdapter 和 FragmentStatePagerAdapter 的数据更新问题</title>
-        <pubTime>2017-03-31T13:05:00.000Z</pubTime>
+        <title>Framework 源码解析知识梳理(1) - 应用进程与 AMS 的通信实现</title>
+        <pubTime>2017-05-13T04:36:00.000Z</pubTime>
         
          
            
              
-              <breadCrumb title="Fragment 知识梳理" url="http://yoursite.com/categories/Fragment-%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86/"/>
+              <breadCrumb title="Framework 源码解析知识梳理" url="http://yoursite.com/categories/Framework-%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86/"/>
           
         </display>
     </data>
@@ -1668,6 +1650,24 @@
         <display>
         <title>Fragment 知识梳理(4) - FragmentPagerAdapter 和 FragmentStatePagerAdapter 解析</title>
         <pubTime>2017-03-30T13:19:00.000Z</pubTime>
+        
+         
+           
+             
+              <breadCrumb title="Fragment 知识梳理" url="http://yoursite.com/categories/Fragment-%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://yoursite.com/2017/03/31/Fragment/Fragment-%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86(3)---FragmentPagerAdapter-%E5%92%8C-FragmentStatePagerAdapter-%E7%9A%84%E6%95%B0/</loc>
+    <lastmod>2017-06-28T06:47:04.226Z</lastmod>
+    <data>
+        <display>
+        <title>Fragment 知识梳理(3) - FragmentPagerAdapter 和 FragmentStatePagerAdapter 的数据更新问题</title>
+        <pubTime>2017-03-31T13:05:00.000Z</pubTime>
         
          
            
@@ -1788,12 +1788,12 @@
 
     
   <url>
-    <loc>http://yoursite.com/2017/02/21/Canvas-&-Paint/Canvas&Paint-%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86(1)---Canvas-%E5%9F%BA%E7%A1%80/</loc>
+    <loc>http://yoursite.com/2017/03/02/Canvas-&-Paint/Canvas&Paint-%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86(2)---Canvas-%E7%9A%84%E4%BF%9D%E5%AD%98%E5%92%8C%E6%81%A2%E5%A4%8D/</loc>
     <lastmod>2017-06-28T06:47:04.226Z</lastmod>
     <data>
         <display>
-        <title>Canvas&Paint 知识梳理(1) - Canvas 基础</title>
-        <pubTime>2017-02-20T16:13:00.000Z</pubTime>
+        <title>Canvas&Paint 知识梳理(2) - Canvas 的保存和恢复</title>
+        <pubTime>2017-03-02T12:32:00.000Z</pubTime>
         
          
            
@@ -1806,30 +1806,12 @@
 
     
   <url>
-    <loc>http://yoursite.com/2017/02/20/Android-%E5%BC%82%E6%AD%A5%E4%BB%BB%E5%8A%A1/Android-%E5%BC%82%E6%AD%A5%E4%BB%BB%E5%8A%A1%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86(2)---HandlerThread-%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/</loc>
+    <loc>http://yoursite.com/2017/02/21/Canvas-&-Paint/Canvas&Paint-%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86(1)---Canvas-%E5%9F%BA%E7%A1%80/</loc>
     <lastmod>2017-06-28T06:47:04.226Z</lastmod>
     <data>
         <display>
-        <title>Android 异步任务知识梳理(2) - HandlerThread 源码解析</title>
-        <pubTime>2017-02-20T13:59:00.000Z</pubTime>
-        
-         
-           
-             
-              <breadCrumb title="Android 异步任务知识梳理" url="http://yoursite.com/categories/Android-%E5%BC%82%E6%AD%A5%E4%BB%BB%E5%8A%A1%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://yoursite.com/2017/03/02/Canvas-&-Paint/Canvas&Paint-%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86(2)---Canvas-%E7%9A%84%E4%BF%9D%E5%AD%98%E5%92%8C%E6%81%A2%E5%A4%8D/</loc>
-    <lastmod>2017-06-28T06:47:04.226Z</lastmod>
-    <data>
-        <display>
-        <title>Canvas&Paint 知识梳理(2) - Canvas 的保存和恢复</title>
-        <pubTime>2017-03-02T12:32:00.000Z</pubTime>
+        <title>Canvas&Paint 知识梳理(1) - Canvas 基础</title>
+        <pubTime>2017-02-20T16:13:00.000Z</pubTime>
         
          
            
@@ -1902,6 +1884,24 @@
         <display>
         <title>Android 异步任务知识梳理(3) - AsyncQueryHandler 源码解析</title>
         <pubTime>2017-02-20T14:10:00.000Z</pubTime>
+        
+         
+           
+             
+              <breadCrumb title="Android 异步任务知识梳理" url="http://yoursite.com/categories/Android-%E5%BC%82%E6%AD%A5%E4%BB%BB%E5%8A%A1%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://yoursite.com/2017/02/20/Android-%E5%BC%82%E6%AD%A5%E4%BB%BB%E5%8A%A1/Android-%E5%BC%82%E6%AD%A5%E4%BB%BB%E5%8A%A1%E7%9F%A5%E8%AF%86%E6%A2%B3%E7%90%86(2)---HandlerThread-%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/</loc>
+    <lastmod>2017-06-28T06:47:04.226Z</lastmod>
+    <data>
+        <display>
+        <title>Android 异步任务知识梳理(2) - HandlerThread 源码解析</title>
+        <pubTime>2017-02-20T13:59:00.000Z</pubTime>
         
          
            
