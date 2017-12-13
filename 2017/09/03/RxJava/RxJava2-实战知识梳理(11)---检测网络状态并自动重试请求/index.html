@@ -1,0 +1,965 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="一、应用背景今天，我们以一个请求天气数据的例子，来演示如何用RxJava实现网络重连时的自动请求，首先，我们对这个需求进行一个简单的描述，整个项目的框架如下所示：  在应用启动时，我们会启动定位模块，该定位模块在后台每隔一段时间发起一次定位请求，拿到定位的结果后，我们通过该城市向服务器发起请求，以获取对应城市的天气信息进行展示。 但是在拿到城市之后向服务器请求天气的过程中有可能是处于没有网络的状态">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RxJava2 实战知识梳理(11) - 检测网络状态并自动重试请求">
+<meta property="og:url" content="http://yoursite.com/2017/09/03/RxJava/RxJava2-实战知识梳理(11)---检测网络状态并自动重试请求/index.html">
+<meta property="og:site_name" content="泽毛的博客">
+<meta property="og:description" content="一、应用背景今天，我们以一个请求天气数据的例子，来演示如何用RxJava实现网络重连时的自动请求，首先，我们对这个需求进行一个简单的描述，整个项目的框架如下所示：  在应用启动时，我们会启动定位模块，该定位模块在后台每隔一段时间发起一次定位请求，拿到定位的结果后，我们通过该城市向服务器发起请求，以获取对应城市的天气信息进行展示。 但是在拿到城市之后向服务器请求天气的过程中有可能是处于没有网络的状态">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-bb3ccf276b32e8e7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-15450df6c959321c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-d299e0abf7485d1f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-6487f85ba5fd57e4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-d3cfa5ee19f7571b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-618d6cace82aa7e9.gif?imageMogr2/auto-orient/strip">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-4d44a2d024be5556.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-83e7eb4c9f6252bd.gif?imageMogr2/auto-orient/strip">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-dbfacb32f0857ed4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2017-12-13T05:30:06.916Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="RxJava2 实战知识梳理(11) - 检测网络状态并自动重试请求">
+<meta name="twitter:description" content="一、应用背景今天，我们以一个请求天气数据的例子，来演示如何用RxJava实现网络重连时的自动请求，首先，我们对这个需求进行一个简单的描述，整个项目的框架如下所示：  在应用启动时，我们会启动定位模块，该定位模块在后台每隔一段时间发起一次定位请求，拿到定位的结果后，我们通过该城市向服务器发起请求，以获取对应城市的天气信息进行展示。 但是在拿到城市之后向服务器请求天气的过程中有可能是处于没有网络的状态">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-bb3ccf276b32e8e7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: 'bd2f9b0f6cf360a4093517d22678efec',
+      indexName: 'Blog',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/09/03/RxJava/RxJava2-实战知识梳理(11)---检测网络状态并自动重试请求/"/>
+
+
+
+
+
+  <title>RxJava2 实战知识梳理(11) - 检测网络状态并自动重试请求 | 泽毛的博客</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?c276429c3a148ef2fa47d755199a64c2";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">泽毛的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">但愿每次回忆，对生活都不感到负疚</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            目录
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-friend">
+          <a href="/friend/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            小伙伴
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/03/RxJava/RxJava2-实战知识梳理(11)---检测网络状态并自动重试请求/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="泽毛">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="泽毛的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">RxJava2 实战知识梳理(11) - 检测网络状态并自动重试请求</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-03T11:42:00+08:00">
+                2017-09-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/RxJava2-实战知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">RxJava2 实战知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a class="cloud-tie-join-count" href="/2017/09/03/RxJava/RxJava2-实战知识梳理(11)---检测网络状态并自动重试请求/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count join-count" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2017/09/03/RxJava/RxJava2-实战知识梳理(11)---检测网络状态并自动重试请求/" class="leancloud_visitors" data-flag-title="RxJava2 实战知识梳理(11) - 检测网络状态并自动重试请求">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">热度 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+                 <span>°C</span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="一、应用背景"><a href="#一、应用背景" class="headerlink" title="一、应用背景"></a>一、应用背景</h1><p>今天，我们以一个请求天气数据的例子，来演示如何用<code>RxJava</code>实现网络重连时的自动请求，首先，我们对这个需求进行一个简单的描述，整个项目的框架如下所示：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-bb3ccf276b32e8e7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="整体框架图"></p>
+<ul>
+<li>在应用启动时，我们会启动定位模块，该定位模块在后台每隔一段时间发起一次定位请求，拿到定位的结果后，我们通过该城市向服务器发起请求，以获取对应城市的天气信息进行展示。</li>
+<li>但是在拿到城市之后向服务器请求天气的过程中有可能是处于没有网络的状态，导致无法获取城市的天气信息并刷新界面，因此，我们需要检测网络的状态，在网络重连的时候，读取上一次缓存的城市，向服务器发起请求以获取城市对应天气信息。</li>
+</ul>
+<p>本文的示例代码在 <a href="https://github.com/imZeJun/RxSample" target="_blank" rel="external">RxSample</a> 的第十一章中。</p>
+<h1 id="二、示例"><a href="#二、示例" class="headerlink" title="二、示例"></a>二、示例</h1><h2 id="2-1-定位模块"><a href="#2-1-定位模块" class="headerlink" title="2.1 定位模块"></a>2.1 定位模块</h2><p>我们通过一个后台线程来模拟定位的过程，它每隔一段时间获取一次定位的结果，并将该结果通过<code>mCityPublish</code>发送数据给它的订阅者。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//用于发布定位到的城市结果。</span></div><div class="line"><span class="keyword">private</span> PublishSubject&lt;Long&gt; mCityPublish;</div><div class="line"></div><div class="line"><span class="comment">//模拟定位模块的回调。</span></div><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">startUpdateLocation</span><span class="params">()</span> </span>&#123;</div><div class="line">    mLocationThread = <span class="keyword">new</span> Thread() &#123;</div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">            <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</div><div class="line">                <span class="keyword">try</span> &#123;</div><div class="line">                    <span class="keyword">for</span> (<span class="keyword">long</span> cityId : CITY_ARRAY) &#123;</div><div class="line">                        <span class="keyword">if</span> (isInterrupted()) &#123;</div><div class="line">                            <span class="keyword">break</span>;</div><div class="line">                        &#125;</div><div class="line">                        Log.d(TAG, <span class="string">"重新定位"</span>);</div><div class="line">                        Thread.sleep(<span class="number">5000</span>);</div><div class="line">                        Log.d(TAG, <span class="string">"定位到城市信息="</span> + cityId);</div><div class="line">                        mCityPublish.onNext(cityId);</div><div class="line">                    &#125;</div><div class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">                    e.printStackTrace();</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;;</div><div class="line">    mLocationThread.start();</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>在<code>mCityPublish</code>发送消息到订阅者收到消息之间，我们还需要做一些特殊的处理：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> Observable&lt;Long&gt; <span class="title">getCityPublish</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">return</span> mCityPublish.distinctUntilChanged().doOnNext(<span class="keyword">new</span> Consumer&lt;Long&gt;() &#123;</div><div class="line"></div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">accept</span><span class="params">(Long aLong)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">            saveCacheCity(aLong);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">    &#125;);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这里我们做了两步处理：</p>
+<ul>
+<li>使用<code>distinctUntilChanged</code>对定位结果进行过滤，如果此次定位的结果和上次定位的结果相同，那么不通知订阅者。<code>distinctUntilChanged</code>的原理图如下所示：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-15450df6c959321c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></li>
+<li>使用<code>doOnNext</code>，在返回结果给订阅者之前，先把最新一次的定位结果存储起来，用于在之后网络重连之后进行请求。</li>
+</ul>
+<h2 id="2-2-网络状态模块"><a href="#2-2-网络状态模块" class="headerlink" title="2.2 网络状态模块"></a>2.2 网络状态模块</h2><p>与定位模块类似，我们也需要一个<code>mNetStatusPublish</code>，其类型为<code>PublishSubject</code>，它在网络状态发生变化时通知订阅者。这里需要注册一个广播，在收到广播之后，我们通过<code>mNetStatusPublish</code>通知订阅者，代码如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">registerBroadcast</span><span class="params">()</span> </span>&#123;</div><div class="line">    mReceiver = <span class="keyword">new</span> BroadcastReceiver() &#123;</div><div class="line"></div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onReceive</span><span class="params">(Context context, Intent intent)</span> </span>&#123;</div><div class="line">            <span class="keyword">if</span> (mNetStatusPublish != <span class="keyword">null</span>) &#123;</div><div class="line">                mNetStatusPublish.onNext(isNetworkConnected());</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">    &#125;;</div><div class="line">    IntentFilter filter = <span class="keyword">new</span> IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);</div><div class="line">    registerReceiver(mReceiver, filter);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>在收到网络状态变化的消息之后：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> Observable&lt;Long&gt; <span class="title">getNetStatusPublish</span><span class="params">()</span> </span>&#123;</div><div class="line">     <span class="keyword">return</span> mNetStatusPublish.filter(<span class="keyword">new</span> Predicate&lt;Boolean&gt;() &#123;</div><div class="line"></div><div class="line">         <span class="meta">@Override</span></div><div class="line">         <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">test</span><span class="params">(Boolean aBoolean)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">             <span class="keyword">return</span> aBoolean &amp;&amp; getCacheCity() &gt; <span class="number">0</span>;</div><div class="line">         &#125;</div><div class="line"></div><div class="line">     &#125;).map(<span class="keyword">new</span> Function&lt;Boolean, Long&gt;() &#123;</div><div class="line"></div><div class="line">         <span class="meta">@Override</span></div><div class="line">         <span class="function"><span class="keyword">public</span> Long <span class="title">apply</span><span class="params">(Boolean aBoolean)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">             <span class="keyword">return</span> getCacheCity();</div><div class="line">         &#125;</div><div class="line">         </div><div class="line">     &#125;).subscribeOn(Schedulers.io());</div><div class="line"> &#125;</div></pre></td></tr></table></figure></p>
+<p>这里我们做了两步处理：</p>
+<ul>
+<li>使用<code>filter</code>对消息进行过滤，只有在 <strong>联网情况并且之前已经定位到了城市</strong> 之后才通知订阅者，<code>filter</code>的原理图如下所示，该操作符用于过滤掉一些不需要的数据：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-d299e0abf7485d1f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></li>
+<li>使用<code>map</code>，读取当前缓存的城市名，返回给订阅者，<code>map</code>的原理图如下所示，该操作符可以用于执行变换操作。<br><img src="http://upload-images.jianshu.io/upload_images/1949836-6487f85ba5fd57e4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><h2 id="2-3-网络请求模块"><a href="#2-3-网络请求模块" class="headerlink" title="2.3 网络请求模块"></a>2.3 网络请求模块</h2>在<code>2.1</code>和<code>2.2</code>中，我们分别用<code>getCityPublish()</code>和<code>getNetStatusPublish()</code>来获取被订阅者，它们分别对应于定位模块和网络状态模块发生变化时所发送的城市数据，下面来看我们通过城市数据获取城市天气信息的代码：<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">startUpdateWeather</span><span class="params">()</span> </span>&#123;</div><div class="line">    Observable.merge(getCityPublish(), getNetStatusPublish()).flatMap(<span class="keyword">new</span> Function&lt;Long, ObservableSource&lt;WeatherEntity&gt;&gt;() &#123;</div><div class="line"></div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> ObservableSource&lt;WeatherEntity&gt; <span class="title">apply</span><span class="params">(Long aLong)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">            Log.d(TAG, <span class="string">"尝试请求天气信息="</span> + aLong);</div><div class="line">            <span class="keyword">return</span> getWeather(aLong).subscribeOn(Schedulers.io());</div><div class="line">        &#125;</div><div class="line"></div><div class="line">    &#125;).retryWhen(<span class="keyword">new</span> Function&lt;Observable&lt;Throwable&gt;, ObservableSource&lt;?&gt;&gt;() &#123;</div><div class="line"></div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="keyword">public</span> ObservableSource&lt;?&gt; apply(Observable&lt;Throwable&gt; throwableObservable) <span class="keyword">throws</span> Exception &#123;</div><div class="line">            <span class="keyword">return</span> throwableObservable.flatMap(<span class="keyword">new</span> Function&lt;Throwable, ObservableSource&lt;?&gt;&gt;() &#123;</div><div class="line"></div><div class="line">                <span class="meta">@Override</span></div><div class="line">                <span class="keyword">public</span> ObservableSource&lt;?&gt; apply(Throwable throwable) <span class="keyword">throws</span> Exception &#123;</div><div class="line">                    Log.d(TAG, <span class="string">"请求天气信息过程中发生错误，进行重订阅"</span>);</div><div class="line">                    <span class="keyword">return</span> Observable.just(<span class="number">0</span>);</div><div class="line">                &#125;</div><div class="line"></div><div class="line">            &#125;);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">    &#125;).observeOn(AndroidSchedulers.mainThread()).subscribe(<span class="keyword">new</span> Observer&lt;WeatherEntity&gt;() &#123;</div><div class="line"></div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onSubscribe</span><span class="params">(Disposable disposable)</span> </span>&#123;</div><div class="line">            mCompositeDisposable.add(disposable);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onNext</span><span class="params">(WeatherEntity weatherEntity)</span> </span>&#123;</div><div class="line">            WeatherEntity.WeatherInfo info = weatherEntity.getWeatherinfo();</div><div class="line">            <span class="keyword">if</span> (info != <span class="keyword">null</span>) &#123;</div><div class="line">                Log.d(TAG, <span class="string">"尝试请求天气信息成功"</span>);</div><div class="line">                StringBuilder builder = <span class="keyword">new</span> StringBuilder();</div><div class="line">                builder.append(<span class="string">"城市名："</span>).append(info.getCity()).append(<span class="string">"\n"</span>).append(<span class="string">"温度："</span>).append(info.getTemp()).append(<span class="string">"\n"</span>).append(<span class="string">"风向："</span>).append(info.getWD()).append(<span class="string">"\n"</span>).append(<span class="string">"风速："</span>).append(info.getWS()).append(<span class="string">"\n"</span>);</div><div class="line">                mTvNetworkResult.setText(builder.toString());</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onError</span><span class="params">(Throwable throwable)</span> </span>&#123;</div><div class="line">            Log.d(TAG, <span class="string">"尝试请求天气信息失败"</span>);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onComplete</span><span class="params">()</span> </span>&#123;</div><div class="line">            Log.d(TAG, <span class="string">"尝试请求天气信息结束"</span>);</div><div class="line">        &#125;</div><div class="line">    &#125;);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">private</span> Observable&lt;WeatherEntity&gt; <span class="title">getWeather</span><span class="params">(<span class="keyword">long</span> cityId)</span> </span>&#123;</div><div class="line">    WeatherApi api = <span class="keyword">new</span> Retrofit.Builder()</div><div class="line">            .baseUrl(<span class="string">"http://www.weather.com.cn/"</span>)</div><div class="line">            .addConverterFactory(GsonConverterFactory.create())</div><div class="line">            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())</div><div class="line">            .build().create(WeatherApi.class);</div><div class="line">    <span class="keyword">return</span> api.getWeather(cityId);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>这里我们做了以下几个操作：</p>
+<ul>
+<li>使用<code>merge</code>合并两个数据源，我们通过<code>getWeather(long cityId)</code>来获取城市信息，这里面用到了 <a href="http://www.jianshu.com/p/74f46ae1fabb" target="_blank" rel="external">RxJava2 实战知识梳理(4) - 结合 Retrofit 请求新闻资讯</a> 的知识，只不过这里的接口是使用的天气信息网的数据，<code>merge</code>的原理在 <a href="http://www.jianshu.com/p/dfc11118b70b" target="_blank" rel="external">RxJava2 实战知识梳理(8) - 使用 publish + merge 优化先加载缓存，再读取网络数据的请求过程</a> 也已经做了介绍。</li>
+<li><p>使用<code>retryWhen</code>进行重订阅，因为在获取到城市，之后转换成城市天气信息的时候有可能发生错误，如果发生了错误，那么整个调用链就结束了，需要重新订阅。这里的重订阅使用的<code>retryWhen</code>操作符，关于重订阅更详细的解释可以看前面的这篇文章 <a href="http://www.jianshu.com/p/d135f19e045c" target="_blank" rel="external">RxJava2 实战知识梳理(6) - 基于错误类型的重试请求</a>，下面是其中的部分说明：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-d3cfa5ee19f7571b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+</li>
+<li><p>使用<code>observeOn</code>切换到主线程进行界面的更新，原理如：<br><a href="http://www.jianshu.com/p/c935d0860186" target="_blank" rel="external">RxJava2 实战知识梳理(1) - 后台执行耗时操作，实时通知 UI 更新</a></p>
+<h2 id="2-4-示例演示"><a href="#2-4-示例演示" class="headerlink" title="2.4 示例演示"></a>2.4 示例演示</h2><p>本章的示例代码在 <a href="https://github.com/imZeJun/RxSample" target="_blank" rel="external">RxSample</a> 的第十一章中，我们演示两种情况：</p>
+</li>
+<li>正常联网情况，定位回调的间隔为<code>1s</code>：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-618d6cace82aa7e9.gif?imageMogr2/auto-orient/strip" alt=""><br>控制台输出如下，可以看到只有当前后两次定位信息不同时才会发起网络请求天气信息：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-4d44a2d024be5556.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></li>
+<li>在非联网的时候进入，并只进行一次定位，然后在切换到有网的状态。<br><img src="http://upload-images.jianshu.io/upload_images/1949836-83e7eb4c9f6252bd.gif?imageMogr2/auto-orient/strip" alt=""><br>此时控制台的输出如下，可以看到在网络重连之后，我们使用缓存的城市自动重新发起了请求：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-dbfacb32f0857ed4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><h2 id="2-5-操作符"><a href="#2-5-操作符" class="headerlink" title="2.5 操作符"></a>2.5 操作符</h2>在这个示例中，我们用到了以下几种操作符，如果有不明白的地方，大家可以去对应的链接中查看更详细的解释：</li>
+<li><a href="https://mcxiaoke.gitbooks.io/rxdocs/content/Subject.html" target="_blank" rel="external">PublishSubject</a></li>
+<li><a href="https://mcxiaoke.gitbooks.io/rxdocs/content/operators/Distinct.html" target="_blank" rel="external">DistinctUntilChanged</a></li>
+<li><a href="https://mcxiaoke.gitbooks.io/rxdocs/content/operators/Filter.html" target="_blank" rel="external">Filter</a></li>
+<li><a href="https://mcxiaoke.gitbooks.io/rxdocs/content/operators/Merge.html" target="_blank" rel="external">Merge</a></li>
+<li><a href="https://mcxiaoke.gitbooks.io/rxdocs/content/operators/Map.html" target="_blank" rel="external">Map</a></li>
+<li><a href="https://mcxiaoke.gitbooks.io/rxdocs/content/operators/SubscribeOn.html" target="_blank" rel="external">SubscribeOn</a></li>
+<li><a href="https://mcxiaoke.gitbooks.io/rxdocs/content/operators/ObserveOn.html" target="_blank" rel="external">ObserveOn</a></li>
+</ul>
+<hr>
+<h2 id="更多文章，欢迎访问我的-Android-知识梳理系列："><a href="#更多文章，欢迎访问我的-Android-知识梳理系列：" class="headerlink" title="更多文章，欢迎访问我的 Android 知识梳理系列："></a>更多文章，欢迎访问我的 <strong>Android</strong> 知识梳理系列：</h2><ul>
+<li><strong>Android</strong> 知识梳理目录：<a href="http://www.jianshu.com/p/fd82d18994ce" target="_blank" rel="external">http://www.jianshu.com/p/fd82d18994ce</a></li>
+<li>个人主页：<a href="http://lizejun.cn" target="_blank" rel="external">http://lizejun.cn</a></li>
+<li>个人知识总结目录：<a href="http://lizejun.cn/categories/" target="_blank" rel="external">http://lizejun.cn/categories/</a></li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/09/02/RxJava/RxJava2-实战知识梳理(10)---屏幕旋转导致-Activity-重建时恢复任务/" rel="next" title="RxJava2 实战知识梳理(10) - 屏幕旋转导致 Activity 重建时恢复任务">
+                <i class="fa fa-chevron-left"></i> RxJava2 实战知识梳理(10) - 屏幕旋转导致 Activity 重建时恢复任务
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/09/04/RxJava/RxJava2-实战知识梳理(12)---实战讲解-publish-&-replay-&-share-&-refCount-&-autoCo/" rel="prev" title="RxJava2 实战知识梳理(12) - 实战讲解 publish & replay & share & refCount & autoConnect">
+                RxJava2 实战知识梳理(12) - 实战讲解 publish & replay & share & refCount & autoConnect <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="cloud-tie-wrapper" class="cloud-tie-wrapper"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="泽毛" />
+          <p class="site-author-name" itemprop="name">泽毛</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">132</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">28</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              Links
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.jianshu.com/u/37baa8a86582" title="我的简书" target="_blank">我的简书</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://github.com/imZeJun" title="GitHub" target="_blank">GitHub</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.heqiangfly.com/" title="寒江蓑笠" target="_blank">寒江蓑笠</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://johnnyshieh.me/" title="Johnny Shieh" target="_blank">Johnny Shieh</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、应用背景"><span class="nav-number">1.</span> <span class="nav-text">一、应用背景</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、示例"><span class="nav-number">2.</span> <span class="nav-text">二、示例</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-定位模块"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 定位模块</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-网络状态模块"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 网络状态模块</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-网络请求模块"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 网络请求模块</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-4-示例演示"><span class="nav-number">2.4.</span> <span class="nav-text">2.4 示例演示</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-5-操作符"><span class="nav-number">2.5.</span> <span class="nav-text">2.5 操作符</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#更多文章，欢迎访问我的-Android-知识梳理系列："><span class="nav-number">2.6.</span> <span class="nav-text">更多文章，欢迎访问我的 Android 知识梳理系列：</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">泽毛</span>
+</div>
+
+<div class="powered-by">
+<i class=""></i><span id="busuanzi_container_site_uv">
+  访客 - <span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+<div class="powered-by">
+<i class=""></i><span id="busuanzi_container_site_pv">
+  访问量 - <span id="busuanzi_value_site_pv"></span>
+</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+    <script>
+      var cloudTieConfig = {
+        url: document.location.href, 
+        sourceId: "",
+        productKey: "b50a597e2fb84d35a6766074670f1d15",
+        target: "cloud-tie-wrapper"
+      };
+    </script>
+    <script src="https://img1.ws.126.net/f2e/tie/yun/sdk/loader.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("4ko7Mbc92NvXMivUJ2jBW88P-gzGzoHsz", "ccjGamRX2s1CSuhjsOVy2a6N");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,957 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="一、应用背景首先要感谢简友 楠柯壹梦 提供的实战案例，这篇文章的例子是基于他提出的需要在token失效时，刷新token并重新请求接口的应用场景所想到的解决方案。如果大家有别的案例或者在实际中遇到什么问题也可以私信我，让我们一起完善这系列的文章。 有时候，我们的某些接口会依赖于用户的token信息，像我们项目当中的资讯评论列表、或者账户的书签同步都会依赖于用户token信息，但是token往往会有">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RxJava2 实战知识梳理(14) - 在 token 过期时，刷新过期 token 并重新发起请求">
+<meta property="og:url" content="http://yoursite.com/2017/09/06/RxJava/RxJava2-实战知识梳理(14)---在-token-过期时，刷新过期-token-并重新发起请求/index.html">
+<meta property="og:site_name" content="泽毛的博客">
+<meta property="og:description" content="一、应用背景首先要感谢简友 楠柯壹梦 提供的实战案例，这篇文章的例子是基于他提出的需要在token失效时，刷新token并重新请求接口的应用场景所想到的解决方案。如果大家有别的案例或者在实际中遇到什么问题也可以私信我，让我们一起完善这系列的文章。 有时候，我们的某些接口会依赖于用户的token信息，像我们项目当中的资讯评论列表、或者账户的书签同步都会依赖于用户token信息，但是token往往会有">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-743324ecf345d7aa.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-75602a96deed77e4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-8bf0221238361ee0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-3296c83695dca427.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2017-12-13T05:20:33.152Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="RxJava2 实战知识梳理(14) - 在 token 过期时，刷新过期 token 并重新发起请求">
+<meta name="twitter:description" content="一、应用背景首先要感谢简友 楠柯壹梦 提供的实战案例，这篇文章的例子是基于他提出的需要在token失效时，刷新token并重新请求接口的应用场景所想到的解决方案。如果大家有别的案例或者在实际中遇到什么问题也可以私信我，让我们一起完善这系列的文章。 有时候，我们的某些接口会依赖于用户的token信息，像我们项目当中的资讯评论列表、或者账户的书签同步都会依赖于用户token信息，但是token往往会有">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-743324ecf345d7aa.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: 'bd2f9b0f6cf360a4093517d22678efec',
+      indexName: 'Blog',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/09/06/RxJava/RxJava2-实战知识梳理(14)---在-token-过期时，刷新过期-token-并重新发起请求/"/>
+
+
+
+
+
+  <title>RxJava2 实战知识梳理(14) - 在 token 过期时，刷新过期 token 并重新发起请求 | 泽毛的博客</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?c276429c3a148ef2fa47d755199a64c2";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">泽毛的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">但愿每次回忆，对生活都不感到负疚</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            目录
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-friend">
+          <a href="/friend/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            小伙伴
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/06/RxJava/RxJava2-实战知识梳理(14)---在-token-过期时，刷新过期-token-并重新发起请求/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="泽毛">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="泽毛的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">RxJava2 实战知识梳理(14) - 在 token 过期时，刷新过期 token 并重新发起请求</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-06T23:56:00+08:00">
+                2017-09-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/RxJava2-实战知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">RxJava2 实战知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a class="cloud-tie-join-count" href="/2017/09/06/RxJava/RxJava2-实战知识梳理(14)---在-token-过期时，刷新过期-token-并重新发起请求/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count join-count" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2017/09/06/RxJava/RxJava2-实战知识梳理(14)---在-token-过期时，刷新过期-token-并重新发起请求/" class="leancloud_visitors" data-flag-title="RxJava2 实战知识梳理(14) - 在 token 过期时，刷新过期 token 并重新发起请求">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">热度 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+                 <span>°C</span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="一、应用背景"><a href="#一、应用背景" class="headerlink" title="一、应用背景"></a>一、应用背景</h1><p>首先要感谢简友 <a href="http://www.jianshu.com/u/251e15fc2977" target="_blank" rel="external">楠柯壹梦</a> 提供的实战案例，这篇文章的例子是基于他提出的需要在<code>token</code>失效时，刷新<code>token</code>并重新请求接口的应用场景所想到的解决方案。如果大家有别的案例或者在实际中遇到什么问题也可以私信我，让我们一起完善这系列的文章。</p>
+<p>有时候，我们的某些接口会依赖于用户的<code>token</code>信息，像我们项目当中的资讯评论列表、或者账户的书签同步都会依赖于用户<code>token</code>信息，但是<code>token</code>往往会有一定的有效期，那么我们在请求这些接口返回<code>token</code>失效的时候，就需要刷新<code>token</code>再重新发起一次请求，这个流程图可以归纳如下：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-743324ecf345d7aa.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>这个应用的场景和 <a href="http://www.jianshu.com/p/d135f19e045c" target="_blank" rel="external">RxJava2 实战知识梳理(6) - 基于错误类型的重试请求</a> 中介绍的场景很类似，之前提到的错误类型就指的是<code>token</code>失效，但是相比之前的例子，我们增加了额外的两个需求：</p>
+<ul>
+<li>在重试之前，需要先去刷新一次<code>token</code>，而不是单纯地等待一段时间再重试。</li>
+<li>如果有多个请求都出现了因<code>token</code>失效而需要重新刷新<code>token</code>的情况，那么需要判断当前是否有另一个请求正在刷新<code>token</code>，如果有，那么就不要发起刷新<code>token</code>的请求，而是等待刷新<code>token</code>的请求返回后，直接进行重试。</li>
+</ul>
+<p>本文的代码可以通过 <a href="https://github.com/imZeJun/RxSample" target="_blank" rel="external">RxSample</a> 的第十四章获取。 </p>
+<h1 id="二、示例讲解"><a href="#二、示例讲解" class="headerlink" title="二、示例讲解"></a>二、示例讲解</h1><h2 id="2-1-Token-存储模块"><a href="#2-1-Token-存储模块" class="headerlink" title="2.1 Token 存储模块"></a>2.1 Token 存储模块</h2><p>首先，我们需要一个地方来缓存需要的<code>Token</code>，这里用<code>SharedPreferences</code>来实现，有想了解其内部实现原理的同学可以看这篇文章：<a href="http://www.jianshu.com/p/31ffd0498496" target="_blank" rel="external">Android 数据存储知识梳理(3) - SharedPreference 源码解析</a>。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Store</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String SP_RX = <span class="string">"sp_rx"</span>;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String TOKEN = <span class="string">"token"</span>;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> SharedPreferences mStore;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Store</span><span class="params">()</span> </span>&#123;</div><div class="line">        mStore = Utils.getAppContext().getSharedPreferences(SP_RX, Context.MODE_PRIVATE);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Store <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> Holder.INSTANCE;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">Holder</span> </span>&#123;</div><div class="line">        <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Store INSTANCE = <span class="keyword">new</span> Store();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setToken</span><span class="params">(String token)</span> </span>&#123;</div><div class="line">        mStore.edit().putString(TOKEN, token).apply();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getToken</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> mStore.getString(TOKEN, <span class="string">""</span>);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="2-2-依赖于-token-的接口"><a href="#2-2-依赖于-token-的接口" class="headerlink" title="2.2 依赖于 token 的接口"></a>2.2 依赖于 token 的接口</h2><p>这里，我们用一个简单的<code>getUserObservable</code>来模拟依赖于<code>token</code>的接口，<code>token</code>存储的是获取的时间，为了演示方便，我们设置如果距离上次获取的时间大于<code>2s</code>，那么就认为过期，并抛出<code>token</code>失效的错误，否则调用<code>onNext</code>方法返回接口给下游。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> Observable&lt;String&gt; <span class="title">getUserObservable</span> <span class="params">(<span class="keyword">final</span> <span class="keyword">int</span> index, <span class="keyword">final</span> String token)</span> </span>&#123;</div><div class="line">    <span class="keyword">return</span> Observable.create(<span class="keyword">new</span> ObservableOnSubscribe&lt;String&gt;() &#123;</div><div class="line"></div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">subscribe</span><span class="params">(ObservableEmitter&lt;String&gt; e)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">            Log.d(TAG, index + <span class="string">"使用token="</span> + token + <span class="string">"发起请求"</span>);</div><div class="line">            <span class="comment">//模拟根据Token去请求信息的过程。</span></div><div class="line">            <span class="keyword">if</span> (!TextUtils.isEmpty(token) &amp;&amp; System.currentTimeMillis() - Long.valueOf(token) &lt; <span class="number">2000</span>) &#123;</div><div class="line">                e.onNext(index + <span class="string">":"</span> + token + <span class="string">"的用户信息"</span>);</div><div class="line">            &#125; <span class="keyword">else</span> &#123;</div><div class="line">                e.onError(<span class="keyword">new</span> Throwable(ERROR_TOKEN));</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="2-3-完整的请求过程"><a href="#2-3-完整的请求过程" class="headerlink" title="2.3 完整的请求过程"></a>2.3 完整的请求过程</h2><p>下面，我们来看一下整个完整的请求过程：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">startRequest</span><span class="params">(<span class="keyword">final</span> <span class="keyword">int</span> index)</span> </span>&#123;</div><div class="line">     Observable&lt;String&gt; observable = Observable.defer(<span class="keyword">new</span> Callable&lt;ObservableSource&lt;String&gt;&gt;() &#123;</div><div class="line">         <span class="meta">@Override</span></div><div class="line">         <span class="function"><span class="keyword">public</span> ObservableSource&lt;String&gt; <span class="title">call</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">             String cacheToken = TokenLoader.getInstance().getCacheToken();</div><div class="line">             Log.d(TAG, index + <span class="string">"获取到缓存Token="</span> + cacheToken);</div><div class="line">             <span class="keyword">return</span> Observable.just(cacheToken);</div><div class="line">         &#125;</div><div class="line">     &#125;).flatMap(<span class="keyword">new</span> Function&lt;String, ObservableSource&lt;String&gt;&gt;() &#123;</div><div class="line">         <span class="meta">@Override</span></div><div class="line">         <span class="function"><span class="keyword">public</span> ObservableSource&lt;String&gt; <span class="title">apply</span><span class="params">(String token)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">             <span class="keyword">return</span> getUserObservable(index, token);</div><div class="line">         &#125;</div><div class="line">     &#125;).retryWhen(<span class="keyword">new</span> Function&lt;Observable&lt;Throwable&gt;, ObservableSource&lt;?&gt;&gt;() &#123;</div><div class="line"></div><div class="line">         <span class="keyword">private</span> <span class="keyword">int</span> mRetryCount = <span class="number">0</span>;</div><div class="line"></div><div class="line">         <span class="meta">@Override</span></div><div class="line">         <span class="keyword">public</span> ObservableSource&lt;?&gt; apply(Observable&lt;Throwable&gt; throwableObservable) <span class="keyword">throws</span> Exception &#123;</div><div class="line">             <span class="keyword">return</span> throwableObservable.flatMap(<span class="keyword">new</span> Function&lt;Throwable, ObservableSource&lt;?&gt;&gt;() &#123;</div><div class="line"></div><div class="line">                 <span class="meta">@Override</span></div><div class="line">                 <span class="keyword">public</span> ObservableSource&lt;?&gt; apply(Throwable throwable) <span class="keyword">throws</span> Exception &#123;</div><div class="line">                     Log.d(TAG, index + <span class="string">":"</span> + <span class="string">"发生错误="</span> + throwable + <span class="string">",重试次数="</span> + mRetryCount);</div><div class="line">                     <span class="keyword">if</span> (mRetryCount &gt; <span class="number">0</span>) &#123;</div><div class="line">                         <span class="keyword">return</span> Observable.error(<span class="keyword">new</span> Throwable(ERROR_RETRY));</div><div class="line">                     &#125; <span class="keyword">else</span> <span class="keyword">if</span> (ERROR_TOKEN.equals(throwable.getMessage())) &#123;</div><div class="line">                         mRetryCount++;</div><div class="line">                         <span class="keyword">return</span> TokenLoader.getInstance().getNetTokenLocked();</div><div class="line">                     &#125; <span class="keyword">else</span> &#123;</div><div class="line">                         <span class="keyword">return</span> Observable.error(throwable);</div><div class="line">                     &#125;</div><div class="line">                 &#125;</div><div class="line">             &#125;);</div><div class="line">         &#125;</div><div class="line">     &#125;);</div><div class="line">     DisposableObserver&lt;String&gt; observer = <span class="keyword">new</span> DisposableObserver&lt;String&gt;() &#123;</div><div class="line"></div><div class="line">         <span class="meta">@Override</span></div><div class="line">         <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onNext</span><span class="params">(String value)</span> </span>&#123;</div><div class="line">             Log.d(TAG, index + <span class="string">":"</span> + <span class="string">"收到信息="</span> + value);</div><div class="line">         &#125;</div><div class="line"></div><div class="line">         <span class="meta">@Override</span></div><div class="line">         <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onError</span><span class="params">(Throwable e)</span> </span>&#123;</div><div class="line">             Log.d(TAG, index + <span class="string">":"</span> + <span class="string">"onError="</span> + e);</div><div class="line">         &#125;</div><div class="line"></div><div class="line">         <span class="meta">@Override</span></div><div class="line">         <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onComplete</span><span class="params">()</span> </span>&#123;</div><div class="line">             Log.d(TAG, index + <span class="string">":"</span> + <span class="string">"onComplete"</span>);</div><div class="line">         &#125;</div><div class="line">     &#125;;</div><div class="line">     observable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(observer);</div><div class="line"> &#125;</div></pre></td></tr></table></figure></p>
+<p>为了方便大家阅读，我把所有的逻辑都写在了一整个调用链里，整个调用链分为四个部分：</p>
+<ul>
+<li><code>defer</code>：读取缓存中的<code>token</code>信息，这里调用了<code>TokenLoader</code>中读取缓存的接口，而这里使用<code>defer</code>操作符，是为了在重订阅时，重新创建一个新的<code>Observable</code>，以读取最新的缓存<code>token</code>信息，其原理图如下：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-75602a96deed77e4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="defer 原理图"></li>
+<li><code>flatMap</code>：通过<code>token</code>信息，请求必要的接口。</li>
+<li><code>retryWhen</code>：使用重订阅的方式来处理<code>token</code>失效时的逻辑，这里分为三种情况：重试次数到达，那么放弃重订阅，直接返回错误；请求<code>token</code>接口，根据<code>token</code>请求的结果决定是否重订阅；其它情况直接放弃重订阅。</li>
+<li><code>subscribe</code>：返回接口数据。</li>
+</ul>
+<h2 id="2-4-TokenLoader-的实现"><a href="#2-4-TokenLoader-的实现" class="headerlink" title="2.4 TokenLoader 的实现"></a>2.4 TokenLoader 的实现</h2><p>关键点在于<code>TokenLoader</code>的实现逻辑，代码如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TokenLoader</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String TAG = TokenLoader.class.getSimpleName();</div><div class="line"></div><div class="line">    <span class="keyword">private</span> AtomicBoolean mRefreshing = <span class="keyword">new</span> AtomicBoolean(<span class="keyword">false</span>);</div><div class="line">    <span class="keyword">private</span> PublishSubject&lt;String&gt; mPublishSubject;</div><div class="line">    <span class="keyword">private</span> Observable&lt;String&gt; mTokenObservable;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="title">TokenLoader</span><span class="params">()</span> </span>&#123;</div><div class="line">        mPublishSubject = PublishSubject.create();</div><div class="line">        mTokenObservable = Observable.create(<span class="keyword">new</span> ObservableOnSubscribe&lt;String&gt;() &#123;</div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">subscribe</span><span class="params">(ObservableEmitter&lt;String&gt; e)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">                Thread.sleep(<span class="number">1000</span>);</div><div class="line">                Log.d(TAG, <span class="string">"发送Token"</span>);</div><div class="line">                e.onNext(String.valueOf(System.currentTimeMillis()));</div><div class="line">            &#125;</div><div class="line">        &#125;).doOnNext(<span class="keyword">new</span> Consumer&lt;String&gt;() &#123;</div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">accept</span><span class="params">(String token)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">                Log.d(TAG, <span class="string">"存储Token="</span> + token);</div><div class="line">                Store.getInstance().setToken(token);</div><div class="line">                mRefreshing.set(<span class="keyword">false</span>);</div><div class="line">            &#125;</div><div class="line">        &#125;).doOnError(<span class="keyword">new</span> Consumer&lt;Throwable&gt;() &#123;</div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">accept</span><span class="params">(Throwable throwable)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">                mRefreshing.set(<span class="keyword">false</span>);</div><div class="line">            &#125;</div><div class="line">        &#125;).subscribeOn(Schedulers.io());</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> TokenLoader <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> Holder.INSTANCE;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Holder</span> </span>&#123;</div><div class="line">        <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> TokenLoader INSTANCE = <span class="keyword">new</span> TokenLoader();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getCacheToken</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> Store.getInstance().getToken();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> Observable&lt;String&gt; <span class="title">getNetTokenLocked</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">if</span> (mRefreshing.compareAndSet(<span class="keyword">false</span>, <span class="keyword">true</span>)) &#123;</div><div class="line">            Log.d(TAG, <span class="string">"没有请求，发起一次新的Token请求"</span>);</div><div class="line">            startTokenRequest();</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">            Log.d(TAG, <span class="string">"已经有请求，直接返回等待"</span>);</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">return</span> mPublishSubject;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">startTokenRequest</span><span class="params">()</span> </span>&#123;</div><div class="line">        mTokenObservable.subscribe(mPublishSubject);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>在<code>retryWhen</code>中，我们调用了<code>getNetTokenLocked</code>来获得一个<code>PublishSubject</code>，为了实现前面说到的下面这个逻辑：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-8bf0221238361ee0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>我们使用了一个<code>AtomicBoolean</code>来标记是否有刷新<code>Token</code>的请求正在执行，如果有，那么直接返回一个<code>PublishSubject</code>，否则就先发起一次刷新<code>token</code>的请求，并将<code>PublishSubject</code>作为该请求的订阅者。</p>
+<p>这里用到了<code>PublishSubject</code>的特性，它既是作为<code>Token</code>请求的订阅者，同时又作为<code>retryWhen</code>函数所返回<code>Observable</code>的发送方，因为<code>retryWhen</code>返回的<code>Observable</code>所发送的值就决定了是否需要重订阅：</p>
+<ul>
+<li>如果<code>Token</code>请求返回正确，那么就会发送<code>onNext</code>事件，触发重订阅操作，使得我们可以再次触发一次重试操作。</li>
+<li>如果<code>Token</code>请求返回错误，那么就会放弃重订阅，使得整个请求的调用链结束。</li>
+</ul>
+<p>而<code>AtomicBoolean</code>保证了多线程的情况下，只能有一个刷新<code>Token</code>的请求，在这个阶段内不会触发重复的刷新<code>token</code>请求，仅仅是作为观察者而已，并且可以在刷新<code>token</code>的请求回来之后立刻进行重订阅的操作。在<code>doOnNext/doOnError</code>中，我们将正在刷新的标志位恢复，同时缓存最新的<code>token</code>。</p>
+<p>为了模拟上面提到的多线程请求刷新<code>token</code>的情况，我们在发起一个请求<code>500ms</code>之后，立刻发起另一个请求，当第二个请求决定是否要重订阅时，第一个请求正在进行刷新<code>token</code>的操作。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</div><div class="line">    <span class="keyword">super</span>.onCreate(savedInstanceState);</div><div class="line">    setContentView(R.layout.activity_token);</div><div class="line">    mBtnRequest = (Button) findViewById(R.id.bt_request);</div><div class="line">    mBtnRequest.setOnClickListener(<span class="keyword">new</span> View.OnClickListener() &#123;</div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(View v)</span> </span>&#123;</div><div class="line">            startRequest(<span class="number">0</span>);</div><div class="line">            <span class="keyword">try</span> &#123;</div><div class="line">                Thread.sleep(<span class="number">500</span>);</div><div class="line">            &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">                e.printStackTrace();</div><div class="line">            &#125;</div><div class="line">            startRequest(<span class="number">1</span>);</div><div class="line">        &#125;</div><div class="line">    &#125;);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>控制台的输出如下，可以看到在第二个请求决定是否要重订阅时，它判断到已经有请求，因此只是等待而已。而在第一个请求导致的<code>token</code>刷新回调之后，两个请求都进行了重试，并成功地请求到了接口信息。<br><img src="http://upload-images.jianshu.io/upload_images/1949836-3296c83695dca427.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h2 id="2-5-操作符"><a href="#2-5-操作符" class="headerlink" title="2.5 操作符"></a>2.5 操作符</h2><p>本文中用到的操作符的官方解释链接如下：</p>
+<ul>
+<li><a href="https://mcxiaoke.gitbooks.io/rxdocs/content/operators/Create.html" target="_blank" rel="external">Create</a></li>
+<li><a href="https://mcxiaoke.gitbooks.io/rxdocs/content/operators/Defer.html" target="_blank" rel="external">Defer</a></li>
+<li><a href="https://mcxiaoke.gitbooks.io/rxdocs/content/operators/FlatMap.html" target="_blank" rel="external">FlatMap</a></li>
+<li><a href="https://mcxiaoke.gitbooks.io/rxdocs/content/operators/Retry.html" target="_blank" rel="external">RetryWhen</a></li>
+<li><a href="https://mcxiaoke.gitbooks.io/rxdocs/content/Subject.html" target="_blank" rel="external">PublishSubject</a></li>
+</ul>
+<p>关于<code>retryWhen</code>的更详细的解释，推荐大家可以看一下之前的 <a href="http://www.jianshu.com/p/d135f19e045c" target="_blank" rel="external">RxJava2 实战知识梳理(6) - 基于错误类型的重试请求</a>，它是这篇文章的基础。</p>
+<hr>
+<h2 id="更多文章，欢迎访问我的-Android-知识梳理系列："><a href="#更多文章，欢迎访问我的-Android-知识梳理系列：" class="headerlink" title="更多文章，欢迎访问我的 Android 知识梳理系列："></a>更多文章，欢迎访问我的 <strong>Android</strong> 知识梳理系列：</h2><ul>
+<li><strong>Android</strong> 知识梳理目录：<a href="http://www.jianshu.com/p/fd82d18994ce" target="_blank" rel="external">http://www.jianshu.com/p/fd82d18994ce</a></li>
+<li>个人主页：<a href="http://lizejun.cn" target="_blank" rel="external">http://lizejun.cn</a></li>
+<li>个人知识总结目录：<a href="http://lizejun.cn/categories/" target="_blank" rel="external">http://lizejun.cn/categories/</a></li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/09/05/RxJava/RxJava2-实战知识梳理(13)---如何使得错误发生时不自动停止订阅关系/" rel="next" title="RxJava2 实战知识梳理(13) - 如何使得错误发生时不自动停止订阅关系">
+                <i class="fa fa-chevron-left"></i> RxJava2 实战知识梳理(13) - 如何使得错误发生时不自动停止订阅关系
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/09/09/RxJava/RxJava2-实战知识梳理(15)---实现一个简单的-MVP-+-RxJava-+-Retrofit-应用/" rel="prev" title="RxJava2 实战知识梳理(15) - 实现一个简单的 MVP + RxJava + Retrofit 应用">
+                RxJava2 实战知识梳理(15) - 实现一个简单的 MVP + RxJava + Retrofit 应用 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="cloud-tie-wrapper" class="cloud-tie-wrapper"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="泽毛" />
+          <p class="site-author-name" itemprop="name">泽毛</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">132</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">28</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              Links
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.jianshu.com/u/37baa8a86582" title="我的简书" target="_blank">我的简书</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://github.com/imZeJun" title="GitHub" target="_blank">GitHub</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.heqiangfly.com/" title="寒江蓑笠" target="_blank">寒江蓑笠</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://johnnyshieh.me/" title="Johnny Shieh" target="_blank">Johnny Shieh</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、应用背景"><span class="nav-number">1.</span> <span class="nav-text">一、应用背景</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、示例讲解"><span class="nav-number">2.</span> <span class="nav-text">二、示例讲解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-Token-存储模块"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 Token 存储模块</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-依赖于-token-的接口"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 依赖于 token 的接口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-完整的请求过程"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 完整的请求过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-4-TokenLoader-的实现"><span class="nav-number">2.4.</span> <span class="nav-text">2.4 TokenLoader 的实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-5-操作符"><span class="nav-number">2.5.</span> <span class="nav-text">2.5 操作符</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#更多文章，欢迎访问我的-Android-知识梳理系列："><span class="nav-number">2.6.</span> <span class="nav-text">更多文章，欢迎访问我的 Android 知识梳理系列：</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">泽毛</span>
+</div>
+
+<div class="powered-by">
+<i class=""></i><span id="busuanzi_container_site_uv">
+  访客 - <span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+<div class="powered-by">
+<i class=""></i><span id="busuanzi_container_site_pv">
+  访问量 - <span id="busuanzi_value_site_pv"></span>
+</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+    <script>
+      var cloudTieConfig = {
+        url: document.location.href, 
+        sourceId: "",
+        productKey: "b50a597e2fb84d35a6766074670f1d15",
+        target: "cloud-tie-wrapper"
+      };
+    </script>
+    <script src="https://img1.ws.126.net/f2e/tie/yun/sdk/loader.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("4ko7Mbc92NvXMivUJ2jBW88P-gzGzoHsz", "ccjGamRX2s1CSuhjsOVy2a6N");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

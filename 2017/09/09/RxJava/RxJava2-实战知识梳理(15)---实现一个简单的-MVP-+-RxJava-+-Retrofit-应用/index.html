@@ -1,0 +1,947 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="一、前言不知不觉，从八月二十七号的第一篇教程 RxJava2 实战知识梳理(1) - 后台执行耗时操作，实时通知 UI 更新 到今天刚好两个星期，这一系列教程的目的主要是希望通过一些实际的案例，让大家对于RxJava中的一些操作符能有比较直观的认识。 今天这篇文章，是昨天晚上花了几个小时，对项目中用到的MVP + RxJava + Retrofit的整个架构做了一个简化，抽离出其中最核心的部分编写">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RxJava2 实战知识梳理(15) - 实现一个简单的 MVP + RxJava + Retrofit 应用">
+<meta property="og:url" content="http://yoursite.com/2017/09/09/RxJava/RxJava2-实战知识梳理(15)---实现一个简单的-MVP-+-RxJava-+-Retrofit-应用/index.html">
+<meta property="og:site_name" content="泽毛的博客">
+<meta property="og:description" content="一、前言不知不觉，从八月二十七号的第一篇教程 RxJava2 实战知识梳理(1) - 后台执行耗时操作，实时通知 UI 更新 到今天刚好两个星期，这一系列教程的目的主要是希望通过一些实际的案例，让大家对于RxJava中的一些操作符能有比较直观的认识。 今天这篇文章，是昨天晚上花了几个小时，对项目中用到的MVP + RxJava + Retrofit的整个架构做了一个简化，抽离出其中最核心的部分编写">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-9a12290cb2d061b5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-54d66787606b8687.gif?imageMogr2/auto-orient/strip">
+<meta property="og:updated_time" content="2017-12-13T05:21:02.596Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="RxJava2 实战知识梳理(15) - 实现一个简单的 MVP + RxJava + Retrofit 应用">
+<meta name="twitter:description" content="一、前言不知不觉，从八月二十七号的第一篇教程 RxJava2 实战知识梳理(1) - 后台执行耗时操作，实时通知 UI 更新 到今天刚好两个星期，这一系列教程的目的主要是希望通过一些实际的案例，让大家对于RxJava中的一些操作符能有比较直观的认识。 今天这篇文章，是昨天晚上花了几个小时，对项目中用到的MVP + RxJava + Retrofit的整个架构做了一个简化，抽离出其中最核心的部分编写">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-9a12290cb2d061b5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: 'bd2f9b0f6cf360a4093517d22678efec',
+      indexName: 'Blog',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/09/09/RxJava/RxJava2-实战知识梳理(15)---实现一个简单的-MVP-+-RxJava-+-Retrofit-应用/"/>
+
+
+
+
+
+  <title>RxJava2 实战知识梳理(15) - 实现一个简单的 MVP + RxJava + Retrofit 应用 | 泽毛的博客</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?c276429c3a148ef2fa47d755199a64c2";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">泽毛的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">但愿每次回忆，对生活都不感到负疚</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            目录
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-friend">
+          <a href="/friend/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            小伙伴
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/09/RxJava/RxJava2-实战知识梳理(15)---实现一个简单的-MVP-+-RxJava-+-Retrofit-应用/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="泽毛">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="泽毛的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">RxJava2 实战知识梳理(15) - 实现一个简单的 MVP + RxJava + Retrofit 应用</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-09T14:13:00+08:00">
+                2017-09-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/RxJava2-实战知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">RxJava2 实战知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a class="cloud-tie-join-count" href="/2017/09/09/RxJava/RxJava2-实战知识梳理(15)---实现一个简单的-MVP-+-RxJava-+-Retrofit-应用/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count join-count" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2017/09/09/RxJava/RxJava2-实战知识梳理(15)---实现一个简单的-MVP-+-RxJava-+-Retrofit-应用/" class="leancloud_visitors" data-flag-title="RxJava2 实战知识梳理(15) - 实现一个简单的 MVP + RxJava + Retrofit 应用">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">热度 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+                 <span>°C</span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="一、前言"><a href="#一、前言" class="headerlink" title="一、前言"></a>一、前言</h1><p>不知不觉，从八月二十七号的第一篇教程 <a href="http://www.jianshu.com/p/c935d0860186" target="_blank" rel="external">RxJava2 实战知识梳理(1) - 后台执行耗时操作，实时通知 UI 更新</a> 到今天刚好两个星期，这一系列教程的目的主要是希望通过一些实际的案例，让大家对于<code>RxJava</code>中的一些操作符能有比较直观的认识。</p>
+<p>今天这篇文章，是昨天晚上花了几个小时，对项目中用到的<code>MVP + RxJava + Retrofit</code>的整个架构做了一个简化，抽离出其中最核心的部分编写的读取 <a href="http://gank.io/api" target="_blank" rel="external">Gank</a> 中拉取新闻资讯的例子。</p>
+<p>该例子的源码可以通过  <a href="https://github.com/imZeJun/RxSample" target="_blank" rel="external">RxSample</a> 的第十五章获取，下面我们先介绍一个整个例子的框架：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-9a12290cb2d061b5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h1 id="二、Model"><a href="#二、Model" class="headerlink" title="二、Model"></a>二、Model</h1><p><code>Model</code>对应上图中的<code>NewsRepository</code>，它负责为<code>Presenter</code>层提供数据，因为数据有可能来自缓存或者网络，因此在<code>NewsRepository</code>中包含了两个数据源，也就是<code>LocalNewsSource</code>和<code>RemoteNewsSource</code>：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">NewsRepository</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> LocalNewsSource mLocalNewsSource;</div><div class="line">    <span class="keyword">private</span> RemoteNewsSource mRemoteNewsSource;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="title">NewsRepository</span><span class="params">()</span> </span>&#123;</div><div class="line">        mLocalNewsSource = <span class="keyword">new</span> LocalNewsSource();</div><div class="line">        mRemoteNewsSource = <span class="keyword">new</span> RemoteNewsSource();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> NewsRepository <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> Holder.INSTANCE;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Holder</span> </span>&#123;</div><div class="line">        <span class="keyword">private</span> <span class="keyword">static</span> NewsRepository INSTANCE = <span class="keyword">new</span> NewsRepository();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> Observable&lt;NewsEntity&gt; <span class="title">getNetNews</span><span class="params">(String category)</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> mRemoteNewsSource.getNews(category).doOnNext(<span class="keyword">new</span> Consumer&lt;NewsEntity&gt;() &#123;</div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">accept</span><span class="params">(NewsEntity newsEntity)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">                mLocalNewsSource.saveNews(newsEntity);</div><div class="line">            &#125;</div><div class="line">        &#125;);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> Observable&lt;NewsEntity&gt; <span class="title">getCacheNews</span><span class="params">(String category)</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> mLocalNewsSource.getNews(category);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="2-1-LocalNewsSource"><a href="#2-1-LocalNewsSource" class="headerlink" title="2.1 LocalNewsSource"></a>2.1 LocalNewsSource</h2><p><code>LocalNewsSource</code>通过数据库的方式实现了资讯的缓存，该数据库的表包含两个字段，即资讯的分类，和资讯的具体数据。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LocalNewsSource</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String[] QUERY_PROJECTION = <span class="keyword">new</span> String[] &#123; NewsContract.NewsTable.COLUMN_NAME_DATA &#125;;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String QUERY_SELECTION = NewsContract.NewsTable.COLUMN_NAME_CATEGORY + <span class="string">"= ?"</span>;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> NewsDBHelper mNewsDBHelper;</div><div class="line">    <span class="keyword">private</span> SQLiteDatabase mSQLiteDatabase;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">LocalNewsSource</span><span class="params">()</span> </span>&#123;</div><div class="line">        mNewsDBHelper = <span class="keyword">new</span> NewsDBHelper(Utils.getAppContext());</div><div class="line">        mSQLiteDatabase = mNewsDBHelper.getWritableDatabase();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> Observable&lt;NewsEntity&gt; <span class="title">getNews</span><span class="params">(String category)</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> Observable.just(category).flatMap(<span class="keyword">new</span> Function&lt;String, ObservableSource&lt;NewsEntity&gt;&gt;() &#123;</div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> ObservableSource&lt;NewsEntity&gt; <span class="title">apply</span><span class="params">(String category)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">                NewsEntity newsEntity = <span class="keyword">new</span> NewsEntity();</div><div class="line">                Cursor cursor = mSQLiteDatabase.query(NewsContract.NewsTable.TABLE_NAME, QUERY_PROJECTION, QUERY_SELECTION, <span class="keyword">new</span> String[] &#123; category &#125;, <span class="keyword">null</span>, <span class="keyword">null</span>, <span class="keyword">null</span>);</div><div class="line">                <span class="keyword">if</span> (cursor != <span class="keyword">null</span> &amp;&amp; cursor.moveToNext()) &#123;</div><div class="line">                    String data = cursor.getString(cursor.getColumnIndex(NewsContract.NewsTable.COLUMN_NAME_DATA));</div><div class="line">                    newsEntity = JSON.parseObject(data, NewsEntity.class);</div><div class="line">                &#125;</div><div class="line">                <span class="keyword">if</span> (cursor != <span class="keyword">null</span>) &#123;</div><div class="line">                    cursor.close();</div><div class="line">                &#125;</div><div class="line">                <span class="keyword">return</span> Observable.just(newsEntity);</div><div class="line">            &#125;</div><div class="line">        &#125;);</div><div class="line">    &#125;</div><div class="line"></div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">saveNews</span><span class="params">(NewsEntity newsEntity)</span> </span>&#123;</div><div class="line">        Observable.just(newsEntity).observeOn(Schedulers.io()).subscribe(<span class="keyword">new</span> Consumer&lt;NewsEntity&gt;() &#123;</div><div class="line"></div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">accept</span><span class="params">(NewsEntity newsEntity)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">                <span class="keyword">if</span> (newsEntity.getResults() != <span class="keyword">null</span> &amp;&amp; newsEntity.getResults().size() &gt; <span class="number">0</span>) &#123;</div><div class="line">                    String cache = JSON.toJSONString(newsEntity);</div><div class="line">                    ContentValues values = <span class="keyword">new</span> ContentValues();</div><div class="line">                    values.put(NewsContract.NewsTable.COLUMN_NAME_CATEGORY, <span class="string">"Android"</span>);</div><div class="line">                    values.put(NewsContract.NewsTable.COLUMN_NAME_DATA, cache);</div><div class="line">                    mSQLiteDatabase.insert(NewsContract.NewsTable.TABLE_NAME, <span class="keyword">null</span>, values);</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="2-2-RemoteNewsSource"><a href="#2-2-RemoteNewsSource" class="headerlink" title="2.2 RemoteNewsSource"></a>2.2 RemoteNewsSource</h2><p><code>RemoteNewsSource</code>则负责从网络上拉取资讯信息，这里用到了<code>Retrofit</code>来实现，有需要了解的同学可以参考前面的这篇文章 <a href="http://www.jianshu.com/p/74f46ae1fabb" target="_blank" rel="external">RxJava2 实战知识梳理(4) - 结合 Retrofit 请求新闻资讯</a>。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RemoteNewsSource</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> NewsApi mNewsApi;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">RemoteNewsSource</span><span class="params">()</span> </span>&#123;</div><div class="line">        mNewsApi = <span class="keyword">new</span> Retrofit.Builder()</div><div class="line">                .baseUrl(<span class="string">"http://gank.io"</span>)</div><div class="line">                .addConverterFactory(GsonConverterFactory.create())</div><div class="line">                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())</div><div class="line">                .build().create(NewsApi.class);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> Observable&lt;NewsEntity&gt; <span class="title">getNews</span><span class="params">(String category)</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> mNewsApi.getNews(category, <span class="number">10</span>, <span class="number">1</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h1 id="三、View-和-Presenter"><a href="#三、View-和-Presenter" class="headerlink" title="三、View 和 Presenter"></a>三、View 和 Presenter</h1><h2 id="3-1-View-和-Presenter-的接口定义"><a href="#3-1-View-和-Presenter-的接口定义" class="headerlink" title="3.1 View 和 Presenter 的接口定义"></a>3.1 View 和 Presenter 的接口定义</h2><p>首先，我们需要对于<code>View</code>和<code>Presenter</code>之间的交互定义接口，这些接口我们写在<code>NewsMvpContract</code>中：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">NewsMvpContract</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> REFRESH_AUTO = <span class="number">0</span>;</div><div class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> REFRESH_CACHE = <span class="number">1</span>;</div><div class="line"></div><div class="line">    <span class="meta">@IntDef</span> (&#123;REFRESH_AUTO, REFRESH_CACHE&#125;)</div><div class="line">    <span class="keyword">public</span> <span class="meta">@interface</span> RefreshType &#123;&#125;</div><div class="line"></div><div class="line">    <span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">View</span> </span>&#123;</div><div class="line">        <span class="function"><span class="keyword">void</span> <span class="title">onRefreshFinished</span><span class="params">(@RefreshType <span class="keyword">int</span> refreshType, List&lt;NewsBean&gt; newsEntity)</span></span>;</div><div class="line">        <span class="function"><span class="keyword">void</span> <span class="title">showTips</span><span class="params">(String message)</span></span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Presenter</span> </span>&#123;</div><div class="line">        <span class="function"><span class="keyword">void</span> <span class="title">refresh</span><span class="params">(@RefreshType <span class="keyword">int</span> refreshType)</span></span>;</div><div class="line">        <span class="function"><span class="keyword">void</span> <span class="title">destroy</span><span class="params">()</span></span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><code>View</code>层定义了两个接口，它们的含义分别为：</p>
+<ul>
+<li><code>onRefreshFinished</code>：刷新资讯列表。</li>
+<li><code>showTips</code>：在发生错误时给予用户提示。</li>
+</ul>
+<p><code>Presenter</code>层则负责在<code>View</code>层发起请求之后，调用<code>Model</code>层获取数据，然后回调<code>View</code>层的接口进行界面的更新，因此它提供了两个接口：</p>
+<ul>
+<li><code>refresh</code>：用于<code>View</code>层发起刷新操作。</li>
+<li><code>destroy</code>：在<code>View</code>层销毁时，取消订阅。<h2 id="3-2-View-层实现"><a href="#3-2-View-层实现" class="headerlink" title="3.2 View 层实现"></a>3.2 View 层实现</h2>这里，我们实现<code>Activity</code>作为<code>View</code>层的实现，它在有新的资讯列表回来时，通知<code>RecyclerView</code>进行刷新，而需要提示时则通过<code>SnackBar</code>进行提示，同时它还持有一个<code>NewsPresenter</code>的实例，并在销毁时调用它的<code>destroy</code>方法取消订阅。<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">NewsMvpActivity</span> <span class="keyword">extends</span> <span class="title">AppCompatActivity</span> <span class="keyword">implements</span> <span class="title">NewsMvpContract</span>.<span class="title">View</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> CoordinatorLayout mRootLayout;</div><div class="line">    <span class="keyword">private</span> RecyclerView mRecyclerView;</div><div class="line">    <span class="keyword">private</span> NewsMvpAdapter mRecyclerAdapter;</div><div class="line">    <span class="keyword">private</span> List&lt;NewsBean&gt; mNewsBeans = <span class="keyword">new</span> ArrayList&lt;&gt;();</div><div class="line">    <span class="keyword">private</span> NewsMvpContract.Presenter mPresenter;</div><div class="line">    <span class="keyword">private</span> LinearLayoutManager mLayoutMgr;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</div><div class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState);</div><div class="line">        setContentView(R.layout.activity_news_mvp);</div><div class="line">        initView();</div><div class="line">        dispatchRefresh(NewsMvpContract.REFRESH_CACHE);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">initView</span><span class="params">()</span> </span>&#123;</div><div class="line">        mRootLayout = (CoordinatorLayout) findViewById(R.id.cl_root);</div><div class="line">        mRecyclerView = (RecyclerView) findViewById(R.id.rv_news);</div><div class="line">        mRecyclerAdapter = <span class="keyword">new</span> NewsMvpAdapter();</div><div class="line">        mRecyclerAdapter.setNewsResult(mNewsBeans);</div><div class="line">        mLayoutMgr = <span class="keyword">new</span> LinearLayoutManager(<span class="keyword">this</span>);</div><div class="line">        mRecyclerView.addItemDecoration(<span class="keyword">new</span> DividerItemDecoration(<span class="keyword">this</span>, DividerItemDecoration.VERTICAL));</div><div class="line">        mRecyclerView.setLayoutManager(mLayoutMgr);</div><div class="line">        mRecyclerView.setAdapter(mRecyclerAdapter);</div><div class="line">        mPresenter = <span class="keyword">new</span> NewsPresenter(<span class="keyword">this</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onResume</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">super</span>.onResume();</div><div class="line">        dispatchRefresh(NewsMvpContract.REFRESH_AUTO);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">dispatchRefresh</span><span class="params">(@NewsMvpContract.RefreshType <span class="keyword">int</span> refreshType)</span> </span>&#123;</div><div class="line">        mPresenter.refresh(refreshType);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onRefreshFinished</span><span class="params">(@NewsMvpContract.RefreshType <span class="keyword">int</span> refreshType, List&lt;NewsBean&gt; newsBeans)</span> </span>&#123;</div><div class="line">        mNewsBeans.clear();</div><div class="line">        mNewsBeans.addAll(newsBeans);</div><div class="line">        mRecyclerAdapter.notifyDataSetChanged();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">showTips</span><span class="params">(String message)</span> </span>&#123;</div><div class="line">        Snackbar.make(mRootLayout, message, Snackbar.LENGTH_SHORT).show();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onDestroy</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">super</span>.onDestroy();</div><div class="line">        mPresenter.destroy();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="3-3-Presenter-层实现"><a href="#3-3-Presenter-层实现" class="headerlink" title="3.3 Presenter 层实现"></a>3.3 Presenter 层实现</h2><p><code>Presenter</code>层是比较复杂的地方，当<code>View</code>层调用<code>refresh</code>接口时，它需要根据刷新的类型，请求<code>Model</code>层不同的接口进行处理，并且在数据返回时，将其和当前的数据进行合并，再通知<code>View</code>层进行刷新。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">NewsPresenter</span> <span class="keyword">implements</span> <span class="title">NewsMvpContract</span>.<span class="title">Presenter</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> AUTO_REFRESH_TIME = <span class="number">1000</span> * <span class="number">60</span> * <span class="number">10</span>;</div><div class="line">    <span class="keyword">private</span> CompositeDisposable mCompositeDisposable;</div><div class="line">    <span class="keyword">private</span> NewsMvpContract.View mView;</div><div class="line">    <span class="keyword">private</span> List&lt;NewsBean&gt; mNewsBeans;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">long</span> mLastNetUpdateTime;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">NewsPresenter</span><span class="params">(NewsMvpContract.View view)</span> </span>&#123;</div><div class="line">        mView = view;</div><div class="line">        mCompositeDisposable = <span class="keyword">new</span> CompositeDisposable();</div><div class="line">        mNewsBeans = <span class="keyword">new</span> ArrayList&lt;&gt;();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">refresh</span><span class="params">(@RefreshType <span class="keyword">int</span> refreshType)</span> </span>&#123;</div><div class="line">        <span class="keyword">if</span> (refreshType == NewsMvpContract.REFRESH_CACHE) &#123;</div><div class="line">            NewsRepository.getInstance()</div><div class="line">                    .getCacheNews(<span class="string">"Android"</span>)</div><div class="line">                    .subscribeOn(Schedulers.io())</div><div class="line">                    .observeOn(AndroidSchedulers.mainThread())</div><div class="line">                    .subscribe(<span class="keyword">new</span> RefreshObserver(refreshType));</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">            <span class="keyword">if</span> (System.currentTimeMillis() - mLastNetUpdateTime &gt; AUTO_REFRESH_TIME) &#123; <span class="comment">//自动刷新的间隔时间为十分钟。</span></div><div class="line">                NewsRepository.getInstance()</div><div class="line">                        .getNetNews(<span class="string">"Android"</span>)</div><div class="line">                        .subscribeOn(Schedulers.io())</div><div class="line">                        .observeOn(AndroidSchedulers.mainThread())</div><div class="line">                        .subscribe(<span class="keyword">new</span> RefreshObserver(refreshType));</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">destroy</span><span class="params">()</span> </span>&#123;</div><div class="line">        mCompositeDisposable.clear();</div><div class="line">        mView = <span class="keyword">null</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">updateNewsBeans</span><span class="params">(@NewsMvpContract.RefreshType <span class="keyword">int</span> refreshType, NewsEntity newsEntity)</span> </span>&#123;</div><div class="line">        List&lt;NewsBean&gt; filter = <span class="keyword">new</span> ArrayList&lt;&gt;();</div><div class="line">        <span class="keyword">for</span> (NewsResultEntity resultEntity : newsEntity.getResults()) &#123; <span class="comment">//对资讯进行去重，需要重写NewsBean的对应方法。</span></div><div class="line">            NewsBean newsBean = entityToBean(resultEntity);</div><div class="line">            <span class="keyword">if</span> (!mNewsBeans.contains(newsBean)) &#123;</div><div class="line">                filter.add(newsBean);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">if</span> (refreshType == NewsMvpContract.REFRESH_CACHE &amp;&amp; mNewsBeans.size() == <span class="number">0</span>) &#123; <span class="comment">//只有当前没有数据时，才使用缓存。</span></div><div class="line">            mNewsBeans = filter;</div><div class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (refreshType == NewsMvpContract.REFRESH_AUTO) &#123; <span class="comment">//自动刷新的数据放在头部。</span></div><div class="line">            mNewsBeans.addAll(<span class="number">0</span>, filter);</div><div class="line">            mLastNetUpdateTime = System.currentTimeMillis();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">private</span> NewsBean <span class="title">entityToBean</span><span class="params">(NewsResultEntity resultEntity)</span> </span>&#123;</div><div class="line">        String title = resultEntity.getDesc();</div><div class="line">        NewsBean bean = <span class="keyword">new</span> NewsBean();</div><div class="line">        bean.setTitle(title);</div><div class="line">        <span class="keyword">return</span> bean;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">RefreshObserver</span> <span class="keyword">extends</span> <span class="title">DisposableObserver</span>&lt;<span class="title">NewsEntity</span>&gt; </span>&#123;</div><div class="line"></div><div class="line">        <span class="keyword">private</span> <span class="meta">@NewsMvpContract</span>.RefreshType <span class="keyword">int</span> mRefreshType;</div><div class="line"></div><div class="line">        RefreshObserver(<span class="meta">@NewsMvpContract</span>.RefreshType <span class="keyword">int</span> refreshType) &#123;</div><div class="line">            mRefreshType = refreshType;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onNext</span><span class="params">(NewsEntity newsEntity)</span> </span>&#123;</div><div class="line">            updateNewsBeans(mRefreshType, newsEntity);</div><div class="line">            mView.onRefreshFinished(mRefreshType, mNewsBeans);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onError</span><span class="params">(Throwable throwable)</span> </span>&#123;</div><div class="line">            mView.showTips(<span class="string">"刷新错误"</span>);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onComplete</span><span class="params">()</span> </span>&#123;&#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这里我们之所以要定义一个刷新类型的目的在于，在实际项目中，我们有以下几种刷新方式：</p>
+<ul>
+<li>读取缓存：只在列表为空时才添加。</li>
+<li>自动刷新：需要根据时间判断，每隔<code>10</code>分钟进入一次界面后自动获取。</li>
+<li>下拉刷新：将数据添加在头部。</li>
+<li>上拉刷新：将数据添加在尾部。</li>
+</ul>
+<p>这里为了演示方便我们只实现了前两种方式，大家以后在处理时，也可以借鉴相应的方式。</p>
+<h1 id="四、示例"><a href="#四、示例" class="headerlink" title="四、示例"></a>四、示例</h1><p>下面，我们演示一下，先在联网状态下拉取资讯，再在断网情况下重新进入，读取缓存的情况：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-54d66787606b8687.gif?imageMogr2/auto-orient/strip" alt=""><br>这篇文章原理的东西不多，因为相信大家对于<code>MVP</code>也已经很熟悉，主要是通过一个简单的案例演示一个如何在<code>MVP</code>架构当中使用<code>RxJava</code>，有部分没有贴出来的代码大家可以查看 <a href="https://github.com/imZeJun/RxSample" target="_blank" rel="external">RxSample</a> 中的第十五章。</p>
+<hr>
+<h2 id="更多文章，欢迎访问我的-Android-知识梳理系列："><a href="#更多文章，欢迎访问我的-Android-知识梳理系列：" class="headerlink" title="更多文章，欢迎访问我的 Android 知识梳理系列："></a>更多文章，欢迎访问我的 <strong>Android</strong> 知识梳理系列：</h2><ul>
+<li><strong>Android</strong> 知识梳理目录：<a href="http://www.jianshu.com/p/fd82d18994ce" target="_blank" rel="external">http://www.jianshu.com/p/fd82d18994ce</a></li>
+<li>个人主页：<a href="http://lizejun.cn" target="_blank" rel="external">http://lizejun.cn</a></li>
+<li>个人知识总结目录：<a href="http://lizejun.cn/categories/" target="_blank" rel="external">http://lizejun.cn/categories/</a></li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/09/06/RxJava/RxJava2-实战知识梳理(14)---在-token-过期时，刷新过期-token-并重新发起请求/" rel="next" title="RxJava2 实战知识梳理(14) - 在 token 过期时，刷新过期 token 并重新发起请求">
+                <i class="fa fa-chevron-left"></i> RxJava2 实战知识梳理(14) - 在 token 过期时，刷新过期 token 并重新发起请求
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/11/04/面试算法/算法知识梳理(1)---排序算法/" rel="prev" title="算法知识梳理(1) - 排序算法">
+                算法知识梳理(1) - 排序算法 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="cloud-tie-wrapper" class="cloud-tie-wrapper"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="泽毛" />
+          <p class="site-author-name" itemprop="name">泽毛</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">132</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">28</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              Links
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.jianshu.com/u/37baa8a86582" title="我的简书" target="_blank">我的简书</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://github.com/imZeJun" title="GitHub" target="_blank">GitHub</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.heqiangfly.com/" title="寒江蓑笠" target="_blank">寒江蓑笠</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://johnnyshieh.me/" title="Johnny Shieh" target="_blank">Johnny Shieh</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、前言"><span class="nav-number">1.</span> <span class="nav-text">一、前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、Model"><span class="nav-number">2.</span> <span class="nav-text">二、Model</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-LocalNewsSource"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 LocalNewsSource</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-RemoteNewsSource"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 RemoteNewsSource</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、View-和-Presenter"><span class="nav-number">3.</span> <span class="nav-text">三、View 和 Presenter</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-View-和-Presenter-的接口定义"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 View 和 Presenter 的接口定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-View-层实现"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 View 层实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-3-Presenter-层实现"><span class="nav-number">3.3.</span> <span class="nav-text">3.3 Presenter 层实现</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四、示例"><span class="nav-number">4.</span> <span class="nav-text">四、示例</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#更多文章，欢迎访问我的-Android-知识梳理系列："><span class="nav-number">4.1.</span> <span class="nav-text">更多文章，欢迎访问我的 Android 知识梳理系列：</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">泽毛</span>
+</div>
+
+<div class="powered-by">
+<i class=""></i><span id="busuanzi_container_site_uv">
+  访客 - <span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+<div class="powered-by">
+<i class=""></i><span id="busuanzi_container_site_pv">
+  访问量 - <span id="busuanzi_value_site_pv"></span>
+</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+    <script>
+      var cloudTieConfig = {
+        url: document.location.href, 
+        sourceId: "",
+        productKey: "b50a597e2fb84d35a6766074670f1d15",
+        target: "cloud-tie-wrapper"
+      };
+    </script>
+    <script src="https://img1.ws.126.net/f2e/tie/yun/sdk/loader.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("4ko7Mbc92NvXMivUJ2jBW88P-gzGzoHsz", "ccjGamRX2s1CSuhjsOVy2a6N");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

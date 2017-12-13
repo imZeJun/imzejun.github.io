@@ -1,0 +1,972 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="一、示例1.1 应用场景今天，我们介绍一种新的场景，轮询操作。也就是说，我们会尝试间隔一段时间就向服务器发起一次请求，在使用RxJava之前，该需求的实现一般有两种方式：  通过Handler发送延时消息，在handleMessage中请求服务器之后，再次发送一个延时消息，直到达到循环次数为止。 使用Java提供的定时器Timer。  我们尝试使用RxJava2提供的操作符来实现这一需求，这里演示">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RxJava2 实战知识梳理(5) - 简单及进阶的轮询操作">
+<meta property="og:url" content="http://yoursite.com/2017/08/29/RxJava/RxJava2-实战知识梳理(5)---简单及进阶的轮询操作/index.html">
+<meta property="og:site_name" content="泽毛的博客">
+<meta property="og:description" content="一、示例1.1 应用场景今天，我们介绍一种新的场景，轮询操作。也就是说，我们会尝试间隔一段时间就向服务器发起一次请求，在使用RxJava之前，该需求的实现一般有两种方式：  通过Handler发送延时消息，在handleMessage中请求服务器之后，再次发送一个延时消息，直到达到循环次数为止。 使用Java提供的定时器Timer。  我们尝试使用RxJava2提供的操作符来实现这一需求，这里演示">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-a341fe1b569d6464.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-68d792c65cc2689d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-0c999f07246975aa.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-4f9bfcdf05d0c601.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-c11e150789e2ae94.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-38839db0ecd91f0b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2017-12-13T05:25:45.460Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="RxJava2 实战知识梳理(5) - 简单及进阶的轮询操作">
+<meta name="twitter:description" content="一、示例1.1 应用场景今天，我们介绍一种新的场景，轮询操作。也就是说，我们会尝试间隔一段时间就向服务器发起一次请求，在使用RxJava之前，该需求的实现一般有两种方式：  通过Handler发送延时消息，在handleMessage中请求服务器之后，再次发送一个延时消息，直到达到循环次数为止。 使用Java提供的定时器Timer。  我们尝试使用RxJava2提供的操作符来实现这一需求，这里演示">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-a341fe1b569d6464.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: 'bd2f9b0f6cf360a4093517d22678efec',
+      indexName: 'Blog',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/08/29/RxJava/RxJava2-实战知识梳理(5)---简单及进阶的轮询操作/"/>
+
+
+
+
+
+  <title>RxJava2 实战知识梳理(5) - 简单及进阶的轮询操作 | 泽毛的博客</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?c276429c3a148ef2fa47d755199a64c2";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">泽毛的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">但愿每次回忆，对生活都不感到负疚</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            目录
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-friend">
+          <a href="/friend/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            小伙伴
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/29/RxJava/RxJava2-实战知识梳理(5)---简单及进阶的轮询操作/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="泽毛">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="泽毛的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">RxJava2 实战知识梳理(5) - 简单及进阶的轮询操作</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-29T08:35:00+08:00">
+                2017-08-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/RxJava2-实战知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">RxJava2 实战知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a class="cloud-tie-join-count" href="/2017/08/29/RxJava/RxJava2-实战知识梳理(5)---简单及进阶的轮询操作/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count join-count" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2017/08/29/RxJava/RxJava2-实战知识梳理(5)---简单及进阶的轮询操作/" class="leancloud_visitors" data-flag-title="RxJava2 实战知识梳理(5) - 简单及进阶的轮询操作">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">热度 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+                 <span>°C</span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="一、示例"><a href="#一、示例" class="headerlink" title="一、示例"></a>一、示例</h1><h2 id="1-1-应用场景"><a href="#1-1-应用场景" class="headerlink" title="1.1 应用场景"></a>1.1 应用场景</h2><p>今天，我们介绍一种新的场景，轮询操作。也就是说，我们会尝试间隔一段时间就向服务器发起一次请求，在使用<code>RxJava</code>之前，该需求的实现一般有两种方式：</p>
+<ul>
+<li>通过<code>Handler</code>发送延时消息，在<code>handleMessage</code>中请求服务器之后，再次发送一个延时消息，直到达到循环次数为止。</li>
+<li>使用<code>Java</code>提供的定时器<code>Timer</code>。</li>
+</ul>
+<p>我们尝试使用<code>RxJava2</code>提供的操作符来实现这一需求，这里演示两种方式的轮询，并将单次访问的次数限制在<code>5</code>次：</p>
+<ul>
+<li>固定时延：使用<code>intervalRange</code>操作符，每间隔<code>3s</code>执行一次任务。</li>
+<li>变长时延：使用<code>repeatWhen</code>操作符实现，第一次执行完任务后，等待<code>4s</code>再执行第二次任务，在第二次任务执行完成后，等待<code>5s</code>，依次递增。</li>
+</ul>
+<h1 id="二、示例"><a href="#二、示例" class="headerlink" title="二、示例"></a>二、示例</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PollingActivity</span> <span class="keyword">extends</span> <span class="title">AppCompatActivity</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String TAG = PollingActivity.class.getSimpleName();</div><div class="line"></div><div class="line">    <span class="keyword">private</span> TextView mTvSimple;</div><div class="line">    <span class="keyword">private</span> TextView mTvAdvance;</div><div class="line">    <span class="keyword">private</span> CompositeDisposable mCompositeDisposable;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</div><div class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState);</div><div class="line">        setContentView(R.layout.activity_polling);</div><div class="line">        mTvSimple = (TextView) findViewById(R.id.tv_simple);</div><div class="line">        mTvSimple.setOnClickListener(<span class="keyword">new</span> View.OnClickListener() &#123;</div><div class="line"></div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(View v)</span> </span>&#123;</div><div class="line">                startSimplePolling();</div><div class="line">            &#125;</div><div class="line"></div><div class="line">        &#125;);</div><div class="line">        mTvAdvance = (TextView) findViewById(R.id.tv_advance);</div><div class="line">        mTvAdvance.setOnClickListener(<span class="keyword">new</span> View.OnClickListener() &#123;</div><div class="line"></div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(View v)</span> </span>&#123;</div><div class="line">                startAdvancePolling();</div><div class="line">            &#125;</div><div class="line"></div><div class="line">        &#125;);</div><div class="line">        mCompositeDisposable = <span class="keyword">new</span> CompositeDisposable();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">startSimplePolling</span><span class="params">()</span> </span>&#123;</div><div class="line">        Log.d(TAG, <span class="string">"startSimplePolling"</span>);</div><div class="line">        Observable&lt;Long&gt; observable = Observable.intervalRange(<span class="number">0</span>, <span class="number">5</span>, <span class="number">0</span>, <span class="number">3000</span>, TimeUnit.MILLISECONDS).take(<span class="number">5</span>).doOnNext(<span class="keyword">new</span> Consumer&lt;Long&gt;() &#123;</div><div class="line"></div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">accept</span><span class="params">(Long aLong)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">                doWork(); <span class="comment">//这里使用了doOnNext，因此DisposableObserver的onNext要等到该方法执行完才会回调。</span></div><div class="line">            &#125;</div><div class="line"></div><div class="line">        &#125;);</div><div class="line">        DisposableObserver&lt;Long&gt; disposableObserver = getDisposableObserver();</div><div class="line">        observable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(disposableObserver);</div><div class="line">        mCompositeDisposable.add(disposableObserver);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">startAdvancePolling</span><span class="params">()</span> </span>&#123;</div><div class="line">        Log.d(TAG, <span class="string">"startAdvancePolling click"</span>);</div><div class="line">        Observable&lt;Long&gt; observable = Observable.just(<span class="number">0L</span>).doOnComplete(<span class="keyword">new</span> Action() &#123;</div><div class="line"></div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">                doWork();</div><div class="line">            &#125;</div><div class="line"></div><div class="line">        &#125;).repeatWhen(<span class="keyword">new</span> Function&lt;Observable&lt;Object&gt;, ObservableSource&lt;Long&gt;&gt;() &#123;</div><div class="line"></div><div class="line">            <span class="keyword">private</span> <span class="keyword">long</span> mRepeatCount;</div><div class="line"></div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> ObservableSource&lt;Long&gt; <span class="title">apply</span><span class="params">(Observable&lt;Object&gt; objectObservable)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">                <span class="comment">//必须作出反应，这里是通过flatMap操作符。</span></div><div class="line">                <span class="keyword">return</span> objectObservable.flatMap(<span class="keyword">new</span> Function&lt;Object, ObservableSource&lt;Long&gt;&gt;() &#123;</div><div class="line"></div><div class="line">                    <span class="meta">@Override</span></div><div class="line">                    <span class="function"><span class="keyword">public</span> ObservableSource&lt;Long&gt; <span class="title">apply</span><span class="params">(Object o)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">                        <span class="keyword">if</span> (++mRepeatCount &gt; <span class="number">4</span>) &#123;</div><div class="line">                            <span class="comment">//return Observable.empty(); //发送onComplete消息，无法触发下游的onComplete回调。</span></div><div class="line">                            <span class="keyword">return</span> Observable.error(<span class="keyword">new</span> Throwable(<span class="string">"Polling work finished"</span>)); <span class="comment">//发送onError消息，可以触发下游的onError回调。</span></div><div class="line">                        &#125;</div><div class="line">                        Log.d(TAG, <span class="string">"startAdvancePolling apply"</span>);</div><div class="line">                        <span class="keyword">return</span> Observable.timer(<span class="number">3000</span> + mRepeatCount * <span class="number">1000</span>, TimeUnit.MILLISECONDS);</div><div class="line">                    &#125;</div><div class="line"></div><div class="line">                &#125;);</div><div class="line">            &#125;</div><div class="line"></div><div class="line">        &#125;);</div><div class="line">        DisposableObserver&lt;Long&gt; disposableObserver = getDisposableObserver();</div><div class="line">        observable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(disposableObserver);</div><div class="line">        mCompositeDisposable.add(disposableObserver);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">private</span> DisposableObserver&lt;Long&gt; <span class="title">getDisposableObserver</span><span class="params">()</span> </span>&#123;</div><div class="line"></div><div class="line">        <span class="keyword">return</span> <span class="keyword">new</span> DisposableObserver&lt;Long&gt;() &#123;</div><div class="line"></div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onNext</span><span class="params">(Long aLong)</span> </span>&#123;&#125;</div><div class="line"></div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onError</span><span class="params">(Throwable throwable)</span> </span>&#123;</div><div class="line">                Log.d(TAG, <span class="string">"DisposableObserver onError, threadId="</span> + Thread.currentThread().getId() + <span class="string">",reason="</span> + throwable.getMessage());</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onComplete</span><span class="params">()</span> </span>&#123;</div><div class="line">                Log.d(TAG, <span class="string">"DisposableObserver onComplete, threadId="</span> + Thread.currentThread().getId());</div><div class="line">            &#125;</div><div class="line">        &#125;;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">doWork</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">long</span> workTime = (<span class="keyword">long</span>) (Math.random() * <span class="number">500</span>) + <span class="number">500</span>;</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            Log.d(TAG, <span class="string">"doWork start,  threadId="</span> + Thread.currentThread().getId());</div><div class="line">            Thread.sleep(workTime);</div><div class="line">            Log.d(TAG, <span class="string">"doWork finished"</span>);</div><div class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onDestroy</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">super</span>.onDestroy();</div><div class="line">        mCompositeDisposable.clear();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><code>startSimplePolling</code>对应于固定时延轮询：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-a341fe1b569d6464.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br><code>startAdvancePolling</code>对应于变长时延轮询：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-68d792c65cc2689d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h1 id="三、示例解析"><a href="#三、示例解析" class="headerlink" title="三、示例解析"></a>三、示例解析</h1><p>下面，就让我们一起来分析一下上面这两个例子中涉及到的知识点。</p>
+<h2 id="3-1-intervalRange-amp-doOnNext-实现固定时延轮询"><a href="#3-1-intervalRange-amp-doOnNext-实现固定时延轮询" class="headerlink" title="3.1 intervalRange &amp; doOnNext 实现固定时延轮询"></a>3.1 intervalRange &amp; doOnNext 实现固定时延轮询</h2><p>对于固定时延轮询的需求，采用的是<code>intervalRange</code>的方式来实现，它是一个创建型操作符，该<code>Observable</code>第一次先发射一个特定的数据，之后间隔一段时间再发送一次，它是<code>interval</code>和<code>range</code>的结合体，这两个操作符的原理图为：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-0c999f07246975aa.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="interval 原理图"><br><img src="http://upload-images.jianshu.io/upload_images/1949836-4f9bfcdf05d0c601.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="range 原理图"><br>该操作符的优势在于：</p>
+<ul>
+<li>与<code>interval</code>相比，它可以指定第一个发送数据项的时延、指定发送数据项的个数。</li>
+<li>与<code>range</code>相比，它可以指定两项数据之间发送的时延。</li>
+</ul>
+<p><code>intervalRange</code>的接收参数的含义为：</p>
+<ul>
+<li><code>start</code>：发送数据的起始值，为<code>Long</code>型。</li>
+<li><code>count</code>：总共发送多少项数据。</li>
+<li><code>initialDelay</code>：发送第一个数据项时的起始时延。</li>
+<li><code>period</code>：两项数据之间的间隔时间。</li>
+<li><code>TimeUnit</code>：时间单位。</li>
+</ul>
+<p>在轮询操作中一般会进行一些耗时的网络请求，因此我们选择在<code>doOnNext</code>进行处理，它会在下游的<code>onNext</code>方法被回调之前调用，但是它的运行线程可以通过<code>subscribeOn</code>指定，下游的运行线程再通过<code>observerOn</code>切换会主线程，通过打印对应的线程<code>ID</code>可以验证结果。</p>
+<p>当要求的数据项都发送完毕之后，最后会回调<code>onComplete</code>方法。</p>
+<h2 id="3-2-repeatWhen-实现变长时延轮询"><a href="#3-2-repeatWhen-实现变长时延轮询" class="headerlink" title="3.2 repeatWhen 实现变长时延轮询"></a>3.2 repeatWhen 实现变长时延轮询</h2><h3 id="3-2-1-使用-repeatWhen-实现重订阅"><a href="#3-2-1-使用-repeatWhen-实现重订阅" class="headerlink" title="3.2.1 使用 repeatWhen 实现重订阅"></a>3.2.1 使用 repeatWhen 实现重订阅</h3><p>之所以可以通过<code>repeatWhen</code>来实现轮询，是因为它为我们提供了<strong>重订阅</strong>的功能，而重订阅有两点要素：</p>
+<ul>
+<li>上游告诉我们一次订阅已经完成，这就需要上游回调<code>onComplete</code>函数。</li>
+<li>我们告诉上游是否需要重订阅，通过<code>repeatWhen</code>的<code>Function</code>函数所返回的<code>Observable</code>确定，如果该<code>Observable</code>发送了<code>onComplete</code>或者<code>onError</code>则表示不需要重订阅，结束整个流程；否则触发重订阅的操作。</li>
+</ul>
+<p>其原理图如下所示：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-c11e150789e2ae94.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="repeatWhen 原理图"><br><code>repeatWhen</code>的难点在于如何定义它的<code>Function</code>参数：</p>
+<ul>
+<li><code>Function</code>的输入是一个<code>Observable&lt;Object&gt;</code>，输出是一个泛型<code>ObservableSource&lt;?&gt;</code>。</li>
+<li>如果输出的<code>Observable</code>发送了<code>onComplete</code>或者<code>onError</code>则表示不需要重订阅，结束整个流程；否则触发重订阅的操作。也就是说，它 <strong>仅仅是作为一个是否要触发重订阅的通知</strong>，<code>onNext</code>发送的是什么数据并不重要。</li>
+<li><strong>对于每一次订阅的数据流 Function 函数只会回调一次</strong>，并且是在<code>onComplete</code>的时候触发，它不会收到任何的<code>onNext</code>事件。</li>
+<li>在<code>Function</code>函数中，<strong>必须对输入的 Observable<object>进行处理</object></strong>，这里我们使用的是<code>flatMap</code>操作符接收上游的数据，对于<code>flatMap</code>的解释，大家可以参考 <a href="http://www.jianshu.com/p/74f46ae1fabb" target="_blank" rel="external">RxJava2 实战知识梳理(4) - 结合 Retrofit 请求新闻资讯</a> 。</li>
+</ul>
+<p>而当我们不需要重订阅时，有两种方式：</p>
+<ul>
+<li>返回<code>Observable.empty()</code>，发送<code>onComplete</code>消息，但是<code>DisposableObserver</code>并不会回调<code>onComplete</code>。</li>
+<li>返回<code>Observable.error(new Throwable(&quot;Polling work finished&quot;))</code>，<code>DisposableObserver</code>的<code>onError</code>会被回调，并接受传过去的错误信息。</li>
+</ul>
+<h3 id="3-2-2-使用-Timer-实现两次订阅之间的时延"><a href="#3-2-2-使用-Timer-实现两次订阅之间的时延" class="headerlink" title="3.2.2 使用 Timer 实现两次订阅之间的时延"></a>3.2.2 使用 Timer 实现两次订阅之间的时延</h3><p>以上就是对于<code>repeatWhen</code>的解释，与<code>repeatWhen</code>相类似的还有<code>retryWhen</code>操作符，这个我们在下一篇文章中再介绍，接下来，我们看一下如何实现两次事件的时延。</p>
+<p>前面我们分析过，重订阅触发的时间是在返回的<code>ObservableSource</code>发送了<code>onNext</code>事件之后，那么我们通过该<code>ObservableSource</code>延迟发送一个事件就可以实现相应的需求，这里使用的是<code>time</code>操作符，它的原理图如下所示，也就是，在订阅完成后，等待指定的时间它才会发送消息。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1949836-38839db0ecd91f0b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="timer 原理图"></p>
+<h3 id="3-2-3-使用-doOnComplete-完成轮询的耗时操作"><a href="#3-2-3-使用-doOnComplete-完成轮询的耗时操作" class="headerlink" title="3.2.3  使用 doOnComplete 完成轮询的耗时操作"></a>3.2.3  使用 doOnComplete 完成轮询的耗时操作</h3><p>由于在订阅完成时会发送<code>onComplete</code>消息，那么我们就可以在<code>doOnComplete</code>中进行轮询所要进行的具体操作，它所运行的线程通过<code>subscribeOn</code>指定。</p>
+<hr>
+<h2 id="更多文章，欢迎访问我的-Android-知识梳理系列："><a href="#更多文章，欢迎访问我的-Android-知识梳理系列：" class="headerlink" title="更多文章，欢迎访问我的 Android 知识梳理系列："></a>更多文章，欢迎访问我的 <strong>Android</strong> 知识梳理系列：</h2><ul>
+<li><strong>Android</strong> 知识梳理目录：<a href="http://www.jianshu.com/p/fd82d18994ce" target="_blank" rel="external">http://www.jianshu.com/p/fd82d18994ce</a></li>
+<li>个人主页：<a href="http://lizejun.cn" target="_blank" rel="external">http://lizejun.cn</a></li>
+<li>个人知识总结目录：<a href="http://lizejun.cn/categories/" target="_blank" rel="external">http://lizejun.cn/categories/</a></li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/08/28/RxJava/RxJava2-实战知识梳理(4)---结合-Retrofit-请求新闻资讯/" rel="next" title="RxJava2 实战知识梳理(4) - 结合 Retrofit 请求新闻资讯">
+                <i class="fa fa-chevron-left"></i> RxJava2 实战知识梳理(4) - 结合 Retrofit 请求新闻资讯
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/08/29/RxJava/RxJava2-实战知识梳理(6)---基于错误类型的重试请求/" rel="prev" title="RxJava2 实战知识梳理(6) - 基于错误类型的重试请求">
+                RxJava2 实战知识梳理(6) - 基于错误类型的重试请求 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="cloud-tie-wrapper" class="cloud-tie-wrapper"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="泽毛" />
+          <p class="site-author-name" itemprop="name">泽毛</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">132</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">28</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              Links
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.jianshu.com/u/37baa8a86582" title="我的简书" target="_blank">我的简书</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://github.com/imZeJun" title="GitHub" target="_blank">GitHub</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.heqiangfly.com/" title="寒江蓑笠" target="_blank">寒江蓑笠</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://johnnyshieh.me/" title="Johnny Shieh" target="_blank">Johnny Shieh</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、示例"><span class="nav-number">1.</span> <span class="nav-text">一、示例</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-1-应用场景"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 应用场景</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、示例"><span class="nav-number">2.</span> <span class="nav-text">二、示例</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、示例解析"><span class="nav-number">3.</span> <span class="nav-text">三、示例解析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-intervalRange-amp-doOnNext-实现固定时延轮询"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 intervalRange & doOnNext 实现固定时延轮询</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-repeatWhen-实现变长时延轮询"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 repeatWhen 实现变长时延轮询</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-1-使用-repeatWhen-实现重订阅"><span class="nav-number">3.2.1.</span> <span class="nav-text">3.2.1 使用 repeatWhen 实现重订阅</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-2-使用-Timer-实现两次订阅之间的时延"><span class="nav-number">3.2.2.</span> <span class="nav-text">3.2.2 使用 Timer 实现两次订阅之间的时延</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-3-使用-doOnComplete-完成轮询的耗时操作"><span class="nav-number">3.2.3.</span> <span class="nav-text">3.2.3  使用 doOnComplete 完成轮询的耗时操作</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#更多文章，欢迎访问我的-Android-知识梳理系列："><span class="nav-number">3.3.</span> <span class="nav-text">更多文章，欢迎访问我的 Android 知识梳理系列：</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">泽毛</span>
+</div>
+
+<div class="powered-by">
+<i class=""></i><span id="busuanzi_container_site_uv">
+  访客 - <span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+<div class="powered-by">
+<i class=""></i><span id="busuanzi_container_site_pv">
+  访问量 - <span id="busuanzi_value_site_pv"></span>
+</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+    <script>
+      var cloudTieConfig = {
+        url: document.location.href, 
+        sourceId: "",
+        productKey: "b50a597e2fb84d35a6766074670f1d15",
+        target: "cloud-tie-wrapper"
+      };
+    </script>
+    <script src="https://img1.ws.126.net/f2e/tie/yun/sdk/loader.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("4ko7Mbc92NvXMivUJ2jBW88P-gzGzoHsz", "ccjGamRX2s1CSuhjsOVy2a6N");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

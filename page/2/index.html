@@ -273,7 +273,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/12/插件化/插件化知识梳理(9)---资源的动态加载示例及源码分析/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/05/RxJava/RxJava2-实战知识梳理(13)---如何使得错误发生时不自动停止订阅关系/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="泽毛">
@@ -292,7 +292,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/06/12/插件化/插件化知识梳理(9)---资源的动态加载示例及源码分析/" itemprop="url">插件化知识梳理(9) - 资源的动态加载示例及源码分析</a></h1>
+                <a class="post-title-link" href="/2017/09/05/RxJava/RxJava2-实战知识梳理(13)---如何使得错误发生时不自动停止订阅关系/" itemprop="url">RxJava2 实战知识梳理(13) - 如何使得错误发生时不自动停止订阅关系</a></h1>
         
 
         <div class="post-meta">
@@ -304,8 +304,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-12T22:01:00+08:00">
-                2017-06-12
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-05T13:24:00+08:00">
+                2017-09-05
               </time>
             
 
@@ -327,8 +327,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/插件化知识梳理/" itemprop="url" rel="index">
-                    <span itemprop="name">插件化知识梳理</span>
+                  <a href="/categories/RxJava2-实战知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">RxJava2 实战知识梳理</span>
                   </a>
                 </span>
 
@@ -344,7 +344,7 @@
 
           
           
-             <span id="/2017/06/12/插件化/插件化知识梳理(9)---资源的动态加载示例及源码分析/" class="leancloud_visitors" data-flag-title="插件化知识梳理(9) - 资源的动态加载示例及源码分析">
+             <span id="/2017/09/05/RxJava/RxJava2-实战知识梳理(13)---如何使得错误发生时不自动停止订阅关系/" class="leancloud_visitors" data-flag-title="RxJava2 实战知识梳理(13) - 如何使得错误发生时不自动停止订阅关系">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -375,17 +375,16 @@
       
         
           
-          一、前言当需要设计一个插件化的框架，首先需要解决的是以下三个问题：
+          一、发生错误时停止订阅的情况在RxJava中，如果发生了错误，那么 订阅者会自动停止对上游的订阅关系 ，我们将导致订阅取消的错误分为两种：
 
-Activity的动态注册
-类的动态加载
-资源的动态加载
+上游：上游发生错误，并发送onError事件给订阅者。
+下游：订阅者在onNext中处理时发生了异常。
 
-如果大家有阅读过前面一系列的文章，那么对于如何解决前两个问题应该可以有一个大概的思路了。不清楚的可以重点看一下 插件化知识梳理(6) - Small 源码分析之 Hook
+在RxJava的设计中，如果发生了错误，那么订阅关系
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017/06/12/插件化/插件化知识梳理(9)---资源的动态加载示例及源码分析/#more" rel="contents">
+            <a class="btn" href="/2017/09/05/RxJava/RxJava2-实战知识梳理(13)---如何使得错误发生时不自动停止订阅关系/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -431,7 +430,7 @@ Activity的动态注册
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/10/插件化/插件化知识梳理(8)---类的动态加载源码分析/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/04/RxJava/RxJava2-实战知识梳理(12)---实战讲解-publish-&-replay-&-share-&-refCount-&-autoCo/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="泽毛">
@@ -450,7 +449,7 @@ Activity的动态注册
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/06/10/插件化/插件化知识梳理(8)---类的动态加载源码分析/" itemprop="url">插件化知识梳理(8) - 类的动态加载源码分析</a></h1>
+                <a class="post-title-link" href="/2017/09/04/RxJava/RxJava2-实战知识梳理(12)---实战讲解-publish-&-replay-&-share-&-refCount-&-autoCo/" itemprop="url">RxJava2 实战知识梳理(12) - 实战讲解 publish & replay & share & refCount & autoConnect</a></h1>
         
 
         <div class="post-meta">
@@ -462,8 +461,8 @@ Activity的动态注册
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-10T23:07:00+08:00">
-                2017-06-10
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-04T00:11:00+08:00">
+                2017-09-04
               </time>
             
 
@@ -485,8 +484,8 @@ Activity的动态注册
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/插件化知识梳理/" itemprop="url" rel="index">
-                    <span itemprop="name">插件化知识梳理</span>
+                  <a href="/categories/RxJava2-实战知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">RxJava2 实战知识梳理</span>
                   </a>
                 </span>
 
@@ -502,7 +501,7 @@ Activity的动态注册
 
           
           
-             <span id="/2017/06/10/插件化/插件化知识梳理(8)---类的动态加载源码分析/" class="leancloud_visitors" data-flag-title="插件化知识梳理(8) - 类的动态加载源码分析">
+             <span id="/2017/09/04/RxJava/RxJava2-实战知识梳理(12)---实战讲解-publish-&-replay-&-share-&-refCount-&-autoCo/" class="leancloud_visitors" data-flag-title="RxJava2 实战知识梳理(12) - 实战讲解 publish & replay & share & refCount & autoConnect">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -533,12 +532,21 @@ Activity的动态注册
       
         
           
-          一、前言在 插件化知识梳理(7) - 类的动态加载入门 中，我们通过一个例子来演示了如何通过PathClassLoader和DexClassLoader实现类的动态加载。今天这篇文章，我们一起来对这个类加载内部的实现源码进行一次简单的走读。源码的地址为 地址 ，友情提示，需要翻墙。
-二、源码解析整个
+          一、前言今天，我们来整理以下几个大家容易弄混的概念，并用实际例子来演示，可以从 RxSample 的第十二章中获取：
+
+publish
+reply
+ConnectableObservable
+connect
+share
+refCount
+autoConnect
+
+对于以上这些概念，可以用一幅图来概括
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017/06/10/插件化/插件化知识梳理(8)---类的动态加载源码分析/#more" rel="contents">
+            <a class="btn" href="/2017/09/04/RxJava/RxJava2-实战知识梳理(12)---实战讲解-publish-&-replay-&-share-&-refCount-&-autoCo/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -584,7 +592,7 @@ Activity的动态注册
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/09/插件化/插件化知识梳理(7)---类的动态加载入门/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/03/RxJava/RxJava2-实战知识梳理(11)---检测网络状态并自动重试请求/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="泽毛">
@@ -603,7 +611,7 @@ Activity的动态注册
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/06/09/插件化/插件化知识梳理(7)---类的动态加载入门/" itemprop="url">插件化知识梳理(7) - 类的动态加载入门</a></h1>
+                <a class="post-title-link" href="/2017/09/03/RxJava/RxJava2-实战知识梳理(11)---检测网络状态并自动重试请求/" itemprop="url">RxJava2 实战知识梳理(11) - 检测网络状态并自动重试请求</a></h1>
         
 
         <div class="post-meta">
@@ -615,8 +623,8 @@ Activity的动态注册
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-09T23:18:00+08:00">
-                2017-06-09
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-03T11:42:00+08:00">
+                2017-09-03
               </time>
             
 
@@ -638,8 +646,8 @@ Activity的动态注册
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/插件化知识梳理/" itemprop="url" rel="index">
-                    <span itemprop="name">插件化知识梳理</span>
+                  <a href="/categories/RxJava2-实战知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">RxJava2 实战知识梳理</span>
                   </a>
                 </span>
 
@@ -655,7 +663,7 @@ Activity的动态注册
 
           
           
-             <span id="/2017/06/09/插件化/插件化知识梳理(7)---类的动态加载入门/" class="leancloud_visitors" data-flag-title="插件化知识梳理(7) - 类的动态加载入门">
+             <span id="/2017/09/03/RxJava/RxJava2-实战知识梳理(11)---检测网络状态并自动重试请求/" class="leancloud_visitors" data-flag-title="RxJava2 实战知识梳理(11) - 检测网络状态并自动重试请求">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -686,12 +694,13 @@ Activity的动态注册
       
         
           
-          一、前言在 插件化知识梳理(6) - Small 源码分析之 Hook 原理 这一章的学习完成之后，下一步我们将进入插件化加载的精髓，动态加载类的学习，在此之前，我们需要先准备一些关于类加载的知识。
-Android当中，支持动态加载的两种方式为：DexClassLoader和PathClassLoa
+          一、应用背景今天，我们以一个请求天气数据的例子，来演示如何用RxJava实现网络重连时的自动请求，首先，我们对这个需求进行一个简单的描述，整个项目的框架如下所示：
+
+在应用启动时，我们会启动定位模块，该定位模块在后台每隔一段时间发起一次定位请求，拿到定位的结果后，我们通过该城市向服务器发起请求，以获
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017/06/09/插件化/插件化知识梳理(7)---类的动态加载入门/#more" rel="contents">
+            <a class="btn" href="/2017/09/03/RxJava/RxJava2-实战知识梳理(11)---检测网络状态并自动重试请求/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -737,7 +746,7 @@ Android当中，支持动态加载的两种方式为：DexClassLoader和PathClas
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/07/插件化/插件化知识梳理(6)---Small-源码分析之-Hook-原理/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/02/RxJava/RxJava2-实战知识梳理(10)---屏幕旋转导致-Activity-重建时恢复任务/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="泽毛">
@@ -756,7 +765,7 @@ Android当中，支持动态加载的两种方式为：DexClassLoader和PathClas
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/06/07/插件化/插件化知识梳理(6)---Small-源码分析之-Hook-原理/" itemprop="url">插件化知识梳理(6) - Small 源码分析之 Hook 原理</a></h1>
+                <a class="post-title-link" href="/2017/09/02/RxJava/RxJava2-实战知识梳理(10)---屏幕旋转导致-Activity-重建时恢复任务/" itemprop="url">RxJava2 实战知识梳理(10) - 屏幕旋转导致 Activity 重建时恢复任务</a></h1>
         
 
         <div class="post-meta">
@@ -768,8 +777,8 @@ Android当中，支持动态加载的两种方式为：DexClassLoader和PathClas
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-07T21:12:00+08:00">
-                2017-06-07
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-02T14:16:00+08:00">
+                2017-09-02
               </time>
             
 
@@ -791,8 +800,8 @@ Android当中，支持动态加载的两种方式为：DexClassLoader和PathClas
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/插件化知识梳理/" itemprop="url" rel="index">
-                    <span itemprop="name">插件化知识梳理</span>
+                  <a href="/categories/RxJava2-实战知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">RxJava2 实战知识梳理</span>
                   </a>
                 </span>
 
@@ -808,7 +817,7 @@ Android当中，支持动态加载的两种方式为：DexClassLoader和PathClas
 
           
           
-             <span id="/2017/06/07/插件化/插件化知识梳理(6)---Small-源码分析之-Hook-原理/" class="leancloud_visitors" data-flag-title="插件化知识梳理(6) - Small 源码分析之 Hook 原理">
+             <span id="/2017/09/02/RxJava/RxJava2-实战知识梳理(10)---屏幕旋转导致-Activity-重建时恢复任务/" class="leancloud_visitors" data-flag-title="RxJava2 实战知识梳理(10) - 屏幕旋转导致 Activity 重建时恢复任务">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -839,12 +848,11 @@ Android当中，支持动态加载的两种方式为：DexClassLoader和PathClas
       
         
           
-          一、前言至此，花了四天时间、五篇文章，学习了如何使用Small框架来实现插件化。但是，对于我来说，一开始的目标就不是满足于仅仅知道如何用，而是希望通过这一框架作为平台，学习插件化中所用到的知识。
-对于许多插件化的开源框架而言，一个比较核心的部分就是Hook的实现，所谓Hook，简单地来说就是在应用侧
+          一、前言如果我们在AndroidManifest.xml中声明Activity时，没有对android:configChanges进行特殊的声明，那么在屏幕旋转时，会导致Activity的重建，几个关键声明周期的调用情况如下所示：旋转屏幕前的Activity中的变量都会被销毁，但是有时候我们某些任务
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017/06/07/插件化/插件化知识梳理(6)---Small-源码分析之-Hook-原理/#more" rel="contents">
+            <a class="btn" href="/2017/09/02/RxJava/RxJava2-实战知识梳理(10)---屏幕旋转导致-Activity-重建时恢复任务/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -890,7 +898,7 @@ Android当中，支持动态加载的两种方式为：DexClassLoader和PathClas
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/06/插件化/插件化知识梳理(5)---Small-框架之如何不将插件打包到宿主中/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/31/RxJava/RxJava2-实战知识梳理(9)---使用-timer-interval-delay-实现任务调度/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="泽毛">
@@ -909,7 +917,7 @@ Android当中，支持动态加载的两种方式为：DexClassLoader和PathClas
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/06/06/插件化/插件化知识梳理(5)---Small-框架之如何不将插件打包到宿主中/" itemprop="url">插件化知识梳理(5) - Small 框架之如何不将插件打包到宿主中</a></h1>
+                <a class="post-title-link" href="/2017/08/31/RxJava/RxJava2-实战知识梳理(9)---使用-timer-interval-delay-实现任务调度/" itemprop="url">RxJava2 实战知识梳理(9) - 使用 timer/interval/delay 实现任务调度</a></h1>
         
 
         <div class="post-meta">
@@ -921,8 +929,8 @@ Android当中，支持动态加载的两种方式为：DexClassLoader和PathClas
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-06T12:38:00+08:00">
-                2017-06-06
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-31T23:17:00+08:00">
+                2017-08-31
               </time>
             
 
@@ -944,8 +952,8 @@ Android当中，支持动态加载的两种方式为：DexClassLoader和PathClas
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/插件化知识梳理/" itemprop="url" rel="index">
-                    <span itemprop="name">插件化知识梳理</span>
+                  <a href="/categories/RxJava2-实战知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">RxJava2 实战知识梳理</span>
                   </a>
                 </span>
 
@@ -961,7 +969,7 @@ Android当中，支持动态加载的两种方式为：DexClassLoader和PathClas
 
           
           
-             <span id="/2017/06/06/插件化/插件化知识梳理(5)---Small-框架之如何不将插件打包到宿主中/" class="leancloud_visitors" data-flag-title="插件化知识梳理(5) - Small 框架之如何不将插件打包到宿主中">
+             <span id="/2017/08/31/RxJava/RxJava2-实战知识梳理(9)---使用-timer-interval-delay-实现任务调度/" class="leancloud_visitors" data-flag-title="RxJava2 实战知识梳理(9) - 使用 timer/interval/delay 实现任务调度">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -992,11 +1000,11 @@ Android当中，支持动态加载的两种方式为：DexClassLoader和PathClas
       
         
           
-          一、前言在前面的例子当中，我们都是把插件预置在Apk当中一起安装的，如 插件化知识梳理(4) - Small 框架之如何实现插件更新 所示，我们初始时候会将代表插件的so文件放置在jniLibs/armeabi目录下。那么如果我们将不是很重要的插件放在服务器上，当应用启动之后判断需要该插件，然后再从
+          一、前言其实在之前的文章中，我们已经接触过定时/周期执行任务的操作符，例如在 RxJava2 实战知识梳理(5) - 简单及进阶的轮询操作 和 RxJava2 实战知识梳理(6) - 基于错误类型的重试请求 这两篇文章当中，我们通过intervalRange实现了轮询工作，通过timer实现了延时的
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017/06/06/插件化/插件化知识梳理(5)---Small-框架之如何不将插件打包到宿主中/#more" rel="contents">
+            <a class="btn" href="/2017/08/31/RxJava/RxJava2-实战知识梳理(9)---使用-timer-interval-delay-实现任务调度/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1042,7 +1050,7 @@ Android当中，支持动态加载的两种方式为：DexClassLoader和PathClas
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/05/插件化/插件化知识梳理(4)---Small-框架之如何实现插件更新/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/31/RxJava/RxJava2-实战知识梳理(8)---使用-publish-+-merge-优化先加载缓存，再读取网络数据的请求过程/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="泽毛">
@@ -1061,7 +1069,7 @@ Android当中，支持动态加载的两种方式为：DexClassLoader和PathClas
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/06/05/插件化/插件化知识梳理(4)---Small-框架之如何实现插件更新/" itemprop="url">插件化知识梳理(4) - Small 框架之如何实现插件更新</a></h1>
+                <a class="post-title-link" href="/2017/08/31/RxJava/RxJava2-实战知识梳理(8)---使用-publish-+-merge-优化先加载缓存，再读取网络数据的请求过程/" itemprop="url">RxJava2 实战知识梳理(8) - 使用 publish + merge 优化先加载缓存，再读取网络数据的请求过程</a></h1>
         
 
         <div class="post-meta">
@@ -1073,8 +1081,8 @@ Android当中，支持动态加载的两种方式为：DexClassLoader和PathClas
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-05T22:50:00+08:00">
-                2017-06-05
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-31T00:21:00+08:00">
+                2017-08-31
               </time>
             
 
@@ -1096,8 +1104,8 @@ Android当中，支持动态加载的两种方式为：DexClassLoader和PathClas
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/插件化知识梳理/" itemprop="url" rel="index">
-                    <span itemprop="name">插件化知识梳理</span>
+                  <a href="/categories/RxJava2-实战知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">RxJava2 实战知识梳理</span>
                   </a>
                 </span>
 
@@ -1113,7 +1121,7 @@ Android当中，支持动态加载的两种方式为：DexClassLoader和PathClas
 
           
           
-             <span id="/2017/06/05/插件化/插件化知识梳理(4)---Small-框架之如何实现插件更新/" class="leancloud_visitors" data-flag-title="插件化知识梳理(4) - Small 框架之如何实现插件更新">
+             <span id="/2017/08/31/RxJava/RxJava2-实战知识梳理(8)---使用-publish-+-merge-优化先加载缓存，再读取网络数据的请求过程/" class="leancloud_visitors" data-flag-title="RxJava2 实战知识梳理(8) - 使用 publish + merge 优化先加载缓存，再读取网络数据的请求过程">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -1144,14 +1152,12 @@ Android当中，支持动态加载的两种方式为：DexClassLoader和PathClas
       
         
           
-          一、前言通过前面三节：
-插件化知识梳理(1) - Small 框架之如何引入应用插件插件化知识梳理(2) - Small 框架之如何引入公共库插件插件化知识梳理(3) - Small 框架之宿主分身
-相信大家已经对Small的使用有了一个基本的认识，今天讲解另一个比较重要的知识点，插件更新。
-二、示
+          一、前言在很多资讯应用当中，当我们进入一个新的页面，为了提升用户体验，不让页面空白太久，我们一般会先读取缓存中的数据，再去请求网络。
+今天这篇文章，我们将实现下面这个效果：同时发起读取缓存、访问网络的请求，如果缓存的数据先回来，那么就先展示缓存的数据，而如果网络的数据先回来，那么就不再展示缓存的数据
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017/06/05/插件化/插件化知识梳理(4)---Small-框架之如何实现插件更新/#more" rel="contents">
+            <a class="btn" href="/2017/08/31/RxJava/RxJava2-实战知识梳理(8)---使用-publish-+-merge-优化先加载缓存，再读取网络数据的请求过程/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1197,7 +1203,7 @@ Android当中，支持动态加载的两种方式为：DexClassLoader和PathClas
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/03/插件化/插件化知识梳理(3)---Small-框架之宿主分身/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/30/RxJava/RxJava2-实战知识梳理(7)---基于-combineLatest-实现的输入表单验证/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="泽毛">
@@ -1216,7 +1222,7 @@ Android当中，支持动态加载的两种方式为：DexClassLoader和PathClas
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/06/03/插件化/插件化知识梳理(3)---Small-框架之宿主分身/" itemprop="url">插件化知识梳理(3) - Small 框架之宿主分身</a></h1>
+                <a class="post-title-link" href="/2017/08/30/RxJava/RxJava2-实战知识梳理(7)---基于-combineLatest-实现的输入表单验证/" itemprop="url">RxJava2 实战知识梳理(7) - 基于 combineLatest 实现的输入表单验证</a></h1>
         
 
         <div class="post-meta">
@@ -1228,8 +1234,8 @@ Android当中，支持动态加载的两种方式为：DexClassLoader和PathClas
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-03T22:44:00+08:00">
-                2017-06-03
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-30T00:26:00+08:00">
+                2017-08-30
               </time>
             
 
@@ -1251,8 +1257,8 @@ Android当中，支持动态加载的两种方式为：DexClassLoader和PathClas
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/插件化知识梳理/" itemprop="url" rel="index">
-                    <span itemprop="name">插件化知识梳理</span>
+                  <a href="/categories/RxJava2-实战知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">RxJava2 实战知识梳理</span>
                   </a>
                 </span>
 
@@ -1268,7 +1274,7 @@ Android当中，支持动态加载的两种方式为：DexClassLoader和PathClas
 
           
           
-             <span id="/2017/06/03/插件化/插件化知识梳理(3)---Small-框架之宿主分身/" class="leancloud_visitors" data-flag-title="插件化知识梳理(3) - Small 框架之宿主分身">
+             <span id="/2017/08/30/RxJava/RxJava2-实战知识梳理(7)---基于-combineLatest-实现的输入表单验证/" class="leancloud_visitors" data-flag-title="RxJava2 实战知识梳理(7) - 基于 combineLatest 实现的输入表单验证">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -1299,12 +1305,12 @@ Android当中，支持动态加载的两种方式为：DexClassLoader和PathClas
       
         
           
-          一、前言在 插件化知识梳理(1) - Small 框架之如何引入应用插件，插件化知识梳理(2) - Small 框架之如何引入公共库插件 前两篇文章中，我们介绍了如何通过Small框架来实现应用插件及公共库插件，今天，我再来介绍一个新的知识点 - 宿主分身。
-与应用插件和公共库插件不同，宿主分身会作
+          一、前言2.1 应用背景在平时的应用中，我们经常会让用户输入一些信息，最常见的莫过于注册或者登录界面中，让用户输入用户名或者密码，但是我们经常会对用户名或者密码有一定的要求，只有当它们同时满足要求时，才允许用户进行下一步的操作。
+这个需求就涉及到一种模型，即在多个地方监听变化，但是在一个地方进行统一
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017/06/03/插件化/插件化知识梳理(3)---Small-框架之宿主分身/#more" rel="contents">
+            <a class="btn" href="/2017/08/30/RxJava/RxJava2-实战知识梳理(7)---基于-combineLatest-实现的输入表单验证/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1350,7 +1356,7 @@ Android当中，支持动态加载的两种方式为：DexClassLoader和PathClas
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/03/插件化/插件化知识梳理(2)---Small-框架之如何引入公共库插件/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/29/RxJava/RxJava2-实战知识梳理(6)---基于错误类型的重试请求/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="泽毛">
@@ -1369,7 +1375,7 @@ Android当中，支持动态加载的两种方式为：DexClassLoader和PathClas
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/06/03/插件化/插件化知识梳理(2)---Small-框架之如何引入公共库插件/" itemprop="url">插件化知识梳理(2) - Small 框架之如何引入公共库插件</a></h1>
+                <a class="post-title-link" href="/2017/08/29/RxJava/RxJava2-实战知识梳理(6)---基于错误类型的重试请求/" itemprop="url">RxJava2 实战知识梳理(6) - 基于错误类型的重试请求</a></h1>
         
 
         <div class="post-meta">
@@ -1381,8 +1387,8 @@ Android当中，支持动态加载的两种方式为：DexClassLoader和PathClas
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-03T18:28:00+08:00">
-                2017-06-03
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-29T20:57:00+08:00">
+                2017-08-29
               </time>
             
 
@@ -1404,8 +1410,8 @@ Android当中，支持动态加载的两种方式为：DexClassLoader和PathClas
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/插件化知识梳理/" itemprop="url" rel="index">
-                    <span itemprop="name">插件化知识梳理</span>
+                  <a href="/categories/RxJava2-实战知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">RxJava2 实战知识梳理</span>
                   </a>
                 </span>
 
@@ -1421,7 +1427,7 @@ Android当中，支持动态加载的两种方式为：DexClassLoader和PathClas
 
           
           
-             <span id="/2017/06/03/插件化/插件化知识梳理(2)---Small-框架之如何引入公共库插件/" class="leancloud_visitors" data-flag-title="插件化知识梳理(2) - Small 框架之如何引入公共库插件">
+             <span id="/2017/08/29/RxJava/RxJava2-实战知识梳理(6)---基于错误类型的重试请求/" class="leancloud_visitors" data-flag-title="RxJava2 实战知识梳理(6) - 基于错误类型的重试请求">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -1452,12 +1458,17 @@ Android当中，支持动态加载的两种方式为：DexClassLoader和PathClas
       
         
           
-          一、前言在 插件化知识梳理(1) - Small 框架之如何引入应用插件 中，我们简要地介绍了如何使用Small框架来通过插件实现一个Activity的跳转，也就是app.main，这里的app.main我们称为应用插件，除了应用插件外，还有一种称为公共库插件。
-对于这两种插件的职责，Small官方
+          一、前言1.1 应用背景在网络请求时，有时候会出现需要进行重试的情况，重试的时候，有以下几点需要注意：
+
+限制重试的次数
+根据错误类型，判断是否要重试
+根据错误类型，等待特定的时间之后再去重试
+
+我们先来看一下目前的一些网络框架是怎么做的？通过分析Volley的源码，可以从BasicNetwork的
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017/06/03/插件化/插件化知识梳理(2)---Small-框架之如何引入公共库插件/#more" rel="contents">
+            <a class="btn" href="/2017/08/29/RxJava/RxJava2-实战知识梳理(6)---基于错误类型的重试请求/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1503,7 +1514,7 @@ Android当中，支持动态加载的两种方式为：DexClassLoader和PathClas
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/03/设计模式/设计模式知识梳理(1)---设计模式概述/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/29/RxJava/RxJava2-实战知识梳理(5)---简单及进阶的轮询操作/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="泽毛">
@@ -1522,7 +1533,7 @@ Android当中，支持动态加载的两种方式为：DexClassLoader和PathClas
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/06/03/设计模式/设计模式知识梳理(1)---设计模式概述/" itemprop="url">设计模式知识梳理(1) - 设计模式概述</a></h1>
+                <a class="post-title-link" href="/2017/08/29/RxJava/RxJava2-实战知识梳理(5)---简单及进阶的轮询操作/" itemprop="url">RxJava2 实战知识梳理(5) - 简单及进阶的轮询操作</a></h1>
         
 
         <div class="post-meta">
@@ -1534,8 +1545,8 @@ Android当中，支持动态加载的两种方式为：DexClassLoader和PathClas
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-03T18:28:00+08:00">
-                2017-06-03
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-29T08:35:00+08:00">
+                2017-08-29
               </time>
             
 
@@ -1557,8 +1568,8 @@ Android当中，支持动态加载的两种方式为：DexClassLoader和PathClas
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/设计模式知识梳理/" itemprop="url" rel="index">
-                    <span itemprop="name">设计模式知识梳理</span>
+                  <a href="/categories/RxJava2-实战知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">RxJava2 实战知识梳理</span>
                   </a>
                 </span>
 
@@ -1574,7 +1585,7 @@ Android当中，支持动态加载的两种方式为：DexClassLoader和PathClas
 
           
           
-             <span id="/2017/06/03/设计模式/设计模式知识梳理(1)---设计模式概述/" class="leancloud_visitors" data-flag-title="设计模式知识梳理(1) - 设计模式概述">
+             <span id="/2017/08/29/RxJava/RxJava2-实战知识梳理(5)---简单及进阶的轮询操作/" class="leancloud_visitors" data-flag-title="RxJava2 实战知识梳理(5) - 简单及进阶的轮询操作">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -1605,12 +1616,14 @@ Android当中，支持动态加载的两种方式为：DexClassLoader和PathClas
       
         
           
-          一、概述去年时候看过&lt;&lt;Head First 设计模式&gt;&gt;这本书，也记了一些用例和笔记，下面是当时各模式对应的笔记，现在看起来也都忘的差不多了，就把以前的笔记当作是一个目录，打算花半个到一个月的时间，好好地总结一下每个设计模式。
-二、各设计模式详解2.1 策略模式定义了算族，
+          一、示例1.1 应用场景今天，我们介绍一种新的场景，轮询操作。也就是说，我们会尝试间隔一段时间就向服务器发起一次请求，在使用RxJava之前，该需求的实现一般有两种方式：
+
+通过Handler发送延时消息，在handleMessage中请求服务器之后，再次发送一个延时消息，直到达到循环次数为止。
+使
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017/06/03/设计模式/设计模式知识梳理(1)---设计模式概述/#more" rel="contents">
+            <a class="btn" href="/2017/08/29/RxJava/RxJava2-实战知识梳理(5)---简单及进阶的轮询操作/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1656,7 +1669,7 @@ Android当中，支持动态加载的两种方式为：DexClassLoader和PathClas
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/03/插件化/插件化知识梳理(1)---Small-框架之如何引入应用插件/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/28/RxJava/RxJava2-实战知识梳理(4)---结合-Retrofit-请求新闻资讯/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="泽毛">
@@ -1675,7 +1688,7 @@ Android当中，支持动态加载的两种方式为：DexClassLoader和PathClas
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/06/03/插件化/插件化知识梳理(1)---Small-框架之如何引入应用插件/" itemprop="url">插件化知识梳理(1) - Small 框架之如何引入应用插件</a></h1>
+                <a class="post-title-link" href="/2017/08/28/RxJava/RxJava2-实战知识梳理(4)---结合-Retrofit-请求新闻资讯/" itemprop="url">RxJava2 实战知识梳理(4) - 结合 Retrofit 请求新闻资讯</a></h1>
         
 
         <div class="post-meta">
@@ -1687,8 +1700,8 @@ Android当中，支持动态加载的两种方式为：DexClassLoader和PathClas
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-03T10:10:00+08:00">
-                2017-06-03
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-28T21:42:00+08:00">
+                2017-08-28
               </time>
             
 
@@ -1710,8 +1723,8 @@ Android当中，支持动态加载的两种方式为：DexClassLoader和PathClas
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/插件化知识梳理/" itemprop="url" rel="index">
-                    <span itemprop="name">插件化知识梳理</span>
+                  <a href="/categories/RxJava2-实战知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">RxJava2 实战知识梳理</span>
                   </a>
                 </span>
 
@@ -1727,7 +1740,7 @@ Android当中，支持动态加载的两种方式为：DexClassLoader和PathClas
 
           
           
-             <span id="/2017/06/03/插件化/插件化知识梳理(1)---Small-框架之如何引入应用插件/" class="leancloud_visitors" data-flag-title="插件化知识梳理(1) - Small 框架之如何引入应用插件">
+             <span id="/2017/08/28/RxJava/RxJava2-实战知识梳理(4)---结合-Retrofit-请求新闻资讯/" class="leancloud_visitors" data-flag-title="RxJava2 实战知识梳理(4) - 结合 Retrofit 请求新闻资讯">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -1758,12 +1771,12 @@ Android当中，支持动态加载的两种方式为：DexClassLoader和PathClas
       
         
           
-          一、前言上个星期，公司里有一个小的讲座，对插件化进行了简单的介绍，因此决定开始研究一下这方面的知识。
-在网上查了一些相关的资料，发现了Small这个开源的插件化框架，因此打算从它入手，通过它的内部实现，学习一下插件化的相关原理。这篇文章是个开篇，先从一个简单的例子开始，把环境给搭建好。先给大家分享一
+          一、前言如何通过结合Retrofit框架来进行网络请求，也是RxJava的学习过程中必须要掌握的一环。网上已经有很多开源项目和文章介绍了，今天这篇文章，我们就通过一个简单的例子，通过RxJava + Retrofit的方式实现网络请求。
+这个例子很简单，我们通过 干货集中营 提供的接口，分别请求An
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017/06/03/插件化/插件化知识梳理(1)---Small-框架之如何引入应用插件/#more" rel="contents">
+            <a class="btn" href="/2017/08/28/RxJava/RxJava2-实战知识梳理(4)---结合-Retrofit-请求新闻资讯/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1804,7 +1817,7 @@ Android当中，支持动态加载的两种方式为：DexClassLoader和PathClas
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/12/">12</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/14/">14</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -1849,7 +1862,7 @@ Android当中，支持动态加载的两种方式为：DexClassLoader和PathClas
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">117</span>
+                <span class="site-state-item-count">132</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -1860,7 +1873,7 @@ Android当中，支持动态加载的两种方式为：DexClassLoader和PathClas
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">27</span>
+                <span class="site-state-item-count">28</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>

@@ -1,0 +1,1032 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="一、前言今天，我们来整理以下几个大家容易弄混的概念，并用实际例子来演示，可以从 RxSample 的第十二章中获取：  publish reply ConnectableObservable connect share refCount autoConnect  对于以上这些概念，可以用一幅图来概括：从图中可以看出，这里面可以供使用者订阅的Observable可以分为四类，下面我们将逐一介绍这几种">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RxJava2 实战知识梳理(12) - 实战讲解 publish &amp; replay &amp; share &amp; refCount &amp; autoConnect">
+<meta property="og:url" content="http://yoursite.com/2017/09/04/RxJava/RxJava2-实战知识梳理(12)---实战讲解-publish-&-replay-&-share-&-refCount-&-autoCo/index.html">
+<meta property="og:site_name" content="泽毛的博客">
+<meta property="og:description" content="一、前言今天，我们来整理以下几个大家容易弄混的概念，并用实际例子来演示，可以从 RxSample 的第十二章中获取：  publish reply ConnectableObservable connect share refCount autoConnect  对于以上这些概念，可以用一幅图来概括：从图中可以看出，这里面可以供使用者订阅的Observable可以分为四类，下面我们将逐一介绍这几种">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-e6783b371272be0f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-70125d853a7a03fe.gif?imageMogr2/auto-orient/strip">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-2945fa3652b88bdb.gif?imageMogr2/auto-orient/strip">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-05de73e4174507f4.gif?imageMogr2/auto-orient/strip">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-a770526fed5f6545.gif?imageMogr2/auto-orient/strip">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-bd912b15ff2e8126.gif?imageMogr2/auto-orient/strip">
+<meta property="og:updated_time" content="2017-12-13T05:32:09.352Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="RxJava2 实战知识梳理(12) - 实战讲解 publish &amp; replay &amp; share &amp; refCount &amp; autoConnect">
+<meta name="twitter:description" content="一、前言今天，我们来整理以下几个大家容易弄混的概念，并用实际例子来演示，可以从 RxSample 的第十二章中获取：  publish reply ConnectableObservable connect share refCount autoConnect  对于以上这些概念，可以用一幅图来概括：从图中可以看出，这里面可以供使用者订阅的Observable可以分为四类，下面我们将逐一介绍这几种">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-e6783b371272be0f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: 'bd2f9b0f6cf360a4093517d22678efec',
+      indexName: 'Blog',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/09/04/RxJava/RxJava2-实战知识梳理(12)---实战讲解-publish-&-replay-&-share-&-refCount-&-autoCo/"/>
+
+
+
+
+
+  <title>RxJava2 实战知识梳理(12) - 实战讲解 publish & replay & share & refCount & autoConnect | 泽毛的博客</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?c276429c3a148ef2fa47d755199a64c2";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">泽毛的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">但愿每次回忆，对生活都不感到负疚</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            目录
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-friend">
+          <a href="/friend/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            小伙伴
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/04/RxJava/RxJava2-实战知识梳理(12)---实战讲解-publish-&-replay-&-share-&-refCount-&-autoCo/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="泽毛">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="泽毛的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">RxJava2 实战知识梳理(12) - 实战讲解 publish & replay & share & refCount & autoConnect</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-04T00:11:00+08:00">
+                2017-09-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/RxJava2-实战知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">RxJava2 实战知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a class="cloud-tie-join-count" href="/2017/09/04/RxJava/RxJava2-实战知识梳理(12)---实战讲解-publish-&-replay-&-share-&-refCount-&-autoCo/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count join-count" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2017/09/04/RxJava/RxJava2-实战知识梳理(12)---实战讲解-publish-&-replay-&-share-&-refCount-&-autoCo/" class="leancloud_visitors" data-flag-title="RxJava2 实战知识梳理(12) - 实战讲解 publish & replay & share & refCount & autoConnect">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">热度 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+                 <span>°C</span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="一、前言"><a href="#一、前言" class="headerlink" title="一、前言"></a>一、前言</h1><p>今天，我们来整理以下几个大家容易弄混的概念，并用实际例子来演示，可以从 <a href="https://github.com/imZeJun/RxSample" target="_blank" rel="external">RxSample</a> 的第十二章中获取：</p>
+<ul>
+<li><code>publish</code></li>
+<li><code>reply</code></li>
+<li><code>ConnectableObservable</code></li>
+<li><code>connect</code></li>
+<li><code>share</code></li>
+<li><code>refCount</code></li>
+<li><code>autoConnect</code></li>
+</ul>
+<p>对于以上这些概念，可以用一幅图来概括：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-e6783b371272be0f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>从图中可以看出，这里面可以供使用者订阅的<code>Observable</code>可以分为四类，下面我们将逐一介绍这几种<code>Observable</code>的特点：</p>
+<ul>
+<li>第一类：<code>Cold Observable</code>，就是我们通过<code>Observable.create</code>、<code>Observable.interval</code>等创建型操作符生成的<code>Observable</code>。</li>
+<li>第二类：由<code>Cold Observable</code>经过<code>publish()</code>或者<code>replay(int N)</code>操作符转换成的<code>ConnectableObservable</code>。</li>
+<li>第三类：由<code>ConnectableObservable</code>经过<code>refCount()</code>，或者由<code>Cold Observable</code>经过<code>share()</code>转换成的<code>Observable</code>。</li>
+<li>第四类：由<code>ConnectableObservable</code>经过<code>autoConnect(int N)</code>转换成的<code>Observable</code>。</li>
+</ul>
+<h1 id="二、Cold-Observable"><a href="#二、Cold-Observable" class="headerlink" title="二、Cold Observable"></a>二、Cold Observable</h1><p><code>Cold Observable</code>就是我们通过<code>Observable.create</code>、<code>Observable.interval</code>等创建型操作符生成的<code>Observable</code>，它具有以下几个特点：</p>
+<ul>
+<li>当一个订阅者订阅<code>Cold Observable</code>时，<code>Cold Observable</code>会重新开始发射数据给该订阅者。</li>
+<li>当多个订阅者订阅到同一个<code>Cold Observable</code>，它们收到的数据是相互独立的。</li>
+<li>当一个订阅者取消订阅<code>Cold Observable</code>后，<code>Cold Observable</code>会停止发射数据给该订阅者，但不会停止发射数据给其它订阅者。</li>
+</ul>
+<p>下面，我们演示一个例子，首先我们创建一个<code>Cold Observable</code>：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//直接订阅Cold Observable。</span></div><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">createColdSource</span><span class="params">()</span> </span>&#123;</div><div class="line">    mConvertObservable = getSource();</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">private</span> Observable&lt;Integer&gt; <span class="title">getSource</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">return</span> Observable.create(<span class="keyword">new</span> ObservableOnSubscribe&lt;Integer&gt;() &#123;</div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">subscribe</span><span class="params">(ObservableEmitter&lt;Integer&gt; observableEmitter)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">            <span class="keyword">try</span> &#123;</div><div class="line">                <span class="keyword">int</span> i = <span class="number">0</span>;</div><div class="line">                <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</div><div class="line">                    Log.d(TAG, <span class="string">"源被订阅者发射数据="</span> + i + <span class="string">",发送线程ID="</span> + Thread.currentThread().getId());</div><div class="line">                    mSourceOut.add(i);</div><div class="line">                    observableEmitter.onNext(i++);</div><div class="line">                    updateMessage();</div><div class="line">                    Thread.sleep(<span class="number">1000</span>);</div><div class="line">                &#125;</div><div class="line">            &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">                e.printStackTrace();</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;).subscribeOn(Schedulers.io());</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>在创建两个订阅者，它们可以随时订阅到<code>Cold Observable</code>或者取消对它的订阅：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">startSubscribe1</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">if</span> (mConvertObservable != <span class="keyword">null</span> &amp;&amp; mDisposable1 == <span class="keyword">null</span>) &#123;</div><div class="line">        mDisposable1 = mConvertObservable.subscribe(<span class="keyword">new</span> Consumer&lt;Integer&gt;() &#123;</div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">accept</span><span class="params">(Integer integer)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">                Log.d(TAG, <span class="string">"订阅者1收到数据="</span> + integer + <span class="string">",接收线程ID="</span> + Thread.currentThread().getId());</div><div class="line">                mSubscribe1In.add(integer);</div><div class="line">                updateMessage();</div><div class="line">            &#125;</div><div class="line">        &#125;);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">disposeSubscribe1</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">if</span> (mDisposable1 != <span class="keyword">null</span>) &#123;</div><div class="line">        mDisposable1.dispose();</div><div class="line">        mDisposable1 = <span class="keyword">null</span>;</div><div class="line">        mSubscribe1In.clear();</div><div class="line">        updateMessage();</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">startSubscribe2</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">if</span> (mConvertObservable != <span class="keyword">null</span> &amp;&amp; mDisposable2 == <span class="keyword">null</span>) &#123;</div><div class="line">        mDisposable2 = mConvertObservable.subscribe(<span class="keyword">new</span> Consumer&lt;Integer&gt;() &#123;</div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">accept</span><span class="params">(Integer integer)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">                Log.d(TAG, <span class="string">"订阅者2收到数据="</span> + integer + <span class="string">",接收线程ID="</span> + Thread.currentThread().getId());</div><div class="line">                mSubscribe2In.add(integer);</div><div class="line">                updateMessage();</div><div class="line">            &#125;</div><div class="line">        &#125;);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">disposeSubscribe2</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">if</span> (mDisposable2 != <span class="keyword">null</span>) &#123;</div><div class="line">        mDisposable2.dispose();</div><div class="line">        mDisposable2 = <span class="keyword">null</span>;</div><div class="line">        mSubscribe2In.clear();</div><div class="line">        updateMessage();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>为了验证之前说到的几个特点，进入程序之后，我们会先创建该<code>Cold Observable</code>，之后进行一系列的操作，效果如下：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-70125d853a7a03fe.gif?imageMogr2/auto-orient/strip" alt=""><br>在上面的图中，我们做了一下几步操作：</p>
+<ul>
+<li>第一步：启动应用，创建<code>Cold Observable</code>，这时候<code>Cold Observable</code>没有发送任何数据。</li>
+<li>第二步：<code>Observer1</code>订阅<code>Observable</code>，此时<code>Cold Observable</code>开始发送数据，<code>Observer1</code>也可以收到数据，即 <strong>一个订阅者订阅 Cold Observable 时， Cold Observable 会开始发射数据给该订阅者</strong></li>
+<li>第三步：<code>Observer2</code>订阅<code>Observable</code>，此时<code>Observable2</code>也可以收到数据，但是它和<code>Observable1</code>收到的数据是相互独立的，即 <strong>当多个订阅者订阅到同一个 Cold Observable ，它们收到的数据是相互独立的</strong>。</li>
+<li>第四步：<code>Observer1</code>取消对<code>Observable</code>的订阅，这时候<code>Observer1</code>收不到数据，并且<code>Observable</code>也不会发射数据给它，但是仍然会发射数据给<code>Observer2</code>，即 <strong>当一个订阅者取消订阅 Cold Observable 后，Cold Observable 会停止发射数据给该订阅者，但不会停止发射数据给其它订阅者</strong>。</li>
+<li>第五步：<code>Observer1</code>重新订阅<code>Observable</code>，这时候<code>Observable</code>从<code>0</code>开始发射数据给<code>Observer1</code>，即 <strong>一个订阅者订阅 Cold Observable 时， Cold Observable 会重新开始发射数据给该订阅者</strong>。</li>
+</ul>
+<h1 id="三、由-Cold-Observable-转换的-ConnectableObservable"><a href="#三、由-Cold-Observable-转换的-ConnectableObservable" class="headerlink" title="三、由 Cold Observable 转换的 ConnectableObservable"></a>三、由 Cold Observable 转换的 ConnectableObservable</h1><p>在了解完<code>Cold Observable</code>之后，我们再来看第二类的<code>Observable</code>，它的类型为<code>ConnectableObservable</code>，它是通过<code>Cold Observable</code>经过下面两种方式生成的：</p>
+<ul>
+<li><code>.publish()</code></li>
+<li><code>.reply(int N)</code></li>
+</ul>
+<p>如果使用<code>.publish()</code>创建，那么订阅者只能收到在订阅之后<code>Cold Observable</code>发出的数据，而如果使用<code>reply(int N)</code>创建，那么订阅者在订阅后可以收到<code>Cold Observable</code>在订阅之前发送的<code>N</code>个数据。</p>
+<p>我们先以<code>publish()</code>为例，介绍<code>ConnectableObservable</code>的几个特点：</p>
+<ul>
+<li>无论<code>ConnectableObservable</code>有没有订阅者，只要调用了<code>ConnectableObservable</code>的<code>connect</code>方法，<code>Cold Observable</code>就开始发送数据。</li>
+<li><code>connect</code>会返回一个<code>Disposable</code>对象，调用了该对象的<code>dispose</code>方法，<code>Cold Observable</code>将会停止发送数据，所有<code>ConnectableObservable</code>的订阅者也无法收到数据。</li>
+<li>在调用<code>connect</code>返回的<code>Disposable</code>对象后，如果重新调用了<code>connect</code>方法，那么<code>Cold Observable</code>会重新发送数据。</li>
+<li>当一个订阅者订阅到<code>ConnectableObservable</code>后，该订阅者会收到在订阅之后，<code>Cold Observable</code>发送给<code>ConnectableObservable</code>的数据。</li>
+<li>当多个订阅者订阅到同一个<code>ConnectableObservable</code>时，它们收到的数据是相同的。</li>
+<li>当一个订阅者取消对<code>ConnectableObservable</code>，不会影响其他订阅者收到消息。</li>
+</ul>
+<p>下面，我们创建一个<code>ConnectableObservable</code>，两个订阅者之后会订阅到它，而不是<code>Cold Observable</code>：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//.publish()将源Observable转换成为HotObservable，当调用它的connect方法后，无论此时有没有订阅者，源Observable都开始发送数据，订阅者订阅后将可以收到数据，并且订阅者解除订阅不会影响源Observable数据的发射。</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">createPublishSource</span><span class="params">()</span> </span>&#123;</div><div class="line">    mColdObservable = getSource();</div><div class="line">    mConvertObservable = mColdObservable.publish();</div><div class="line">    mConvertDisposable = ((ConnectableObservable&lt;Integer&gt;) mConvertObservable).connect();</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>和上面一样，还是用一个例子来演示，该例子的效果为：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-2945fa3652b88bdb.gif?imageMogr2/auto-orient/strip" alt=""></p>
+<ul>
+<li>第一步：启动应用，通过<code>Cold Observable</code>的<code>publish</code>方法创建<code>ConnectableObservable</code>，并调用<code>ConnectableObservable</code>的<code>connect</code>方法，可以看到，此时虽然<code>ConnectableObservable</code>没有任何订阅者，但是<code>Cold Observable</code>也已经开始发送数据。</li>
+<li>第二步：<code>Observer1</code>订阅到<code>ConnectableObservable</code>，此时它只能收到订阅之后<code>Cold Observable</code>发射的数据。</li>
+<li>第三步：<code>Observer2</code>订阅到<code>ConnectableObservable</code>，<code>Cold Observable</code>只会发射一份数据，并且<code>Observer1</code>和<code>Observer2</code>收到的数据是相同的。</li>
+<li>第三步：<code>Observer1</code>取消对<code>ConnectableObservable</code>的订阅，<code>Cold Observable</code>仍然会发射数据，<code>Observer2</code>仍然可以收到<code>Cold Observable</code>发射的数据。</li>
+<li>第四步：<code>Observer1</code>重新订阅<code>ConnectableObservable</code>，和第三步相同，它仍然只会收到订阅之后<code>Cold Observable</code>发射的数据。</li>
+<li>第五步：通过<code>connect</code>返回的<code>Disposable</code>对象，调用<code>dispose</code>方法，此时<code>Cold Observable</code>停止发射数据，并且<code>Observer1</code>和<code>Observer2</code>都收不到数据。</li>
+</ul>
+<p>上面这些现象发生的根本原因在于：现在<code>Observer</code>和<code>Observer2</code>都是订阅到<code>ConnectableObservable</code>，真正产生数据的<code>Cold Observable</code>并不知道他们的存在，和它交互的是<code>ConnectableObservable</code>，<code>ConnectableObservable</code>相当于一个中介，它完成下面两项任务：</p>
+<ul>
+<li>对于上游：通过<code>connect</code>和<code>dispose</code>方法决定是否要订阅到<code>Cold Observer</code>，也就是决定了<code>Cold Observable</code>是否发送数据。</li>
+<li>对于下游：将<code>Cold Observable</code>发送的数据转交给它的订阅者。</li>
+</ul>
+<h1 id="四、由-ConnectableObservable-转换成-Observable"><a href="#四、由-ConnectableObservable-转换成-Observable" class="headerlink" title="四、由 ConnectableObservable 转换成 Observable"></a>四、由 ConnectableObservable 转换成 Observable</h1><p>由<code>ConnectableObservable</code>转换成<code>Observable</code>有两种方法，我们分为两节介绍下当订阅到转换后的<code>Observable</code>时的现象：</p>
+<ul>
+<li><code>.refCount()</code></li>
+<li><code>.autoConnect(int N)</code></li>
+</ul>
+<h2 id="4-1-ConnectableObservable-由-refCount-转换成-Observable"><a href="#4-1-ConnectableObservable-由-refCount-转换成-Observable" class="headerlink" title="4.1 ConnectableObservable 由 refCount 转换成 Observable"></a>4.1 ConnectableObservable 由 refCount 转换成 Observable</h2><p>经过<code>refCount</code>方法，<code>ConnectableObservable</code>可以转换成正常的<code>Observable</code>，我们称为<code>refObservable</code>，这里我们假设<code>ConnectableObservable</code>是由<code>Cold Observable</code>通过<code>publish()</code>方法转换的，对于它的订阅者，有以下几个特点：</p>
+<ul>
+<li>第一个订阅者订阅到<code>refObservable</code>后，<code>Cold Observable</code>开始发送数据。</li>
+<li>之后的订阅者订阅到<code>refObservable</code>后，只能收到在订阅之后<code>Cold Observable</code>发送的数据。</li>
+<li>如果一个订阅者取消订阅到<code>refObservable</code>后，假如它是当前<code>refObservable</code>的唯一一个订阅者，那么<code>Cold Observable</code>会停止发送数据；否则，<code>Cold Observable</code>仍然会继续发送数据，其它的订阅者仍然可以收到<code>Cold Observable</code>发送的数据。</li>
+</ul>
+<p>接着上例子，我们创建一个<code>refObservable</code>：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//.share()相当于.publish().refCount()，当有订阅者订阅时，源订阅者会开始发送数据，如果所有的订阅者都取消订阅，源Observable就会停止发送数据。</span></div><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">createShareSource</span><span class="params">()</span> </span>&#123;</div><div class="line">    mColdObservable = getSource();</div><div class="line">    mConvertObservable = mColdObservable.publish().refCount();</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>示例如下：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-05de73e4174507f4.gif?imageMogr2/auto-orient/strip" alt=""><br>操作分为以下几步：</p>
+<ul>
+<li>第一步：通过<code>.publish().refCount()</code>创建由<code>ConnectableObservable</code>转换后的<code>refObservable</code>，此时<code>Cold Observable</code>没有发送任何消息。</li>
+<li>第二步：<code>Observer1</code>订阅到<code>refObservable</code>，<code>Cold Observable</code>开始发送数据，<code>Observer1</code>接收数据。</li>
+<li>第三步：<code>Observer2</code>订阅到<code>refObservable</code>，它只能收到在订阅之后<code>Cold Observable</code>发送的数据。</li>
+<li>第四步：<code>Observer1</code>取消订阅，<code>Cold Observable</code>继续发送数据，<code>Observer2</code>仍然能收到数据。</li>
+<li>第五步：<code>Observer2</code>取消订阅，<code>Cold Observable</code>停止发送数据。</li>
+<li>第六步：<code>Observer1</code>重新订阅，<code>Cold Observable</code>重新开始发送数据。</li>
+</ul>
+<p>最后说明一点：订阅到<code>Cold Observable</code>的<code>.publish().refCount()</code>和<code>Cold Observable</code>的<code>share()</code>所返回的<code>Observable</code>是等价的。</p>
+<h2 id="4-2-ConnectableObservable-由-autoConnect-int-N-转换成-Observable"><a href="#4-2-ConnectableObservable-由-autoConnect-int-N-转换成-Observable" class="headerlink" title="4.2 ConnectableObservable 由 autoConnect(int N) 转换成 Observable"></a>4.2 ConnectableObservable 由 autoConnect(int N) 转换成 Observable</h2><p><code>autoConnect(int N)</code>和<code>refCount</code>很类似，都是将<code>ConnectableObservable</code>转换成普通的<code>Observable</code>，我们称为<code>autoObservable</code>，同样我们先假设<code>ConnectableObservable</code>是由<code>Cold Observable</code>通过<code>publish()</code>方法生成的，它有以下几个特点：</p>
+<ul>
+<li>当有<code>N</code>个订阅者订阅到<code>refObservable</code>后，<code>Cold Observable</code>开始发送数据。</li>
+<li>之后的订阅者订阅到<code>refObservable</code>后，只能收到在订阅之后<code>Cold Observable</code>发送的数据。</li>
+<li>只要<code>Cold Observable</code>开始发送数据，即使所有的<code>autoObservable</code>的订阅和都取消了订阅，<code>Cold Observable</code>也不会停止发送数据，如果想要<code>Cold Observable</code>停止发送数据，那么可以使用<code>autoConnect(int numberOfSubscribers, Consumer connection)</code>中<code>Consumer</code>返回的<code>Disposable</code>，它的作用和<code>ConnectableObservable</code>的<code>connect</code>方法返回的<code>Disposable</code>相同。</li>
+</ul>
+<p>其创建方法如下所示：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//.autoConnect在有指定个订阅者时开始让源Observable发送消息，但是订阅者是否取消订阅不会影响到源Observable的发射。</span></div><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">createAutoConnectSource</span><span class="params">()</span> </span>&#123;</div><div class="line">    mColdObservable = getSource();</div><div class="line">    mConvertObservable = mColdObservable.publish().autoConnect(<span class="number">1</span>, <span class="keyword">new</span> Consumer&lt;Disposable&gt;() &#123;</div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">accept</span><span class="params">(Disposable disposable)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">            mConvertDisposable = disposable;</div><div class="line">        &#125;</div><div class="line">    &#125;);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>示例效果如下：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-a770526fed5f6545.gif?imageMogr2/auto-orient/strip" alt=""><br>我们进行了如下几步操作：</p>
+<ul>
+<li>第一步：启动应用，创建<code>autoConnect</code>转换后的<code>autoObservable</code>。</li>
+<li>第二步：<code>Observer1</code>订阅到<code>autoObservable</code>，此时满足条件，<code>Cold Observable</code>开始发送数据。</li>
+<li>第三步：<code>Observer2</code>订阅到<code>autoObservable</code>，它只能收到订阅后发生的数据。</li>
+<li>第四步：<code>Observer1</code>取消订阅，<code>Cold Observable</code>继续发送数据，<code>Observer2</code>仍然可以收到数据。</li>
+<li>第五步：<code>Observer2</code>取消订阅，<code>Cold Observable</code>仍然继续发送数据。</li>
+<li>第六步：<code>Observer2</code>订阅到<code>autoObservable</code>，它只能收到订阅后发送的消息了。</li>
+<li>第七步：调用<code>mConvertDisposable</code>的<code>dispose</code>，<code>Cold Observable</code>停止发送数据。</li>
+</ul>
+<h1 id="五、publish-和-reply-int-N-的区别"><a href="#五、publish-和-reply-int-N-的区别" class="headerlink" title="五、publish 和 reply(int N) 的区别"></a>五、publish 和 reply(int N) 的区别</h1><p>在上面的例子当中，所有总结的特点都是建立在<code>ConnectableObservable</code>是由<code>publish()</code>生成，只所以这么做，是为了方便大家理解，无论是订阅到<code>ConnectableObservable</code>，还是由<code>ConnectableObservable</code>转换的<code>refObservable</code>和<code>autoObservable</code>，使用这两种方式创建的唯一区别就是，订阅者在订阅后，如果是通过<code>publish()</code>创建的，那么订阅者之后收到订阅后<code>Cold Observable</code>发送的数据；而如果是<code>reply(int N)</code>创建的，那么订阅者还能额外收到<code>N</code>个之前<code>Cold Observable</code>发送的数据，我们用下面一个小例子来演示，订阅者订阅到的<code>Observable</code>如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//.reply会让缓存源Observable的N个数据项，当有新的订阅者订阅时，它会发送这N个数据项给它。</span></div><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">createReplySource</span><span class="params">()</span> </span>&#123;</div><div class="line">    mColdObservable = getSource();</div><div class="line">    mConvertObservable = mColdObservable.replay(<span class="number">3</span>);</div><div class="line">    mConvertDisposable = ((ConnectableObservable&lt;Integer&gt;) mConvertObservable).connect();</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>示例演示效果：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-bd912b15ff2e8126.gif?imageMogr2/auto-orient/strip" alt=""><br>操作步骤：</p>
+<ul>
+<li>第一步：启动应用，通过<code>Cold Observable</code>的<code>publish</code>方法创建<code>ConnectableObservable</code>，并调用<code>ConnectableObservable</code>的<code>replay(3)</code>方法，可以看到，此时虽然<code>ConnectableObservable</code>没有任何订阅者，但是<code>Cold Observable</code>也已经开始发送数据。</li>
+<li>第二步：<code>Observer1</code>订阅到<code>ConnectableObservable</code>，此时它会先收到之前发射的<code>3</code>个数据，之后收到订阅之后<code>Cold Observable</code>发射的数据。</li>
+</ul>
+<p>最后再提一下，更详细的代码大家可以从 <a href="https://github.com/imZeJun/RxSample" target="_blank" rel="external">RxSample</a> 的第十二章中获取。</p>
+<hr>
+<h2 id="更多文章，欢迎访问我的-Android-知识梳理系列："><a href="#更多文章，欢迎访问我的-Android-知识梳理系列：" class="headerlink" title="更多文章，欢迎访问我的 Android 知识梳理系列："></a>更多文章，欢迎访问我的 <strong>Android</strong> 知识梳理系列：</h2><ul>
+<li><strong>Android</strong> 知识梳理目录：<a href="http://www.jianshu.com/p/fd82d18994ce" target="_blank" rel="external">http://www.jianshu.com/p/fd82d18994ce</a></li>
+<li>个人主页：<a href="http://lizejun.cn" target="_blank" rel="external">http://lizejun.cn</a></li>
+<li>个人知识总结目录：<a href="http://lizejun.cn/categories/" target="_blank" rel="external">http://lizejun.cn/categories/</a></li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/09/03/RxJava/RxJava2-实战知识梳理(11)---检测网络状态并自动重试请求/" rel="next" title="RxJava2 实战知识梳理(11) - 检测网络状态并自动重试请求">
+                <i class="fa fa-chevron-left"></i> RxJava2 实战知识梳理(11) - 检测网络状态并自动重试请求
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/09/05/RxJava/RxJava2-实战知识梳理(13)---如何使得错误发生时不自动停止订阅关系/" rel="prev" title="RxJava2 实战知识梳理(13) - 如何使得错误发生时不自动停止订阅关系">
+                RxJava2 实战知识梳理(13) - 如何使得错误发生时不自动停止订阅关系 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="cloud-tie-wrapper" class="cloud-tie-wrapper"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="泽毛" />
+          <p class="site-author-name" itemprop="name">泽毛</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">132</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">28</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              Links
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.jianshu.com/u/37baa8a86582" title="我的简书" target="_blank">我的简书</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://github.com/imZeJun" title="GitHub" target="_blank">GitHub</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.heqiangfly.com/" title="寒江蓑笠" target="_blank">寒江蓑笠</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://johnnyshieh.me/" title="Johnny Shieh" target="_blank">Johnny Shieh</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、前言"><span class="nav-number">1.</span> <span class="nav-text">一、前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、Cold-Observable"><span class="nav-number">2.</span> <span class="nav-text">二、Cold Observable</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、由-Cold-Observable-转换的-ConnectableObservable"><span class="nav-number">3.</span> <span class="nav-text">三、由 Cold Observable 转换的 ConnectableObservable</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四、由-ConnectableObservable-转换成-Observable"><span class="nav-number">4.</span> <span class="nav-text">四、由 ConnectableObservable 转换成 Observable</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#4-1-ConnectableObservable-由-refCount-转换成-Observable"><span class="nav-number">4.1.</span> <span class="nav-text">4.1 ConnectableObservable 由 refCount 转换成 Observable</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-2-ConnectableObservable-由-autoConnect-int-N-转换成-Observable"><span class="nav-number">4.2.</span> <span class="nav-text">4.2 ConnectableObservable 由 autoConnect(int N) 转换成 Observable</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#五、publish-和-reply-int-N-的区别"><span class="nav-number">5.</span> <span class="nav-text">五、publish 和 reply(int N) 的区别</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#更多文章，欢迎访问我的-Android-知识梳理系列："><span class="nav-number">5.1.</span> <span class="nav-text">更多文章，欢迎访问我的 Android 知识梳理系列：</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">泽毛</span>
+</div>
+
+<div class="powered-by">
+<i class=""></i><span id="busuanzi_container_site_uv">
+  访客 - <span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+<div class="powered-by">
+<i class=""></i><span id="busuanzi_container_site_pv">
+  访问量 - <span id="busuanzi_value_site_pv"></span>
+</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+    <script>
+      var cloudTieConfig = {
+        url: document.location.href, 
+        sourceId: "",
+        productKey: "b50a597e2fb84d35a6766074670f1d15",
+        target: "cloud-tie-wrapper"
+      };
+    </script>
+    <script src="https://img1.ws.126.net/f2e/tie/yun/sdk/loader.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("4ko7Mbc92NvXMivUJ2jBW88P-gzGzoHsz", "ccjGamRX2s1CSuhjsOVy2a6N");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

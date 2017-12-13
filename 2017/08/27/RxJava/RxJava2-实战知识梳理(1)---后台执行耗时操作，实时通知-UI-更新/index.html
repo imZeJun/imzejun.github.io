@@ -1,0 +1,958 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="一、前言接触RxJava2已经很久了，也看了网上的很多文章，发现基本都是在对RxJava的基本思想介绍之后，再去对各个操作符进行分析，但是看了之后感觉过了不久就忘了。 偶然的机会看到了开源项目 RxJava-Android-Samples，这里一共介绍了十六种RxJava2的使用场景，它从实际的应用场景出发介绍RxJava2的使用，特别适合对于RxJava2已经有初步了解的开发者进一步地去学习如何">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RxJava2 实战知识梳理(1) - 后台执行耗时操作，实时通知 UI 更新">
+<meta property="og:url" content="http://yoursite.com/2017/08/27/RxJava/RxJava2-实战知识梳理(1)---后台执行耗时操作，实时通知-UI-更新/index.html">
+<meta property="og:site_name" content="泽毛的博客">
+<meta property="og:description" content="一、前言接触RxJava2已经很久了，也看了网上的很多文章，发现基本都是在对RxJava的基本思想介绍之后，再去对各个操作符进行分析，但是看了之后感觉过了不久就忘了。 偶然的机会看到了开源项目 RxJava-Android-Samples，这里一共介绍了十六种RxJava2的使用场景，它从实际的应用场景出发介绍RxJava2的使用，特别适合对于RxJava2已经有初步了解的开发者进一步地去学习如何">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-6fe38e642b07ba23.gif?imageMogr2/auto-orient/strip">
+<meta property="og:updated_time" content="2017-12-13T05:12:57.416Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="RxJava2 实战知识梳理(1) - 后台执行耗时操作，实时通知 UI 更新">
+<meta name="twitter:description" content="一、前言接触RxJava2已经很久了，也看了网上的很多文章，发现基本都是在对RxJava的基本思想介绍之后，再去对各个操作符进行分析，但是看了之后感觉过了不久就忘了。 偶然的机会看到了开源项目 RxJava-Android-Samples，这里一共介绍了十六种RxJava2的使用场景，它从实际的应用场景出发介绍RxJava2的使用，特别适合对于RxJava2已经有初步了解的开发者进一步地去学习如何">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-6fe38e642b07ba23.gif?imageMogr2/auto-orient/strip">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: 'bd2f9b0f6cf360a4093517d22678efec',
+      indexName: 'Blog',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/08/27/RxJava/RxJava2-实战知识梳理(1)---后台执行耗时操作，实时通知-UI-更新/"/>
+
+
+
+
+
+  <title>RxJava2 实战知识梳理(1) - 后台执行耗时操作，实时通知 UI 更新 | 泽毛的博客</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?c276429c3a148ef2fa47d755199a64c2";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">泽毛的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">但愿每次回忆，对生活都不感到负疚</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            目录
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-friend">
+          <a href="/friend/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            小伙伴
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/27/RxJava/RxJava2-实战知识梳理(1)---后台执行耗时操作，实时通知-UI-更新/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="泽毛">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="泽毛的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">RxJava2 实战知识梳理(1) - 后台执行耗时操作，实时通知 UI 更新</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-27T16:37:00+08:00">
+                2017-08-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/RxJava2-实战知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">RxJava2 实战知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a class="cloud-tie-join-count" href="/2017/08/27/RxJava/RxJava2-实战知识梳理(1)---后台执行耗时操作，实时通知-UI-更新/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count join-count" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2017/08/27/RxJava/RxJava2-实战知识梳理(1)---后台执行耗时操作，实时通知-UI-更新/" class="leancloud_visitors" data-flag-title="RxJava2 实战知识梳理(1) - 后台执行耗时操作，实时通知 UI 更新">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">热度 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+                 <span>°C</span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="一、前言"><a href="#一、前言" class="headerlink" title="一、前言"></a>一、前言</h1><p>接触<code>RxJava2</code>已经很久了，也看了网上的很多文章，发现基本都是在对<code>RxJava</code>的基本思想介绍之后，再去对各个操作符进行分析，但是看了之后感觉过了不久就忘了。</p>
+<p>偶然的机会看到了开源项目 <a href="https://github.com/kaushikgopal/RxJava-Android-Samples" target="_blank" rel="external">RxJava-Android-Samples</a>，这里一共介绍了十六种<code>RxJava2</code>的使用场景，它从实际的应用场景出发介绍<code>RxJava2</code>的使用，特别适合对于<code>RxJava2</code>已经有初步了解的开发者进一步地去学习如何将其应用到实际开发当中。</p>
+<p>因此，我打算跟着这个项目的思路编写一系列实战的介绍并完成示例代码编写，并对该实例中用到的知识进行介绍，做到学以致用。下面，就开始第一个例子的学习，源码的仓库为：<a href="https://github.com/imZeJun/RxSample" target="_blank" rel="external">RxSample</a>。</p>
+<h1 id="二、示例"><a href="#二、示例" class="headerlink" title="二、示例"></a>二、示例</h1><h2 id="2-1-应用场景"><a href="#2-1-应用场景" class="headerlink" title="2.1 应用场景"></a>2.1 应用场景</h2><p>当我们需要进行一些耗时操作，例如下载、访问数据库等，为了不阻塞主线程，往往会将其放在后台进行处理，同时在处理的过程中、处理完成后通知主线程更新<code>UI</code>，这里就涉及到了后台线程和主线程之间的切换。首先回忆一下，在以前我们一般会用以下两种方式来实现这一效果：</p>
+<ul>
+<li>创建一个新的子线程，在其<code>run()</code>方法中执行耗时的操作，并通过一个和主线程<code>Looper</code>关联的<code>Handler</code>发送消息给主线程更新进度显示、处理结果。</li>
+<li>使用<code>AsyncTask</code>，在其<code>doInBackground</code>方法中执行耗时的操作，调用<code>publishProgress</code>方法通知主线程，然后在<code>onProgressUpdate</code>中更新进度显示，在<code>onPostExecute</code>中显示最终结果。</li>
+</ul>
+<p>那么，让我们看一些在<code>RxJava</code>中如何完成这一需求。</p>
+<h2 id="2-2-示例代码"><a href="#2-2-示例代码" class="headerlink" title="2.2 示例代码"></a>2.2 示例代码</h2><p>我们的界面上有一个按钮<code>mTvDownload</code>，点击之后会发起一个耗时的任务，这里我们用<code>Thread.sleep</code>来模拟耗时的操作，每隔<code>500ms</code>我们会将当前的进度通知主线程，在<code>mTvDownloadResult</code>中显示当前处理的进度。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BackgroundActivity</span> <span class="keyword">extends</span> <span class="title">AppCompatActivity</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> TextView mTvDownload;</div><div class="line">    <span class="keyword">private</span> TextView mTvDownloadResult;</div><div class="line">    <span class="keyword">private</span> CompositeDisposable mCompositeDisposable = <span class="keyword">new</span> CompositeDisposable();</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</div><div class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState);</div><div class="line">        setContentView(R.layout.activity_background);</div><div class="line">        mTvDownload = (TextView) findViewById(R.id.tv_download);</div><div class="line">        mTvDownloadResult = (TextView) findViewById(R.id.tv_download_result);</div><div class="line">        mTvDownload.setOnClickListener(<span class="keyword">new</span> View.OnClickListener() &#123;</div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(View v)</span> </span>&#123;</div><div class="line">                startDownload();</div><div class="line">            &#125;</div><div class="line">        &#125;);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">startDownload</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">final</span> Observable&lt;Integer&gt; observable = Observable.create(<span class="keyword">new</span> ObservableOnSubscribe&lt;Integer&gt;() &#123;</div><div class="line"></div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">subscribe</span><span class="params">(ObservableEmitter&lt;Integer&gt; e)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">                <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">100</span>; i++) &#123;</div><div class="line">                    <span class="keyword">if</span> (i % <span class="number">20</span> == <span class="number">0</span>) &#123;</div><div class="line">                        <span class="keyword">try</span> &#123;</div><div class="line">                            Thread.sleep(<span class="number">500</span>); <span class="comment">//模拟下载的操作。</span></div><div class="line">                        &#125; <span class="keyword">catch</span> (InterruptedException exception) &#123;</div><div class="line">                            <span class="keyword">if</span> (!e.isDisposed()) &#123;</div><div class="line">                                e.onError(exception);</div><div class="line">                            &#125;</div><div class="line">                        &#125;</div><div class="line">                        e.onNext(i);</div><div class="line">                    &#125;</div><div class="line">                &#125;</div><div class="line">                e.onComplete();</div><div class="line">            &#125;</div><div class="line"></div><div class="line">        &#125;);</div><div class="line">        DisposableObserver&lt;Integer&gt; disposableObserver = <span class="keyword">new</span> DisposableObserver&lt;Integer&gt;() &#123;</div><div class="line"></div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onNext</span><span class="params">(Integer value)</span> </span>&#123;</div><div class="line">                Log.d(<span class="string">"BackgroundActivity"</span>, <span class="string">"onNext="</span> + value);</div><div class="line">                mTvDownloadResult.setText(<span class="string">"Current Progress="</span> + value);</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onError</span><span class="params">(Throwable e)</span> </span>&#123;</div><div class="line">                Log.d(<span class="string">"BackgroundActivity"</span>, <span class="string">"onError="</span> + e);</div><div class="line">                mTvDownloadResult.setText(<span class="string">"Download Error"</span>);</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onComplete</span><span class="params">()</span> </span>&#123;</div><div class="line">                Log.d(<span class="string">"BackgroundActivity"</span>, <span class="string">"onComplete"</span>);</div><div class="line">                mTvDownloadResult.setText(<span class="string">"Download onComplete"</span>);</div><div class="line">            &#125;</div><div class="line">        &#125;;</div><div class="line">        observable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(disposableObserver);</div><div class="line">        mCompositeDisposable.add(disposableObserver);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onDestroy</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">super</span>.onDestroy();</div><div class="line">        mCompositeDisposable.clear();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>实际的运行结果如下：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-6fe38e642b07ba23.gif?imageMogr2/auto-orient/strip" alt=""></p>
+<h1 id="三、示例解析"><a href="#三、示例解析" class="headerlink" title="三、示例解析"></a>三、示例解析</h1><h2 id="3-1-线程切换"><a href="#3-1-线程切换" class="headerlink" title="3.1 线程切换"></a>3.1 线程切换</h2><p>在上面的例子中，涉及到了两种类型的操作：</p>
+<ul>
+<li>需要在后台执行的耗时操作，对应于<code>subscribe(ObservableEmitter&lt;Integer&gt; e)</code>中的代码。</li>
+<li>需要在主线程进行<code>UI</code>更新的操作，对应于<code>DisposableObserver</code>的所有回调，具体的是在<code>onNext</code>中进行进度的更新；在<code>onComplete</code>和<code>onError</code>中展示最终的处理结果。</li>
+</ul>
+<p>那么，这两种类型操作所运行的线程是在哪里指定的呢，关键是下面这句：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">observable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(disposableObserver);</div></pre></td></tr></table></figure></p>
+<ul>
+<li><code>subscribeOn(Schedulers.io())</code>：指定<code>observable</code>的<code>subscribe</code>方法运行在后台线程。</li>
+<li><code>observeOn(AndroidSchedulers.mainThread())</code>：指定<code>observer</code>的回调方法运行在主线程。</li>
+</ul>
+<p>这两个函数刚开始的时候很有可能弄混，我是这么记的，<code>subscribeOn</code>以<code>s</code>开头，可以理解为“上游”开头的谐音，也就是上游执行的线程。</p>
+<p>关于这两个函数，还有一点说明：多次调用<code>subscribeOn</code>，会以第一次的为准；而多次调用<code>observeOn</code>则会以最后一次的为准，不过一般我们都不会这么干，就不举例子了。</p>
+<h2 id="3-2-线程的类型"><a href="#3-2-线程的类型" class="headerlink" title="3.2 线程的类型"></a>3.2 线程的类型</h2><p><code>subscribeOn/observeOn</code>都要求传入一个<code>Schedulers</code>的子类，它就代表了运行线程类型，下面我们来看一下都有哪些选择：</p>
+<ul>
+<li><code>Schedulers.computation()</code>：用于计算任务，默认线程数等于处理器的数量。</li>
+<li><code>Schedulers.from(Executor executor)</code>：使用<code>Executor</code>作为调度器，关于<code>Executor</code>框架可以参考这篇文章：<a href="http://www.jianshu.com/p/80baeaf4eb32" target="_blank" rel="external">多线程知识梳理(5) - 线程池四部曲之 Executor 框架</a>。</li>
+<li><code>Schedulers.immediate( )</code>：在当前线程执行任务</li>
+<li><code>Schedulers.io( )</code>：用于<code>IO</code>密集型任务，例如访问网络、数据库操作等，也是我们最常使用的。</li>
+<li><code>Schedulers.newThread( )</code>：为每一个任务创建一个新的线程。</li>
+<li><code>Schedulers.trampoline( )</code>：当其它排队的任务完成后，在当前线程排队开始执行。</li>
+<li><code>Schedulers.single()</code>：所有任务共用一个后台线程。</li>
+</ul>
+<p>以上是在<code>io.reactivex.schedulers</code>包中，提供的<code>Schedulers</code>，而如果我们导入了下面的依赖，那么在<code>io.reactivex.android.schedulers</code>下，还有额外的两个<code>Schedulers</code>可选：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">compile &apos;io.reactivex.rxjava2:rxandroid:2.0.1&apos;</div></pre></td></tr></table></figure></p>
+<ul>
+<li><code>AndroidSchedulers.mainThread()</code>：运行在应用程序的主线程。</li>
+<li><code>AndroidSchedulers.from(Looper looper)</code>：运行在该<code>looper</code>对应的线程当中。</li>
+</ul>
+<h2 id="3-3-使用-CompositeDisposable-对下游进行管理"><a href="#3-3-使用-CompositeDisposable-对下游进行管理" class="headerlink" title="3.3 使用 CompositeDisposable 对下游进行管理"></a>3.3 使用 CompositeDisposable 对下游进行管理</h2><p>如果<code>Activity</code>要被销毁时，我们的后台任务没有执行完，那么就会导致<code>Activity</code>不能正常回收，而对于每一个<code>Observer</code>，都会有一个<code>Disposable</code>对象用于管理，而<code>RxJava</code>提供了一个<code>CompositeDisposable</code>类用于管理这些<code>Disposable</code>，我们只需要将其将入到该集合当中，在<code>Activity</code>的<code>onDestroy</code>方法中，调用它的<code>clear</code>方法，就能避免内存泄漏的发生。</p>
+<h1 id="四、小结"><a href="#四、小结" class="headerlink" title="四、小结"></a>四、小结</h1><p>这个系列的第一篇文章，我们介绍了如何使用<code>subscribeOn/observeOn</code>来实现后台执行耗时任务，并通知主线程更新进度。</p>
+<hr>
+<h2 id="更多文章，欢迎访问我的-Android-知识梳理系列："><a href="#更多文章，欢迎访问我的-Android-知识梳理系列：" class="headerlink" title="更多文章，欢迎访问我的 Android 知识梳理系列："></a>更多文章，欢迎访问我的 <strong>Android</strong> 知识梳理系列：</h2><ul>
+<li><strong>Android</strong> 知识梳理目录：<a href="http://www.jianshu.com/p/fd82d18994ce" target="_blank" rel="external">http://www.jianshu.com/p/fd82d18994ce</a></li>
+<li>个人主页：<a href="http://lizejun.cn" target="_blank" rel="external">http://lizejun.cn</a></li>
+<li>个人知识总结目录：<a href="http://lizejun.cn/categories/" target="_blank" rel="external">http://lizejun.cn/categories/</a></li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/06/26/Framework-源码解析/Framework-源码解析知识梳理(6)---ContentProvider-源码解析/" rel="next" title="Framework 源码解析知识梳理(6) - ContentProvider 源码解析">
+                <i class="fa fa-chevron-left"></i> Framework 源码解析知识梳理(6) - ContentProvider 源码解析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/08/27/RxJava/RxJava2-实战知识梳理(2)---计算一段时间内数据的平均值/" rel="prev" title="RxJava2 实战知识梳理(2) - 计算一段时间内数据的平均值">
+                RxJava2 实战知识梳理(2) - 计算一段时间内数据的平均值 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="cloud-tie-wrapper" class="cloud-tie-wrapper"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="泽毛" />
+          <p class="site-author-name" itemprop="name">泽毛</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">132</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">28</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              Links
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.jianshu.com/u/37baa8a86582" title="我的简书" target="_blank">我的简书</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://github.com/imZeJun" title="GitHub" target="_blank">GitHub</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.heqiangfly.com/" title="寒江蓑笠" target="_blank">寒江蓑笠</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://johnnyshieh.me/" title="Johnny Shieh" target="_blank">Johnny Shieh</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、前言"><span class="nav-number">1.</span> <span class="nav-text">一、前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、示例"><span class="nav-number">2.</span> <span class="nav-text">二、示例</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-应用场景"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 应用场景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-示例代码"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 示例代码</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、示例解析"><span class="nav-number">3.</span> <span class="nav-text">三、示例解析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-线程切换"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 线程切换</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-线程的类型"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 线程的类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-3-使用-CompositeDisposable-对下游进行管理"><span class="nav-number">3.3.</span> <span class="nav-text">3.3 使用 CompositeDisposable 对下游进行管理</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四、小结"><span class="nav-number">4.</span> <span class="nav-text">四、小结</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#更多文章，欢迎访问我的-Android-知识梳理系列："><span class="nav-number">4.1.</span> <span class="nav-text">更多文章，欢迎访问我的 Android 知识梳理系列：</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">泽毛</span>
+</div>
+
+<div class="powered-by">
+<i class=""></i><span id="busuanzi_container_site_uv">
+  访客 - <span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+<div class="powered-by">
+<i class=""></i><span id="busuanzi_container_site_pv">
+  访问量 - <span id="busuanzi_value_site_pv"></span>
+</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+    <script>
+      var cloudTieConfig = {
+        url: document.location.href, 
+        sourceId: "",
+        productKey: "b50a597e2fb84d35a6766074670f1d15",
+        target: "cloud-tie-wrapper"
+      };
+    </script>
+    <script src="https://img1.ws.126.net/f2e/tie/yun/sdk/loader.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("4ko7Mbc92NvXMivUJ2jBW88P-gzGzoHsz", "ccjGamRX2s1CSuhjsOVy2a6N");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

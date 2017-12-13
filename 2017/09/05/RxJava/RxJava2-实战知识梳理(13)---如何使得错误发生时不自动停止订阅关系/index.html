@@ -1,0 +1,939 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="一、发生错误时停止订阅的情况在RxJava中，如果发生了错误，那么 订阅者会自动停止对上游的订阅关系 ，我们将导致订阅取消的错误分为两种：  上游：上游发生错误，并发送onError事件给订阅者。 下游：订阅者在onNext中处理时发生了异常。  在RxJava的设计中，如果发生了错误，那么订阅关系就取消了。但是在某些时候，我们希望在错误发生的时候不要取消订阅，因为这样订阅者只有重新通过subsc">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RxJava2 实战知识梳理(13) - 如何使得错误发生时不自动停止订阅关系">
+<meta property="og:url" content="http://yoursite.com/2017/09/05/RxJava/RxJava2-实战知识梳理(13)---如何使得错误发生时不自动停止订阅关系/index.html">
+<meta property="og:site_name" content="泽毛的博客">
+<meta property="og:description" content="一、发生错误时停止订阅的情况在RxJava中，如果发生了错误，那么 订阅者会自动停止对上游的订阅关系 ，我们将导致订阅取消的错误分为两种：  上游：上游发生错误，并发送onError事件给订阅者。 下游：订阅者在onNext中处理时发生了异常。  在RxJava的设计中，如果发生了错误，那么订阅关系就取消了。但是在某些时候，我们希望在错误发生的时候不要取消订阅，因为这样订阅者只有重新通过subsc">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-cc44c86850e2f032.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-90d6388e6e2f47de.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-3d2d1e795248fa71.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-7cd90f94438a0cbe.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-1c2a8261fb7663d7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1949836-09c74f46db18800f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2017-12-13T05:20:06.420Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="RxJava2 实战知识梳理(13) - 如何使得错误发生时不自动停止订阅关系">
+<meta name="twitter:description" content="一、发生错误时停止订阅的情况在RxJava中，如果发生了错误，那么 订阅者会自动停止对上游的订阅关系 ，我们将导致订阅取消的错误分为两种：  上游：上游发生错误，并发送onError事件给订阅者。 下游：订阅者在onNext中处理时发生了异常。  在RxJava的设计中，如果发生了错误，那么订阅关系就取消了。但是在某些时候，我们希望在错误发生的时候不要取消订阅，因为这样订阅者只有重新通过subsc">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1949836-cc44c86850e2f032.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: 'bd2f9b0f6cf360a4093517d22678efec',
+      indexName: 'Blog',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/09/05/RxJava/RxJava2-实战知识梳理(13)---如何使得错误发生时不自动停止订阅关系/"/>
+
+
+
+
+
+  <title>RxJava2 实战知识梳理(13) - 如何使得错误发生时不自动停止订阅关系 | 泽毛的博客</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?c276429c3a148ef2fa47d755199a64c2";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">泽毛的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">但愿每次回忆，对生活都不感到负疚</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            目录
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-friend">
+          <a href="/friend/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            小伙伴
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/05/RxJava/RxJava2-实战知识梳理(13)---如何使得错误发生时不自动停止订阅关系/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="泽毛">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="泽毛的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">RxJava2 实战知识梳理(13) - 如何使得错误发生时不自动停止订阅关系</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-05T13:24:00+08:00">
+                2017-09-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/RxJava2-实战知识梳理/" itemprop="url" rel="index">
+                    <span itemprop="name">RxJava2 实战知识梳理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a class="cloud-tie-join-count" href="/2017/09/05/RxJava/RxJava2-实战知识梳理(13)---如何使得错误发生时不自动停止订阅关系/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count join-count" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2017/09/05/RxJava/RxJava2-实战知识梳理(13)---如何使得错误发生时不自动停止订阅关系/" class="leancloud_visitors" data-flag-title="RxJava2 实战知识梳理(13) - 如何使得错误发生时不自动停止订阅关系">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">热度 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+                 <span>°C</span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="一、发生错误时停止订阅的情况"><a href="#一、发生错误时停止订阅的情况" class="headerlink" title="一、发生错误时停止订阅的情况"></a>一、发生错误时停止订阅的情况</h1><p>在<code>RxJava</code>中，如果发生了错误，那么 <strong>订阅者会自动停止对上游的订阅关系</strong> ，我们将导致订阅取消的错误分为两种：</p>
+<ul>
+<li><strong>上游</strong>：上游发生错误，并发送<code>onError</code>事件给订阅者。</li>
+<li><strong>下游</strong>：订阅者在<code>onNext</code>中处理时发生了异常。</li>
+</ul>
+<p>在<code>RxJava</code>的设计中，如果发生了错误，那么订阅关系就取消了。但是在某些时候，我们希望在错误发生的时候不要取消订阅，因为这样订阅者只有重新通过<code>subscribe</code>方法才能收到消息，类似的场景如监测数据源变化、<code>RxBus</code>的实现等。</p>
+<p>我们先用两个简单的例子来演示一下上面提到的两种情况：</p>
+<h2 id="1-1-上游传递消息时发生错误"><a href="#1-1-上游传递消息时发生错误" class="headerlink" title="1.1 上游传递消息时发生错误"></a>1.1 上游传递消息时发生错误</h2><p>订阅者在初始时候订阅到<code>mPublishObject</code>，当该<code>PublishObject</code>发送到第四个事件时，主动抛出一个异常，以模拟上游发生异常的情况。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line"> <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">upError</span><span class="params">()</span> </span>&#123;</div><div class="line">    mPublishSubject.map(<span class="keyword">new</span> Function&lt;Integer, Integer&gt;() &#123;</div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> Integer <span class="title">apply</span><span class="params">(Integer integer)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">            <span class="keyword">if</span> (integer == <span class="number">4</span>) &#123;</div><div class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException();</div><div class="line">            &#125;</div><div class="line">            <span class="keyword">return</span> integer;</div><div class="line">        &#125;</div><div class="line">    &#125;).observeOn(AndroidSchedulers.mainThread()).subscribe(getNormalObserver());</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">private</span> Observer&lt;Integer&gt; <span class="title">getNormalObserver</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">new</span> Observer&lt;Integer&gt;() &#123;</div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onSubscribe</span><span class="params">(Disposable d)</span> </span>&#123;</div><div class="line"></div><div class="line">        &#125;</div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onNext</span><span class="params">(Integer value)</span> </span>&#123;</div><div class="line">            Log.d(TAG, <span class="string">"onNext="</span> + value);</div><div class="line">        &#125;</div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onError</span><span class="params">(Throwable e)</span> </span>&#123;</div><div class="line">            Log.d(TAG, <span class="string">"onError="</span> + e);</div><div class="line">        &#125;</div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onComplete</span><span class="params">()</span> </span>&#123;</div><div class="line">            Log.d(TAG, <span class="string">"onComplete"</span>);</div><div class="line">        &#125;</div><div class="line">    &#125;;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>从控制台的输出可以看到，当第四次发送事件后，由于上游发生了异常，因此订阅者收到了<code>onError</code>事件，之后它就再也无法收到消息了。<br><img src="http://upload-images.jianshu.io/upload_images/1949836-cc44c86850e2f032.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h2 id="1-2-订阅者处理消息时发生错误"><a href="#1-2-订阅者处理消息时发生错误" class="headerlink" title="1.2 订阅者处理消息时发生错误"></a>1.2 订阅者处理消息时发生错误</h2><p>下面，我们再来看订阅处理消息时发生错误的场景：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">downError</span><span class="params">()</span> </span>&#123;</div><div class="line">    mPublishSubject.observeOn(AndroidSchedulers.mainThread()).subscribe(getErrorObserver());</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">private</span> LambdaObserver&lt;Integer&gt; <span class="title">getErrorObserver</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">new</span> LambdaObserver&lt;&gt;(<span class="keyword">new</span> Consumer&lt;Integer&gt;() &#123;</div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">accept</span><span class="params">(Integer value)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">            Log.d(TAG, <span class="string">"onNext="</span> + value);</div><div class="line">            <span class="keyword">if</span> (value == <span class="number">4</span>) &#123;</div><div class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException();</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;, <span class="keyword">new</span> Consumer&lt;Throwable&gt;() &#123;</div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">accept</span><span class="params">(Throwable throwable)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">            Log.d(TAG, <span class="string">"onError="</span> + throwable);</div><div class="line">        &#125;</div><div class="line">    &#125;, <span class="keyword">new</span> Action() &#123;</div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">            Log.d(TAG, <span class="string">"onComplete"</span>);</div><div class="line">        &#125;</div><div class="line">    &#125;, <span class="keyword">new</span> Consumer&lt;Disposable&gt;() &#123;</div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">accept</span><span class="params">(Disposable disposable)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line"></div><div class="line">        &#125;</div><div class="line">    &#125;);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>我们在订阅者收到第四个数据的时候抛出一个异常，此时控制台的输出为如下，与上面类似，之后订阅者都无法接收到消息，因为订阅关系已经被解除了。<br><img src="http://upload-images.jianshu.io/upload_images/1949836-90d6388e6e2f47de.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h1 id="二、发生异常时的处理办法"><a href="#二、发生异常时的处理办法" class="headerlink" title="二、发生异常时的处理办法"></a>二、发生异常时的处理办法</h1><h2 id="2-1-上游发生错误"><a href="#2-1-上游发生错误" class="headerlink" title="2.1 上游发生错误"></a>2.1 上游发生错误</h2><p>在上游发生错误的时候，一般通过重订阅的方式来解决。我们可以根据错误的类型判断是否需要重订阅，重订阅的时候使用<code>retryWhen</code>操作符，这个我们在 <a href="http://www.jianshu.com/p/d135f19e045c" target="_blank" rel="external">RxJava2 实战知识梳理(6) - 基于错误类型的重试请求</a> 已经介绍过了。</p>
+<p>下面，我们演示一下在上面的错误当中如何恢复：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">upErrorIgnore</span><span class="params">()</span> </span>&#123;</div><div class="line">    mPublishSubject.map(<span class="keyword">new</span> Function&lt;Integer, Integer&gt;() &#123;</div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> Integer <span class="title">apply</span><span class="params">(Integer integer)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">            <span class="keyword">if</span> (integer == <span class="number">4</span>) &#123;</div><div class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"retry"</span>);</div><div class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (integer == <span class="number">8</span>) &#123;</div><div class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"don't retry"</span>);</div><div class="line">            &#125;</div><div class="line">            <span class="keyword">return</span> integer;</div><div class="line">        &#125;</div><div class="line">    &#125;).observeOn(AndroidSchedulers.mainThread()).retryWhen(<span class="keyword">new</span> Function&lt;Observable&lt;Throwable&gt;, ObservableSource&lt;?&gt;&gt;() &#123;</div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="keyword">public</span> ObservableSource&lt;?&gt; apply(Observable&lt;Throwable&gt; throwableObservable) <span class="keyword">throws</span> Exception &#123;</div><div class="line">            <span class="comment">//第一步，通过flatMap对错误进行响应。</span></div><div class="line">            <span class="keyword">return</span> throwableObservable.flatMap(<span class="keyword">new</span> Function&lt;Throwable, ObservableSource&lt;?&gt;&gt;() &#123;</div><div class="line">                <span class="meta">@Override</span></div><div class="line">                <span class="keyword">public</span> ObservableSource&lt;?&gt; apply(Throwable throwable) <span class="keyword">throws</span> Exception &#123;</div><div class="line">                    <span class="comment">//第二步：根据错误的类型判断是否需要重订阅。</span></div><div class="line">                    <span class="keyword">return</span> <span class="string">"retry"</span>.equals(throwable.getMessage()) ? Observable.just(<span class="number">0</span>) : Observable.empty();</div><div class="line">                &#125;</div><div class="line">            &#125;);</div><div class="line">        &#125;</div><div class="line">    &#125;).subscribe(getNormalObserver());</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>在第四次/第八次点击的是否，我们分别在上游抛出一个异常，这样就会触发<code>retryWhen</code>的回调，在其中我们分为注释中的两部分进行处理，第四次的时候发起重订阅，而第八次则不发起，因此，第九个事件订阅者就收不到了，控制台的输出为：<br><img src="http://upload-images.jianshu.io/upload_images/1949836-3d2d1e795248fa71.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h2 id="2-2-订阅者发生错误"><a href="#2-2-订阅者发生错误" class="headerlink" title="2.2 订阅者发生错误"></a>2.2 订阅者发生错误</h2><p>但是<code>retryWhen</code>只能处理上游发生错误的情况，对于上面说的第二种情况并不能处理，因此假如是上面介绍的第二种情况：订阅者在<code>onNext</code>处理中发生错误的情况，仍然会解除订阅关系。</p>
+<p>这里首先要感谢 <a href="http://johnnyshieh.me/" target="_blank" rel="external">Johnny Shieh</a> 提供的解决方法，在 <a href="http://johnnyshieh.me/posts/rxbus-rxjava2/" target="_blank" rel="external">RxJava 2 版本的 Rxbus</a> 一文中，他分析了这一问题的原因，这是因为在<code>LambdaObserver</code>的源码中，如果在<code>onNext</code>中发生了异常，那么首先会调用<code>onError</code>方法，而<code>onError</code>中会执行取消订阅的操作。<br><img src="http://upload-images.jianshu.io/upload_images/1949836-7cd90f94438a0cbe.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>解决办法就是，<strong>把 LambdaObserver 代码拷贝出来，注释掉那句，然后继承于它去实现 Observer</strong>，代码在 <a href="https://github.com/imZeJun/RxSample" target="_blank" rel="external">RxSample</a> 的十三章例子中。<br><img src="http://upload-images.jianshu.io/upload_images/1949836-1c2a8261fb7663d7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>从控制台可以看出，并没有解除订阅关系，在发生错误之后，仍然可以继续收到数据。<br><img src="http://upload-images.jianshu.io/upload_images/1949836-09c74f46db18800f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<hr>
+<h2 id="更多文章，欢迎访问我的-Android-知识梳理系列："><a href="#更多文章，欢迎访问我的-Android-知识梳理系列：" class="headerlink" title="更多文章，欢迎访问我的 Android 知识梳理系列："></a>更多文章，欢迎访问我的 <strong>Android</strong> 知识梳理系列：</h2><ul>
+<li><strong>Android</strong> 知识梳理目录：<a href="http://www.jianshu.com/p/fd82d18994ce" target="_blank" rel="external">http://www.jianshu.com/p/fd82d18994ce</a></li>
+<li>个人主页：<a href="http://lizejun.cn" target="_blank" rel="external">http://lizejun.cn</a></li>
+<li>个人知识总结目录：<a href="http://lizejun.cn/categories/" target="_blank" rel="external">http://lizejun.cn/categories/</a></li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/09/04/RxJava/RxJava2-实战知识梳理(12)---实战讲解-publish-&-replay-&-share-&-refCount-&-autoCo/" rel="next" title="RxJava2 实战知识梳理(12) - 实战讲解 publish & replay & share & refCount & autoConnect">
+                <i class="fa fa-chevron-left"></i> RxJava2 实战知识梳理(12) - 实战讲解 publish & replay & share & refCount & autoConnect
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/09/06/RxJava/RxJava2-实战知识梳理(14)---在-token-过期时，刷新过期-token-并重新发起请求/" rel="prev" title="RxJava2 实战知识梳理(14) - 在 token 过期时，刷新过期 token 并重新发起请求">
+                RxJava2 实战知识梳理(14) - 在 token 过期时，刷新过期 token 并重新发起请求 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="cloud-tie-wrapper" class="cloud-tie-wrapper"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="泽毛" />
+          <p class="site-author-name" itemprop="name">泽毛</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">132</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">28</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              Links
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.jianshu.com/u/37baa8a86582" title="我的简书" target="_blank">我的简书</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://github.com/imZeJun" title="GitHub" target="_blank">GitHub</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.heqiangfly.com/" title="寒江蓑笠" target="_blank">寒江蓑笠</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://johnnyshieh.me/" title="Johnny Shieh" target="_blank">Johnny Shieh</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、发生错误时停止订阅的情况"><span class="nav-number">1.</span> <span class="nav-text">一、发生错误时停止订阅的情况</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-1-上游传递消息时发生错误"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 上游传递消息时发生错误</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-2-订阅者处理消息时发生错误"><span class="nav-number">1.2.</span> <span class="nav-text">1.2 订阅者处理消息时发生错误</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、发生异常时的处理办法"><span class="nav-number">2.</span> <span class="nav-text">二、发生异常时的处理办法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-上游发生错误"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 上游发生错误</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-订阅者发生错误"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 订阅者发生错误</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#更多文章，欢迎访问我的-Android-知识梳理系列："><span class="nav-number">2.3.</span> <span class="nav-text">更多文章，欢迎访问我的 Android 知识梳理系列：</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">泽毛</span>
+</div>
+
+<div class="powered-by">
+<i class=""></i><span id="busuanzi_container_site_uv">
+  访客 - <span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+<div class="powered-by">
+<i class=""></i><span id="busuanzi_container_site_pv">
+  访问量 - <span id="busuanzi_value_site_pv"></span>
+</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+    <script>
+      var cloudTieConfig = {
+        url: document.location.href, 
+        sourceId: "",
+        productKey: "b50a597e2fb84d35a6766074670f1d15",
+        target: "cloud-tie-wrapper"
+      };
+    </script>
+    <script src="https://img1.ws.126.net/f2e/tie/yun/sdk/loader.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("4ko7Mbc92NvXMivUJ2jBW88P-gzGzoHsz", "ccjGamRX2s1CSuhjsOVy2a6N");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
